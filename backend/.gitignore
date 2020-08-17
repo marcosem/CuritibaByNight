@@ -3,6 +3,7 @@ node_modules/
 build/
 yarn.lock
 src/__tests__/coverage/
+dist/
 
 ormconfig-prod.json
 
