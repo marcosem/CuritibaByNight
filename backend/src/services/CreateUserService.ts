@@ -8,6 +8,8 @@ interface RequestDTO {
   name: string;
   login: string;
   email: string;
+  email_ic: string;
+  phone: string;
   password: string;
 }
 
@@ -16,6 +18,8 @@ class CreateUserService {
     name,
     login,
     email,
+    email_ic,
+    phone,
     password,
   }: RequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
@@ -32,12 +36,27 @@ class CreateUserService {
       throw new AppError('Email address already exist.', 409);
     }
 
+    // if Email IC and Email are equal, store only Email
+    let redefEmailIc;
+    if (email_ic) {
+      if (email_ic === email) {
+        redefEmailIc = '';
+      } else {
+        redefEmailIc = email_ic;
+      }
+    } else {
+      redefEmailIc = '';
+    }
+
     const hashedPassword = await hash(password, 8);
 
     const user = usersRepository.create({
       name,
       login,
       email,
+      phone,
+      email_ic: redefEmailIc,
+      storyteller: false,
       password: hashedPassword,
     });
 

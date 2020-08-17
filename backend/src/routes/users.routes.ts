@@ -12,8 +12,20 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 const usersRouter = Router();
 const upload = multer(uploadConfig);
 
+/*
+  id: string;
+  name: string;
+  login: string;
+  email: string;
+  email_ic: string;
+  phone: string;
+  password: string;
+  storyteller: boolean;
+  avatar: string;
+  */
+
 usersRouter.post('/', async (req, res) => {
-  const { name, login, email, password } = req.body;
+  const { name, login, email, email_ic, phone, password } = req.body;
 
   // const usersRepository = getCustomRepository(UsersRepository);
 
@@ -23,11 +35,14 @@ usersRouter.post('/', async (req, res) => {
     name,
     login,
     email,
+    email_ic,
+    phone,
     password,
   });
 
   // Do not show user password
   delete user.password;
+  delete user.storyteller;
 
   return res.json(user);
 });

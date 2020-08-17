@@ -55,6 +55,10 @@ class AuthenticateUserService {
       expiresIn,
     });
 
+    // Update lastLogin date
+    user.lastLogin_at = new Date();
+    await usersRepository.save(user);
+
     return {
       user,
       token,

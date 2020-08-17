@@ -38,7 +38,7 @@ class User {
   @Column()
   avatar: string;
 
-  @UpdateDateColumn()
+  @Column('timestamp with time zone')
   lastLogin_at: Date;
 
   // @Column('timestamp with time zone')
