@@ -3,6 +3,9 @@ import { FiUser, FiLock, FiLogIn } from 'react-icons/fi';
 import logoImg from '../../assets/CbN_Logo.png';
 import { Container, Content, Background } from './styles';
 
+import Input from '../../components/Input';
+import Button from '../../components/Button';
+
 const SignIn: React.FC = () => (
   <Container>
     <Content>
@@ -10,10 +13,15 @@ const SignIn: React.FC = () => (
 
       <form>
         <h1>Faça seu Logon</h1>
-        <input placeholder="Login" />
-        <input type="password" placeholder="Senha" />
+        <Input name="login" icon={FiUser} placeholder="Login" />
+        <Input
+          name="password"
+          icon={FiLock}
+          type="password"
+          placeholder="Senha"
+        />
 
-        <button type="submit">Entrar</button>
+        <Button type="submit">Entrar</Button>
 
         <a href="forgot">Esqueci minha senha</a>
       </form>
