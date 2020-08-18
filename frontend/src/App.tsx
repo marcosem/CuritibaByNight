@@ -1,7 +1,12 @@
 import React from 'react';
+import GlobalStyle from './styles/global';
+import SignIn from './pages/SignIn';
 
-function App() {
-  return <h1>Hello Curitiba By Night!</h1>;
-}
+const App: React.FC = () => (
+  <>
+    <SignIn />
+    <GlobalStyle />
+  </>
+);
 
 export default App;
