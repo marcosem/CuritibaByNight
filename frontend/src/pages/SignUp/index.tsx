@@ -1,8 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { FiUser, FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
 import { FaIdCard, FaWhatsapp } from 'react-icons/fa';
+import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import { Container, Content, Background } from './styles';
 
@@ -20,36 +22,31 @@ interface FormData {
 }
 
 const SignUp: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
+
   const handleSubmit = useCallback(async (data: FormData) => {
     try {
-      const phoneRegExp = /^$|(\d{2}-\d{4,5}-\d{4})$/;
+      formRef.current?.setErrors({});
+      const phoneRegExp = /^$|(\d{2}-\d{4,5}-?\d{4})$/;
 
       const schema = Yup.object().shape({
         login: Yup.string()
-          .required('Login é obrigatório')
-          .matches(/^[A-z]+$/, 'Login Precisa conter somente letras'),
-        name: Yup.string().required('Nome é obrigatório'),
+          .required('Login obrigatório')
+          .matches(/^[A-z]+$/, 'Somente letras'),
+        name: Yup.string().required('Nome obrigatório'),
         email: Yup.string()
           .required('E-Mail obrigatório')
-          .email('Digite um e-mail válido'),
-        phone: Yup.string()
-          .matches(
-            phoneRegExp,
-            'Celular precisa estar no formato: DDD-#####-####',
-          )
-          .optional(),
-        password: Yup.string().min(
-          6,
-          'Senha precisa conter no mínimo 6 catacteres',
-        ),
-        passwordConfirm: Yup.string().required(
-          'Confimação de senha é obrigatória',
-        ),
+          .email('E-Mail inválido'),
+        phone: Yup.string().matches(phoneRegExp, 'Formato: ##-#####-####'),
+        password: Yup.string().min(6, 'Mínimo 6 catacteres'),
+        passwordConfirm: Yup.string().required('Confimação obrigatória'),
       });
 
       await schema.validate(data, { abortEarly: false });
     } catch (err) {
-      console.log(err);
+      const errors = getValidationErrors(err);
+
+      formRef.current?.setErrors(errors);
     }
   }, []);
 
@@ -59,7 +56,7 @@ const SignUp: React.FC = () => {
       <Content>
         <Logo />
 
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} ref={formRef}>
           <h1>Faça seu Cadastro</h1>
           <Input name="login" icon={FiUser} placeholder="Login" />
           <Input name="name" icon={FaIdCard} placeholder="Nome do Jogador" />
