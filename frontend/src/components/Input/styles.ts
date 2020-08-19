@@ -7,6 +7,8 @@ interface ContainerProps {
   isFocused: boolean;
 }
 
+//
+
 export const Container = styled.div<ContainerProps>`
   background: #100909;
   border-radius: 10px;
@@ -15,7 +17,7 @@ export const Container = styled.div<ContainerProps>`
   display: flex;
   align-items: center;
 
-  border: 2px solid #100909;
+  border: 2px solid #201919;
   color: #756b6b;
 
   & + div {
