@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiUser, FiLock, FiLogIn } from 'react-icons/fi';
-import logoImg from '../../assets/CbN_Logo.png';
+import logoImg from '../../assets/logo.svg';
 import { Container, Content, Background } from './styles';
 
 import Input from '../../components/Input';
