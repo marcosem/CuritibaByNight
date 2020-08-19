@@ -38,7 +38,7 @@ const SignUp: React.FC = () => {
           .required('E-Mail obrigatório')
           .email('E-Mail inválido'),
         phone: Yup.string().matches(phoneRegExp, 'Formato: ##-#####-####'),
-        password: Yup.string().min(6, 'Mínimo 6 catacteres'),
+        password: Yup.string().min(6, 'Mínimo 6 caracteres'),
         passwordConfirm: Yup.string().required('Confimação obrigatória'),
       });
 
