@@ -1,15 +1,15 @@
 import React from 'react';
 import { FiUser, FiLock, FiLogIn } from 'react-icons/fi';
-import logoImg from '../../assets/logo.svg';
 import { Container, Content, Background } from './styles';
 
+import Logo from '../../components/Logo';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 const SignIn: React.FC = () => (
   <Container>
     <Content>
-      <img src={logoImg} alt="Curitiba By Night" />
+      <Logo />
 
       <form>
         <h1>Faça seu Logon</h1>

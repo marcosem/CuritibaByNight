@@ -1,9 +1,9 @@
 import React from 'react';
 import { FiUser, FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
 import { FaIdCard, FaWhatsapp } from 'react-icons/fa';
-import logoImg from '../../assets/logo.svg';
 import { Container, Content, Background } from './styles';
 
+import Logo from '../../components/Logo';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -11,7 +11,7 @@ const SignUp: React.FC = () => (
   <Container>
     <Background />
     <Content>
-      <img src={logoImg} alt="Curitiba By Night" />
+      <Logo />
 
       <form>
         <h1>Faça seu Cadastro</h1>
