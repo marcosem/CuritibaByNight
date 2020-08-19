@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FiUser, FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
 import { FaIdCard, FaWhatsapp } from 'react-icons/fa';
 import { Form } from '@unform/web';
+import * as Yup from 'yup';
 
 import { Container, Content, Background } from './styles';
 
@@ -19,9 +20,38 @@ interface FormData {
 }
 
 const SignUp: React.FC = () => {
-  function handleSubmit(data: FormData): void {
-    console.log(data);
-  }
+  const handleSubmit = useCallback(async (data: FormData) => {
+    try {
+      const phoneRegExp = /^$|(\d{2}-\d{4,5}-\d{4})$/;
+
+      const schema = Yup.object().shape({
+        login: Yup.string()
+          .required('Login é obrigatório')
+          .matches(/^[A-z]+$/, 'Login Precisa conter somente letras'),
+        name: Yup.string().required('Nome é obrigatório'),
+        email: Yup.string()
+          .required('E-Mail obrigatório')
+          .email('Digite um e-mail válido'),
+        phone: Yup.string()
+          .matches(
+            phoneRegExp,
+            'Celular precisa estar no formato: DDD-#####-####',
+          )
+          .optional(),
+        password: Yup.string().min(
+          6,
+          'Senha precisa conter no mínimo 6 catacteres',
+        ),
+        passwordConfirm: Yup.string().required(
+          'Confimação de senha é obrigatória',
+        ),
+      });
+
+      await schema.validate(data, { abortEarly: false });
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
   return (
     <Container>
