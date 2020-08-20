@@ -18,9 +18,6 @@ class User {
   name: string;
 
   @Column()
-  login: string;
-
-  @Column()
   email: string;
 
   @Column()
@@ -37,6 +34,12 @@ class User {
 
   @Column()
   avatar: string;
+
+  @Column()
+  character_file: string;
+
+  @Column()
+  secret: string;
 
   @Column('timestamp with time zone')
   lastLogin_at: Date;

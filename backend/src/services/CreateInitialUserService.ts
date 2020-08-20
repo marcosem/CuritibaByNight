@@ -1,34 +1,24 @@
 import { getCustomRepository } from 'typeorm';
-import { hash } from 'bcryptjs';
+import { uuid } from 'uuidv4';
 import User from '../models/User';
 import UsersRepository from '../repositories/UsersRepository';
 import AppError from '../errors/AppError';
 
 interface RequestDTO {
   name: string;
-  login: string;
   email: string;
   email_ic: string;
   phone: string;
-  password: string;
 }
 
-class CreateUserService {
+class CreateInitialUserService {
   public async execute({
     name,
-    login,
     email,
     email_ic,
     phone,
-    password,
   }: RequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
-
-    // Verify if user login already exist
-    const userLoginExist = await usersRepository.findUserByLogin(login);
-    if (userLoginExist) {
-      throw new AppError('User login already exist.', 409);
-    }
 
     // Verify is user email already exist
     const userEmailExist = await usersRepository.findUserByEmail(email);
@@ -48,16 +38,15 @@ class CreateUserService {
       redefEmailIc = '';
     }
 
-    const hashedPassword = await hash(password, 8);
+    // const hashedPassword = await hash(password, 8);
 
     const user = usersRepository.create({
       name,
-      login,
       email,
       phone,
       email_ic: redefEmailIc,
       storyteller: false,
-      password: hashedPassword,
+      secret: uuid(),
     });
 
     await usersRepository.save(user);
@@ -66,4 +55,4 @@ class CreateUserService {
   }
 }
 
-export default CreateUserService;
+export default CreateInitialUserService;

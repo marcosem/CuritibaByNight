@@ -18,11 +18,6 @@ export default class CreateUsers1593986404935 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'login',
-            type: 'varchar',
-            isUnique: true,
-          },
-          {
             name: 'email',
             type: 'varchar',
             isUnique: true,
@@ -49,6 +44,16 @@ export default class CreateUsers1593986404935 implements MigrationInterface {
           },
           {
             name: 'avatar',
+            type: 'varchar',
+            isNullable: true,
+          },
+          {
+            name: 'character_file',
+            type: 'varchar',
+            isNullable: true,
+          },
+          {
+            name: 'secret',
             type: 'varchar',
             isNullable: true,
           },

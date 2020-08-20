@@ -4,9 +4,9 @@ import User from '../models/User';
 @EntityRepository(User)
 class UsersRepository extends Repository<User> {
   // Verify if user Login exist
-  public async findUserByLogin(login: string): Promise<User | null> {
+  public async findUserBySecret(secret: string): Promise<User | null> {
     const userFound = await this.findOne({
-      where: { login },
+      where: { secret },
     });
 
     // if not found, return null
