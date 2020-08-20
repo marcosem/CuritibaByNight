@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { FiUser, FiLock, FiLogIn } from 'react-icons/fi';
+import { FiMail, FiLock, FiLogIn } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -20,9 +20,9 @@ const SignIn: React.FC = () => {
       // const phoneRegExp = /^$|(\d{2}-\d{4,5}-?\d{4})$/;
 
       const schema = Yup.object().shape({
-        login: Yup.string()
-          .required('Entre com Login ou E-Mail')
-          .matches(/^[A-z]+$/, 'Somente letras'),
+        email: Yup.string()
+          .required('E-Mail obrigatório')
+          .email('E-Mail inválido'),
         password: Yup.string().required('Senha obrigatória'),
       });
 
@@ -41,7 +41,7 @@ const SignIn: React.FC = () => {
 
         <Form onSubmit={handleSubmit} ref={formRef}>
           <h1>Faça seu Logon</h1>
-          <Input name="login" icon={FiUser} placeholder="Login" />
+          <Input name="email" icon={FiMail} placeholder="E-Mail" />
           <Input
             name="password"
             icon={FiLock}

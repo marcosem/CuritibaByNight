@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { FiUser, FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
-import { FaIdCard, FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -13,7 +13,6 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 interface FormData {
-  login: string;
   name: string;
   email: string;
   phone: string;
@@ -30,21 +29,30 @@ const SignUp: React.FC = () => {
       const phoneRegExp = /^$|(\d{2}-\d{4,5}-?\d{4})$/;
 
       const schema = Yup.object().shape({
-        login: Yup.string()
-          .required('Login obrigatório')
-          .matches(/^[A-z]+$/, 'Somente letras'),
         name: Yup.string().required('Nome obrigatório'),
         email: Yup.string()
           .required('E-Mail obrigatório')
           .email('E-Mail inválido'),
-        phone: Yup.string().matches(phoneRegExp, 'Formato: ##-#####-####'),
+        phone: Yup.string().matches(phoneRegExp, 'Formato: xx-xxxxx-xxxx'),
         password: Yup.string().min(6, 'Mínimo 6 caracteres'),
         passwordConfirm: Yup.string().required('Confimação obrigatória'),
       });
 
       await schema.validate(data, { abortEarly: false });
+
+      if (data.password !== data.passwordConfirm) {
+        formRef.current?.setErrors({
+          passwordConfirm: 'Senha diferente da Confirmação',
+        });
+      }
     } catch (err) {
       const errors = getValidationErrors(err);
+
+      if (!errors.passwordConfirm) {
+        if (data.password !== data.passwordConfirm) {
+          errors.passwordConfirm = 'Senha diferente da Confirmação';
+        }
+      }
 
       formRef.current?.setErrors(errors);
     }
@@ -58,8 +66,7 @@ const SignUp: React.FC = () => {
 
         <Form onSubmit={handleSubmit} ref={formRef}>
           <h1>Faça seu Cadastro</h1>
-          <Input name="login" icon={FiUser} placeholder="Login" />
-          <Input name="name" icon={FaIdCard} placeholder="Nome do Jogador" />
+          <Input name="name" icon={FiUser} placeholder="Nome do Jogador" />
           <Input name="email" icon={FiMail} placeholder="E-Mail do Jogador" />
           <Input name="phone" icon={FaWhatsapp} placeholder="Celular" />
 
@@ -76,7 +83,7 @@ const SignUp: React.FC = () => {
             placeholder="Confirme a Senha"
           />
 
-          <Button type="submit">Entrar</Button>
+          <Button type="submit">Cadastrar</Button>
         </Form>
         <a href="login">
           <FiArrowLeft />

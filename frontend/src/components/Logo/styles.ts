@@ -5,5 +5,3 @@ export const Container = styled.div`
     width: 300px;
   }
 `;
-
-// width: 250px;

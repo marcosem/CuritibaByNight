@@ -7,8 +7,6 @@ interface ContainerProps {
   isFocused: boolean;
 }
 
-//
-
 export const Container = styled.div<ContainerProps>`
   background: #100909;
   border-radius: 10px;
@@ -27,20 +25,20 @@ export const Container = styled.div<ContainerProps>`
   ${props =>
     props.isErrored &&
     css`
-      border-color: #c53030;
+      border-color: #860209;
     `}
 
   ${props =>
     props.isFocused &&
     css`
-      color: #860209;
-      border-color: #860209;
+      color: #fff;
+      border-color: #fff;
     `}
 
   ${props =>
     props.isFilled &&
     css`
-      color: #860209;
+      color: #fff;
     `}
 
   input {
@@ -72,11 +70,11 @@ export const Error = styled(ToolTip)`
   }
 
   span {
-    background: #c53030;
+    background: #860209;
     color: #d5d5d5;
 
     &::before {
-      border-color: #c53030 transparent;
+      border-color: #860209 transparent;
     }
   }
 `;
