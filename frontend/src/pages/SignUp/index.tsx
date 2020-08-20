@@ -33,10 +33,15 @@ const SignUp: React.FC = () => {
         email: Yup.string()
           .required('E-Mail obrigatório')
           .email('E-Mail inválido'),
-        phone: Yup.string().matches(phoneRegExp, 'Formato: xx-xxxxx-xxxx'),
+        phone: Yup.string().matches(
+          phoneRegExp,
+          'Entre com o formato: xx-xxxxx-xxxx',
+        ),
         password: Yup.string().min(6, 'Mínimo 6 caracteres'),
         passwordConfirm: Yup.string().required('Confimação obrigatória'),
       });
+
+      console.log(data);
 
       await schema.validate(data, { abortEarly: false });
 
@@ -66,20 +71,39 @@ const SignUp: React.FC = () => {
 
         <Form onSubmit={handleSubmit} ref={formRef}>
           <h1>Faça seu Cadastro</h1>
-          <Input name="name" icon={FiUser} placeholder="Nome do Jogador" />
-          <Input name="email" icon={FiMail} placeholder="E-Mail do Jogador" />
-          <Input name="phone" icon={FaWhatsapp} placeholder="Celular" />
+          <Input
+            name="name"
+            icon={FiUser}
+            mask=""
+            placeholder="Nome do Jogador"
+          />
+          <Input
+            name="email"
+            icon={FiMail}
+            mask=""
+            placeholder="E-Mail do Jogador"
+          />
+          <Input
+            name="phone"
+            icon={FaWhatsapp}
+            mask="99-9999tt999?"
+            formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
+            maskChar={null}
+            placeholder="Celular"
+          />
 
           <Input
             name="password"
             icon={FiLock}
             type="password"
+            mask=""
             placeholder="Senha"
           />
           <Input
             name="passwordConfirm"
             icon={FiLock}
             type="password"
+            mask=""
             placeholder="Confirme a Senha"
           />
 
@@ -95,3 +119,15 @@ const SignUp: React.FC = () => {
 };
 
 export default SignUp;
+
+/*
+handlerChangeBrazilianPhone = (ev) => {
+  const brazilianPhone = ev.target.value.replace(/[^0-9]+/g, '')
+  this.setState({ brazilianPhone })
+}
+...
+mask={this.state.brazilianPhone.length <= 10 ? '(99) 9999-9999?' : '(99) 99999-9999'}
+formatChars={{ 9: '[0-9]', '?': '[0-9 ]' }}
+onChange={this.handlerChangeBrazilianPhone}
+value={this.state.brazilianPhone}
+*/

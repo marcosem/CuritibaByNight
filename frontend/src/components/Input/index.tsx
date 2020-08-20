@@ -1,5 +1,5 @@
 import React, {
-  InputHTMLAttributes,
+  // InputHTMLAttributes,
   useEffect,
   useRef,
   useState,
@@ -7,15 +7,17 @@ import React, {
 } from 'react';
 import { IconBaseProps } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
+import ReactInputMask, { Props as InputProps } from 'react-input-mask';
 import { useField } from '@unform/core';
 import { Container, Error } from './styles';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+// interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputPropsEx extends InputProps {
   name: string;
   icon?: React.ComponentType<IconBaseProps>;
 }
 
-const Input: React.FC<InputProps> = ({ name, icon: Icon, ...rest }) => {
+const Input: React.FC<InputPropsEx> = ({ name, icon: Icon, ...rest }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
@@ -41,13 +43,14 @@ const Input: React.FC<InputProps> = ({ name, icon: Icon, ...rest }) => {
   return (
     <Container isErrored={!!error} isFilled={isFilled} isFocused={isFocused}>
       {Icon && <Icon size={20} />}
-      <input
+      <ReactInputMask
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         defaultValue={defaultValue}
-        ref={inputRef}
         {...rest}
-      />
+      >
+        {(inputProps: InputProps) => <input ref={inputRef} {...inputProps} />}
+      </ReactInputMask>
       {error && (
         <Error title={error}>
           <FiAlertCircle color="#c53030" size={20} />
