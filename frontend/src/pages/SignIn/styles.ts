@@ -20,7 +20,7 @@ export const Content = styled.div`
   max-width: 700px;
 
   form {
-    margin: 80px 0;
+    margin: 30px 0;
     width: 340px;
     text-align: center;
 
@@ -29,14 +29,14 @@ export const Content = styled.div`
     }
 
     a {
-      color: #fff;
+      color: #d5d5d5;
       display: block;
       margin-top: 16px;
       text-decoration: none;
       transition: color 0.2s;
 
       &:hover {
-        color: ${shade(0.2, '#fff')};
+        color: ${shade(0.2, '#d5d5d5')};
       }
     }
   }
