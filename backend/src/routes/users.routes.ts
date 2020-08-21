@@ -8,12 +8,19 @@ import CreateSTUserService from '../services/CreateSTUserService';
 import CreateInitialUserService from '../services/CreateInitialUserService';
 import CompleteInitialUserService from '../services/CompleteInitialUserService';
 import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
+import UploadCharacterSheetService from '../services/UploadCharacterSheetService';
+import GetUserCharacterSheet from '../services/GetUserCharacterSheet';
 
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ensureSTAuthenticated from '../middlewares/ensureSTAuthenticated';
 
 const usersRouter = Router();
-const upload = multer(uploadConfig);
+const avatarMulter = uploadConfig('avatar');
+const sheetMulter = uploadConfig('sheet');
+const uploadAvatar = multer(avatarMulter);
+const uploadSheet = multer(sheetMulter);
+
+// const uploadSheet = multer(uploadConfig('sheet'));
 
 /*
   id: string;
@@ -88,7 +95,7 @@ usersRouter.post('/create', ensureSTAuthenticated, async (req, res) => {
   return res.json(user);
 });
 
-usersRouter.use('/image', express.static(uploadConfig.directory));
+usersRouter.use('/image', express.static(avatarMulter.directory));
 
 usersRouter.get('/list', ensureSTAuthenticated, async (req, res) => {
   const usersRepository = getCustomRepository(UsersRepository);
@@ -108,7 +115,7 @@ usersRouter.get('/list', ensureSTAuthenticated, async (req, res) => {
 usersRouter.patch(
   '/avatar',
   ensureAuthenticated,
-  upload.single('avatar'),
+  uploadAvatar.single('avatar'),
   async (req, res) => {
     const updateUserAvatar = new UpdateUserAvatarService();
 
@@ -124,5 +131,37 @@ usersRouter.patch(
     return res.json(user);
   },
 );
+
+usersRouter.patch(
+  '/uploadsheet',
+  ensureSTAuthenticated,
+  uploadSheet.single('sheet'),
+  async (req, res) => {
+    const { player_id } = req.body;
+
+    const uploadCharacterSheetService = new UploadCharacterSheetService();
+
+    const user = await uploadCharacterSheetService.execute({
+      user_id: req.user.id,
+      player_id,
+      sheetFilename: req.file.filename,
+    });
+
+    delete user.password;
+    delete user.secret;
+
+    return res.json(user);
+  },
+);
+
+usersRouter.get('/sheet', ensureAuthenticated, async (req, res) => {
+  const getUserCharacterSheet = new GetUserCharacterSheet();
+
+  const sheet = await getUserCharacterSheet.execute({
+    user_id: req.user.id,
+  });
+
+  return res.sendFile(sheet);
+});
 
 export default usersRouter;

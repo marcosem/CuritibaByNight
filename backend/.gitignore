@@ -2,10 +2,15 @@
 node_modules/
 build/
 yarn.lock
+yarn-error.log
 src/__tests__/coverage/
 dist/
 
 ormconfig-prod.json
 
 tmp/*
+!tmp/avatar
+!tmp/sheet
 !tmp/.gitkeep
+tmp/avatar/*
+tmp/sheet/*

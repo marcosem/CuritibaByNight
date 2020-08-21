@@ -15,8 +15,9 @@ class UpdateUserAvatarService {
   public async execute({ user_id, avatarFilename }: RequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
 
-    const user = await usersRepository.findOne(user_id);
-    // console.log(user);
+    const user = await usersRepository.findOne({
+      where: { id: user_id },
+    });
 
     if (!user) {
       throw new AppError('Only authenticated users can change avatar', 401);
@@ -24,7 +25,10 @@ class UpdateUserAvatarService {
 
     if (user.avatar) {
       // Delete previews avatar
-      const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
+      const userAvatarFilePath = path.join(
+        uploadConfig('avatar').directory,
+        user.avatar,
+      );
       const userAvatarFileExists = fs.existsSync(userAvatarFilePath); // fs.promises.stat(userAvatarFilePath);
 
       if (userAvatarFileExists) {
