@@ -16,6 +16,7 @@ interface AuthContextData {
   // eslint-disable-next-line @typescript-eslint/ban-types
   user: object;
   signIn(credentials: SingInCreadentials): Promise<void>;
+  signOut(): void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -47,8 +48,15 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({ token, user });
   }, []);
 
+  const signOut = useCallback(() => {
+    localStorage.removeItem('@CuritibaByNight:token');
+    localStorage.removeItem('@CuritibaByNight:user');
+
+    setData({} as AuthState);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn }}>
+    <AuthContext.Provider value={{ user: data.user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
