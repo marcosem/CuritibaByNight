@@ -41,8 +41,6 @@ const SignUp: React.FC = () => {
         passwordConfirm: Yup.string().required('Confimação obrigatória'),
       });
 
-      console.log(data);
-
       await schema.validate(data, { abortEarly: false });
 
       if (data.password !== data.passwordConfirm) {
