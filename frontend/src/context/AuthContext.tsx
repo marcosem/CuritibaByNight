@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useState } from 'react';
+import React, { createContext, useCallback, useState, useContext } from 'react';
 import api from '../services/api';
 
 interface AuthState {
@@ -12,17 +12,15 @@ interface SingInCreadentials {
   password: string;
 }
 
-interface AuthContextState {
+interface AuthContextData {
   // eslint-disable-next-line @typescript-eslint/ban-types
   user: object;
   signIn(credentials: SingInCreadentials): Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextState>(
-  {} as AuthContextState,
-);
+const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export const AuthProvider: React.FC = ({ children }) => {
+const AuthProvider: React.FC = ({ children }) => {
   // Initilizing token if it is in the local storage
   const [data, setData] = useState<AuthState>(() => {
     const token = localStorage.getItem('@CuritibaByNight:token');
@@ -55,3 +53,15 @@ export const AuthProvider: React.FC = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+function useAuth(): AuthContextData {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+
+  return context;
+}
+
+export { AuthProvider, useAuth };
