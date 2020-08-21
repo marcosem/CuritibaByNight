@@ -159,6 +159,20 @@ usersRouter.get('/sheet', ensureAuthenticated, async (req, res) => {
 
   const sheet = await getUserCharacterSheet.execute({
     user_id: req.user.id,
+    player_id: req.user.id,
+  });
+
+  return res.sendFile(sheet);
+});
+
+usersRouter.post('/sheet', ensureSTAuthenticated, async (req, res) => {
+  const { player_id } = req.body;
+
+  const getUserCharacterSheet = new GetUserCharacterSheet();
+
+  const sheet = await getUserCharacterSheet.execute({
+    user_id: req.user.id,
+    player_id,
   });
 
   return res.sendFile(sheet);
