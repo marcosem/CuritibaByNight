@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@types/react-input-mask": "^2.0.5",
+    "@types/react-router-dom": "^5.1.5",
     "@types/styled-components": "^5.1.2",
     "@types/yup": "^0.29.5",
     "@typescript-eslint/eslint-plugin": "^3.9.1",

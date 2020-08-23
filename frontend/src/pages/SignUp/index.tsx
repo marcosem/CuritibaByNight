@@ -4,9 +4,10 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
+import { Link } from 'react-router-dom';
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import { Container, Content, Background } from './styles';
+import { Container, Content, AnimationContainer, Background } from './styles';
 
 import Logo from '../../components/Logo';
 import Input from '../../components/Input';
@@ -65,52 +66,54 @@ const SignUp: React.FC = () => {
     <Container>
       <Background />
       <Content>
-        <Logo />
+        <AnimationContainer>
+          <Logo />
 
-        <Form onSubmit={handleSubmit} ref={formRef}>
-          <h1>Faça seu Cadastro</h1>
-          <Input
-            name="name"
-            icon={FiUser}
-            mask=""
-            placeholder="Nome do Jogador"
-          />
-          <Input
-            name="email"
-            icon={FiMail}
-            mask=""
-            placeholder="E-Mail do Jogador"
-          />
-          <Input
-            name="phone"
-            icon={FaWhatsapp}
-            mask="99-9999tt999?"
-            formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
-            maskChar={null}
-            placeholder="Celular"
-          />
+          <Form onSubmit={handleSubmit} ref={formRef}>
+            <h1>Faça seu Cadastro</h1>
+            <Input
+              name="name"
+              icon={FiUser}
+              mask=""
+              placeholder="Nome do Jogador"
+            />
+            <Input
+              name="email"
+              icon={FiMail}
+              mask=""
+              placeholder="E-Mail do Jogador"
+            />
+            <Input
+              name="phone"
+              icon={FaWhatsapp}
+              mask="99-9999tt999?"
+              formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
+              maskChar={null}
+              placeholder="Celular"
+            />
 
-          <Input
-            name="password"
-            icon={FiLock}
-            type="password"
-            mask=""
-            placeholder="Senha"
-          />
-          <Input
-            name="passwordConfirm"
-            icon={FiLock}
-            type="password"
-            mask=""
-            placeholder="Confirme a Senha"
-          />
+            <Input
+              name="password"
+              icon={FiLock}
+              type="password"
+              mask=""
+              placeholder="Senha"
+            />
+            <Input
+              name="passwordConfirm"
+              icon={FiLock}
+              type="password"
+              mask=""
+              placeholder="Confirme a Senha"
+            />
 
-          <Button type="submit">Cadastrar</Button>
-        </Form>
-        <a href="login">
-          <FiArrowLeft />
-          Voltar para Logon
-        </a>
+            <Button type="submit">Cadastrar</Button>
+          </Form>
+          <Link to="/">
+            <FiArrowLeft />
+            Voltar para Logon
+          </Link>
+        </AnimationContainer>
       </Content>
     </Container>
   );
