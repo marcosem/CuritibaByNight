@@ -2,14 +2,14 @@ import { getCustomRepository } from 'typeorm';
 import { isUuid } from 'uuidv4';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
-interface RequestDTO {
+interface IRequestDTO {
   secret: string;
 }
 
 class GetInitialUserService {
-  public async execute({ secret }: RequestDTO): Promise<User> {
+  public async execute({ secret }: IRequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
 
     if (!isUuid(secret)) {

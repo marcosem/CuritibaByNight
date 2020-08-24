@@ -1,16 +1,16 @@
 import { getCustomRepository } from 'typeorm';
 import path from 'path';
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 
-interface RequestDTO {
+interface IRequestDTO {
   user_id: string;
   player_id: string;
 }
 
 class GetUserCharacterSheet {
-  public async execute({ user_id, player_id }: RequestDTO): Promise<string> {
+  public async execute({ user_id, player_id }: IRequestDTO): Promise<string> {
     const usersRepository = getCustomRepository(UsersRepository);
 
     const user = await usersRepository.findOne({

@@ -2,9 +2,9 @@ import { getCustomRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
-interface RequestDTO {
+interface IRequestDTO {
   name: string;
   email: string;
   email_ic: string;
@@ -21,7 +21,7 @@ class CreateSTUserService {
     phone,
     password,
     st_secret,
-  }: RequestDTO): Promise<User> {
+  }: IRequestDTO): Promise<User> {
     if (st_secret !== 'GimmeThePower!') {
       throw new AppError('User not authorized.', 401);
     }

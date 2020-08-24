@@ -5,7 +5,7 @@ import { parseISO, isToday } from 'date-fns';
 import app from '../../../shared/infra/http/app';
 
 describe('User Routes', () => {
-  interface User {
+  interface IUser {
     id: string;
     name: string;
     login: string;
@@ -126,7 +126,7 @@ describe('User Routes', () => {
     expect(response.body).toMatchObject(userTemplate);
 
     // Verify if each object contains user id and createdAt properties
-    response.body.forEach((user: User) => {
+    response.body.forEach((user: IUser) => {
       // Expect to have a valid user id
       expect(isUuid(user.id)).toBe(true);
       // Expect to have a valid creation date

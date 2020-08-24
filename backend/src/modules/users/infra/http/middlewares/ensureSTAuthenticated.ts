@@ -4,9 +4,9 @@ import { verify } from 'jsonwebtoken';
 import AppError from '@shared/errors/AppError';
 import authConfig from '@config/auth';
 
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
-interface TokenPayload {
+interface ITokenPayload {
   iat: number;
   exp: number;
   sub: string;
@@ -31,7 +31,7 @@ export default async function ensureSTAuthenticated(
   try {
     const decoded = verify(token, authConfig.jwt.secret);
 
-    const { sub } = decoded as TokenPayload;
+    const { sub } = decoded as ITokenPayload;
     const user = await usersRepository.findOne(sub);
     const isST = user ? user.storyteller : false;
 

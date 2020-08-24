@@ -2,12 +2,12 @@ import { resolve } from 'path';
 import crypto from 'crypto';
 import multer, { StorageEngine } from 'multer';
 
-interface UploadReturn {
+interface IUploadReturn {
   directory: string;
   storage: StorageEngine;
 }
 
-export default function upload(type: string): UploadReturn {
+export default function upload(type: string): IUploadReturn {
   let tmpFolder;
 
   switch (type) {

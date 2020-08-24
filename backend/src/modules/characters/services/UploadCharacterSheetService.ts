@@ -2,11 +2,11 @@ import { getCustomRepository } from 'typeorm';
 import path from 'path';
 import fs from 'fs';
 import User from '@modules/users/infra/typeorm/entities/User';
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 
-interface RequestDTO {
+interface IRequestDTO {
   user_id: string;
   player_id: string;
   sheetFilename: string;
@@ -17,7 +17,7 @@ class UploadCharacterSheetService {
     user_id,
     player_id,
     sheetFilename,
-  }: RequestDTO): Promise<User> {
+  }: IRequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
 
     const user = await usersRepository.findOne(user_id);

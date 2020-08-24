@@ -4,20 +4,20 @@ import { sign } from 'jsonwebtoken';
 import User from '@modules/users/infra/typeorm/entities/User';
 import authConfig from '@config/auth';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
-interface RequestDTO {
+interface IRequestDTO {
   email: string;
   password: string;
 }
 
-interface Response {
+interface IResponse {
   user: User;
   token: string;
 }
 
 class AuthenticateUserService {
-  public async execute({ email, password }: RequestDTO): Promise<Response> {
+  public async execute({ email, password }: IRequestDTO): Promise<IResponse> {
     const usersRepository = getCustomRepository(UsersRepository);
 
     // Verify if login is user email or user login

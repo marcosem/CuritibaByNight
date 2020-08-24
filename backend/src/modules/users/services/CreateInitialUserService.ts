@@ -2,9 +2,9 @@ import { getCustomRepository } from 'typeorm';
 import { uuid } from 'uuidv4';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
-interface RequestDTO {
+interface IRequestDTO {
   name: string;
   email: string;
   email_ic: string;
@@ -17,7 +17,7 @@ class CreateInitialUserService {
     email,
     email_ic,
     phone,
-  }: RequestDTO): Promise<User> {
+  }: IRequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
 
     // Verify is user email already exist

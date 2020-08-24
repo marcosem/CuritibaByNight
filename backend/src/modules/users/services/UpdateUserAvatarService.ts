@@ -5,15 +5,18 @@ import fs from 'fs';
 import uploadConfig from '@config/upload';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
-interface RequestDTO {
+interface IRequestDTO {
   user_id: string;
   avatarFilename: string;
 }
 
 class UpdateUserAvatarService {
-  public async execute({ user_id, avatarFilename }: RequestDTO): Promise<User> {
+  public async execute({
+    user_id,
+    avatarFilename,
+  }: IRequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
 
     const user = await usersRepository.findOne({
