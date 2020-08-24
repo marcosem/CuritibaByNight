@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-// import { UseTransitionProps } from 'react-spring';
 import {
   FiAlertCircle,
   FiCheckCircle,

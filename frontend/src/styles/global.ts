@@ -9,7 +9,7 @@ export default createGlobalStyle`
   }
 
   body {
-    background: #282727;
+    background: linear-gradient(180deg, #080707 0%, #383737 100%);
     color: #d5d5d5;
     -webkit-font-smoothing: antialiased;
   }
@@ -27,3 +27,5 @@ export default createGlobalStyle`
     cursor: pointer;
   }
 `;
+
+//     background: #282727;
