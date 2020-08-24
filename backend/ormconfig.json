@@ -6,8 +6,7 @@
   "password": "docker",
   "database": "cbynight",
   "entities": [
-    "./src/modules/users/infra/typeorm/entities/*.ts",
-    "./src/modules/characters/infra/typeorm/entities/*.ts"
+    "./src/modules/**/infra/typeorm/entities/*.ts"
   ],
   "migrations": [
     "./src/shared/infra/typeorm/migrations/*.ts"

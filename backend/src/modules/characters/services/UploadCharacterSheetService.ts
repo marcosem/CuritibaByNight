@@ -1,10 +1,9 @@
-import { getCustomRepository } from 'typeorm';
 import path from 'path';
 import fs from 'fs';
 import User from '@modules/users/infra/typeorm/entities/User';
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
+import IUserRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   user_id: string;
@@ -13,14 +12,14 @@ interface IRequestDTO {
 }
 
 class UploadCharacterSheetService {
+  constructor(private usersRepository: IUserRepository) {}
+
   public async execute({
     user_id,
     player_id,
     sheetFilename,
   }: IRequestDTO): Promise<User> {
-    const usersRepository = getCustomRepository(UsersRepository);
-
-    const user = await usersRepository.findOne(user_id);
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError(
@@ -38,9 +37,7 @@ class UploadCharacterSheetService {
       throw new AppError('File must be in PDF format', 400);
     }
 
-    const player = await usersRepository.findOne({
-      where: { id: player_id },
-    });
+    const player = await this.usersRepository.findById(player_id);
 
     if (!player) {
       throw new AppError('Player not found', 400);
@@ -61,7 +58,7 @@ class UploadCharacterSheetService {
     }
 
     player.character_file = sheetFilename;
-    await usersRepository.save(player);
+    await this.usersRepository.update(player);
 
     return player;
   }

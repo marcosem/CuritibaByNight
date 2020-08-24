@@ -5,6 +5,7 @@ import AppError from '@shared/errors/AppError';
 import authConfig from '@config/auth';
 
 import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
+// import IUserRepository from '@modules/users/repositories/IUsersRepository';
 
 interface ITokenPayload {
   iat: number;
@@ -32,7 +33,7 @@ export default async function ensureSTAuthenticated(
     const decoded = verify(token, authConfig.jwt.secret);
 
     const { sub } = decoded as ITokenPayload;
-    const user = await usersRepository.findOne(sub);
+    const user = await usersRepository.findUserById(sub); // .findOne(sub);
     const isST = user ? user.storyteller : false;
 
     if (!isST) {

@@ -1,8 +1,7 @@
-import { getCustomRepository } from 'typeorm';
 import path from 'path';
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
+import IUserRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   user_id: string;
@@ -10,12 +9,10 @@ interface IRequestDTO {
 }
 
 class GetUserCharacterSheet {
-  public async execute({ user_id, player_id }: IRequestDTO): Promise<string> {
-    const usersRepository = getCustomRepository(UsersRepository);
+  constructor(private usersRepository: IUserRepository) {}
 
-    const user = await usersRepository.findOne({
-      where: { id: user_id },
-    });
+  public async execute({ user_id, player_id }: IRequestDTO): Promise<string> {
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError(
@@ -29,9 +26,7 @@ class GetUserCharacterSheet {
       );
     }
 
-    const player = await usersRepository.findOne({
-      where: { id: player_id },
-    });
+    const player = await this.usersRepository.findById(player_id);
 
     if (!player) {
       throw new AppError('Player not found', 400);

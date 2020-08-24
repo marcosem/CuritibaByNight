@@ -1,8 +1,7 @@
-import { getCustomRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
+import IUserRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   name: string;
@@ -14,6 +13,8 @@ interface IRequestDTO {
 }
 
 class CreateSTUserService {
+  constructor(private usersRepository: IUserRepository) {}
+
   public async execute({
     name,
     email,
@@ -26,10 +27,8 @@ class CreateSTUserService {
       throw new AppError('User not authorized.', 401);
     }
 
-    const usersRepository = getCustomRepository(UsersRepository);
-
     // Verify is user email already exist
-    const userEmailExist = await usersRepository.findUserByEmail(email);
+    const userEmailExist = await this.usersRepository.findByEmail(email);
     if (userEmailExist) {
       throw new AppError('Email address already exist.', 409);
     }
@@ -48,7 +47,7 @@ class CreateSTUserService {
 
     const hashedPassword = await hash(password, 8);
 
-    const user = usersRepository.create({
+    const user = await this.usersRepository.create({
       name,
       email,
       phone,
@@ -56,8 +55,6 @@ class CreateSTUserService {
       storyteller: true,
       password: hashedPassword,
     });
-
-    await usersRepository.save(user);
 
     return user;
   }

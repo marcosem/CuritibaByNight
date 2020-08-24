@@ -1,10 +1,9 @@
-import { getCustomRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
 import { isUuid } from 'uuidv4';
 
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
+import IUserRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   name: string;
@@ -16,6 +15,8 @@ interface IRequestDTO {
 }
 
 class CreateInitialUserService {
+  constructor(private usersRepository: IUserRepository) {}
+
   public async execute({
     name,
     email,
@@ -24,14 +25,12 @@ class CreateInitialUserService {
     password,
     secret,
   }: IRequestDTO): Promise<User> {
-    const usersRepository = getCustomRepository(UsersRepository);
-
     if (!isUuid(secret)) {
       throw new AppError('Invalid Token.', 401);
     }
 
     // Search user by provided secret
-    const userSecretExist = await usersRepository.findUserBySecret(secret);
+    const userSecretExist = await this.usersRepository.findBySecret(secret);
 
     if (!userSecretExist) {
       throw new AppError('Invalid Token.', 401);
@@ -51,18 +50,15 @@ class CreateInitialUserService {
 
     const hashedPassword = await hash(password, 8);
 
-    const user = usersRepository.create({
-      id: userSecretExist.id,
-      name,
-      email,
-      phone,
-      email_ic: redefEmailIc,
-      storyteller: false,
-      password: hashedPassword,
-      secret: '', // Erase the secret, only valid once
-    });
+    userSecretExist.name = name;
+    userSecretExist.email = email;
+    userSecretExist.phone = phone;
+    userSecretExist.email_ic = redefEmailIc;
+    userSecretExist.storyteller = false;
+    userSecretExist.password = hashedPassword;
+    userSecretExist.secret = '';
 
-    await usersRepository.save(user);
+    const user = this.usersRepository.update(userSecretExist);
 
     return user;
   }

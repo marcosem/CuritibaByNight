@@ -1,6 +1,5 @@
 import express, { Router } from 'express';
 import multer from 'multer';
-import { getCustomRepository } from 'typeorm';
 import uploadConfig from '@config/upload';
 
 import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
@@ -16,29 +15,17 @@ import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAut
 import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
 
 const usersRouter = Router();
+
 const avatarMulter = uploadConfig('avatar');
 const sheetMulter = uploadConfig('sheet');
 const uploadAvatar = multer(avatarMulter);
 const uploadSheet = multer(sheetMulter);
 
-// const uploadSheet = multer(uploadConfig('sheet'));
-
-/*
-  id: string;
-  name: string;
-  email: string;
-  email_ic: string;
-  phone: string;
-  password: string;
-  storyteller: boolean;
-  secret: string;
-  avatar: string;
-  */
-
 usersRouter.post('/createst', async (req, res) => {
   const { name, email, email_ic, phone, password, st_secret } = req.body;
 
-  const createUserService = new CreateSTUserService();
+  const usersRepository = new UsersRepository();
+  const createUserService = new CreateSTUserService(usersRepository);
 
   const user = await createUserService.execute({
     name,
@@ -58,7 +45,8 @@ usersRouter.post('/createst', async (req, res) => {
 usersRouter.get('/complete/:id', async (req, res) => {
   const { id } = req.params;
 
-  const getUserService = new GetInitialUserService();
+  const usersRepository = new UsersRepository();
+  const getUserService = new GetInitialUserService(usersRepository);
 
   const user = await getUserService.execute({ secret: id });
 
@@ -72,7 +60,8 @@ usersRouter.get('/complete/:id', async (req, res) => {
 usersRouter.post('/complete', async (req, res) => {
   const { name, email, email_ic, phone, password, secret } = req.body;
 
-  const createUserService = new CompleteInitialUserService();
+  const usersRepository = new UsersRepository();
+  const createUserService = new CompleteInitialUserService(usersRepository);
 
   const user = await createUserService.execute({
     name,
@@ -94,7 +83,10 @@ usersRouter.post('/complete', async (req, res) => {
 usersRouter.post('/create', ensureSTAuthenticated, async (req, res) => {
   const { name, email, email_ic, phone } = req.body;
 
-  const createInitialUserService = new CreateInitialUserService();
+  const usersRepository = new UsersRepository();
+  const createInitialUserService = new CreateInitialUserService(
+    usersRepository,
+  );
 
   const user = await createInitialUserService.execute({
     name,
@@ -112,8 +104,9 @@ usersRouter.post('/create', ensureSTAuthenticated, async (req, res) => {
 
 usersRouter.use('/image', express.static(avatarMulter.directory));
 
+/*
 usersRouter.get('/list', ensureSTAuthenticated, async (req, res) => {
-  const usersRepository = getCustomRepository(UsersRepository);
+  // const usersRepository = getCustomRepository(UsersRepository);
   const usersList = await usersRepository.find();
 
   // remove passwords
@@ -126,13 +119,15 @@ usersRouter.get('/list', ensureSTAuthenticated, async (req, res) => {
 
   return res.json(usersListProtected);
 });
+*/
 
 usersRouter.patch(
   '/avatar',
   ensureAuthenticated,
   uploadAvatar.single('avatar'),
   async (req, res) => {
-    const updateUserAvatar = new UpdateUserAvatarService();
+    const usersRepository = new UsersRepository();
+    const updateUserAvatar = new UpdateUserAvatarService(usersRepository);
 
     const user = await updateUserAvatar.execute({
       user_id: req.user.id,
@@ -154,7 +149,10 @@ usersRouter.patch(
   async (req, res) => {
     const { player_id } = req.body;
 
-    const uploadCharacterSheetService = new UploadCharacterSheetService();
+    const usersRepository = new UsersRepository();
+    const uploadCharacterSheetService = new UploadCharacterSheetService(
+      usersRepository,
+    );
 
     const user = await uploadCharacterSheetService.execute({
       user_id: req.user.id,
@@ -170,7 +168,8 @@ usersRouter.patch(
 );
 
 usersRouter.get('/sheet', ensureAuthenticated, async (req, res) => {
-  const getUserCharacterSheet = new GetUserCharacterSheet();
+  const usersRepository = new UsersRepository();
+  const getUserCharacterSheet = new GetUserCharacterSheet(usersRepository);
 
   const sheet = await getUserCharacterSheet.execute({
     user_id: req.user.id,
@@ -183,7 +182,8 @@ usersRouter.get('/sheet', ensureAuthenticated, async (req, res) => {
 usersRouter.post('/sheet', ensureSTAuthenticated, async (req, res) => {
   const { player_id } = req.body;
 
-  const getUserCharacterSheet = new GetUserCharacterSheet();
+  const usersRepository = new UsersRepository();
+  const getUserCharacterSheet = new GetUserCharacterSheet(usersRepository);
 
   const sheet = await getUserCharacterSheet.execute({
     user_id: req.user.id,

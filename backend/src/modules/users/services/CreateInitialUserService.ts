@@ -1,8 +1,7 @@
-import { getCustomRepository } from 'typeorm';
 import { uuid } from 'uuidv4';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
+import IUserRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   name: string;
@@ -12,16 +11,16 @@ interface IRequestDTO {
 }
 
 class CreateInitialUserService {
+  constructor(private usersRepository: IUserRepository) {}
+
   public async execute({
     name,
     email,
     email_ic,
     phone,
   }: IRequestDTO): Promise<User> {
-    const usersRepository = getCustomRepository(UsersRepository);
-
     // Verify is user email already exist
-    const userEmailExist = await usersRepository.findUserByEmail(email);
+    const userEmailExist = await this.usersRepository.findByEmail(email);
     if (userEmailExist) {
       throw new AppError('Email address already exist.', 409);
     }
@@ -38,9 +37,7 @@ class CreateInitialUserService {
       redefEmailIc = '';
     }
 
-    // const hashedPassword = await hash(password, 8);
-
-    const user = usersRepository.create({
+    const user = await this.usersRepository.create({
       name,
       email,
       phone,
@@ -48,8 +45,6 @@ class CreateInitialUserService {
       storyteller: false,
       secret: uuid(),
     });
-
-    await usersRepository.save(user);
 
     return user;
   }
