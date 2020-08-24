@@ -1,9 +1,10 @@
 import { getCustomRepository } from 'typeorm';
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
-import AppError from '../errors/AppError';
-import authConfig from '../config/auth';
-import UsersRepository from '../repositories/UsersRepository';
+import AppError from '@shared/errors/AppError';
+import authConfig from '@config/auth';
+
+import UsersRepository from '@modules/users/repositories/UsersRepository';
 
 interface TokenPayload {
   iat: number;

@@ -1,19 +1,19 @@
 import express, { Router } from 'express';
 import multer from 'multer';
 import { getCustomRepository } from 'typeorm';
-import uploadConfig from '../config/upload';
+import uploadConfig from '@config/upload';
 
-import UsersRepository from '../repositories/UsersRepository';
-import CreateSTUserService from '../services/CreateSTUserService';
-import CreateInitialUserService from '../services/CreateInitialUserService';
-import CompleteInitialUserService from '../services/CompleteInitialUserService';
-import GetInitialUserService from '../services/GetInitialUserService';
-import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
-import UploadCharacterSheetService from '../services/UploadCharacterSheetService';
-import GetUserCharacterSheet from '../services/GetUserCharacterSheet';
+import UsersRepository from '@modules/users/repositories/UsersRepository';
+import CreateSTUserService from '@modules/users/services/CreateSTUserService';
+import CreateInitialUserService from '@modules/users/services/CreateInitialUserService';
+import CompleteInitialUserService from '@modules/users/services/CompleteInitialUserService';
+import GetInitialUserService from '@modules/users/services/GetInitialUserService';
+import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
+import UploadCharacterSheetService from '@modules/characters/services/UploadCharacterSheetService';
+import GetUserCharacterSheet from '@modules/characters/services/GetUserCharacterSheet';
 
-import ensureAuthenticated from '../middlewares/ensureAuthenticated';
-import ensureSTAuthenticated from '../middlewares/ensureSTAuthenticated';
+import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
+import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
 
 const usersRouter = Router();
 const avatarMulter = uploadConfig('avatar');

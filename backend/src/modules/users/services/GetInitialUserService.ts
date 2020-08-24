@@ -1,8 +1,8 @@
 import { getCustomRepository } from 'typeorm';
 import { isUuid } from 'uuidv4';
-import User from '../models/User';
-import UsersRepository from '../repositories/UsersRepository';
-import AppError from '../errors/AppError';
+import User from '@modules/users/infra/typeorm/entities/User';
+import AppError from '@shared/errors/AppError';
+import UsersRepository from '@modules/users/repositories/UsersRepository';
 
 interface RequestDTO {
   secret: string;

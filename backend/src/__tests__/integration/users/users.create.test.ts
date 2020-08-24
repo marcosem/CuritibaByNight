@@ -1,7 +1,8 @@
 import request from 'supertest';
+// import { isUuid } from 'uuidv4';
 import { isUuid } from 'uuidv4';
 import { parseISO, isToday } from 'date-fns';
-import app from '../../../app';
+import app from '../../../shared/infra/http/app';
 
 describe('User Routes', () => {
   interface User {

@@ -1,9 +1,8 @@
 import { getCustomRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
-import { isUuid } from 'uuidv4';
-import User from '../models/User';
-import UsersRepository from '../repositories/UsersRepository';
-import AppError from '../errors/AppError';
+import User from '@modules/users/infra/typeorm/entities/User';
+import AppError from '@shared/errors/AppError';
+import UsersRepository from '@modules/users/repositories/UsersRepository';
 
 interface RequestDTO {
   name: string;
@@ -11,29 +10,28 @@ interface RequestDTO {
   email_ic: string;
   phone: string;
   password: string;
-  secret: string;
+  st_secret: string;
 }
 
-class CreateInitialUserService {
+class CreateSTUserService {
   public async execute({
     name,
     email,
     email_ic,
     phone,
     password,
-    secret,
+    st_secret,
   }: RequestDTO): Promise<User> {
-    const usersRepository = getCustomRepository(UsersRepository);
-
-    if (!isUuid(secret)) {
-      throw new AppError('Invalid Token.', 401);
+    if (st_secret !== 'GimmeThePower!') {
+      throw new AppError('User not authorized.', 401);
     }
 
-    // Search user by provided secret
-    const userSecretExist = await usersRepository.findUserBySecret(secret);
+    const usersRepository = getCustomRepository(UsersRepository);
 
-    if (!userSecretExist) {
-      throw new AppError('Invalid Token.', 401);
+    // Verify is user email already exist
+    const userEmailExist = await usersRepository.findUserByEmail(email);
+    if (userEmailExist) {
+      throw new AppError('Email address already exist.', 409);
     }
 
     // if Email IC and Email are equal, store only Email
@@ -51,14 +49,12 @@ class CreateInitialUserService {
     const hashedPassword = await hash(password, 8);
 
     const user = usersRepository.create({
-      id: userSecretExist.id,
       name,
       email,
       phone,
       email_ic: redefEmailIc,
-      storyteller: false,
+      storyteller: true,
       password: hashedPassword,
-      secret: '', // Erase the secret, only valid once
     });
 
     await usersRepository.save(user);
@@ -67,4 +63,4 @@ class CreateInitialUserService {
   }
 }
 
-export default CreateInitialUserService;
+export default CreateSTUserService;

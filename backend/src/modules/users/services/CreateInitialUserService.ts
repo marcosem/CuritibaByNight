@@ -1,31 +1,23 @@
 import { getCustomRepository } from 'typeorm';
-import { hash } from 'bcryptjs';
-import User from '../models/User';
-import UsersRepository from '../repositories/UsersRepository';
-import AppError from '../errors/AppError';
+import { uuid } from 'uuidv4';
+import User from '@modules/users/infra/typeorm/entities/User';
+import AppError from '@shared/errors/AppError';
+import UsersRepository from '@modules/users/repositories/UsersRepository';
 
 interface RequestDTO {
   name: string;
   email: string;
   email_ic: string;
   phone: string;
-  password: string;
-  st_secret: string;
 }
 
-class CreateSTUserService {
+class CreateInitialUserService {
   public async execute({
     name,
     email,
     email_ic,
     phone,
-    password,
-    st_secret,
   }: RequestDTO): Promise<User> {
-    if (st_secret !== 'GimmeThePower!') {
-      throw new AppError('User not authorized.', 401);
-    }
-
     const usersRepository = getCustomRepository(UsersRepository);
 
     // Verify is user email already exist
@@ -46,15 +38,15 @@ class CreateSTUserService {
       redefEmailIc = '';
     }
 
-    const hashedPassword = await hash(password, 8);
+    // const hashedPassword = await hash(password, 8);
 
     const user = usersRepository.create({
       name,
       email,
       phone,
       email_ic: redefEmailIc,
-      storyteller: true,
-      password: hashedPassword,
+      storyteller: false,
+      secret: uuid(),
     });
 
     await usersRepository.save(user);
@@ -63,4 +55,4 @@ class CreateSTUserService {
   }
 }
 
-export default CreateSTUserService;
+export default CreateInitialUserService;
