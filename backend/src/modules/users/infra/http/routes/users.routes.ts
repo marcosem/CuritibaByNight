@@ -3,7 +3,7 @@ import multer from 'multer';
 import { getCustomRepository } from 'typeorm';
 import uploadConfig from '@config/upload';
 
-import UsersRepository from '@modules/users/repositories/UsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import CreateInitialUserService from '@modules/users/services/CreateInitialUserService';
 import CompleteInitialUserService from '@modules/users/services/CompleteInitialUserService';
