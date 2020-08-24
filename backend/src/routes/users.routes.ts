@@ -7,6 +7,7 @@ import UsersRepository from '../repositories/UsersRepository';
 import CreateSTUserService from '../services/CreateSTUserService';
 import CreateInitialUserService from '../services/CreateInitialUserService';
 import CompleteInitialUserService from '../services/CompleteInitialUserService';
+import GetInitialUserService from '../services/GetInitialUserService';
 import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
 import UploadCharacterSheetService from '../services/UploadCharacterSheetService';
 import GetUserCharacterSheet from '../services/GetUserCharacterSheet';
@@ -50,6 +51,20 @@ usersRouter.post('/createst', async (req, res) => {
 
   // Do not show user password
   delete user.password;
+
+  return res.json(user);
+});
+
+usersRouter.get('/complete/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const getUserService = new GetInitialUserService();
+
+  const user = await getUserService.execute({ secret: id });
+
+  delete user.password;
+  delete user.secret;
+  delete user.storyteller;
 
   return res.json(user);
 });
