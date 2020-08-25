@@ -4,7 +4,7 @@ import { isUuid } from 'uuidv4';
 import { parseISO, isToday } from 'date-fns';
 import app from '../../../shared/infra/http/app';
 
-describe('User Routes', () => {
+describe.skip('User Routes', () => {
   interface IUser {
     id: string;
     name: string;
