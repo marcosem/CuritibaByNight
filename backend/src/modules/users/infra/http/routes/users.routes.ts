@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
 import multer from 'multer';
 import uploadConfig from '@config/upload';
+import { container } from 'tsyringe';
 
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import CreateInitialUserService from '@modules/users/services/CreateInitialUserService';
 import CompleteInitialUserService from '@modules/users/services/CompleteInitialUserService';
@@ -24,8 +24,7 @@ const uploadSheet = multer(sheetMulter);
 usersRouter.post('/createst', async (req, res) => {
   const { name, email, email_ic, phone, password, st_secret } = req.body;
 
-  const usersRepository = new UsersRepository();
-  const createUserService = new CreateSTUserService(usersRepository);
+  const createUserService = container.resolve(CreateSTUserService);
 
   const user = await createUserService.execute({
     name,
@@ -45,8 +44,7 @@ usersRouter.post('/createst', async (req, res) => {
 usersRouter.get('/complete/:id', async (req, res) => {
   const { id } = req.params;
 
-  const usersRepository = new UsersRepository();
-  const getUserService = new GetInitialUserService(usersRepository);
+  const getUserService = container.resolve(GetInitialUserService);
 
   const user = await getUserService.execute({ secret: id });
 
@@ -60,8 +58,7 @@ usersRouter.get('/complete/:id', async (req, res) => {
 usersRouter.post('/complete', async (req, res) => {
   const { name, email, email_ic, phone, password, secret } = req.body;
 
-  const usersRepository = new UsersRepository();
-  const createUserService = new CompleteInitialUserService(usersRepository);
+  const createUserService = container.resolve(CompleteInitialUserService);
 
   const user = await createUserService.execute({
     name,
@@ -83,10 +80,7 @@ usersRouter.post('/complete', async (req, res) => {
 usersRouter.post('/create', ensureSTAuthenticated, async (req, res) => {
   const { name, email, email_ic, phone } = req.body;
 
-  const usersRepository = new UsersRepository();
-  const createInitialUserService = new CreateInitialUserService(
-    usersRepository,
-  );
+  const createInitialUserService = container.resolve(CreateInitialUserService);
 
   const user = await createInitialUserService.execute({
     name,
@@ -126,8 +120,7 @@ usersRouter.patch(
   ensureAuthenticated,
   uploadAvatar.single('avatar'),
   async (req, res) => {
-    const usersRepository = new UsersRepository();
-    const updateUserAvatar = new UpdateUserAvatarService(usersRepository);
+    const updateUserAvatar = container.resolve(UpdateUserAvatarService);
 
     const user = await updateUserAvatar.execute({
       user_id: req.user.id,
@@ -149,9 +142,8 @@ usersRouter.patch(
   async (req, res) => {
     const { player_id } = req.body;
 
-    const usersRepository = new UsersRepository();
-    const uploadCharacterSheetService = new UploadCharacterSheetService(
-      usersRepository,
+    const uploadCharacterSheetService = container.resolve(
+      UploadCharacterSheetService,
     );
 
     const user = await uploadCharacterSheetService.execute({
@@ -168,8 +160,7 @@ usersRouter.patch(
 );
 
 usersRouter.get('/sheet', ensureAuthenticated, async (req, res) => {
-  const usersRepository = new UsersRepository();
-  const getUserCharacterSheet = new GetUserCharacterSheet(usersRepository);
+  const getUserCharacterSheet = container.resolve(GetUserCharacterSheet);
 
   const sheet = await getUserCharacterSheet.execute({
     user_id: req.user.id,
@@ -182,8 +173,7 @@ usersRouter.get('/sheet', ensureAuthenticated, async (req, res) => {
 usersRouter.post('/sheet', ensureSTAuthenticated, async (req, res) => {
   const { player_id } = req.body;
 
-  const usersRepository = new UsersRepository();
-  const getUserCharacterSheet = new GetUserCharacterSheet(usersRepository);
+  const getUserCharacterSheet = container.resolve(GetUserCharacterSheet);
 
   const sheet = await getUserCharacterSheet.execute({
     user_id: req.user.id,

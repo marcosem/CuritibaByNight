@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import path from 'path';
 import fs from 'fs';
 import User from '@modules/users/infra/typeorm/entities/User';
@@ -11,8 +12,12 @@ interface IRequestDTO {
   sheetFilename: string;
 }
 
+@injectable()
 class UploadCharacterSheetService {
-  constructor(private usersRepository: IUserRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUserRepository,
+  ) {}
 
   public async execute({
     user_id,

@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import { uuid } from 'uuidv4';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
@@ -10,8 +11,12 @@ interface IRequestDTO {
   phone: string;
 }
 
+@injectable()
 class CreateInitialUserService {
-  constructor(private usersRepository: IUserRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUserRepository,
+  ) {}
 
   public async execute({
     name,

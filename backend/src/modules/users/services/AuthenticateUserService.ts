@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import User from '@modules/users/infra/typeorm/entities/User';
@@ -15,8 +16,12 @@ interface IResponse {
   token: string;
 }
 
+@injectable()
 class AuthenticateUserService {
-  constructor(private usersRepository: IUserRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUserRepository,
+  ) {}
 
   public async execute({ email, password }: IRequestDTO): Promise<IResponse> {
     // Verify is user email already exist

@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import { isUuid } from 'uuidv4';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
@@ -7,8 +8,12 @@ interface IRequestDTO {
   secret: string;
 }
 
+@injectable()
 class GetInitialUserService {
-  constructor(private usersRepository: IUserRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUserRepository,
+  ) {}
 
   public async execute({ secret }: IRequestDTO): Promise<User> {
     if (!isUuid(secret)) {

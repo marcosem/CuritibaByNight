@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import path from 'path';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
@@ -8,8 +9,12 @@ interface IRequestDTO {
   player_id: string;
 }
 
+@injectable()
 class GetUserCharacterSheet {
-  constructor(private usersRepository: IUserRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUserRepository,
+  ) {}
 
   public async execute({ user_id, player_id }: IRequestDTO): Promise<string> {
     const user = await this.usersRepository.findById(user_id);

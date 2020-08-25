@@ -3,6 +3,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import 'express-async-errors';
 import '@shared/infra/typeorm';
+import '@shared/container';
 import AppError from '@shared/errors/AppError';
 import routes from './routes';
 

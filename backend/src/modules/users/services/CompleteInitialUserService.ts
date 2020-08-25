@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import { hash } from 'bcryptjs';
 import { isUuid } from 'uuidv4';
 
@@ -14,8 +15,12 @@ interface IRequestDTO {
   secret: string;
 }
 
+@injectable()
 class CreateInitialUserService {
-  constructor(private usersRepository: IUserRepository) {}
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUserRepository,
+  ) {}
 
   public async execute({
     name,
