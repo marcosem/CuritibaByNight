@@ -1,10 +1,12 @@
-import { getCustomRepository } from 'typeorm';
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 import AppError from '@shared/errors/AppError';
 import authConfig from '@config/auth';
 
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
+import { container } from 'tsyringe';
+import CreateSTUserService from '@modules/users/services/GetUserService';
+
+// import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 // import IUserRepository from '@modules/users/repositories/IUsersRepository';
 
 interface ITokenPayload {
@@ -27,13 +29,14 @@ export default async function ensureSTAuthenticated(
 
   // Take out Bearer
   const [, token] = authHeader.split(' ');
-  const usersRepository = getCustomRepository(UsersRepository);
+  // const usersRepository = getCustomRepository(UsersRepository);
+  const getUsers = container.resolve(CreateSTUserService);
 
   try {
     const decoded = verify(token, authConfig.jwt.secret);
 
     const { sub } = decoded as ITokenPayload;
-    const user = await usersRepository.findUserById(sub); // .findOne(sub);
+    const user = await getUsers.execute(sub);
     const isST = user ? user.storyteller : false;
 
     if (!isST) {

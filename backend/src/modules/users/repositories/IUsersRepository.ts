@@ -7,4 +7,5 @@ export default interface IUserRepository {
   findById(user_id: string): Promise<User | undefined>;
   findBySecret(secret: string): Promise<User | undefined>;
   findByEmail(email: string): Promise<User | undefined>;
+  listAll(): Promise<User[]>;
 }
