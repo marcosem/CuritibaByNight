@@ -3,13 +3,17 @@ import { uuid } from 'uuidv4';
 import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import CompleteInitialUser from '@modules/users/services/CompleteInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-// import AppError from '@shared/errors/AppError';
+import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 
 describe('CompleteInitialUser', () => {
   it('Should be able to get a just created Initial User', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-    const completeInitialUser = new CompleteInitialUser(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const completeInitialUser = new CompleteInitialUser(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const initialUser = await createInitialUser.execute({
       name: 'A User',
@@ -36,7 +40,11 @@ describe('CompleteInitialUser', () => {
 
   it('Should return error for not existant secret', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const completeInitialUser = new CompleteInitialUser(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const completeInitialUser = new CompleteInitialUser(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await expect(
       completeInitialUser.execute({
@@ -52,7 +60,11 @@ describe('CompleteInitialUser', () => {
 
   it('Should return error for invalid secret', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const completeInitialUser = new CompleteInitialUser(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const completeInitialUser = new CompleteInitialUser(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await expect(
       completeInitialUser.execute({
@@ -69,7 +81,11 @@ describe('CompleteInitialUser', () => {
   it('Should set email_ic to empty if it is equal to email', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-    const completeInitialUser = new CompleteInitialUser(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const completeInitialUser = new CompleteInitialUser(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const initialUser = await createInitialUser.execute({
       name: 'A User',
@@ -95,7 +111,11 @@ describe('CompleteInitialUser', () => {
   it('Should allow email_ic to be different of email', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-    const completeInitialUser = new CompleteInitialUser(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const completeInitialUser = new CompleteInitialUser(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const initialUser = await createInitialUser.execute({
       name: 'A User',

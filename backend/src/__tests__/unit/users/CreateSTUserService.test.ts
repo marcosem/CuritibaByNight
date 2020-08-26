@@ -2,12 +2,17 @@ import 'reflect-metadata';
 import { isUuid } from 'uuidv4';
 import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import AppError from '@shared/errors/AppError';
 
 describe('CreateSTUser', () => {
   it('Should be able to create a new Storyteller User', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const createSTUser = new CreateSTUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const createSTUser = new CreateSTUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const user = await createSTUser.execute({
       name: 'A User',
@@ -24,7 +29,11 @@ describe('CreateSTUser', () => {
 
   it('Should not allow create Storyteller User without the correct secret', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const createSTUser = new CreateSTUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const createSTUser = new CreateSTUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await expect(
       createSTUser.execute({
@@ -40,7 +49,11 @@ describe('CreateSTUser', () => {
 
   it('Should not allow create two Storyteller Users with same email', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const createSTUser = new CreateSTUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const createSTUser = new CreateSTUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await createSTUser.execute({
       name: 'User One',
@@ -65,7 +78,11 @@ describe('CreateSTUser', () => {
 
   it('Should set email_ic to empty if it is equal to email', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const createSTUser = new CreateSTUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const createSTUser = new CreateSTUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const user = await createSTUser.execute({
       name: 'User One',
@@ -81,7 +98,11 @@ describe('CreateSTUser', () => {
 
   it('Should allow email_ic to be different of email', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    const createSTUser = new CreateSTUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const createSTUser = new CreateSTUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const user = await createSTUser.execute({
       name: 'User One',

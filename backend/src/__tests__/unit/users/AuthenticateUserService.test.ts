@@ -2,12 +2,17 @@ import 'reflect-metadata';
 import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 
 describe('AuthenticateUser', () => {
   const fakeUsersRepository = new FakeUsersRepository();
 
   beforeAll(async () => {
-    const createSTUser = new CreateSTUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const createSTUser = new CreateSTUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await createSTUser.execute({
       name: 'A User',
@@ -20,7 +25,11 @@ describe('AuthenticateUser', () => {
   });
 
   it('Should be to able to authenticate', async () => {
-    const authenticateUser = new AuthenticateUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const authenticateUser = new AuthenticateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     const response = await authenticateUser.execute({
       email: 'user@user.com',
@@ -32,7 +41,11 @@ describe('AuthenticateUser', () => {
   });
 
   it('Should not allow to autheticate a non existant email', async () => {
-    const authenticateUser = new AuthenticateUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const authenticateUser = new AuthenticateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await expect(
       authenticateUser.execute({
@@ -43,7 +56,11 @@ describe('AuthenticateUser', () => {
   });
 
   it('Should not allow to autheticate with wrong password', async () => {
-    const authenticateUser = new AuthenticateUserService(fakeUsersRepository);
+    const fakeHashProvider = new FakeHashProvider();
+    const authenticateUser = new AuthenticateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    );
 
     await expect(
       authenticateUser.execute({
