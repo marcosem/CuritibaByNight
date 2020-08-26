@@ -78,18 +78,3 @@ class UsersRepository implements IUserRepository {
 }
 
 export default UsersRepository;
-
-/*
-export default interface IUpdateUserDTO {
-  id: string;
-  name: string;
-  email: string;
-  email_ic?: string;
-  phone?: string;
-  password?: string;
-  storyteller?: boolean;
-  secret?: string;
-  avatar?: string;
-  lastLogin_at?: Date;
-}
-*/
