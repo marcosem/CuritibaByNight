@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
-import GetUserCharacterSheet from '@modules/characters/services/GetUserCharacterSheet';
+import GetUserCharacterSheetService from '@modules/characters/services/GetUserCharacterSheetService';
 import UploadCharacterSheetService from '@modules/characters/services/UploadCharacterSheetService';
 import { container } from 'tsyringe';
 
 export default class SessionsController {
   public async show(req: Request, res: Response): Promise<Response | void> {
-    const getUserCharacterSheet = container.resolve(GetUserCharacterSheet);
+    const getUserCharacterSheet = container.resolve(
+      GetUserCharacterSheetService,
+    );
 
     const sheet = await getUserCharacterSheet.execute({
       user_id: req.user.id,
@@ -18,7 +20,9 @@ export default class SessionsController {
   public async index(req: Request, res: Response): Promise<Response | void> {
     const { player_id } = req.body;
 
-    const getUserCharacterSheet = container.resolve(GetUserCharacterSheet);
+    const getUserCharacterSheet = container.resolve(
+      GetUserCharacterSheetService,
+    );
 
     const sheet = await getUserCharacterSheet.execute({
       user_id: req.user.id,
