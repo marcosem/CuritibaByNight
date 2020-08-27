@@ -48,8 +48,8 @@ class UploadCharacterSheetService {
       throw new AppError('Player not found', 400);
     }
 
-    if (user.character_file) {
-      this.storageProvider.deleteFile(user.character_file, 'sheet');
+    if (player.character_file) {
+      this.storageProvider.deleteFile(player.character_file, 'sheet');
     }
 
     const filename = await this.storageProvider.saveFile(
