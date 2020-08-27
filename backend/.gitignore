@@ -10,9 +10,9 @@ ormconfig-prod.json
 
 tmp/*
 !tmp/uploads
+!tmp/.gitkeep
 tmp/uploads/*
 !tmp/uploads/avatar/
 !tmp/uploads/sheet/
-!tmp/.gitkeep
 tmp/uploads/avatar/*
 tmp/uploads/sheet/*
