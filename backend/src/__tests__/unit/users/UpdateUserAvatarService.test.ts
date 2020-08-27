@@ -43,6 +43,9 @@ describe('UpdateUserAvatar', () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const fakeStorageProvider = new FakeStorageProvider();
     const fakeHashProvider = new FakeHashProvider();
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
     const createSTUser = new CreateSTUserService(
       fakeUsersRepository,
       fakeHashProvider,
@@ -73,6 +76,7 @@ describe('UpdateUserAvatar', () => {
       avatarFilename: 'new_avatar.jpg',
     });
 
+    expect(deleteFile).toHaveBeenCalledWith('avatar.jpg', 'avatar');
     expect(userWithAvatar).toHaveProperty('avatar', 'new_avatar.jpg');
   });
 

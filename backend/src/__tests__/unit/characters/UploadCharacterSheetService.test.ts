@@ -47,6 +47,9 @@ describe('UpdateCharacterSheet', () => {
   it('Should delete old character sheet before add new', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const fakeStorageProvider = new FakeStorageProvider();
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
     const fakeHashProvider = new FakeHashProvider();
     const createSTUser = new CreateSTUserService(
       fakeUsersRepository,
@@ -80,6 +83,7 @@ describe('UpdateCharacterSheet', () => {
       sheetFilename: 'new_character.pdf',
     });
 
+    expect(deleteFile).toBeCalledWith('character.pdf', 'sheet');
     expect(userWithCharacterSheet).toHaveProperty(
       'character_file',
       'new_character.pdf',
