@@ -9,8 +9,10 @@ dist/
 ormconfig-prod.json
 
 tmp/*
-!tmp/avatar
-!tmp/sheet
+!tmp/uploads
+tmp/uploads/*
+!tmp/uploads/avatar/
+!tmp/uploads/sheet/
 !tmp/.gitkeep
-tmp/avatar/*
-tmp/sheet/*
+tmp/uploads/avatar/*
+tmp/uploads/sheet/*

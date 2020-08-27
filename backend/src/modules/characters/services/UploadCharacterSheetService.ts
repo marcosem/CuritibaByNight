@@ -1,10 +1,8 @@
 import { injectable, inject } from 'tsyringe';
-import path from 'path';
-import fs from 'fs';
 import User from '@modules/users/infra/typeorm/entities/User';
-import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 import IUserRepository from '@modules/users/repositories/IUsersRepository';
+import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -17,6 +15,8 @@ class UploadCharacterSheetService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUserRepository,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute({
@@ -48,21 +48,16 @@ class UploadCharacterSheetService {
       throw new AppError('Player not found', 400);
     }
 
-    if (player.character_file) {
-      // Delete previews avatar
-      const playerSheetFilePath = path.join(
-        uploadConfig('sheet').directory,
-        player.character_file,
-      );
-
-      const playerSheetFileExists = fs.existsSync(playerSheetFilePath);
-
-      if (playerSheetFileExists) {
-        await fs.promises.unlink(playerSheetFilePath);
-      }
+    if (user.character_file) {
+      this.storageProvider.deleteFile(user.character_file, 'sheet');
     }
 
-    player.character_file = sheetFilename;
+    const filename = await this.storageProvider.saveFile(
+      sheetFilename,
+      'sheet',
+    );
+
+    player.character_file = filename;
     await this.usersRepository.update(player);
 
     return player;

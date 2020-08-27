@@ -3,26 +3,37 @@ import crypto from 'crypto';
 import multer, { StorageEngine } from 'multer';
 
 interface IUploadReturn {
-  directory: string;
+  // directory: string;
+  tmpFolder: string;
+  uploadsFolder: string;
   storage: StorageEngine;
 }
 
 export default function upload(type: string): IUploadReturn {
-  let tmpFolder;
+  const tmpFolder = resolve(__dirname, '..', '..', 'tmp');
+  let uploadsFolder;
 
   switch (type) {
     case 'avatar':
-      tmpFolder = resolve(__dirname, '..', '..', 'tmp', 'avatar');
+      uploadsFolder = resolve(
+        __dirname,
+        '..',
+        '..',
+        'tmp',
+        'uploads',
+        'avatar',
+      );
       break;
     case 'sheet':
-      tmpFolder = resolve(__dirname, '..', '..', 'tmp', 'sheet');
+      uploadsFolder = resolve(__dirname, '..', '..', 'tmp', 'uploads', 'sheet');
       break;
     default:
-      tmpFolder = resolve(__dirname, '..', '..', 'tmp');
+      uploadsFolder = resolve(__dirname, '..', '..', 'tmp', 'uploads');
   }
 
   return {
-    directory: tmpFolder,
+    tmpFolder,
+    uploadsFolder,
     storage: multer.diskStorage({
       destination: tmpFolder,
       filename(request, file, callback) {

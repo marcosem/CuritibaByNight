@@ -39,7 +39,7 @@ usersRouter.post(
   initialUsersController.create,
 );
 
-usersRouter.use('/image', express.static(avatarMulter.directory));
+usersRouter.use('/image', express.static(avatarMulter.uploadsFolder));
 
 usersRouter.get('/list', ensureSTAuthenticated, usersController.index);
 

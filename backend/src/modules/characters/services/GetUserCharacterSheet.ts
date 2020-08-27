@@ -42,7 +42,7 @@ class GetUserCharacterSheet {
     }
 
     const playerSheetFilePath = path.join(
-      uploadConfig('sheet').directory,
+      uploadConfig('sheet').uploadsFolder,
       player.character_file,
     );
 
