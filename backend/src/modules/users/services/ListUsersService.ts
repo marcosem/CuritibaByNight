@@ -1,6 +1,6 @@
 import { injectable, inject } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
-import IUserRepository from '@modules/users/repositories/IUsersRepository';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   secret: string;
@@ -10,7 +10,7 @@ interface IRequestDTO {
 class ListUsersService {
   constructor(
     @inject('UsersRepository')
-    private usersRepository: IUserRepository,
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute(): Promise<User[]> {

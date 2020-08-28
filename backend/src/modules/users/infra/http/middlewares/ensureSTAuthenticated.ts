@@ -7,7 +7,7 @@ import { container } from 'tsyringe';
 import CreateSTUserService from '@modules/users/services/GetUserService';
 
 // import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
-// import IUserRepository from '@modules/users/repositories/IUsersRepository';
+// import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 interface ITokenPayload {
   iat: number;

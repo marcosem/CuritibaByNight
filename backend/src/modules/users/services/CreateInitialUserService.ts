@@ -2,7 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import { uuid } from 'uuidv4';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import IUserRepository from '@modules/users/repositories/IUsersRepository';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   name: string;
@@ -15,7 +15,7 @@ interface IRequestDTO {
 class CreateInitialUserService {
   constructor(
     @inject('UsersRepository')
-    private usersRepository: IUserRepository,
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute({

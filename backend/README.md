@@ -8,8 +8,10 @@
 - Use Mailtrap for email sending in Development Environment;
 - Use Amazon SES for email sending in Production Environment;
 - Email sending should work as background job.
+- The new password should be crypted before stored in DB
 
 **BR - Business Rules**
+- Only valid emails from existant users should be accept to receive password recovery request.
 - The URL to recovery password should expires in two hours.
 - User should confirm the password when reseting the password.
 

@@ -2,7 +2,7 @@ import { injectable, inject } from 'tsyringe';
 // import uploadConfig from '@config/upload';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import IUserRepository from '@modules/users/repositories/IUsersRepository';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
 interface IRequestDTO {
@@ -14,7 +14,7 @@ interface IRequestDTO {
 class UpdateUserAvatarService {
   constructor(
     @inject('UsersRepository')
-    private usersRepository: IUserRepository,
+    private usersRepository: IUsersRepository,
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
   ) {}

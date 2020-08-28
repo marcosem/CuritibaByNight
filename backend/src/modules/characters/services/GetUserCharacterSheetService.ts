@@ -2,7 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import path from 'path';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
-import IUserRepository from '@modules/users/repositories/IUsersRepository';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestDTO {
   user_id: string;
@@ -13,7 +13,7 @@ interface IRequestDTO {
 class GetUserCharacterSheet {
   constructor(
     @inject('UsersRepository')
-    private usersRepository: IUserRepository,
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute({ user_id, player_id }: IRequestDTO): Promise<string> {

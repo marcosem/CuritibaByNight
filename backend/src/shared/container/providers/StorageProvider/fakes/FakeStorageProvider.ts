@@ -1,6 +1,6 @@
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
-class DiskStorageProvider implements IStorageProvider {
+class FakeStorageProvider implements IStorageProvider {
   private storageAvatar: string[] = [];
 
   private storageSheet: string[] = [];
@@ -50,4 +50,4 @@ class DiskStorageProvider implements IStorageProvider {
   }
 }
 
-export default DiskStorageProvider;
+export default FakeStorageProvider;
