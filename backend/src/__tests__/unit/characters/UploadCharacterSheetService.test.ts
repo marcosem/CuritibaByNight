@@ -55,6 +55,7 @@ describe('UpdateCharacterSheet', () => {
       fakeUsersRepository,
       fakeHashProvider,
     );
+    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
 
     const updateUserCharacterSheet = new UpdateCharacterSheetService(
       fakeUsersRepository,
@@ -71,14 +72,21 @@ describe('UpdateCharacterSheet', () => {
       st_secret: 'GimmeThePower!',
     });
 
+    const nonSTuser = await createInitialUser.execute({
+      name: 'Not ST User',
+      email: 'notST@user.com',
+      email_ic: '',
+      phone: '12-12345-1234',
+    });
+
     await updateUserCharacterSheet.execute({
-      player_id: user.id,
+      player_id: nonSTuser.id,
       user_id: user.id,
       sheetFilename: 'character.pdf',
     });
 
     const userWithCharacterSheet = await updateUserCharacterSheet.execute({
-      player_id: user.id,
+      player_id: nonSTuser.id,
       user_id: user.id,
       sheetFilename: 'new_character.pdf',
     });
