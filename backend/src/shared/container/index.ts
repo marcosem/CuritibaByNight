@@ -1,5 +1,6 @@
 import { container } from 'tsyringe';
 
+import '@modules/characters/providers';
 import '@modules/users/providers';
 import '@shared/container/providers';
 

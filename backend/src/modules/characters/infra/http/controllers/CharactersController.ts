@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import GetUserCharacterSheetService from '@modules/characters/services/GetUserCharacterSheetService';
 import UploadCharacterSheetService from '@modules/characters/services/UploadCharacterSheetService';
+import ParseCharacterSheetService from '@modules/characters/services/ParseCharacterSheetService';
 import { container } from 'tsyringe';
 
 export default class SessionsController {
@@ -44,6 +45,15 @@ export default class SessionsController {
       player_id,
       sheetFilename: req.file.filename,
     });
+
+    const parseCharacterSheetService = container.resolve(
+      ParseCharacterSheetService,
+    );
+
+    const char = await parseCharacterSheetService.execute({
+      sheetFilename: user.character_file,
+    });
+    console.log(char);
 
     delete user.password;
     delete user.secret;
