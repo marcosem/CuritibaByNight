@@ -18,7 +18,6 @@ describe('CompleteInitialUser', () => {
     const initialUser = await createInitialUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       phone: '12-12345-1234',
     });
 
@@ -27,7 +26,6 @@ describe('CompleteInitialUser', () => {
     const completeUserRetrieved = await completeInitialUser.execute({
       name: 'Anothe Name',
       email: 'other@email.com',
-      email_ic: '',
       phone: '21-54321-4321',
       password: '123456',
       secret: initialUserSecret,
@@ -50,7 +48,6 @@ describe('CompleteInitialUser', () => {
       completeInitialUser.execute({
         name: 'Anothe Name',
         email: 'other@email.com',
-        email_ic: '',
         phone: '21-54321-4321',
         password: '123456',
         secret: uuid(),
@@ -70,72 +67,10 @@ describe('CompleteInitialUser', () => {
       completeInitialUser.execute({
         name: 'Anothe Name',
         email: 'other@email.com',
-        email_ic: '',
         phone: '21-54321-4321',
         password: '123456',
         secret: 'I am not an UUID secret',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
-  });
-
-  it('Should set email_ic to empty if it is equal to email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-    const fakeHashProvider = new FakeHashProvider();
-    const completeInitialUser = new CompleteInitialUser(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const initialUser = await createInitialUser.execute({
-      name: 'A User',
-      email: 'user@user.com',
-      email_ic: '',
-      phone: '12-12345-1234',
-    });
-
-    const initialUserSecret = initialUser.secret;
-
-    const completeUserRetrieved = await completeInitialUser.execute({
-      name: 'Anothe Name',
-      email: 'other@email.com',
-      email_ic: 'other@email.com',
-      phone: '21-54321-4321',
-      password: '123456',
-      secret: initialUserSecret,
-    });
-
-    expect(completeUserRetrieved.email_ic).toBe('');
-  });
-
-  it('Should allow email_ic to be different of email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-    const fakeHashProvider = new FakeHashProvider();
-    const completeInitialUser = new CompleteInitialUser(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const initialUser = await createInitialUser.execute({
-      name: 'A User',
-      email: 'user@user.com',
-      email_ic: '',
-      phone: '12-12345-1234',
-    });
-
-    const initialUserSecret = initialUser.secret;
-
-    const completeUserRetrieved = await completeInitialUser.execute({
-      name: 'Anothe Name',
-      email: 'email@user.com',
-      email_ic: 'email_ic@user.com',
-      phone: '21-54321-4321',
-      password: '123456',
-      secret: initialUserSecret,
-    });
-
-    expect(completeUserRetrieved.email).toBe('email@user.com');
-    expect(completeUserRetrieved.email_ic).toBe('email_ic@user.com');
   });
 });

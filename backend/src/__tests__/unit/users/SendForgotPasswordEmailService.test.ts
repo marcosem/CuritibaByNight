@@ -38,7 +38,6 @@ describe('SendForgotPasswordEmail', () => {
     const user = await createSTUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       password: '123456',
       phone: '12-12345-1234',
       st_secret: 'GimmeThePower!',
@@ -66,7 +65,6 @@ describe('SendForgotPasswordEmail', () => {
     const user = await createSTUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       password: '123456',
       phone: '12-12345-1234',
       st_secret: 'GimmeThePower!',

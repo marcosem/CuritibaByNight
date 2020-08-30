@@ -14,7 +14,6 @@ describe('GetInitialUser', () => {
     const initialUser = await createInitialUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       phone: '12-12345-1234',
     });
 

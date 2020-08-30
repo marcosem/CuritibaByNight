@@ -12,7 +12,6 @@ describe('CreateInitialUser', () => {
     const user = await createInitialUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       phone: '12-12345-1234',
     });
 
@@ -29,7 +28,6 @@ describe('CreateInitialUser', () => {
     await createInitialUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       phone: '12-12345-1234',
     });
 
@@ -37,38 +35,8 @@ describe('CreateInitialUser', () => {
       createInitialUser.execute({
         name: 'A User',
         email: 'user@user.com',
-        email_ic: '',
         phone: '12-12345-1234',
       }),
     ).rejects.toBeInstanceOf(AppError);
-  });
-
-  it('Should set email_ic to empty if it is equal to email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-
-    const user = await createInitialUser.execute({
-      name: 'A User',
-      email: 'user@user.com',
-      email_ic: 'user@user.com',
-      phone: '12-12345-1234',
-    });
-
-    expect(user.email_ic).toBe('');
-  });
-
-  it('Should allow email_ic to be different of email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-
-    const user = await createInitialUser.execute({
-      name: 'A User',
-      email: 'email@user.com',
-      email_ic: 'email_ic@user.com',
-      phone: '12-12345-1234',
-    });
-
-    expect(user.email).toBe('email@user.com');
-    expect(user.email_ic).toBe('email_ic@user.com');
   });
 });

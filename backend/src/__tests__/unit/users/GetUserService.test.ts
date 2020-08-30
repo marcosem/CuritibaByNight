@@ -19,7 +19,6 @@ describe('GetUser', () => {
     const user = await createSTUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       password: '123456',
       phone: '12-12345-1234',
       st_secret: 'GimmeThePower!',
@@ -30,9 +29,8 @@ describe('GetUser', () => {
     expect(userRetrieved).toMatchObject(user);
   });
 
-  it('Should retunr error when not found an user', async () => {
+  it('Should return error when not found an user', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
-    // const createSTUser = new CreateSTUserService(fakeUsersRepository);
     const getUser = new GetUserService(fakeUsersRepository);
 
     await expect(getUser.execute(uuid())).rejects.toBeInstanceOf(AppError);

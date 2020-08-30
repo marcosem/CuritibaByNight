@@ -2,24 +2,19 @@ import 'reflect-metadata';
 import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
-// import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
 import FakeUserTokensRepository from '@modules/users/repositories/fakes/FakeUserTokensRepository';
-// import SendForgotPasswordEmailService from '@modules/users/services/SendForgotPasswordEmailService';
 import ResetPasswordService from '@modules/users/services/ResetPasswordService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeHashProvider: FakeHashProvider;
-// let fakeMailProvider: FakeMailProvider;
 let fakeUserTokensRepository: FakeUserTokensRepository;
-// let sendForgotPasswordEmail: SendForgotPasswordEmailService;
 let resetPassword: ResetPasswordService;
 
 describe('ResetPassword', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeHashProvider = new FakeHashProvider();
-    // fakeMailProvider = new FakeMailProvider();
     fakeUserTokensRepository = new FakeUserTokensRepository();
 
     resetPassword = new ResetPasswordService(
@@ -27,14 +22,6 @@ describe('ResetPassword', () => {
       fakeUserTokensRepository,
       fakeHashProvider,
     );
-
-    /*
-    sendForgotPasswordEmail = new SendForgotPasswordEmailService(
-      fakeUsersRepository,
-      fakeMailProvider,
-      fakeUserTokensRepository,
-    );
-    */
   });
 
   it('Should be able to reset the password', async () => {
@@ -46,7 +33,6 @@ describe('ResetPassword', () => {
     const user = await createSTUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       password: '123456',
       phone: '12-12345-1234',
       st_secret: 'GimmeThePower!',
@@ -89,7 +75,6 @@ describe('ResetPassword', () => {
     const user = await createSTUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       password: '123456',
       phone: '12-12345-1234',
       st_secret: 'GimmeThePower!',

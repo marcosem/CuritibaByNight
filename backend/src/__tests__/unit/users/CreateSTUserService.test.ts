@@ -17,7 +17,6 @@ describe('CreateSTUser', () => {
     const user = await createSTUser.execute({
       name: 'A User',
       email: 'user@user.com',
-      email_ic: '',
       password: '123456',
       phone: '12-12345-1234',
       st_secret: 'GimmeThePower!',
@@ -39,7 +38,6 @@ describe('CreateSTUser', () => {
       createSTUser.execute({
         name: 'A User',
         email: 'user@user.com',
-        email_ic: '',
         password: '123456',
         phone: '12-12345-1234',
         st_secret: 'Incorrect Secret',
@@ -58,7 +56,6 @@ describe('CreateSTUser', () => {
     await createSTUser.execute({
       name: 'User One',
       email: 'user@user.com',
-      email_ic: '',
       password: '123456',
       phone: '12-12345-1234',
       st_secret: 'GimmeThePower!',
@@ -68,52 +65,10 @@ describe('CreateSTUser', () => {
       createSTUser.execute({
         name: 'User Two',
         email: 'user@user.com',
-        email_ic: '',
         password: '123456',
         phone: '12-12345-1234',
         st_secret: 'GimmeThePower!',
       }),
     ).rejects.toBeInstanceOf(AppError);
-  });
-
-  it('Should set email_ic to empty if it is equal to email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const user = await createSTUser.execute({
-      name: 'User One',
-      email: 'user@user.com',
-      email_ic: 'user@user.com',
-      password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
-    });
-
-    expect(user.email_ic).toBe('');
-  });
-
-  it('Should allow email_ic to be different of email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const user = await createSTUser.execute({
-      name: 'User One',
-      email: 'email@user.com',
-      email_ic: 'email_ic@user.com',
-      password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
-    });
-
-    expect(user.email).toBe('email@user.com');
-    expect(user.email_ic).toBe('email_ic@user.com');
   });
 });
