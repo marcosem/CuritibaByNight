@@ -11,7 +11,7 @@ import {
 
 import User from '@modules/users/infra/typeorm/entities/User';
 
-@Entity('user_token')
+@Entity('user_tokens')
 class User_Token {
   @PrimaryGeneratedColumn('uuid')
   id: string;
