@@ -43,7 +43,6 @@ class UsersRepository implements IUsersRepository {
   public async create({
     name,
     email,
-    email_ic = '',
     phone = '',
     password = undefined,
     storyteller = false,
@@ -52,7 +51,6 @@ class UsersRepository implements IUsersRepository {
     const user = this.ormRepository.create({
       name,
       email,
-      email_ic,
       phone,
       password,
       storyteller,

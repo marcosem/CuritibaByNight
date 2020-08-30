@@ -21,9 +21,6 @@ class User {
   email: string;
 
   @Column()
-  email_ic: string;
-
-  @Column()
   phone: string;
 
   @Column()
@@ -34,9 +31,6 @@ class User {
 
   @Column()
   avatar: string;
-
-  @Column()
-  character_file: string;
 
   @Column()
   secret: string;

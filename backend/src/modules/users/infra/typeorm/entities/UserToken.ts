@@ -5,7 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Generated,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
+
+import User from '@modules/users/infra/typeorm/entities/User';
 
 @Entity('user_token')
 class User_Token {
@@ -18,6 +22,10 @@ class User_Token {
 
   @Column()
   user_id: string;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   // @Column('timestamp with time zone')
   @CreateDateColumn()

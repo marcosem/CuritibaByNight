@@ -29,7 +29,6 @@ class FakeUsersRepository implements IUsersRepository {
   public async create({
     name,
     email,
-    email_ic = '',
     phone = '',
     password = undefined,
     storyteller = false,
@@ -41,7 +40,6 @@ class FakeUsersRepository implements IUsersRepository {
       id: uuid(),
       name,
       email,
-      email_ic,
       phone,
       storyteller,
     });

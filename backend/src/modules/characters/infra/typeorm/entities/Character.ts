@@ -4,9 +4,13 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
-@Entity('character')
+import User from '@modules/users/infra/typeorm/entities/User';
+
+@Entity('characters')
 class Character {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,8 +21,12 @@ class Character {
   @Column()
   user_id: string;
 
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
   @Column()
-  email_ic: string;
+  email: string;
 
   @Column()
   experience: number;
