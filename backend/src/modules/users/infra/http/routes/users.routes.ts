@@ -5,7 +5,6 @@ import uploadConfig from '@config/upload';
 import STUsersController from '@modules/users/infra/http/controllers/STUsersController';
 import UsersController from '@modules/users/infra/http/controllers/UsersController';
 import InitialUsersController from '@modules/users/infra/http/controllers/InitialUsersController';
-import CharactersController from '@modules/characters/infra/http/controllers/CharactersController';
 import UserAvatarController from '@modules/users/infra/http/controllers/UserAvatarController';
 
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
@@ -17,12 +16,9 @@ const sTUsersController = new STUsersController();
 const usersController = new UsersController();
 const initialUsersController = new InitialUsersController();
 const userAvatarController = new UserAvatarController();
-const charactersController = new CharactersController();
 
 const avatarMulter = uploadConfig('avatar');
-const sheetMulter = uploadConfig('sheet');
 const uploadAvatar = multer(avatarMulter);
-const uploadSheet = multer(sheetMulter);
 
 // Storyteller users routes
 usersRouter.post('/createst', sTUsersController.create);
@@ -49,19 +45,5 @@ usersRouter.patch(
   uploadAvatar.single('avatar'),
   userAvatarController.update,
 );
-
-// Character sheet routes
-usersRouter.patch(
-  '/uploadsheet',
-  ensureSTAuthenticated,
-  uploadSheet.single('sheet'),
-  charactersController.update,
-);
-
-// Show my character sheet
-usersRouter.get('/sheet', ensureAuthenticated, charactersController.show);
-
-// Show any character sheet - Only ST may do that
-usersRouter.post('/sheet', ensureSTAuthenticated, charactersController.index);
 
 export default usersRouter;
