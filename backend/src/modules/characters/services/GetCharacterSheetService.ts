@@ -2,7 +2,6 @@ import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
-// import Character from '@modules/characters/infra/typeorm/entities/Character';
 import uploadConfig from '@config/upload';
 import path from 'path';
 
@@ -14,10 +13,10 @@ interface IRequestDTO {
 @injectable()
 class GetCharacterSheet {
   constructor(
-    @inject('UsersRepository')
-    private usersRepository: IUsersRepository,
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute({ user_id, char_id }: IRequestDTO): Promise<string> {

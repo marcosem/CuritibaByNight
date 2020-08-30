@@ -12,10 +12,10 @@ interface IRequestDTO {
 @injectable()
 class GetUserCharacterSheet {
   constructor(
-    @inject('UsersRepository')
-    private usersRepository: IUsersRepository,
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute({
