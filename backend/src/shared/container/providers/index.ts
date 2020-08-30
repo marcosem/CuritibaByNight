@@ -9,7 +9,14 @@ container.registerSingleton<IStorageProvider>(
   DiskStorageProvider,
 );
 
+// Need to have constructor executed when server is on
+container.registerInstance<IMailProvider>(
+  'MailProvider',
+  new EtherealMailProvider(),
+);
+/*
 container.registerSingleton<IMailProvider>(
   'MailProvider',
   EtherealMailProvider,
 );
+*/
