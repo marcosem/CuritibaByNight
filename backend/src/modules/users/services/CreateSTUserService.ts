@@ -7,7 +7,6 @@ import IHashProvider from '@modules/users/providers/HashProvider/models/IHashPro
 interface IRequestDTO {
   name: string;
   email: string;
-  email_ic: string;
   phone: string;
   password: string;
   st_secret: string;
@@ -25,7 +24,6 @@ class CreateSTUserService {
   public async execute({
     name,
     email,
-    email_ic,
     phone,
     password,
     st_secret,
@@ -40,25 +38,12 @@ class CreateSTUserService {
       throw new AppError('Email address already exist.', 409);
     }
 
-    // if Email IC and Email are equal, store only Email
-    let redefEmailIc;
-    if (email_ic) {
-      if (email_ic === email) {
-        redefEmailIc = '';
-      } else {
-        redefEmailIc = email_ic;
-      }
-    } else {
-      redefEmailIc = '';
-    }
-
     const hashedPassword = await this.hashProvider.generateHash(password);
 
     const user = await this.usersRepository.create({
       name,
       email,
       phone,
-      email_ic: redefEmailIc,
       storyteller: true,
       password: hashedPassword,
     });

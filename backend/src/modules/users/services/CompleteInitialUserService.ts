@@ -9,7 +9,6 @@ import IHashProvider from '@modules/users/providers/HashProvider/models/IHashPro
 interface IRequestDTO {
   name: string;
   email: string;
-  email_ic: string;
   phone: string;
   password: string;
   secret: string;
@@ -27,7 +26,6 @@ class CreateInitialUserService {
   public async execute({
     name,
     email,
-    email_ic,
     phone,
     password,
     secret,
@@ -43,24 +41,11 @@ class CreateInitialUserService {
       throw new AppError('Invalid Token.', 401);
     }
 
-    // if Email IC and Email are equal, store only Email
-    let redefEmailIc;
-    if (email_ic) {
-      if (email_ic === email) {
-        redefEmailIc = '';
-      } else {
-        redefEmailIc = email_ic;
-      }
-    } else {
-      redefEmailIc = '';
-    }
-
     const hashedPassword = await this.hashProvider.generateHash(password);
 
     userSecretExist.name = name;
     userSecretExist.email = email;
     userSecretExist.phone = phone;
-    userSecretExist.email_ic = redefEmailIc;
     userSecretExist.storyteller = false;
     userSecretExist.password = hashedPassword;
     userSecretExist.secret = '';

@@ -7,7 +7,6 @@ import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 interface IRequestDTO {
   name: string;
   email: string;
-  email_ic: string;
   phone: string;
 }
 
@@ -18,35 +17,17 @@ class CreateInitialUserService {
     private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute({
-    name,
-    email,
-    email_ic,
-    phone,
-  }: IRequestDTO): Promise<User> {
+  public async execute({ name, email, phone }: IRequestDTO): Promise<User> {
     // Verify is user email already exist
     const userEmailExist = await this.usersRepository.findByEmail(email);
     if (userEmailExist) {
       throw new AppError('Email address already exist.', 409);
     }
 
-    // if Email IC and Email are equal, store only Email
-    let redefEmailIc;
-    if (email_ic) {
-      if (email_ic === email) {
-        redefEmailIc = '';
-      } else {
-        redefEmailIc = email_ic;
-      }
-    } else {
-      redefEmailIc = '';
-    }
-
     const user = await this.usersRepository.create({
       name,
       email,
       phone,
-      email_ic: redefEmailIc,
       storyteller: false,
       secret: uuid(),
     });
