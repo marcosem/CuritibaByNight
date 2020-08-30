@@ -14,7 +14,7 @@ class PDFParseProvider implements IPDFParserProvider {
     const char = new Character();
 
     const pdfBuffer = await fs.promises.readFile(
-      resolve(uploadConfig('sheet').uploadsFolder, filename),
+      resolve(uploadConfig('sheet').tmpFolder, filename),
     );
 
     const { text } = await pdfParser(pdfBuffer);
@@ -26,7 +26,8 @@ class PDFParseProvider implements IPDFParserProvider {
 
     char.file = filename;
 
-    let playerName: string;
+    // let playerName: string;
+    let experience: number;
     let index = 0;
     let isTitled = true;
 
@@ -37,6 +38,21 @@ class PDFParseProvider implements IPDFParserProvider {
         char.name = line.substring(0, line.length - 1);
       } else if (index === 4 && isTitled) {
         char.name = line.substring(0, line.length - 1);
+      } else if (line.indexOf('Experience Unspent: ') >= 0 && !experience) {
+        const startXP =
+          line.indexOf('Experience Unspent: ') + 'Experience Unspent: '.length;
+        const endXP = line.indexOf('Date Printed: ') - 1;
+
+        experience = parseInt(line.substring(startXP, endXP), 10);
+        // eslint-disable-next-line no-restricted-globals
+        if (!isNaN(experience)) {
+          char.experience = experience;
+        }
+
+        rl.close();
+      }
+
+      /*
       } else if (line.indexOf('Player: ') >= 0 && !playerName) {
         const startPlayer = line.indexOf('Player: ') + 'Player: '.length;
         const endPlayer = line.indexOf('Experience Unspent: ') - 1;
@@ -50,11 +66,12 @@ class PDFParseProvider implements IPDFParserProvider {
 
         rl.close();
       }
+        */
     });
 
     await once(rl, 'close');
 
-    if (!char.user_id) {
+    if (!char.experience) {
       return undefined;
     }
 
