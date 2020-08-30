@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import GetUserCharacterSheetService from '@modules/characters/services/GetUserCharacterSheetService';
 import CreateCharacterSheetService from '@modules/characters/services/CreateCharacterSheetService';
 import GetCharacterSheetService from '@modules/characters/services/GetCharacterSheetService';
-import UploadCharacterSheetService from '@modules/characters/services/UploadCharacterSheetService';
+import UpdateCharacterSheetService from '@modules/characters/services/UpdateCharacterSheetService';
 import ParseCharacterSheetService from '@modules/characters/services/ParseCharacterSheetService';
 import { container } from 'tsyringe';
 
@@ -97,11 +97,11 @@ export default class CharacterController {
       inputData.char_xp = parsedChar.experience;
     }
 
-    const uploadCharacterSheetService = container.resolve(
-      UploadCharacterSheetService,
+    const updateCharacterSheetService = container.resolve(
+      UpdateCharacterSheetService,
     );
 
-    const char = await uploadCharacterSheetService.execute(inputData);
+    const char = await updateCharacterSheetService.execute(inputData);
 
     return res.json(char);
   }

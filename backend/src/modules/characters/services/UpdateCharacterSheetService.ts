@@ -14,7 +14,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class UploadCharacterSheetService {
+class UpdateCharacterSheetService {
   constructor(
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
@@ -36,13 +36,13 @@ class UploadCharacterSheetService {
     if (!user) {
       await this.storageProvider.deleteFile(sheetFilename, 'sheet');
       throw new AppError(
-        'Only authenticated Storytellers can upload character sheets',
+        'Only authenticated Storytellers can update character sheets',
         401,
       );
     } else if (!user.storyteller) {
       await this.storageProvider.deleteFile(sheetFilename, 'sheet');
       throw new AppError(
-        'Only authenticated Storytellers can upload character sheets',
+        'Only authenticated Storytellers can update character sheets',
         401,
       );
     }
@@ -78,4 +78,4 @@ class UploadCharacterSheetService {
   }
 }
 
-export default UploadCharacterSheetService;
+export default UpdateCharacterSheetService;
