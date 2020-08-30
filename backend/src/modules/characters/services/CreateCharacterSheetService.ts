@@ -7,7 +7,8 @@ import IStorageProvider from '@shared/container/providers/StorageProvider/models
 
 interface IRequestDTO {
   user_id: string;
-  char_id: string;
+  player_id: string;
+  char_email?: string;
   char_name: string;
   char_xp: number;
   sheetFilename: string;
@@ -26,7 +27,8 @@ class UploadCharacterSheetService {
 
   public async execute({
     user_id,
-    char_id,
+    player_id,
+    char_email,
     char_name,
     char_xp,
     sheetFilename,
@@ -52,15 +54,11 @@ class UploadCharacterSheetService {
       throw new AppError('File must be in PDF format', 400);
     }
 
-    const char = await this.charactersRepository.findById(char_id);
+    const player = await this.usersRepository.findById(player_id);
 
-    if (!char) {
+    if (!player) {
       await this.storageProvider.deleteFile(sheetFilename, 'sheet');
-      throw new AppError('Character not found', 400);
-    }
-
-    if (char.file) {
-      this.storageProvider.deleteFile(char.file, 'sheet');
+      throw new AppError('Player not found', 400);
     }
 
     const filename = await this.storageProvider.saveFile(
@@ -68,11 +66,13 @@ class UploadCharacterSheetService {
       'sheet',
     );
 
-    char.name = char_name;
-    char.experience = char_xp;
-    char.file = filename;
-
-    await this.charactersRepository.update(char);
+    const char = await this.charactersRepository.create({
+      user_id: player_id,
+      name: char_name,
+      email: char_email,
+      experience: char_xp,
+      file: filename,
+    });
 
     return char;
   }
