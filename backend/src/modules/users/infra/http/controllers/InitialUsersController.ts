@@ -21,7 +21,7 @@ export default class InitialUsersController {
   }
 
   public async create(req: Request, res: Response): Promise<Response> {
-    const { name, email, email_ic, phone } = req.body;
+    const { name, email, phone } = req.body;
 
     const createInitialUserService = container.resolve(
       CreateInitialUserService,
@@ -30,7 +30,6 @@ export default class InitialUsersController {
     const user = await createInitialUserService.execute({
       name,
       email,
-      email_ic,
       phone,
     });
 
@@ -42,14 +41,13 @@ export default class InitialUsersController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
-    const { name, email, email_ic, phone, password, secret } = req.body;
+    const { name, email, phone, password, secret } = req.body;
 
     const createUserService = container.resolve(CompleteInitialUserService);
 
     const user = await createUserService.execute({
       name,
       email,
-      email_ic,
       phone,
       password,
       secret,
