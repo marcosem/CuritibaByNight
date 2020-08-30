@@ -51,22 +51,6 @@ class PDFParseProvider implements IPDFParserProvider {
 
         rl.close();
       }
-
-      /*
-      } else if (line.indexOf('Player: ') >= 0 && !playerName) {
-        const startPlayer = line.indexOf('Player: ') + 'Player: '.length;
-        const endPlayer = line.indexOf('Experience Unspent: ') - 1;
-        const startXP =
-          line.indexOf('Experience Unspent: ') + 'Experience Unspent: '.length;
-        const endXP = line.indexOf('Date Printed: ') - 1;
-        playerName = line.substring(startPlayer, endPlayer);
-
-        char.experience = parseInt(line.substring(startXP, endXP), 10);
-        char.user_id = playerName;
-
-        rl.close();
-      }
-        */
     });
 
     await once(rl, 'close');
