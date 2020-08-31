@@ -1,20 +1,13 @@
 import 'reflect-metadata';
-import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import CreateCharacterSheetService from '@modules/characters/services/CreateCharacterSheetService';
-import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
 let fakeCharactersRepository: FakeCharactersRepository;
-
-let fakeHashProvider: FakeHashProvider;
-let createSTUser: CreateSTUserService;
-
 let createCharacterSheet: CreateCharacterSheetService;
 
 describe('CreateCharacterSheet', () => {
@@ -22,12 +15,6 @@ describe('CreateCharacterSheet', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeStorageProvider = new FakeStorageProvider();
     fakeCharactersRepository = new FakeCharactersRepository();
-
-    fakeHashProvider = new FakeHashProvider();
-    createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
 
     createCharacterSheet = new CreateCharacterSheetService(
       fakeCharactersRepository,
@@ -38,12 +25,11 @@ describe('CreateCharacterSheet', () => {
 
   it('Should be able to create a character sheet to an user', async () => {
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      storyteller: true,
     });
 
     const char = await createCharacterSheet.execute({
@@ -83,19 +69,18 @@ describe('CreateCharacterSheet', () => {
   });
 
   it('Should not allow non storyteller user to create character sheets', async () => {
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-
-    const initialUser = await createInitialUser.execute({
+    // Create a user
+    const noSTUser = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
-      phone: '12-12345-1234',
+      password: '123456',
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
 
     await expect(
       createCharacterSheet.execute({
-        user_id: initialUser.id,
+        user_id: noSTUser.id,
         player_id: 'Does not matter',
         char_name: 'Dracula',
         char_xp: 666,
@@ -109,12 +94,11 @@ describe('CreateCharacterSheet', () => {
 
   it('Should not allow to create character sheets with a non PDF file', async () => {
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      storyteller: true,
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
@@ -135,12 +119,11 @@ describe('CreateCharacterSheet', () => {
 
   it('Should not allow to create character sheets for non existant users', async () => {
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      storyteller: true,
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');

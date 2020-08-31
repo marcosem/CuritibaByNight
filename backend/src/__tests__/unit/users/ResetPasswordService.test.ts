@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import FakeUserTokensRepository from '@modules/users/repositories/fakes/FakeUserTokensRepository';
@@ -25,17 +24,11 @@ describe('ResetPassword', () => {
   });
 
   it('Should be able to reset the password', async () => {
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
       phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
     });
 
     const { token } = await fakeUserTokensRepository.generate(user.id);
@@ -67,17 +60,11 @@ describe('ResetPassword', () => {
   });
 
   it('Should not be able to reset password if passed more than 2 hours', async () => {
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
       phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
     });
 
     const { token } = await fakeUserTokensRepository.generate(user.id);

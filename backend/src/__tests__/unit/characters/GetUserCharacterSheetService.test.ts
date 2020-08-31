@@ -1,29 +1,17 @@
 import 'reflect-metadata';
-import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
-import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
-import CreateCharacterSheetService from '@modules/characters/services/CreateCharacterSheetService';
 import GetUserCharacterSheetService from '@modules/characters/services/GetUserCharacterSheetService';
-import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
-let fakeHashProvider: FakeHashProvider;
-let createSTUser: CreateSTUserService;
 let getUserCharacterSheet: GetUserCharacterSheetService;
 
 describe('GetUserCharacterSheet', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
-    fakeHashProvider = new FakeHashProvider();
-    createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
 
     getUserCharacterSheet = new GetUserCharacterSheetService(
       fakeCharactersRepository,
@@ -32,39 +20,28 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should be able get a list of users character sheets', async () => {
-    const fakeStorageProvider = new FakeStorageProvider();
-
-    const createCharacterSheet = new CreateCharacterSheetService(
-      fakeCharactersRepository,
-      fakeUsersRepository,
-      fakeStorageProvider,
-    );
-
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      storyteller: true,
     });
 
-    await createCharacterSheet.execute({
+    await fakeCharactersRepository.create({
       user_id: user.id,
-      player_id: user.id,
-      char_name: 'Dracula',
-      char_xp: 666,
-      sheetFilename: 'dracula.pdf',
-      char_email: 'dracula@vampyr.com',
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      email: 'dracula@vampyr.com',
     });
 
-    await createCharacterSheet.execute({
+    await fakeCharactersRepository.create({
       user_id: user.id,
-      player_id: user.id,
-      char_name: 'Nosferatu',
-      char_xp: 999,
-      sheetFilename: 'nosferatu.pdf',
-      char_email: 'nosferatu@vampyr.com',
+      name: 'Nosferatu',
+      experience: 999,
+      file: 'nosferatu.pdf',
+      email: 'nosferatu@vampyr.com',
     });
 
     const charList = await getUserCharacterSheet.execute({
@@ -99,26 +76,22 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should not allow non storyteller user to get character sheets from others users', async () => {
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
     });
 
-    const initialUser = await createInitialUser.execute({
+    const nonSTUser = await fakeUsersRepository.create({
       name: 'A User',
       email: 'notSTuser@user.com',
-      phone: '12-12345-1234',
+      password: '123456',
     });
 
     await expect(
       getUserCharacterSheet.execute({
-        user_id: initialUser.id,
+        user_id: nonSTUser.id,
         player_id: user.id,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
@@ -126,12 +99,11 @@ describe('GetUserCharacterSheet', () => {
 
   it('Should not allow to get non existant users character sheets', async () => {
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      storyteller: true,
     });
 
     await expect(
@@ -144,12 +116,11 @@ describe('GetUserCharacterSheet', () => {
 
   it('Should not allow to get a non existant list of character sheets', async () => {
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
-      phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      storyteller: true,
     });
 
     await expect(

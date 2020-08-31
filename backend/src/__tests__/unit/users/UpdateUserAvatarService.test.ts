@@ -1,27 +1,17 @@
 import 'reflect-metadata';
-import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
-let fakeHashProvider: FakeHashProvider;
 let fakeStorageProvider: FakeStorageProvider;
-let createSTUser: CreateSTUserService;
 let updateUserAvatar: UpdateUserAvatarService;
 
 describe('UpdateUserAvatar', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
-    fakeHashProvider = new FakeHashProvider();
     fakeStorageProvider = new FakeStorageProvider();
-
-    createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
 
     updateUserAvatar = new UpdateUserAvatarService(
       fakeUsersRepository,
@@ -31,12 +21,11 @@ describe('UpdateUserAvatar', () => {
 
   it('Should be able to update the user avatar', async () => {
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
       phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
     });
 
     const userWithAvatar = await updateUserAvatar.execute({
@@ -51,12 +40,11 @@ describe('UpdateUserAvatar', () => {
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
 
     // Create a user
-    const user = await createSTUser.execute({
+    const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
       phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
     });
 
     await updateUserAvatar.execute({
