@@ -8,6 +8,13 @@ class FakeUserTokensRepository implements IUserTokensRepository {
   private userTokens: UserToken[] = [];
 
   public async generate(user_id: string): Promise<UserToken> {
+    // Remove old tokens from this user first
+    const newList = this.userTokens.filter(
+      usrToken => usrToken.user_id !== user_id,
+    );
+
+    this.userTokens = newList;
+
     const userToken = new UserToken();
 
     Object.assign(userToken, {
