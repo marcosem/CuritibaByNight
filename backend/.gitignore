@@ -14,5 +14,6 @@ tmp/*
 tmp/uploads/*
 !tmp/uploads/avatar/
 !tmp/uploads/sheet/
+!tmp/uploads/assets/
 tmp/uploads/avatar/*
 tmp/uploads/sheet/*

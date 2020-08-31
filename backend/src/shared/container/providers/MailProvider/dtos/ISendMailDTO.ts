@@ -7,7 +7,8 @@ interface IMailContact {
 
 interface IMailAttachment {
   filename: string;
-  path: string;
+  path?: string;
+  content?: Buffer;
   contentType?: string;
   cid?: string;
 }

@@ -33,10 +33,11 @@ class SendForgotPasswordEmailService {
       __dirname,
       '..',
       'views',
-      'forgot_password2.hbs',
+      'forgot_password.hbs',
     );
 
-    const imageTemplatePath = resolve(__dirname, '..', 'views', 'images');
+    // getting user first name.
+    const userNames = user.name.split(' ');
 
     await this.mailProvider.sendMail({
       to: {
@@ -47,24 +48,26 @@ class SendForgotPasswordEmailService {
       templateData: {
         file: forgotPasswordTemplate,
         variables: {
-          name: user.name,
+          name: userNames[0],
           link: `http://localhost:3000/reset_password?token=${token}`,
         },
       },
+      /*
       attachments: [
         {
-          filename: 'curitibabynight.svg',
+          filename: 'curitibabynight.png',
           path: resolve(imageTemplatePath, 'curitibabynight.svg'),
-          contentType: 'image/svg+xml',
-          cid: 'curitibabynight.svg',
+          // contentType: 'image/svg+xml',
+          cid: 'cbn@curitibabynight',
         },
         {
-          filename: 'password.jpg',
+          filename: 'password.png',
           path: resolve(imageTemplatePath, 'password.jpg'),
-          contentType: 'image/jpeg',
-          cid: 'password.jpg',
+          // contentType: 'image/jpeg',
+          cid: 'cbn@password',
         },
       ],
+      */
     });
   }
 }
