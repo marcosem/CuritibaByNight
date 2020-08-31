@@ -5,15 +5,21 @@ import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepo
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import AppError from '@shared/errors/AppError';
 
+let fakeUsersRepository: FakeUsersRepository;
+let fakeHashProvider: FakeHashProvider;
+let createSTUser: CreateSTUserService;
+
 describe('CreateSTUser', () => {
-  it('Should be able to create a new Storyteller User', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    fakeHashProvider = new FakeHashProvider();
+    createSTUser = new CreateSTUserService(
       fakeUsersRepository,
       fakeHashProvider,
     );
+  });
 
+  it('Should be able to create a new Storyteller User', async () => {
     const user = await createSTUser.execute({
       name: 'A User',
       email: 'user@user.com',
@@ -27,13 +33,6 @@ describe('CreateSTUser', () => {
   });
 
   it('Should not allow create Storyteller User without the correct secret', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
     await expect(
       createSTUser.execute({
         name: 'A User',
@@ -46,13 +45,6 @@ describe('CreateSTUser', () => {
   });
 
   it('Should not allow create two Storyteller Users with same email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
     await createSTUser.execute({
       name: 'User One',
       email: 'user@user.com',

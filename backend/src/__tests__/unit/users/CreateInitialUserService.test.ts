@@ -4,11 +4,16 @@ import CreateInitialUser from '@modules/users/services/CreateInitialUserService'
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import AppError from '@shared/errors/AppError';
 
-describe('CreateInitialUser', () => {
-  it('Should be able to create a new Initial User', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
+let fakeUsersRepository: FakeUsersRepository;
+let createInitialUser: CreateInitialUser;
 
+describe('CreateInitialUser', () => {
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    createInitialUser = new CreateInitialUser(fakeUsersRepository);
+  });
+
+  it('Should be able to create a new Initial User', async () => {
     const user = await createInitialUser.execute({
       name: 'A User',
       email: 'user@user.com',
@@ -22,9 +27,6 @@ describe('CreateInitialUser', () => {
   });
 
   it('Should not allow create Initial User with an already existant email', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-
     await createInitialUser.execute({
       name: 'A User',
       email: 'user@user.com',

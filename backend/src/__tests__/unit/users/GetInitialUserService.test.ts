@@ -3,13 +3,18 @@ import { uuid } from 'uuidv4';
 import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import GetInitialUser from '@modules/users/services/GetInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-// import AppError from '@shared/errors/AppError';
+
+let fakeUsersRepository: FakeUsersRepository;
+let getInitialUser: GetInitialUser;
 
 describe('GetInitialUser', () => {
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    getInitialUser = new GetInitialUser(fakeUsersRepository);
+  });
+
   it('Should be able to get a just created Initial User', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
     const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-    const getInitialUser = new GetInitialUser(fakeUsersRepository);
 
     const initialUser = await createInitialUser.execute({
       name: 'A User',
@@ -27,18 +32,12 @@ describe('GetInitialUser', () => {
   });
 
   it('Should return error for not existant secret', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const getInitialUser = new GetInitialUser(fakeUsersRepository);
-
     await expect(
       getInitialUser.execute({ secret: uuid() }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
   it('Should return error for invalid secret', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const getInitialUser = new GetInitialUser(fakeUsersRepository);
-
     await expect(
       getInitialUser.execute({ secret: 'I am not an UUID secret' }),
     ).rejects.toMatchObject({ statusCode: 401 });

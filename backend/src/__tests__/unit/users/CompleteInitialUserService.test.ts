@@ -5,15 +5,22 @@ import CompleteInitialUser from '@modules/users/services/CompleteInitialUserServ
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 
+let fakeUsersRepository: FakeUsersRepository;
+let fakeHashProvider: FakeHashProvider;
+let completeInitialUser: CompleteInitialUser;
+
 describe('CompleteInitialUser', () => {
-  it('Should be able to get a just created Initial User', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-    const fakeHashProvider = new FakeHashProvider();
-    const completeInitialUser = new CompleteInitialUser(
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    fakeHashProvider = new FakeHashProvider();
+    completeInitialUser = new CompleteInitialUser(
       fakeUsersRepository,
       fakeHashProvider,
     );
+  });
+
+  it('Should be able to get a just created Initial User', async () => {
+    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
 
     const initialUser = await createInitialUser.execute({
       name: 'A User',
@@ -37,13 +44,6 @@ describe('CompleteInitialUser', () => {
   });
 
   it('Should return error for not existant secret', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const completeInitialUser = new CompleteInitialUser(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
     await expect(
       completeInitialUser.execute({
         name: 'Anothe Name',
@@ -56,13 +56,6 @@ describe('CompleteInitialUser', () => {
   });
 
   it('Should return error for invalid secret', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const completeInitialUser = new CompleteInitialUser(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
     await expect(
       completeInitialUser.execute({
         name: 'Anothe Name',

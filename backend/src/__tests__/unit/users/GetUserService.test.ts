@@ -6,15 +6,21 @@ import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepo
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import AppError from '@shared/errors/AppError';
 
+let fakeUsersRepository: FakeUsersRepository;
+let getUser: GetUserService;
+
 describe('GetUser', () => {
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    getUser = new GetUserService(fakeUsersRepository);
+  });
+
   it('Should be able to get an user data', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
     const fakeHashProvider = new FakeHashProvider();
     const createSTUser = new CreateSTUserService(
       fakeUsersRepository,
       fakeHashProvider,
     );
-    const getUser = new GetUserService(fakeUsersRepository);
 
     const user = await createSTUser.execute({
       name: 'A User',
@@ -30,9 +36,6 @@ describe('GetUser', () => {
   });
 
   it('Should return error when not found an user', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const getUser = new GetUserService(fakeUsersRepository);
-
     await expect(getUser.execute(uuid())).rejects.toBeInstanceOf(AppError);
   });
 });

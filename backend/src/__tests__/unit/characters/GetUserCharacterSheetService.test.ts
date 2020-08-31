@@ -9,27 +9,35 @@ import CreateInitialUser from '@modules/users/services/CreateInitialUserService'
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import AppError from '@shared/errors/AppError';
 
-describe('GetUserCharacterSheet', () => {
-  it('Should be able get a list of users character sheets', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-    const fakeCharactersRepository = new FakeCharactersRepository();
+let fakeUsersRepository: FakeUsersRepository;
+let fakeCharactersRepository: FakeCharactersRepository;
+let fakeHashProvider: FakeHashProvider;
+let createSTUser: CreateSTUserService;
+let getUserCharacterSheet: GetUserCharacterSheetService;
 
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
+describe('GetUserCharacterSheet', () => {
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    fakeCharactersRepository = new FakeCharactersRepository();
+    fakeHashProvider = new FakeHashProvider();
+    createSTUser = new CreateSTUserService(
       fakeUsersRepository,
       fakeHashProvider,
     );
+
+    getUserCharacterSheet = new GetUserCharacterSheetService(
+      fakeCharactersRepository,
+      fakeUsersRepository,
+    );
+  });
+
+  it('Should be able get a list of users character sheets', async () => {
+    const fakeStorageProvider = new FakeStorageProvider();
 
     const createCharacterSheet = new CreateCharacterSheetService(
       fakeCharactersRepository,
       fakeUsersRepository,
       fakeStorageProvider,
-    );
-
-    const getUserCharacterSheet = new GetUserCharacterSheetService(
-      fakeCharactersRepository,
-      fakeUsersRepository,
     );
 
     // Create a user
@@ -82,14 +90,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should be allow invalid users to get character sheets', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeCharactersRepository = new FakeCharactersRepository();
-
-    const getUserCharacterSheet = new GetUserCharacterSheetService(
-      fakeCharactersRepository,
-      fakeUsersRepository,
-    );
-
     await expect(
       getUserCharacterSheet.execute({
         user_id: 'I am invalid user',
@@ -99,20 +99,7 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should not allow non storyteller user to get character sheets from others users', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeCharactersRepository = new FakeCharactersRepository();
-
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
     const createInitialUser = new CreateInitialUser(fakeUsersRepository);
-
-    const getUserCharacterSheet = new GetUserCharacterSheetService(
-      fakeCharactersRepository,
-      fakeUsersRepository,
-    );
 
     // Create a user
     const user = await createSTUser.execute({
@@ -138,20 +125,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should not allow to get non existant users character sheets', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeCharactersRepository = new FakeCharactersRepository();
-
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const getUserCharacterSheet = new GetUserCharacterSheetService(
-      fakeCharactersRepository,
-      fakeUsersRepository,
-    );
-
     // Create a user
     const user = await createSTUser.execute({
       name: 'A User',
@@ -170,20 +143,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should not allow to get a non existant list of character sheets', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeCharactersRepository = new FakeCharactersRepository();
-
-    const fakeHashProvider = new FakeHashProvider();
-    const createSTUser = new CreateSTUserService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
-    const getUserCharacterSheet = new GetUserCharacterSheetService(
-      fakeCharactersRepository,
-      fakeUsersRepository,
-    );
-
     // Create a user
     const user = await createSTUser.execute({
       name: 'A User',
