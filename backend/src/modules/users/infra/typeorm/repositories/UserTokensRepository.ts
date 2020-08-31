@@ -10,6 +10,11 @@ class UserTokensRepository implements IUserTokensRepository {
   }
 
   public async generate(user_id: string): Promise<UserToken> {
+    // Remove all old tokens from this users first
+    const oldTokens = await this.ormRepository.find({ where: { user_id } });
+    await this.ormRepository.remove(oldTokens);
+
+    // Create a new token
     const userToken = this.ormRepository.create({
       user_id,
     });
