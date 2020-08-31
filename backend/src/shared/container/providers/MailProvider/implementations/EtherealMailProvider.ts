@@ -32,6 +32,7 @@ class EtherealMailProvider implements IMailProvider {
     from,
     subject,
     templateData,
+    attachments,
   }: ISendMailDTO): Promise<void> {
     const massage = await this.client.sendMail({
       from: {
@@ -44,6 +45,7 @@ class EtherealMailProvider implements IMailProvider {
       },
       subject,
       html: await this.mailTemplateProvider.parse(templateData),
+      attachments: attachments || [],
     });
 
     console.log('Message sent: %s', massage.messageId);

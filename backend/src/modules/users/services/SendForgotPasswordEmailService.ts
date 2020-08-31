@@ -33,8 +33,10 @@ class SendForgotPasswordEmailService {
       __dirname,
       '..',
       'views',
-      'forgot_password.hbs',
+      'forgot_password2.hbs',
     );
+
+    const imageTemplatePath = resolve(__dirname, '..', 'views', 'images');
 
     await this.mailProvider.sendMail({
       to: {
@@ -49,6 +51,20 @@ class SendForgotPasswordEmailService {
           link: `http://localhost:3000/reset_password?token=${token}`,
         },
       },
+      attachments: [
+        {
+          filename: 'curitibabynight.svg',
+          path: resolve(imageTemplatePath, 'curitibabynight.svg'),
+          contentType: 'image/svg+xml',
+          cid: 'curitibabynight.svg',
+        },
+        {
+          filename: 'password.jpg',
+          path: resolve(imageTemplatePath, 'password.jpg'),
+          contentType: 'image/jpeg',
+          cid: 'password.jpg',
+        },
+      ],
     });
   }
 }
