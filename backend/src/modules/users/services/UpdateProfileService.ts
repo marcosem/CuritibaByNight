@@ -68,12 +68,10 @@ class UpdateProfileService {
     profile.phone = phone || profile.phone;
 
     if (!user.storyteller && storyteller) {
-      if (storyteller !== profile.storyteller) {
-        throw new AppError(
-          'Only authenticated Storytellers can update storyteller permissions',
-          401,
-        );
-      }
+      throw new AppError(
+        'Only authenticated Storytellers can update storyteller permissions',
+        401,
+      );
     } else {
       profile.storyteller = storyteller || profile.storyteller;
     }
