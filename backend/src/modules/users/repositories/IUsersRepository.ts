@@ -8,4 +8,5 @@ export default interface IUsersRepository {
   findBySecret(secret: string): Promise<User | undefined>;
   findByEmail(email: string): Promise<User | undefined>;
   listAll(): Promise<User[]>;
+  delete(user_id: string): Promise<void>;
 }
