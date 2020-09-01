@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import ListUsersService from '@modules/users/services/ListUsersService';
 import UpdateProfileService from '@modules/users/services/UpdateProfileService';
+import RemoveUserService from '@modules/users/services/RemoveUserService';
 import GetUserService from '@modules/users/services/GetUserService';
 
 export default class UsersController {
@@ -66,5 +67,16 @@ export default class UsersController {
     delete user.secret;
 
     return res.json(user);
+  }
+
+  public async delete(req: Request, res: Response): Promise<Response> {
+    const user_id = req.user.id;
+    const { profile_id } = req.body;
+
+    const removeUser = container.resolve(RemoveUserService);
+
+    await removeUser.execute({ user_id, profile_id });
+
+    return res.status(204).json();
   }
 }

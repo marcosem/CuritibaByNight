@@ -67,13 +67,14 @@ class UpdateProfileService {
     profile.email = email;
     profile.phone = phone || profile.phone;
 
-    if (!user.storyteller && storyteller) {
+    if (!user.storyteller && storyteller !== undefined) {
       throw new AppError(
         'Only authenticated Storytellers can update storyteller permissions',
         401,
       );
     } else {
-      profile.storyteller = storyteller || profile.storyteller;
+      profile.storyteller =
+        storyteller === undefined ? profile.storyteller : storyteller;
     }
 
     if (password) {
@@ -95,6 +96,8 @@ class UpdateProfileService {
 
       profile.password = await this.hashProvider.generateHash(password);
     }
+
+    await this.usersRepository.update(profile);
 
     return profile;
   }

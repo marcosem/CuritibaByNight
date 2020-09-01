@@ -9,7 +9,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class UpdateProfileService {
+class RemoveUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
@@ -43,4 +43,4 @@ class UpdateProfileService {
   }
 }
 
-export default UpdateProfileService;
+export default RemoveUserService;

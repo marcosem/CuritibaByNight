@@ -30,6 +30,7 @@ class PDFParseProvider implements IPDFParserProvider {
     let experience: number;
     let index = 0;
     let isTitled = true;
+    let isParsed = false;
 
     rl.on('line', line => {
       index += 1;
@@ -44,9 +45,11 @@ class PDFParseProvider implements IPDFParserProvider {
         const endXP = line.indexOf('Date Printed: ') - 1;
 
         experience = parseInt(line.substring(startXP, endXP), 10);
+
         // eslint-disable-next-line no-restricted-globals
         if (!isNaN(experience)) {
           char.experience = experience;
+          isParsed = true;
         }
 
         rl.close();
@@ -55,7 +58,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
     await once(rl, 'close');
 
-    if (!char.experience) {
+    if (!isParsed) {
       return undefined;
     }
 
