@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import multer from 'multer';
 import uploadConfig from '@config/upload';
+import { celebrate, Segments, Joi } from 'celebrate';
 
 import STUsersController from '@modules/users/infra/http/controllers/STUsersController';
 import UsersController from '@modules/users/infra/http/controllers/UsersController';
@@ -21,17 +22,58 @@ const avatarMulter = uploadConfig('avatar');
 const uploadAvatar = multer(avatarMulter);
 
 // Storyteller users routes
-usersRouter.post('/createst', sTUsersController.create);
+usersRouter.post(
+  '/createst',
+  celebrate({
+    [Segments.BODY]: {
+      name: Joi.string().required(),
+      email: Joi.string().email().required(),
+      phone: Joi.string().regex(/^$|([0-9]{2}-[0-9]{4,5}-[0-9]{4})$/),
+      password: Joi.string().required(),
+      st_secret: Joi.string(),
+    },
+  }),
+  sTUsersController.create,
+);
 
 // Initial Users Routes
 // Show a single by secret
-usersRouter.get('/complete/:id', initialUsersController.show);
+usersRouter.get(
+  '/complete/:id',
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  initialUsersController.show,
+);
+
 // Update initial user
-usersRouter.post('/complete', initialUsersController.update);
+usersRouter.post(
+  '/complete',
+  celebrate({
+    [Segments.BODY]: {
+      name: Joi.string().required(),
+      email: Joi.string().email().required(),
+      phone: Joi.string().regex(/^$|([0-9]{2}-[0-9]{4,5}-[0-9]{4})$/),
+      password: Joi.string().required(),
+      secret: Joi.string().uuid().required(),
+    },
+  }),
+  initialUsersController.update,
+);
+
 // Create initial user - ST only
 usersRouter.post(
   '/create',
   ensureSTAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      name: Joi.string().required(),
+      email: Joi.string().email().required(),
+      phone: Joi.string().regex(/^$|([0-9]{2}-[0-9]{4,5}-[0-9]{4})$/),
+    },
+  }),
   initialUsersController.create,
 );
 
@@ -46,6 +88,15 @@ usersRouter.patch(
   userAvatarController.update,
 );
 
-usersRouter.delete('/remove', ensureAuthenticated, usersController.delete);
+usersRouter.delete(
+  '/remove',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      profile_id: Joi.string().uuid(),
+    },
+  }),
+  usersController.delete,
+);
 
 export default usersRouter;
