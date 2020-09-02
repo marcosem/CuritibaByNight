@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import GetInitialUserService from '@modules/users/services/GetInitialUserService';
 import CreateInitialUserService from '@modules/users/services/CreateInitialUserService';
 import CompleteInitialUserService from '@modules/users/services/CompleteInitialUserService';
+import { classToClass } from 'class-transformer';
 
 // index, show, create, update, delete
 export default class InitialUsersController {
@@ -13,11 +14,11 @@ export default class InitialUsersController {
 
     const user = await getUserService.execute({ secret: id });
 
-    delete user.password;
+    // delete user.password;
     delete user.secret;
     delete user.storyteller;
 
-    return res.json(user);
+    return res.json(classToClass(user));
   }
 
   public async create(req: Request, res: Response): Promise<Response> {
@@ -34,10 +35,10 @@ export default class InitialUsersController {
     });
 
     // Do not show user password
-    delete user.password;
+    // delete user.password;
     delete user.storyteller;
 
-    return res.json(user);
+    return res.json(classToClass(user));
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
@@ -54,10 +55,10 @@ export default class InitialUsersController {
     });
 
     // Do not show user password
-    delete user.password;
+    // delete user.password;
     delete user.secret;
     delete user.storyteller;
 
-    return res.json(user);
+    return res.json(classToClass(user));
   }
 }

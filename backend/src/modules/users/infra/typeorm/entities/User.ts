@@ -1,6 +1,3 @@
-/* eslint-disable camelcase */
-// import { uuid } from 'uuidv4';
-// import { startOfDay } from 'date-fns';
 import {
   Entity,
   Column,
@@ -8,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity('users')
 class User {
@@ -24,6 +23,7 @@ class User {
   phone: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column()
@@ -44,6 +44,13 @@ class User {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Expose({ name: 'avatar_url' })
+  getAvatarUrl(): string | null {
+    return this.avatar
+      ? `${process.env.APP_API_URL}/avatar/${this.avatar}`
+      : null;
+  }
 }
 
 export default User;

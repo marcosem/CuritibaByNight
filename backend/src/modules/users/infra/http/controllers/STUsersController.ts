@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import CreateSTUserService from '@modules/users/services/CreateSTUserService';
+import { classToClass } from 'class-transformer';
 
 export default class STUsersController {
   public async create(req: Request, res: Response): Promise<Response> {
@@ -17,8 +18,8 @@ export default class STUsersController {
     });
 
     // Do not show user password
-    delete user.password;
+    // delete user.password;
 
-    return res.json(user);
+    return res.json(classToClass(user));
   }
 }

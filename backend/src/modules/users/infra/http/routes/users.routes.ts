@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import { Router } from 'express';
 import multer from 'multer';
 import uploadConfig from '@config/upload';
 import { celebrate, Segments, Joi } from 'celebrate';
@@ -76,8 +76,6 @@ usersRouter.post(
   }),
   initialUsersController.create,
 );
-
-usersRouter.use('/image', express.static(avatarMulter.uploadsFolder));
 
 usersRouter.get('/list', ensureSTAuthenticated, usersController.index);
 

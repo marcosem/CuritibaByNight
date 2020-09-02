@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
 import { container } from 'tsyringe';
+import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
+import { classToClass } from 'class-transformer';
 
 export default class SessionsController {
   public async create(req: Request, res: Response): Promise<Response> {
@@ -10,9 +11,9 @@ export default class SessionsController {
 
     const { user, token } = await authenticateUser.execute({ email, password });
 
-    delete user.password;
+    // delete user.password;
     delete user.secret;
 
-    return res.json({ user, token });
+    return res.json({ user: classToClass(user), token });
   }
 }

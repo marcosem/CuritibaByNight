@@ -9,8 +9,11 @@ import { resolve } from 'path';
 
 const routes = Router();
 const assetsMulter = resolve(uploadConfig('').uploadsFolder, 'assets');
+const avatarMulter = resolve(uploadConfig('').uploadsFolder, 'avatar');
 
 routes.use('/images', express.static(assetsMulter));
+routes.use('/avatar', express.static(avatarMulter));
+
 routes.use('/users', usersRouter);
 routes.use('/character', charactersRouter);
 routes.use('/password', passwordRouter);
