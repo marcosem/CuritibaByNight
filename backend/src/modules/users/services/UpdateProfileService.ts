@@ -67,7 +67,11 @@ class UpdateProfileService {
     profile.email = email;
     profile.phone = phone || profile.phone;
 
-    if (!user.storyteller && storyteller !== undefined) {
+    if (
+      !user.storyteller &&
+      storyteller !== undefined &&
+      profile.storyteller !== storyteller
+    ) {
       throw new AppError(
         'Only authenticated Storytellers can update storyteller permissions',
         401,
