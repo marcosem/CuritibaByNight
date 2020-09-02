@@ -74,7 +74,7 @@ const SignUp: React.FC = () => {
     async (data: FormData) => {
       try {
         formRef.current?.setErrors({});
-        const phoneRegExp = /^$|(\d{2}-\d{4,5}-?\d{4})$/;
+        const phoneRegExp = /^$|(\d{2}-\d{4,5}-\d{4})$/;
 
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome obrigatório'),
