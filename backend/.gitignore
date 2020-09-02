@@ -6,6 +6,8 @@ yarn-error.log
 src/__tests__/coverage/
 dist/
 
+.env
+
 ormconfig-prod.json
 
 tmp/*
