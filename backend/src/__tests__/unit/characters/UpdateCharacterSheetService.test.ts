@@ -51,7 +51,7 @@ describe('UpdateCharacterSheet', () => {
       user_id: user.id,
       char_id: char.id,
       char_name: 'Nosferatu',
-      char_xp: 999,
+      char_xp: 1,
       sheetFilename: 'nosferatu.pdf',
     });
 
@@ -59,7 +59,7 @@ describe('UpdateCharacterSheet', () => {
       id: char.id,
       user_id: user.id,
       name: 'Nosferatu',
-      experience: 999,
+      experience: 1,
       email: char.email,
       file: 'nosferatu.pdf',
     });
@@ -206,5 +206,37 @@ describe('UpdateCharacterSheet', () => {
     });
 
     expect(deleteFile).not.toHaveBeenCalled();
+  });
+
+  it('Should not allow to update character sheet for non existant user', async () => {
+    // Create a user
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: 'I do not exist',
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      email: 'dracula@vampyr.com',
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    await expect(
+      updateCharacterSheet.execute({
+        user_id: user.id,
+        char_id: char.id,
+        char_name: 'Nosferatu',
+        char_xp: 1,
+        sheetFilename: 'nosferatu.pdf',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    expect(deleteFile).toHaveBeenCalledWith('dracula.pdf', 'sheet');
   });
 });

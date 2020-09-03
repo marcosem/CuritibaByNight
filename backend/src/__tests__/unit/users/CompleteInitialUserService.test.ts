@@ -4,9 +4,11 @@ import CreateInitialUser from '@modules/users/services/CreateInitialUserService'
 import CompleteInitialUser from '@modules/users/services/CompleteInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
+import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeHashProvider: FakeHashProvider;
+let fakeMailProvider: FakeMailProvider;
 let completeInitialUser: CompleteInitialUser;
 
 describe('CompleteInitialUser', () => {
@@ -20,7 +22,11 @@ describe('CompleteInitialUser', () => {
   });
 
   it('Should be able to get a just created Initial User', async () => {
-    const createInitialUser = new CreateInitialUser(fakeUsersRepository);
+    fakeMailProvider = new FakeMailProvider();
+    const createInitialUser = new CreateInitialUser(
+      fakeUsersRepository,
+      fakeMailProvider,
+    );
 
     const initialUser = await createInitialUser.execute({
       name: 'A User',
