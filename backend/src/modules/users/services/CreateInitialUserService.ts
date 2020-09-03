@@ -3,6 +3,8 @@ import { uuid } from 'uuidv4';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import { resolve } from 'path';
 
 interface IRequestDTO {
   name: string;
@@ -15,6 +17,8 @@ class CreateInitialUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   public async execute({ name, email, phone }: IRequestDTO): Promise<User> {
@@ -30,6 +34,33 @@ class CreateInitialUserService {
       phone,
       storyteller: false,
       secret: uuid(),
+    });
+
+    const invitationTemplate = resolve(
+      __dirname,
+      '..',
+      'views',
+      'invitation.hbs',
+    );
+
+    // getting user first name.
+    const userNames = user.name.split(' ');
+
+    await this.mailProvider.sendMail({
+      to: {
+        name: user.name,
+        email: user.email,
+      },
+      subject: '[Curitiba By Night] Conheça o nosso site',
+      templateData: {
+        file: invitationTemplate,
+        variables: {
+          name: userNames[0],
+          link: `${process.env.APP_WEB_URL}/complete/${user.secret}`,
+          imgLogo: `${process.env.APP_API_URL}/images/curitibabynight.png`,
+          imgWebsite: `${process.env.APP_API_URL}/images/website.jpg`,
+        },
+      },
     });
 
     return user;

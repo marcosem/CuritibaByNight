@@ -3,12 +3,14 @@ import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepo
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import UpdateCharacterSheetService from '@modules/characters/services/UpdateCharacterSheetService';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
+import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
 import AppError from '@shared/errors/AppError';
 import Character from '@modules/characters/infra/typeorm/entities/Character';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
 let fakeCharactersRepository: FakeCharactersRepository;
+let fakeMailProvider: FakeMailProvider;
 let updateCharacterSheet: UpdateCharacterSheetService;
 
 describe('UpdateCharacterSheet', () => {
@@ -16,11 +18,13 @@ describe('UpdateCharacterSheet', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeStorageProvider = new FakeStorageProvider();
     fakeCharactersRepository = new FakeCharactersRepository();
+    fakeMailProvider = new FakeMailProvider();
 
     updateCharacterSheet = new UpdateCharacterSheetService(
       fakeCharactersRepository,
       fakeUsersRepository,
       fakeStorageProvider,
+      fakeMailProvider,
     );
   });
 

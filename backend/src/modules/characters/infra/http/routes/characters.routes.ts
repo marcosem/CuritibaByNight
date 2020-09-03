@@ -17,12 +17,6 @@ const uploadSheet = multer(sheetMulter);
 usersRouter.post(
   '/add',
   ensureSTAuthenticated,
-  celebrate({
-    [Segments.BODY]: {
-      player_id: Joi.string().uuid().required(),
-      email: Joi.string().email(),
-    },
-  }),
   uploadSheet.single('sheet'),
   charactersController.create,
 );
@@ -30,11 +24,6 @@ usersRouter.post(
 usersRouter.patch(
   '/update',
   ensureSTAuthenticated,
-  celebrate({
-    [Segments.BODY]: {
-      character_id: Joi.string().uuid().required(),
-    },
-  }),
   uploadSheet.single('sheet'),
   charactersController.update,
 );

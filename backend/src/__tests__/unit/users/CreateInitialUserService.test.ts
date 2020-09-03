@@ -2,15 +2,21 @@ import 'reflect-metadata';
 import { isUuid } from 'uuidv4';
 import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
+let fakeMailProvider: FakeMailProvider;
 let createInitialUser: CreateInitialUser;
 
 describe('CreateInitialUser', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
-    createInitialUser = new CreateInitialUser(fakeUsersRepository);
+    fakeMailProvider = new FakeMailProvider();
+    createInitialUser = new CreateInitialUser(
+      fakeUsersRepository,
+      fakeMailProvider,
+    );
   });
 
   it('Should be able to create a new Initial User', async () => {

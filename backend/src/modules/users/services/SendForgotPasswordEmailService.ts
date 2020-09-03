@@ -54,22 +54,6 @@ class SendForgotPasswordEmailService {
           imgPassword: `${process.env.APP_API_URL}/images/password.jpg`,
         },
       },
-      /*
-      attachments: [
-        {
-          filename: 'curitibabynight.png',
-          path: resolve(imageTemplatePath, 'curitibabynight.svg'),
-          // contentType: 'image/svg+xml',
-          cid: 'cbn@curitibabynight',
-        },
-        {
-          filename: 'password.png',
-          path: resolve(imageTemplatePath, 'password.jpg'),
-          // contentType: 'image/jpeg',
-          cid: 'cbn@password',
-        },
-      ],
-      */
     });
   }
 }

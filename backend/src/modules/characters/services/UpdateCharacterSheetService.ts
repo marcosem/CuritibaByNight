@@ -4,6 +4,8 @@ import Character from '@modules/characters/infra/typeorm/entities/Character';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import { resolve } from 'path';
 
 interface IRequestDTO {
   user_id: string;
@@ -22,6 +24,8 @@ class UpdateCharacterSheetService {
     private usersRepository: IUsersRepository,
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   public async execute({
@@ -73,6 +77,46 @@ class UpdateCharacterSheetService {
     char.file = filename;
 
     await this.charactersRepository.update(char);
+
+    const player = await this.usersRepository.findById(char.user_id);
+
+    if (!player) {
+      await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+      throw new AppError('Character player not found', 400);
+    }
+
+    const charUpdateTemplate = resolve(
+      __dirname,
+      '..',
+      'views',
+      'character_update.hbs',
+    );
+
+    // getting user first name.
+    const userNames = player.name.split(' ');
+    const xpMessage =
+      char.experience === 1
+        ? `${char.experience} XP`
+        : `${char.experience} XPs`;
+
+    await this.mailProvider.sendMail({
+      to: {
+        name: player.name,
+        email: player.email,
+      },
+      subject: `[Curitiba By Night] Personagem '${char.name}' atualizado no sistema`,
+      templateData: {
+        file: charUpdateTemplate,
+        variables: {
+          name: userNames[0],
+          char_name: char.name,
+          char_xp: xpMessage,
+          link: `${process.env.APP_WEB_URL}`,
+          imgLogo: `${process.env.APP_API_URL}/images/curitibabynight.png`,
+          imgCharSheet: `${process.env.APP_API_URL}/images/character_sheet.jpg`,
+        },
+      },
+    });
 
     return char;
   }
