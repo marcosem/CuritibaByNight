@@ -50,7 +50,7 @@ class SendForgotPasswordEmailService {
         variables: {
           name: userNames[0],
           link: `${process.env.APP_WEB_URL}/reset_password?token=${token}`,
-          imgLogo: `${process.env.APP_API_URL}/images/curitibabynight.svg`,
+          imgLogo: `${process.env.APP_API_URL}/images/curitibabynight.png`,
           imgPassword: `${process.env.APP_API_URL}/images/password.jpg`,
         },
       },
