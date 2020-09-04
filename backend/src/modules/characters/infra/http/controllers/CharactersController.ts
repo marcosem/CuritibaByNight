@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import GetUserCharacterSheetService from '@modules/characters/services/GetUserCharacterSheetService';
 import CreateCharacterSheetService from '@modules/characters/services/CreateCharacterSheetService';
-import GetCharacterSheetService from '@modules/characters/services/GetCharacterSheetService';
+import GetCharacterService from '@modules/characters/services/GetCharacterService';
 import UpdateCharacterSheetService from '@modules/characters/services/UpdateCharacterSheetService';
 import ParseCharacterSheetService from '@modules/characters/services/ParseCharacterSheetService';
+import RemoveCharacterService from '@modules/characters/services/RemoveCharacterService';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 export default class CharacterController {
   public async create(req: Request, res: Response): Promise<Response> {
@@ -39,22 +41,20 @@ export default class CharacterController {
 
     const char = await createCharacterSheetService.execute(inputData);
 
-    return res.json(char);
+    return res.json(classToClass(char));
   }
 
-  public async show(req: Request, res: Response): Promise<Response | void> {
+  public async show(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
 
-    const getCharacterSheetService = container.resolve(
-      GetCharacterSheetService,
-    );
+    const getCharacterService = container.resolve(GetCharacterService);
 
-    const sheet = await getCharacterSheetService.execute({
+    const char = await getCharacterService.execute({
       user_id: req.user.id,
       char_id: id,
     });
 
-    return res.sendFile(sheet);
+    return res.json(classToClass(char));
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
@@ -69,7 +69,12 @@ export default class CharacterController {
       player_id: player_id || req.user.id,
     });
 
-    return res.json(charList);
+    const charListUpdated = charList.map(char => {
+      const newChar = char;
+      return classToClass(newChar);
+    });
+
+    return res.json(charListUpdated);
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
@@ -103,6 +108,19 @@ export default class CharacterController {
 
     const char = await updateCharacterSheetService.execute(inputData);
 
-    return res.json(char);
+    return res.json(classToClass(char));
+  }
+
+  public async delete(req: Request, res: Response): Promise<Response> {
+    const { character_id } = req.body;
+
+    const removeCharacter = container.resolve(RemoveCharacterService);
+
+    await removeCharacter.execute({
+      user_id: req.user.id,
+      character_id,
+    });
+
+    return res.status(204).json();
   }
 }

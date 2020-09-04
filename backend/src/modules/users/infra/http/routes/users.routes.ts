@@ -19,7 +19,7 @@ const initialUsersController = new InitialUsersController();
 const userAvatarController = new UserAvatarController();
 
 const avatarMulter = uploadConfig('avatar');
-const uploadAvatar = multer(avatarMulter);
+const uploadAvatar = multer(avatarMulter.multer);
 
 // Storyteller users routes
 usersRouter.post(

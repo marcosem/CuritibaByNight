@@ -6,6 +6,7 @@ import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import { resolve } from 'path';
+import uploadConfig from '@config/upload';
 
 interface IRequestDTO {
   user_id: string;
@@ -99,6 +100,14 @@ class UpdateCharacterSheetService {
         ? `${char.experience} XP`
         : `${char.experience} XPs`;
 
+    const assetsUpload = uploadConfig('assets');
+    let baseAssetsURL: string;
+    if (assetsUpload.driver === 's3') {
+      baseAssetsURL = `https://${assetsUpload.config.s3.bucket}.s3.us-east-2.amazonaws.com`;
+    } else {
+      baseAssetsURL = `${process.env.APP_API_URL}/images`;
+    }
+
     await this.mailProvider.sendMail({
       to: {
         name: player.name,
@@ -112,8 +121,8 @@ class UpdateCharacterSheetService {
           char_name: char.name,
           char_xp: xpMessage,
           link: `${process.env.APP_WEB_URL}`,
-          imgLogo: `${process.env.APP_API_URL}/images/curitibabynight.png`,
-          imgCharSheet: `${process.env.APP_API_URL}/images/character_sheet.jpg`,
+          imgLogo: `${baseAssetsURL}/curitibabynight.png`,
+          imgCharSheet: `${baseAssetsURL}/character_sheet.jpg`,
         },
       },
     });

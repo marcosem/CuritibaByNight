@@ -1,15 +1,22 @@
 import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import RemoveUserService from '@modules/users/services/RemoveUserService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
+let fakeStorageProvider: FakeStorageProvider;
 let removeUserService: RemoveUserService;
 
 describe('RemoveUser', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
-    removeUserService = new RemoveUserService(fakeUsersRepository);
+    fakeStorageProvider = new FakeStorageProvider();
+
+    removeUserService = new RemoveUserService(
+      fakeUsersRepository,
+      fakeStorageProvider,
+    );
   });
 
   it('Should be to delete his own user', async () => {

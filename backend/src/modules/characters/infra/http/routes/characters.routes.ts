@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import multer from 'multer';
 import uploadConfig from '@config/upload';
 import { celebrate, Segments, Joi } from 'celebrate';
@@ -11,7 +11,7 @@ const usersRouter = Router();
 const charactersController = new CharactersController();
 
 const sheetMulter = uploadConfig('sheet');
-const uploadSheet = multer(sheetMulter);
+const uploadSheet = multer(sheetMulter.multer);
 
 // Character sheet routes
 usersRouter.post(
@@ -26,6 +26,23 @@ usersRouter.patch(
   ensureSTAuthenticated,
   uploadSheet.single('sheet'),
   charactersController.update,
+);
+
+usersRouter.delete(
+  '/remove',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      character_id: Joi.string().uuid().required(),
+    },
+  }),
+  charactersController.delete,
+);
+
+usersRouter.use(
+  '/sheet',
+  ensureSTAuthenticated,
+  express.static(sheetMulter.uploadsFolder),
 );
 
 // Show my character sheet

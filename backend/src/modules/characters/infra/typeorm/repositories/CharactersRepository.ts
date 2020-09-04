@@ -59,6 +59,13 @@ class CharactersRepository implements ICharactersRepository {
 
     return charList;
   }
+
+  public async delete(char_id: string): Promise<void> {
+    const char = await this.ormRepository.findOne({ where: { id: char_id } });
+    if (char) {
+      await this.ormRepository.remove(char);
+    }
+  }
 }
 
 export default CharactersRepository;

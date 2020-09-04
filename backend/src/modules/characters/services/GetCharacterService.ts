@@ -2,8 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
-import uploadConfig from '@config/upload';
-import path from 'path';
+import Character from '@modules/characters/infra/typeorm/entities/Character';
 
 interface IRequestDTO {
   user_id: string;
@@ -11,7 +10,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class GetCharacterSheet {
+class GetCharacterService {
   constructor(
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
@@ -19,7 +18,7 @@ class GetCharacterSheet {
     private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute({ user_id, char_id }: IRequestDTO): Promise<string> {
+  public async execute({ user_id, char_id }: IRequestDTO): Promise<Character> {
     const char = await this.charactersRepository.findById(char_id);
 
     if (!char) {
@@ -40,13 +39,28 @@ class GetCharacterSheet {
       );
     }
 
-    const playerSheetFilePath = path.join(
-      uploadConfig('sheet').uploadsFolder,
-      char.file,
-    );
+    return char;
+
+    /*
+    const sheetUpload = uploadConfig('sheet');
+    let playerSheetFilePath;
+    switch (sheetUpload.driver) {
+      case 's3':
+        playerSheetFilePath = `https://${sheetUpload.config.s3.bucket}.s3.us-east-2.amazonaws.com/${char.file}`;
+        // playerSheetFilePath = await request.get(url);
+        break;
+      case 'disk':
+      default:
+        playerSheetFilePath = path.join(
+          uploadConfig('sheet').uploadsFolder,
+          char.file,
+        );
+        break;
+    }
 
     return playerSheetFilePath;
+    */
   }
 }
 
-export default GetCharacterSheet;
+export default GetCharacterService;

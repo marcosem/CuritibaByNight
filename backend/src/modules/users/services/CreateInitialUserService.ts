@@ -5,6 +5,7 @@ import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import { resolve } from 'path';
+import uploadConfig from '@config/upload';
 
 interface IRequestDTO {
   name: string;
@@ -46,6 +47,14 @@ class CreateInitialUserService {
     // getting user first name.
     const userNames = user.name.split(' ');
 
+    const assetsUpload = uploadConfig('assets');
+    let baseAssetsURL: string;
+    if (assetsUpload.driver === 's3') {
+      baseAssetsURL = `https://${assetsUpload.config.s3.bucket}.s3.us-east-2.amazonaws.com`;
+    } else {
+      baseAssetsURL = `${process.env.APP_API_URL}/images`;
+    }
+
     await this.mailProvider.sendMail({
       to: {
         name: user.name,
@@ -57,8 +66,8 @@ class CreateInitialUserService {
         variables: {
           name: userNames[0],
           link: `${process.env.APP_WEB_URL}/complete/${user.secret}`,
-          imgLogo: `${process.env.APP_API_URL}/images/curitibabynight.png`,
-          imgWebsite: `${process.env.APP_API_URL}/images/website.jpg`,
+          imgLogo: `${baseAssetsURL}/curitibabynight.png`,
+          imgWebsite: `${baseAssetsURL}/images/website.jpg`,
         },
       },
     });

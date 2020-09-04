@@ -53,6 +53,11 @@ class FakeCharactersRepository implements ICharactersRepository {
   public async listAll(): Promise<Character[]> {
     return this.chars;
   }
+
+  public async delete(char_id: string): Promise<void> {
+    const listWithRemovedChars = this.chars.filter(char => char.id !== char_id);
+    this.chars = listWithRemovedChars;
+  }
 }
 
 export default FakeCharactersRepository;

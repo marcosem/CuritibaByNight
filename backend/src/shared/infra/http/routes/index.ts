@@ -5,11 +5,10 @@ import passwordRouter from '@modules/users/infra/http/routes/password.routes';
 import sessionsRouter from '@modules/users/infra/http/routes/sessions.routes';
 import profileRouter from '@modules/users/infra/http/routes/profile.routes';
 import uploadConfig from '@config/upload';
-import { resolve } from 'path';
 
 const routes = Router();
-const assetsMulter = resolve(uploadConfig('').uploadsFolder, 'assets');
-const avatarMulter = resolve(uploadConfig('').uploadsFolder, 'avatar');
+const assetsMulter = uploadConfig('assets').uploadsFolder;
+const avatarMulter = uploadConfig('avatar').uploadsFolder;
 
 routes.use('/images', express.static(assetsMulter));
 routes.use('/avatar', express.static(avatarMulter));

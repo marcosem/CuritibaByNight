@@ -2,6 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -13,6 +14,8 @@ class RemoveUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute({ user_id, profile_id }: IRequestDTO): Promise<void> {
@@ -37,6 +40,10 @@ class RemoveUserService {
       if (!profile) {
         throw new AppError('User not found', 400);
       }
+    }
+
+    if (profile.avatar) {
+      this.storageProvider.deleteFile(profile.avatar, 'avatar');
     }
 
     await this.usersRepository.delete(profileID);

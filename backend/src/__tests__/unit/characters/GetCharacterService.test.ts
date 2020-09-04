@@ -1,19 +1,19 @@
 import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-import GetCharacterSheetService from '@modules/characters/services/GetCharacterSheetService';
+import GetCharacterService from '@modules/characters/services/GetCharacterService';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
-let getCharacterSheet: GetCharacterSheetService;
+let getCharacter: GetCharacterService;
 
-describe('GetCharacterSheet', () => {
+describe('GetCharacter', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
 
-    getCharacterSheet = new GetCharacterSheetService(
+    getCharacter = new GetCharacterService(
       fakeCharactersRepository,
       fakeUsersRepository,
     );
@@ -36,17 +36,23 @@ describe('GetCharacterSheet', () => {
       email: 'dracula@vampyr.com',
     });
 
-    const charSheet = await getCharacterSheet.execute({
+    const charLoaded = await getCharacter.execute({
       user_id: user.id,
       char_id: char.id,
     });
 
-    expect(charSheet).toContain(char.file);
+    expect(charLoaded).toMatchObject({
+      id: char.id,
+      name: char.name,
+      experience: char.experience,
+      file: char.file,
+      email: char.email,
+    });
   });
 
   it('Should not be able to get a non existant character sheet', async () => {
     await expect(
-      getCharacterSheet.execute({
+      getCharacter.execute({
         user_id: 'Does not matter',
         char_id: 'I do not exist',
       }),
@@ -71,7 +77,7 @@ describe('GetCharacterSheet', () => {
     });
 
     await expect(
-      getCharacterSheet.execute({
+      getCharacter.execute({
         user_id: 'I am invalid',
         char_id: char.id,
       }),
@@ -100,7 +106,7 @@ describe('GetCharacterSheet', () => {
       email: 'dracula@vampyr.com',
     });
     await expect(
-      getCharacterSheet.execute({
+      getCharacter.execute({
         user_id: nonSTUser.id,
         char_id: char.id,
       }),

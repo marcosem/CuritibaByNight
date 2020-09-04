@@ -7,4 +7,5 @@ export default interface ICharacterRepository {
   findById(character_id: string): Promise<Character | undefined>;
   findByUserId(user_id: string): Promise<Character[]>;
   listAll(): Promise<Character[]>;
+  delete(character_id: string): Promise<void>;
 }
