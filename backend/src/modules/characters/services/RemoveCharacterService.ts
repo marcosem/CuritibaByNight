@@ -1,5 +1,4 @@
 import { injectable, inject } from 'tsyringe';
-// import User from '@modules/users/infra/typeorm/entities/User';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
@@ -11,7 +10,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class RemoveUserService {
+class RemoveCharacterService {
   constructor(
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
@@ -42,12 +41,10 @@ class RemoveUserService {
       throw new AppError('Character not found', 400);
     }
 
-    if (char.file) {
-      this.storageProvider.deleteFile(char.file, 'sheet');
-    }
+    this.storageProvider.deleteFile(char.file, 'sheet');
 
     await this.charactersRepository.delete(char.id);
   }
 }
 
-export default RemoveUserService;
+export default RemoveCharacterService;
