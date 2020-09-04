@@ -102,6 +102,7 @@ const SignUp: React.FC = () => {
           email: data.email,
           phone: data.phone,
           password: data.password,
+          password_confirmation: data.passwordConfirm,
           secret: id,
         });
 
