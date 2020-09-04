@@ -32,6 +32,13 @@ class UserTokensRepository implements IUserTokensRepository {
     // if not found, return undefined
     return userTokenFound;
   }
+
+  public async delete(token: string): Promise<void> {
+    const userToken = await this.ormRepository.findOne({ where: { token } });
+    if (userToken) {
+      await this.ormRepository.remove(userToken);
+    }
+  }
 }
 
 export default UserTokensRepository;

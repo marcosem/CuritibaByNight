@@ -1,5 +1,4 @@
 import styled, { keyframes } from 'styled-components';
-import { shade } from 'polished';
 import resetPasswordBackgroundImg from '../../assets/reset_password.png';
 
 export const Container = styled.div`
