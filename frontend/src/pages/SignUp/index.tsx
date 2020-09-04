@@ -85,8 +85,13 @@ const SignUp: React.FC = () => {
             phoneRegExp,
             'Entre com o formato: xx-xxxxx-xxxx',
           ),
-          password: Yup.string().min(6, 'Mínimo 6 caracteres'),
-          passwordConfirm: Yup.string().required('Confimação obrigatória'),
+          password: Yup.string()
+            .min(6, 'Mínimo 6 caracteres')
+            .required('Senha Obrigatória'),
+          passwordConfirm: Yup.string().oneOf(
+            [Yup.ref('password'), undefined],
+            'Confirmação não combina',
+          ),
         });
 
         await schema.validate(data, { abortEarly: false });
