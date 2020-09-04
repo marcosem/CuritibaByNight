@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
-import signInBackgroundImg from '../../assets/sign-in-background.png';
+import forgotPasswordBackgroundImg from '../../assets/forgot_password.png';
 
 export const Container = styled.div`
   height: 100vh;
@@ -45,27 +45,35 @@ export const AnimationContainer = styled.div`
     h1 {
       margin-bottom: 24px;
     }
-
-    a {
-      color: #d5d5d5;
-      display: block;
-      margin-top: 16px;
-      text-decoration: none;
-      transition: color 0.2s;
-
-      &:hover {
-        color: ${shade(0.2, '#d5d5d5')};
-      }
-    }
   }
 
   button {
     margin-top: 24px;
   }
+
+  > a {
+    color: #d5d5d5;
+    font-weight: 500;
+    display: block;
+    margin-top: 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+
+    transition: color 0.2s;
+
+    &:hover {
+      color: ${shade(0.2, '#d5d5d5')};
+    }
+
+    svg {
+      margin-right: 16px;
+    }
+  }
 `;
 
 export const Background = styled.div`
   flex: 1;
-  background: url(${signInBackgroundImg}) no-repeat center;
+  background: url(${forgotPasswordBackgroundImg}) no-repeat center;
   background-size: cover;
 `;
