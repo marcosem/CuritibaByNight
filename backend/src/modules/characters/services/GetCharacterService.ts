@@ -40,26 +40,6 @@ class GetCharacterService {
     }
 
     return char;
-
-    /*
-    const sheetUpload = uploadConfig('sheet');
-    let playerSheetFilePath;
-    switch (sheetUpload.driver) {
-      case 's3':
-        playerSheetFilePath = `https://${sheetUpload.config.s3.bucket}.s3.us-east-2.amazonaws.com/${char.file}`;
-        // playerSheetFilePath = await request.get(url);
-        break;
-      case 'disk':
-      default:
-        playerSheetFilePath = path.join(
-          uploadConfig('sheet').uploadsFolder,
-          char.file,
-        );
-        break;
-    }
-
-    return playerSheetFilePath;
-    */
   }
 }
 

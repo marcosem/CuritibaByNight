@@ -4,7 +4,6 @@ import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IUserTokensRepository from '@modules/users/repositories/IUserTokensRepository';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import { resolve } from 'path';
-import uploadConfig from '@config/upload';
 
 interface IRequestDTO {
   email: string;
@@ -40,14 +39,6 @@ class SendForgotPasswordEmailService {
     // getting user first name.
     const userNames = user.name.split(' ');
 
-    const assetsUpload = uploadConfig('assets');
-    let baseAssetsURL: string;
-    if (assetsUpload.driver === 's3') {
-      baseAssetsURL = `https://${assetsUpload.config.s3.bucket}.s3.us-east-2.amazonaws.com`;
-    } else {
-      baseAssetsURL = `${process.env.APP_API_URL}/images`;
-    }
-
     await this.mailProvider.sendMail({
       to: {
         name: user.name,
@@ -59,8 +50,8 @@ class SendForgotPasswordEmailService {
         variables: {
           name: userNames[0],
           link: `${process.env.APP_WEB_URL}/reset_password?token=${token}`,
-          imgLogo: `${baseAssetsURL}/curitibabynight.png`,
-          imgPassword: `${baseAssetsURL}/password.jpg`,
+          imgLogo: 'curitibabynight.png',
+          imgPassword: 'password.jpg',
         },
       },
     });
