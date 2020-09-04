@@ -2,11 +2,13 @@ import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import RemoveUserService from '@modules/users/services/RemoveUserService';
+import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
 let removeUserService: RemoveUserService;
+let updateUserAvatar: UpdateUserAvatarService;
 
 describe('RemoveUser', () => {
   beforeEach(() => {
@@ -19,7 +21,7 @@ describe('RemoveUser', () => {
     );
   });
 
-  it('Should be to delete his own user', async () => {
+  it('Should be able to delete his own user', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -103,5 +105,32 @@ describe('RemoveUser', () => {
         profile_id: 'I do not exist',
       }),
     ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should delete avatar file when removing an user', async () => {
+    updateUserAvatar = new UpdateUserAvatarService(
+      fakeUsersRepository,
+      fakeStorageProvider,
+    );
+
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: false,
+    });
+
+    await updateUserAvatar.execute({
+      user_id: user.id,
+      avatarFilename: 'avatar.jpg',
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    await removeUserService.execute({ user_id: user.id });
+    const listLenght = await fakeUsersRepository.listAll();
+
+    expect(listLenght).toHaveLength(0);
+    expect(deleteFile).toBeCalledWith('avatar.jpg', 'avatar');
   });
 });
