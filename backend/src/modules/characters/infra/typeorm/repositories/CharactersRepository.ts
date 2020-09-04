@@ -39,6 +39,7 @@ class CharactersRepository implements ICharactersRepository {
   public async findById(char_id: string): Promise<Character | undefined> {
     const charFound = await this.ormRepository.findOne({
       where: { id: char_id },
+      relations: ['user'],
     });
 
     // if not found, return undefined
