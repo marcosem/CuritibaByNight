@@ -1,31 +1,76 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 
-import { FiPower } from 'react-icons/fi';
-import { Container, Header, HeaderContent, Profile } from './styles';
-import imgLogoHeader from '../../assets/logo_header.svg';
-import { useAuth } from '../../hooks/auth';
+import { Container, Content, Character, CharTitle, CharSheet } from './styles';
+
+import Header from '../../components/Header';
 
 const Dashboard: React.FC = () => {
-  const { signOut, user } = useAuth();
+  const [showCharSheet, setShowCharSheet] = useState<boolean>(false);
+
+  const handleShowCharSheet = useCallback(() => {
+    setShowCharSheet(!showCharSheet);
+  }, [showCharSheet]);
 
   return (
     <Container>
-      <Header>
-        <HeaderContent>
-          <img src={imgLogoHeader} alt="Curitiba By Night" />
-          <Profile>
-            <img src={user.avatar_url} alt={user.name} />
+      <Header />
+      <Content>
+        <div>
+          <strong>Clique no personagem para visualizar sua ficha:</strong>
+        </div>
+        <Character>
+          <CharTitle onClick={handleShowCharSheet}>
             <div>
-              <span>Bem-vindo,</span>
-              <strong>{user.name}</strong>
+              <strong>Personagem:</strong>
+              <span>Alzarir</span>
             </div>
-          </Profile>
-
-          <button type="button" onClick={signOut}>
-            <FiPower />
-          </button>
-        </HeaderContent>
-      </Header>
+            <div>
+              <strong>XP Disponível:</strong>
+              <span>10</span>
+            </div>
+            <div>
+              <strong>Última Atualização:</strong>
+              <span>10/10/2020</span>
+            </div>
+          </CharTitle>
+          <CharSheet>
+            {showCharSheet && (
+              <iframe
+                title="Personagem"
+                src="http://localhost:3333/character/sheet/6226a8a5796f5f5c08ec-julio grozki.pdf"
+                width="100%"
+                height="660px"
+              />
+            )}
+          </CharSheet>
+        </Character>
+        <Character>
+          <CharTitle onClick={handleShowCharSheet}>
+            <div>
+              <strong>Personagem:</strong>
+              <span>Alzalaught</span>
+            </div>
+            <div>
+              <strong>XP Disponível:</strong>
+              <span>10</span>
+            </div>
+            <div>
+              <strong>Última Atualização:</strong>
+              <span>10/10/2020</span>
+            </div>
+          </CharTitle>
+          <CharSheet>
+            {showCharSheet && (
+              <iframe
+                title="Personagem"
+                src="http://localhost:3333/character/sheet/6226a8a5796f5f5c08ec-julio grozki.pdf"
+                width="100%"
+                height="660px"
+              />
+            )}
+          </CharSheet>
+        </Character>
+      </Content>
     </Container>
   );
 };

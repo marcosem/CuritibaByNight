@@ -1,10 +1,4 @@
-import React, {
-  // InputHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { IconBaseProps } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
 import ReactInputMask, { Props as InputProps } from 'react-input-mask';

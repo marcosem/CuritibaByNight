@@ -1,60 +1,81 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+interface ProfileProps {
+  isST: boolean;
+}
+
+const appearFromTop = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(1);
+  }
+`;
+
+const appearFromLeft = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(1);
+  }
+`;
 
 export const Container = styled.div`
   height: 100vh;
 `;
 
-export const Header = styled.header`
-  padding: 10px 0;
-  background: #989797;
-`;
-
-export const HeaderContent = styled.div`
+export const Content = styled.main`
   max-width: 1120px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
+  margin: 18px auto;
 
-  > img {
-    height: 80px;
-  }
-
-  button {
-    margin-left: auto;
-    background: transparent;
-    border: 0;
-
-    svg {
-      color: #860209;
-      width: 32px;
-      height: 32px;
+  > div {
+    margin: 0 0 10px 20px;
+    > strong {
+      color: #000;
     }
   }
 `;
 
-export const Profile = styled.div`
+export const Character = styled.div``;
+
+export const CharTitle = styled.div`
+  border-radius: 10px;
+  background-color: #ccc;
+  cursor: pointer;
+  max-width: 1120px;
   display: flex;
-  align-items: center;
-  margin-left: 80px;
+  justify-content: space-between;
+  padding: 10px 45px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
 
-  img {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-  }
-
-  div {
-    display: flex;
-    flex-direction: column;
-    margin-left: 16px;
-    line-height: 24px;
-  }
-
-  span {
-    color: #000;
-  }
+  animation: ${appearFromLeft} 1s;
 
   strong {
     color: #860209;
+  }
+
+  span {
+    padding-right: 10px;
+    margin-left: 12px;
+    color: #000;
+  }
+
+  svg {
+    color: #000;
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+export const CharSheet = styled.div`
+  iframe {
+    animation: ${appearFromTop} 1s;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
   }
 `;

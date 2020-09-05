@@ -39,11 +39,7 @@ usersRouter.delete(
   charactersController.delete,
 );
 
-usersRouter.use(
-  '/sheet',
-  ensureSTAuthenticated,
-  express.static(sheetMulter.uploadsFolder),
-);
+usersRouter.use('/sheet', express.static(sheetMulter.uploadsFolder));
 
 // Show my character sheet
 usersRouter.get(
