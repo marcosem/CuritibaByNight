@@ -12,7 +12,7 @@ export default {
   driver: `${process.env.MAIL_DRIVER}` || 'ethereal',
   defaults: {
     from: {
-      email: 'do-not-reply@curitibabynight.com',
+      email: `${process.env.APP_NOTIFICATION_EMAIL}`,
       name: 'Curitiba By Night',
     },
   },
