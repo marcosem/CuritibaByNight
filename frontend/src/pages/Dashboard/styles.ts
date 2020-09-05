@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { lighten } from 'polished';
 
 interface ProfileProps {
   isST: boolean;
@@ -42,19 +43,23 @@ export const Content = styled.main`
   }
 `;
 
-export const Character = styled.div``;
+export const Character = styled.div`
+  background-color: #ccc;
+  border-radius: 10px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  animation: ${appearFromLeft} 1s;
+
+  &:hover {
+    background: ${lighten(0.2, '#ccc')};
+  }
+`;
 
 export const CharTitle = styled.div`
-  border-radius: 10px;
-  background-color: #ccc;
   cursor: pointer;
   max-width: 1120px;
   display: flex;
   justify-content: space-between;
   padding: 10px 45px;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-
-  animation: ${appearFromLeft} 1s;
 
   strong {
     color: #860209;

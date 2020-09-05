@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { lighten, shade } from 'polished';
 
 interface ProfileProps {
   isST: boolean;
@@ -28,6 +29,12 @@ export const HeaderContent = styled.div`
       color: #860209;
       width: 32px;
       height: 32px;
+
+      transition: color 0.3s;
+
+      &:hover {
+        color: ${lighten(0.14, '#860209')};
+      }
     }
   }
 `;
@@ -42,12 +49,22 @@ export const Profile = styled.div<ProfileProps>`
     height: 56px;
     border-radius: 50%;
 
+    transition: border-color 0.3s;
+
     border: 3px solid #860209;
+
+    &:hover {
+      border-color: ${lighten(0.14, '#860209')};
+    }
 
     ${props =>
       props.isST &&
       css`
         border: 3px solid #ffd700;
+
+        &:hover {
+          border-color: ${shade(0.2, '#ffd700')};
+        }
       `}
   }
 
