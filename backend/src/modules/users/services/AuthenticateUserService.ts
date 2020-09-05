@@ -29,7 +29,7 @@ class AuthenticateUserService {
     // Verify is user email already exist
     const user = await this.usersRepository.findByEmail(email);
     if (!user) {
-      throw new AppError('Incorrect login validation.', 401);
+      throw new AppError('Incorrect login validation', 401);
     }
 
     // Validate password
@@ -40,7 +40,7 @@ class AuthenticateUserService {
     );
 
     if (!passwordMatched) {
-      throw new AppError('Incorrect login validation.', 401);
+      throw new AppError('Incorrect login validation', 401);
     }
 
     const { secret, expiresIn } = authConfig.jwt;

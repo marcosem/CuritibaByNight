@@ -40,7 +40,7 @@ export default async function ensureSTAuthenticated(
     const isST = user ? user.storyteller : false;
 
     if (!isST) {
-      throw new AppError('User does not have Storyteller permissions.', 401);
+      throw new AppError('User does not have Storyteller permissions', 401);
     }
 
     // Redefinition of express.Request on @types, adding .user

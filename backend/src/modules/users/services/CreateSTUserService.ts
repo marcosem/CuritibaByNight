@@ -29,13 +29,13 @@ class CreateSTUserService {
     st_secret,
   }: IRequestDTO): Promise<User> {
     if (st_secret !== 'GimmeThePower!') {
-      throw new AppError('User not authorized.', 401);
+      throw new AppError('User not authorized', 401);
     }
 
     // Verify is user email already exist
     const userEmailExist = await this.usersRepository.findByEmail(email);
     if (userEmailExist) {
-      throw new AppError('Email address already exist.', 409);
+      throw new AppError('Email address already exist', 409);
     }
 
     const hashedPassword = await this.hashProvider.generateHash(password);

@@ -31,14 +31,14 @@ class CreateInitialUserService {
     secret,
   }: IRequestDTO): Promise<User> {
     if (!isUuid(secret)) {
-      throw new AppError('Invalid Token.', 401);
+      throw new AppError('Invalid Token', 401);
     }
 
     // Search user by provided secret
     const userSecretExist = await this.usersRepository.findBySecret(secret);
 
     if (!userSecretExist) {
-      throw new AppError('Invalid Token.', 401);
+      throw new AppError('Invalid Token', 401);
     }
 
     const hashedPassword = await this.hashProvider.generateHash(password);
