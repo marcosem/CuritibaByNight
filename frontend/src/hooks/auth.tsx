@@ -1,10 +1,19 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable camelcase */
+
 import React, { createContext, useCallback, useState, useContext } from 'react';
 import api from '../services/api';
 
+interface IUser {
+  id: string;
+  name: string;
+  storyteller: boolean;
+  avatar_url: string;
+}
+
 interface AuthState {
   token: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  user: object;
+  user: IUser;
 }
 
 interface SingInCreadentials {
@@ -13,8 +22,7 @@ interface SingInCreadentials {
 }
 
 interface AuthContextData {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  user: object;
+  user: IUser;
   signIn(credentials: SingInCreadentials): Promise<void>;
   signOut(): void;
 }
