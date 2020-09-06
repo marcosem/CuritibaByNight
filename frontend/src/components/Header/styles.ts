@@ -79,7 +79,28 @@ export const Profile = styled.div<ProfileProps>`
     color: #000;
   }
 
-  strong {
+  a {
+    text-decoration: none;
     color: #860209;
+
+    transition: color 0.3s;
+
+    &:hover {
+      color: ${shade(0.2, '#860209')};
+    }
+  }
+`;
+
+export const MyPages = styled.div`
+  margin-left: auto;
+  background: transparent;
+  border: 0;
+  display: flex;
+  flex-direction: row;
+
+  svg {
+    width: 40px;
+    height: 40px;
+    margin: 0 16px;
   }
 `;

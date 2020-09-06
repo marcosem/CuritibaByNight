@@ -1,9 +1,11 @@
 import React from 'react';
 import { FiPower } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import { FaFacebook, FaInstagram, FaDiscord } from 'react-icons/fa';
 import { useAuth } from '../../hooks/auth';
 
 import imgLogoHeader from '../../assets/logo_header.svg';
-import { Container, HeaderContent, Profile } from './styles';
+import { Container, HeaderContent, Profile, MyPages } from './styles';
 
 const Header: React.FC = () => {
   const { signOut, user } = useAuth();
@@ -16,9 +18,41 @@ const Header: React.FC = () => {
           <img src={user.avatar_url} alt={user.name} />
           <div>
             <span>Bem-vindo,</span>
-            <strong>{user.name}</strong>
+            <Link to="/profile">
+              <strong>{user.name}</strong>
+            </Link>
           </div>
         </Profile>
+
+        <MyPages>
+          <div>
+            <a
+              href="https://www.facebook.com/groups/283920641632885/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaFacebook color="#3b5998" />
+            </a>
+          </div>
+          <div>
+            <a
+              href="https://discord.com/channels/708080543043944448/708080543618564099"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaDiscord color="#2c2f33" />
+            </a>
+          </div>
+          <div>
+            <a
+              href="https://www.instagram.com/curitibabynight/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaInstagram color="#bc2a8d" />
+            </a>
+          </div>
+        </MyPages>
 
         <button type="button" onClick={signOut}>
           <FiPower />
