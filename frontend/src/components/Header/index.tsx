@@ -31,7 +31,7 @@ const Header: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaFacebook color="#3b5998" />
+              <FaFacebook />
             </a>
           </div>
           <div>
@@ -40,7 +40,7 @@ const Header: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaDiscord color="#2c2f33" />
+              <FaDiscord />
             </a>
           </div>
           <div>
@@ -49,7 +49,7 @@ const Header: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaInstagram color="#bc2a8d" />
+              <FaInstagram />
             </a>
           </div>
         </MyPages>

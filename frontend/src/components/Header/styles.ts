@@ -99,8 +99,13 @@ export const MyPages = styled.div`
   flex-direction: row;
 
   svg {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     margin: 0 16px;
+    color: #2c2f33;
+
+    &:hover {
+      color: ${lighten(0.1, '#2c2c2c')};
+    }
   }
 `;
