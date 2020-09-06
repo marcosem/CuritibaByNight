@@ -7,6 +7,8 @@ import api from '../services/api';
 interface IUser {
   id: string;
   name: string;
+  email: string;
+  phone: string;
   storyteller: boolean;
   avatar_url: string;
 }
@@ -36,6 +38,7 @@ const AuthProvider: React.FC = ({ children }) => {
     const user = localStorage.getItem('@CuritibaByNight:user');
 
     if (token && user) {
+      api.defaults.headers.Authorization = `Bearer ${token}`;
       return { token, user: JSON.parse(user) };
     }
 
@@ -52,6 +55,8 @@ const AuthProvider: React.FC = ({ children }) => {
 
     localStorage.setItem('@CuritibaByNight:token', token);
     localStorage.setItem('@CuritibaByNight:user', JSON.stringify(user));
+
+    api.defaults.headers.Authorization = `Bearer ${token}`;
 
     setData({ token, user });
   }, []);

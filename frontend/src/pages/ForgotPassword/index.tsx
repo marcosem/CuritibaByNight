@@ -92,7 +92,7 @@ const ResetPassword: React.FC = () => {
           </Form>
           <Link to="/">
             <FiLogIn />
-            Voltar para Logon
+            Voltar para Login
           </Link>
         </AnimationContainer>
       </Content>

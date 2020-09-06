@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { FiUser, FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiArrowLeft, FiCamera } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -11,11 +11,11 @@ import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import { Container, Content, AnimationContainer, Background } from './styles';
+import { Container, Content, AvatarInput } from './styles';
 
-import Logo from '../../components/Logo';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import { useAuth } from '../../hooks/auth';
 
 interface FormData {
   name: string;
@@ -31,44 +31,12 @@ interface InitialUserData {
   phone?: string;
 }
 
-const SignUp: React.FC = () => {
+const Profile: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
-  const { id } = useParams();
-  const [isBusy, setBusy] = useState(true);
-  const [userData, setUserData] = useState<InitialUserData>(
-    {} as InitialUserData,
-  );
   const { addToast } = useToast();
   const history = useHistory();
 
-  useEffect(() => {
-    async function getUserData(): Promise<void> {
-      setBusy(true);
-      try {
-        const response = await api.get(`users/complete/${id}`);
-        const user = response.data;
-
-        if (user) {
-          setUserData({
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-          });
-        }
-      } catch (err) {
-        history.push('/');
-
-        addToast({
-          type: 'error',
-          title: 'Token Inválido',
-          description: 'Token inválido ou vencido, solicite outo ao narrador.',
-        });
-      }
-      setBusy(false);
-    }
-
-    getUserData();
-  }, [id, addToast, history]);
+  const { user } = useAuth();
 
   const handleSubmit = useCallback(
     async (data: FormData) => {
@@ -102,14 +70,15 @@ const SignUp: React.FC = () => {
           });
         }
 
+        /*
         await api.post('/users/complete', {
           name: data.name,
           email: data.email,
           phone: data.phone,
           password: data.password,
           password_confirmation: data.passwordConfirm,
-          secret: id,
         });
+        */
 
         history.push('/');
 
@@ -140,70 +109,90 @@ const SignUp: React.FC = () => {
         });
       }
     },
-    [history, addToast, id],
+    [history, addToast],
   );
 
   return (
     <Container>
-      <Background />
+      <header>
+        <div>
+          <Link to="/">
+            <FiArrowLeft />
+          </Link>
+        </div>
+      </header>
 
       <Content>
-        {!isBusy && userData.name && (
-          <AnimationContainer>
-            <Logo />
+        <Form
+          onSubmit={handleSubmit}
+          ref={formRef}
+          initialData={{
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+          }}
+        >
+          <AvatarInput>
+            <img src={user.avatar_url} alt={user.name} />
+            <button type="button">
+              <FiCamera />
+            </button>
+          </AvatarInput>
 
-            <Form onSubmit={handleSubmit} ref={formRef} initialData={userData}>
-              <h1>Faça seu Cadastro</h1>
-              <Input
-                name="name"
-                icon={FiUser}
-                mask=""
-                placeholder="Nome do Jogador"
-              />
-              <Input
-                name="email"
-                icon={FiMail}
-                mask=""
-                placeholder="E-Mail do Jogador"
-              />
-              <Input
-                name="phone"
-                icon={FaWhatsapp}
-                mask="99-9999tt999?"
-                formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
-                maskChar={null}
-                placeholder="Celular"
-              />
+          <h1>Meu Perfil</h1>
+          <Input
+            name="name"
+            icon={FiUser}
+            mask=""
+            placeholder="Nome do Jogador"
+          />
+          <Input
+            name="email"
+            icon={FiMail}
+            mask=""
+            placeholder="E-Mail do Jogador"
+          />
+          <Input
+            name="phone"
+            icon={FaWhatsapp}
+            mask="99-9999tt999?"
+            formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
+            maskChar={null}
+            placeholder="Celular"
+          />
 
-              <Input
-                name="password"
-                icon={FiLock}
-                type="password"
-                mask=""
-                placeholder="Senha"
-              />
-              <Input
-                name="passwordConfirm"
-                icon={FiLock}
-                type="password"
-                mask=""
-                placeholder="Confirme a Senha"
-              />
+          <Input
+            containerStyle={{ marginTop: 24 }}
+            name="oldPassword"
+            icon={FiLock}
+            type="password"
+            mask=""
+            placeholder="Senha Atual"
+          />
 
-              <Button type="submit">Cadastrar</Button>
-            </Form>
-            <Link to="/">
-              <FiArrowLeft />
-              Voltar para Login
-            </Link>
-          </AnimationContainer>
-        )}
+          <Input
+            name="password"
+            icon={FiLock}
+            type="password"
+            mask=""
+            placeholder="Nova Senha"
+          />
+          <Input
+            name="passwordConfirm"
+            icon={FiLock}
+            type="password"
+            mask=""
+            placeholder="Confirme a Senha"
+          />
+
+          <Button type="submit">Confirmar Alterações</Button>
+        </Form>
       </Content>
     </Container>
   );
 };
 
-export default SignUp;
+export default Profile;
 
 /*
 handlerChangeBrazilianPhone = (ev) => {

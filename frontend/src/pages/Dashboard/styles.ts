@@ -44,6 +44,8 @@ export const Content = styled.main`
 `;
 
 export const Character = styled.div`
+  max-width: 1120px;
+  cursor: pointer;
   background-color: #ccc;
   border-radius: 10px;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
@@ -55,8 +57,6 @@ export const Character = styled.div`
 `;
 
 export const CharTitle = styled.div`
-  cursor: pointer;
-  max-width: 1120px;
   display: flex;
   justify-content: space-between;
   padding: 10px 45px;
