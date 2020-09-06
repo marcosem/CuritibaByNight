@@ -20,6 +20,7 @@ interface FormData {
   name: string;
   email: string;
   phone: string;
+  oldPassword: string;
   password: string;
   passwordConfirm: string;
 }
@@ -52,9 +53,18 @@ const Profile: React.FC = () => {
             phoneRegExp,
             'Entre com o formato: xx-xxxxx-xxxx',
           ),
-          password: Yup.string()
-            .min(6, 'Mínimo 6 caracteres')
-            .required('Senha Obrigatória'),
+          oldPassword: Yup.string().when('password', {
+            is: val => !!val.length,
+            then: Yup.string().required('Necessário entrar a senha atual'),
+            otherwise: Yup.string(),
+          }),
+          password: Yup.string().test('min', 'Mínimo 6 caracteres', val => {
+            if (val) {
+              return val.length >= 6;
+            }
+
+            return true;
+          }),
           passwordConfirm: Yup.string().oneOf(
             [Yup.ref('password'), undefined],
             'Confirmação não combina',
@@ -63,38 +73,34 @@ const Profile: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
-        if (data.password !== data.passwordConfirm) {
-          formRef.current?.setErrors({
-            passwordConfirm: 'Senha diferente da Confirmação',
-          });
-        }
-
-        /*
-        await api.post('/users/complete', {
+        const formData = {
+          profile_id: user.id,
           name: data.name,
           email: data.email,
-          phone: data.phone,
-          password: data.password,
-          password_confirmation: data.passwordConfirm,
-        });
-        */
+          storyteller: user.storyteller,
+          ...(data.password
+            ? {
+                old_password: data.oldPassword,
+                password: data.password,
+                password_confirmation: data.passwordConfirm,
+              }
+            : {}),
+        };
+
+        const response = await api.put('/profile/update', formData);
+
+        updateUser(response.data);
 
         history.push('/');
 
         addToast({
           type: 'success',
-          title: 'Cadastro efetuado!',
-          description: 'Você já pode fazer seu login no Curitiba By Night',
+          title: 'Perfil atualizado!',
+          description: 'Suas informações foram atualizada com sucesso!',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
-
-          if (!errors.passwordConfirm) {
-            if (data.password !== data.passwordConfirm) {
-              errors.passwordConfirm = 'Senha diferente da Confirmação';
-            }
-          }
 
           formRef.current?.setErrors(errors);
 
@@ -103,12 +109,12 @@ const Profile: React.FC = () => {
 
         addToast({
           type: 'error',
-          title: 'Erro no cadastro',
-          description: 'Erro ao realizar o cadastro, tente novamente.',
+          title: 'Erro na ataulização',
+          description: 'Erro ao atualizar o perfil, tente novamente.',
         });
       }
     },
-    [history, addToast],
+    [user.id, user.storyteller, updateUser, history, addToast],
   );
 
   const handleAvatarChange = useCallback(

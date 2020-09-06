@@ -96,12 +96,6 @@ const SignUp: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
-        if (data.password !== data.passwordConfirm) {
-          formRef.current?.setErrors({
-            passwordConfirm: 'Senha diferente da Confirmação',
-          });
-        }
-
         await api.post('/users/complete', {
           name: data.name,
           email: data.email,
@@ -121,12 +115,6 @@ const SignUp: React.FC = () => {
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
-
-          if (!errors.passwordConfirm) {
-            if (data.password !== data.passwordConfirm) {
-              errors.passwordConfirm = 'Senha diferente da Confirmação';
-            }
-          }
 
           formRef.current?.setErrors(errors);
 
