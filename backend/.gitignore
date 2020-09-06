@@ -8,6 +8,7 @@ dist/
 
 .env
 
+ormconfig.json
 ormconfig-prod.json
 
 tmp/*
