@@ -20,7 +20,7 @@ profileRouter.put(
       old_password: Joi.string(),
       password: Joi.string(),
       password_confirmation: Joi.string().valid(Joi.ref('password')),
-      storyteller: Joi.boolean().default(false),
+      storyteller: Joi.boolean().allow(null),
     },
   }),
   usersController.update,
