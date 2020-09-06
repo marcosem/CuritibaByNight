@@ -97,7 +97,14 @@ const Dashboard: React.FC = () => {
       {!isBusy && (
         <Content>
           <div>
-            <strong>Clique no personagem para visualizar sua ficha:</strong>
+            {charList.length > 0 ? (
+              <strong>Clique no personagem para visualizar sua ficha:</strong>
+            ) : (
+              <strong>
+                Você não tem nenhum personagem cadastrado, caso tenha um
+                personagem, peça ao narrador para incluí-lo no sistema.
+              </strong>
+            )}
           </div>
 
           {charList.map(char => (
