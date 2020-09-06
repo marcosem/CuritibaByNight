@@ -25,7 +25,7 @@ describe('CreateSTUser', () => {
       email: 'user@user.com',
       password: '123456',
       phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      st_secret: `${process.env.APP_ST_SECRET}`,
     });
 
     expect(user).toHaveProperty('id');
@@ -50,7 +50,7 @@ describe('CreateSTUser', () => {
       email: 'user@user.com',
       password: '123456',
       phone: '12-12345-1234',
-      st_secret: 'GimmeThePower!',
+      st_secret: `${process.env.APP_ST_SECRET}`,
     });
 
     await expect(
@@ -59,7 +59,7 @@ describe('CreateSTUser', () => {
         email: 'user@user.com',
         password: '123456',
         phone: '12-12345-1234',
-        st_secret: 'GimmeThePower!',
+        st_secret: `${process.env.APP_ST_SECRET}`,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });

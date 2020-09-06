@@ -28,7 +28,7 @@ class CreateSTUserService {
     password,
     st_secret,
   }: IRequestDTO): Promise<User> {
-    if (st_secret !== 'GimmeThePower!') {
+    if (st_secret !== `${process.env.APP_ST_SECRET}`) {
       throw new AppError('User not authorized', 401);
     }
 
