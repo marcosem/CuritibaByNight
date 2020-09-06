@@ -6,12 +6,12 @@
   "password": "docker",
   "database": "cbynight",
   "entities": [
-    "./dist/modules/**/infra/typeorm/entities/*.js"
+    "./src/modules/**/infra/typeorm/entities/*.ts"
   ],
   "migrations": [
-    "./dist/shared/infra/typeorm/migrations/*.js"
+    "./src/shared/infra/typeorm/migrations/*.ts"
   ],
   "cli": {
-    "migrationsDir": "./dist/shared/infra/typeorm/migrations"
+    "migrationsDir": "./src/shared/infra/typeorm/migrations"
   }
 }

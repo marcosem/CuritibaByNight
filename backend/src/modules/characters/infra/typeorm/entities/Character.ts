@@ -1,3 +1,4 @@
+import User from '@modules/users/infra/typeorm/entities/User';
 import {
   Entity,
   Column,
@@ -8,9 +9,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import User from '@modules/users/infra/typeorm/entities/User';
-import uploadConfig from '@config/upload';
 import { Expose } from 'class-transformer';
+import uploadConfig from '@config/upload';
 
 @Entity('characters')
 class Character {
