@@ -23,7 +23,9 @@ interface ICharacter {
 const Dashboard: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [isBusy, setBusy] = useState(true);
+  const [mobileVer, setMobile] = useState(false);
   const { user, signOut } = useAuth();
+
   const { addToast } = useToast();
 
   const loadCharacters = useCallback(async () => {
@@ -69,15 +71,16 @@ const Dashboard: React.FC = () => {
   }, [addToast, signOut, user.id]);
 
   useEffect(() => {
+    setMobile(isMobile);
     loadCharacters();
   }, [loadCharacters]);
 
   return (
     <Container>
-      {isMobile ? <HeaderMobile /> : <Header />}
+      {mobileVer ? <HeaderMobile /> : <Header />}
 
       {!isBusy && (
-        <Content isMobile={isMobile}>
+        <Content isMobile={mobileVer}>
           <div>
             {charList.length > 0 ? (
               <strong>
@@ -91,7 +94,7 @@ const Dashboard: React.FC = () => {
             )}
           </div>
 
-          <Character isMobile={isMobile}>
+          <Character isMobile={mobileVer}>
             {charList.map(char => (
               <CharacterCard
                 key={char.id}
@@ -99,7 +102,7 @@ const Dashboard: React.FC = () => {
                 experience={char.experience}
                 sheetFile={char.character_url}
                 updatedAt={char.formatedDate}
-                isMobile={isMobile}
+                isMobile={mobileVer}
               />
             ))}
             <div />

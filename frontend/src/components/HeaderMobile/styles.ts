@@ -12,7 +12,7 @@ export const Container = styled.header`
 `;
 
 export const HeaderContent = styled.div`
-  max-width: 480px;
+  max-width: 340px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -41,7 +41,7 @@ export const HeaderContent = styled.div`
 `;
 
 export const Profile = styled.div<IProfileProps>`
-  max-width: 480px;
+  max-width: 340px;
   margin: 0 auto;
   display: flex;
   align-items: center;

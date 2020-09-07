@@ -22,7 +22,7 @@ export const Content = styled.main<ICharacterProps>`
   ${props =>
     props.isMobile &&
     css`
-      max-width: 480px;
+      max-width: 340px;
     `}
 `;
 
@@ -35,7 +35,7 @@ export const Character = styled.div<ICharacterProps>`
   ${props =>
     props.isMobile &&
     css`
-      max-width: 480px;
+      max-width: 340px;
       flex-direction: column;
       align-items: center;
     `}
