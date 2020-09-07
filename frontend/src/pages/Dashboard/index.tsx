@@ -1,10 +1,12 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { format } from 'date-fns';
-
-import { Container, Content, Character, CharTitle, CharSheet } from './styles';
+import { isMobile } from 'react-device-detect';
+import { Container, Content, Character } from './styles';
 
 import Header from '../../components/Header';
+import HeaderMobile from '../../components/HeaderMobile';
+import CharacterCard from '../../components/CharacterCard';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -16,7 +18,6 @@ interface ICharacter {
   updated_at: Date;
   formatedDate?: string;
   character_url: string;
-  showCharSheet?: boolean;
 }
 
 const Dashboard: React.FC = () => {
@@ -43,7 +44,6 @@ const Dashboard: React.FC = () => {
               updated_at: new Date(char.updated_at),
               character_url: char.character_url,
               formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),
-              showCharSheet: false,
             };
             return newChar;
           });
@@ -72,33 +72,17 @@ const Dashboard: React.FC = () => {
     loadCharacters();
   }, [loadCharacters]);
 
-  const handleShowCharSheet = useCallback(
-    (char: ICharacter) => {
-      const newCharList = charList.map((character: ICharacter) => {
-        const newChar = character;
-
-        if (char.showCharSheet === false && newChar.id === char.id) {
-          newChar.showCharSheet = true;
-        } else {
-          newChar.showCharSheet = false;
-        }
-
-        return newChar;
-      });
-
-      setCharList(newCharList);
-    },
-    [charList],
-  );
-
   return (
     <Container>
-      <Header />
+      {isMobile ? <HeaderMobile /> : <Header />}
+
       {!isBusy && (
-        <Content>
+        <Content isMobile={isMobile}>
           <div>
             {charList.length > 0 ? (
-              <strong>Clique no personagem para visualizar sua ficha:</strong>
+              <strong>
+                Clique no nome do personagem para visualizar a ficha:
+              </strong>
             ) : (
               <strong>
                 Você não tem nenhum personagem cadastrado, caso tenha um
@@ -107,34 +91,19 @@ const Dashboard: React.FC = () => {
             )}
           </div>
 
-          {charList.map(char => (
-            <Character key={char.id} onClick={() => handleShowCharSheet(char)}>
-              <CharTitle>
-                <div>
-                  <strong>Personagem:</strong>
-                  <span>{char.name}</span>
-                </div>
-                <div>
-                  <strong>XP Disponível:</strong>
-                  <span>{char.experience}</span>
-                </div>
-                <div>
-                  <strong>Última Atualização:</strong>
-                  <span>{char.formatedDate}</span>
-                </div>
-              </CharTitle>
-              <CharSheet>
-                {char.showCharSheet && (
-                  <iframe
-                    title={char.name}
-                    src={char.character_url}
-                    width="100%"
-                    height="660px"
-                  />
-                )}
-              </CharSheet>
-            </Character>
-          ))}
+          <Character isMobile={isMobile}>
+            {charList.map(char => (
+              <CharacterCard
+                key={char.id}
+                name={char.name}
+                experience={char.experience}
+                sheetFile={char.character_url}
+                updatedAt={char.formatedDate}
+                isMobile={isMobile}
+              />
+            ))}
+            <div />
+          </Character>
         </Content>
       )}
     </Container>
