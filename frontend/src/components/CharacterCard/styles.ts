@@ -1,9 +1,14 @@
 import styled, { keyframes, css } from 'styled-components';
 import { lighten } from 'polished';
-import cardBackground from '../../assets/char_profile.png';
+// import cardBackground from '../../assets/char_profile.png';
+import getCardImg from './getCardImg';
 
 interface ICharacterProps {
   isMobile: boolean;
+}
+
+interface ICardProps {
+  clan: string;
 }
 
 const appearFromLeft = keyframes`
@@ -38,7 +43,7 @@ export const Container = styled.div<ICharacterProps>`
   animation: ${appearFromLeft} 1s;
 `;
 
-export const CardSquare = styled.div`
+export const CardSquare = styled.div<ICardProps>`
   position: relative;
   top: 0;
   left: 0;
@@ -47,25 +52,31 @@ export const CardSquare = styled.div`
   height: 100%;
   border-radius: 10px;
 
-  background: url(${cardBackground});
+  ${props => css`
+    background: url(${getCardImg(props.clan)});
+  `}
+
   background-repeat: no-repeat;
   background-size: cover;
 
   > span {
+    cursor: default;
     font-style: normal;
     font-weight: 400;
     font-size: 10px;
     color: #eee;
 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+
     position: absolute;
-    top: 270px;
+    top: 273px;
     left: 44px;
   }
 `;
 
 export const ProfileImage = styled.div`
   position: absolute;
-  top: 25px;
+  top: 28px;
   left: 46px;
 
   width: 192px;
@@ -90,7 +101,7 @@ export const ProfileImage = styled.div`
 
 export const CharInfo = styled.div`
   position: absolute;
-  top: 285px;
+  top: 288px;
   left: 49px;
 
   width: 188px;
@@ -123,7 +134,7 @@ export const CharInfo = styled.div`
 
 export const CharXPTitle = styled.div`
   position: absolute;
-  top: 315px;
+  top: 319px;
   left: 201px;
 
   width: 20px;
@@ -143,11 +154,11 @@ export const CharXPTitle = styled.div`
 
 export const CharXP = styled.div`
   position: absolute;
-  top: 319px;
-  left: 221px;
+  top: 321px;
+  left: 220px;
 
-  width: 24px;
-  height: 24px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
 
   background: transparent;

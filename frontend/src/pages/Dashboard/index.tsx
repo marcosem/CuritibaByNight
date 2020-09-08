@@ -101,6 +101,7 @@ const Dashboard: React.FC = () => {
                 name={char.name}
                 experience={char.experience}
                 sheetFile={char.character_url}
+                clan="Daughters of Cacophony"
                 updatedAt={char.formatedDate}
                 isMobile={mobileVer}
               />

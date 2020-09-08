@@ -17,6 +17,7 @@ interface ICharacterCardProps {
   experience: string;
   avatar?: string;
   sheetFile: string;
+  clan?: string;
   updatedAt?: string;
   isMobile: boolean;
 }
@@ -26,6 +27,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   experience,
   avatar,
   sheetFile,
+  clan = '',
   updatedAt,
   isMobile,
 }) => {
@@ -46,7 +48,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
 
   return (
     <Container isMobile={isMobile}>
-      <CardSquare>
+      <CardSquare clan={clan}>
         <span>{updatedAt}</span>
         <ProfileImage>
           <img src={charImg} alt="Profile" />
