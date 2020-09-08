@@ -18,7 +18,7 @@ interface ICharacter {
   avatar_url: string;
   experience: string;
   updated_at: Date;
-  formatedDate?: string;
+  formatedDate: string;
   character_url: string;
 }
 
@@ -106,7 +106,7 @@ const Dashboard: React.FC = () => {
                 experience={char.experience}
                 sheetFile={char.character_url}
                 clan={char.clan}
-                avatarFile={char.avatar_url}
+                avatar={char.avatar_url}
                 updatedAt={char.formatedDate}
                 isMobile={mobileVer}
               />

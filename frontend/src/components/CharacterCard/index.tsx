@@ -15,11 +15,10 @@ import tempProfileImg from '../../assets/sign-up-background.png';
 interface ICharacterCardProps {
   name: string;
   experience: string;
-  avatar?: string;
+  avatar: string;
   sheetFile: string;
   clan: string;
-  avatarFile: string;
-  updatedAt?: string;
+  updatedAt: string;
   isMobile: boolean;
 }
 
@@ -28,7 +27,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   experience,
   avatar,
   sheetFile,
-  clan = '',
+  clan,
   updatedAt,
   isMobile,
 }) => {
