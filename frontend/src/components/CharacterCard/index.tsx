@@ -17,7 +17,8 @@ interface ICharacterCardProps {
   experience: string;
   avatar?: string;
   sheetFile: string;
-  clan?: string;
+  clan: string;
+  avatarFile: string;
   updatedAt?: string;
   isMobile: boolean;
 }

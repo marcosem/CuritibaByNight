@@ -14,6 +14,8 @@ import { useToast } from '../../hooks/toast';
 interface ICharacter {
   id: string;
   name: string;
+  clan: string;
+  avatar_url: string;
   experience: string;
   updated_at: Date;
   formatedDate?: string;
@@ -45,6 +47,8 @@ const Dashboard: React.FC = () => {
               experience: char.experience,
               updated_at: new Date(char.updated_at),
               character_url: char.character_url,
+              clan: char.clan,
+              avatar: char.avatar_url,
               formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),
             };
             return newChar;
@@ -101,7 +105,8 @@ const Dashboard: React.FC = () => {
                 name={char.name}
                 experience={char.experience}
                 sheetFile={char.character_url}
-                clan="Daughters of Cacophony"
+                clan={char.clan}
+                avatarFile={char.avatar_url}
                 updatedAt={char.formatedDate}
                 isMobile={mobileVer}
               />
