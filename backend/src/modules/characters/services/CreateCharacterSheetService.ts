@@ -11,6 +11,7 @@ interface IRequestDTO {
   char_email?: string;
   char_name: string;
   char_xp: number;
+  char_clan: string;
   sheetFilename: string;
 }
 
@@ -31,6 +32,7 @@ class UploadCharacterSheetService {
     char_email,
     char_name,
     char_xp,
+    char_clan,
     sheetFilename,
   }: IRequestDTO): Promise<Character> {
     const user = await this.usersRepository.findById(user_id);
@@ -71,6 +73,7 @@ class UploadCharacterSheetService {
       name: char_name,
       email: char_email,
       experience: char_xp,
+      clan: char_clan,
       file: filename,
     });
 

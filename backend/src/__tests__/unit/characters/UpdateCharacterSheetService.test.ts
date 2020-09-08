@@ -42,6 +42,7 @@ describe('UpdateCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      clan: 'Tzimisce',
       email: 'dracula@vampyr.com',
     });
 
@@ -52,6 +53,7 @@ describe('UpdateCharacterSheet', () => {
       char_id: char.id,
       char_name: 'Nosferatu',
       char_xp: 1,
+      char_clan: 'Nosferatu',
       sheetFilename: 'nosferatu.pdf',
     });
 
@@ -61,6 +63,7 @@ describe('UpdateCharacterSheet', () => {
       name: 'Nosferatu',
       experience: 1,
       email: char.email,
+      clan: 'Nosferatu',
       file: 'nosferatu.pdf',
     });
 
@@ -76,6 +79,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'Does not matter',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
@@ -99,6 +103,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'Does not matter',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
@@ -123,6 +128,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'Does not matter',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.jpg',
       }),
     ).rejects.toBeInstanceOf(AppError);
@@ -147,6 +153,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'I do not exist',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
       }),
     ).rejects.toBeInstanceOf(AppError);
@@ -168,6 +175,7 @@ describe('UpdateCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      clan: 'Tzimisce',
       email: 'dracula@vampyr.com',
     });
 
@@ -193,6 +201,7 @@ describe('UpdateCharacterSheet', () => {
       char_id: char.id,
       char_name: 'Nosferatu',
       char_xp: 999,
+      char_clan: 'Nosferatu',
       sheetFilename: 'nosferatu.pdf',
     });
 
@@ -222,6 +231,7 @@ describe('UpdateCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      clan: 'Tzimisce',
       email: 'dracula@vampyr.com',
     });
 
@@ -233,6 +243,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: char.id,
         char_name: 'Nosferatu',
         char_xp: 1,
+        char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
       }),
     ).rejects.toBeInstanceOf(AppError);

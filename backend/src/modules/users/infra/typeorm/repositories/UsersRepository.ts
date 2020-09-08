@@ -45,7 +45,7 @@ class UsersRepository implements IUsersRepository {
     email,
     phone = '',
     password = undefined,
-    storyteller = false,
+    storyteller = undefined,
     secret = undefined,
   }: ICreateUserDTO): Promise<User> {
     const user = this.ormRepository.create({

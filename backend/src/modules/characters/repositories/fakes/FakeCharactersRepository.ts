@@ -12,6 +12,7 @@ class FakeCharactersRepository implements ICharactersRepository {
     email = '',
     user_id,
     experience = 0,
+    clan,
     file,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = new Character();
@@ -22,6 +23,7 @@ class FakeCharactersRepository implements ICharactersRepository {
       email,
       user_id,
       experience,
+      clan,
       file,
     });
 

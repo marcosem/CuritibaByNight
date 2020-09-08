@@ -37,6 +37,12 @@ class Character {
   @Column()
   file: string;
 
+  @Column()
+  avatar: string;
+
+  @Column()
+  clan: string;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -56,6 +62,24 @@ class Character {
         return `https://${sheetUpload.config.s3.bucket}.s3.us-east-2.amazonaws.com/${this.file}`;
       case 'disk':
         return `${process.env.APP_API_URL}/character/sheet/${this.file}`;
+      default:
+        return null;
+    }
+  }
+
+  @Expose({ name: 'avatar_url' })
+  getAvatarUrl(): string | null {
+    if (!this.avatar) {
+      return null;
+    }
+
+    const avatarUpload = uploadConfig('avatar');
+
+    switch (avatarUpload.driver) {
+      case 's3':
+        return `https://${avatarUpload.config.s3.bucket}.s3.us-east-2.amazonaws.com/${this.avatar}`;
+      case 'disk':
+        return `${process.env.APP_API_URL}/avatar/${this.avatar}`;
       default:
         return null;
     }

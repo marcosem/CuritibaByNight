@@ -3,5 +3,6 @@ export default interface ICreateCharacterDTO {
   email?: string;
   user_id: string;
   experience?: number;
+  clan?: string;
   file: string;
 }

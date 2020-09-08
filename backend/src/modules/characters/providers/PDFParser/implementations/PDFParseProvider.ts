@@ -31,6 +31,7 @@ class PDFParseProvider implements IPDFParserProvider {
     let index = 0;
     let isTitled = true;
     let isParsed = false;
+    let clan: string;
 
     rl.on('line', line => {
       index += 1;
@@ -51,6 +52,12 @@ class PDFParseProvider implements IPDFParserProvider {
           char.experience = experience;
           isParsed = true;
         }
+      } else if (line.indexOf('Clan: ') >= 0 && !clan) {
+        const startClan = line.indexOf('Clan: ') + 'Clan: '.length;
+        const endClan = line.indexOf('Generation: ') - 1;
+
+        clan = line.substring(startClan, endClan);
+        char.clan = clan;
 
         rl.close();
       }

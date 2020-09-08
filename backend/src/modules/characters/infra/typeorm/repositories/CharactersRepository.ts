@@ -15,6 +15,7 @@ class CharactersRepository implements ICharactersRepository {
     email = '',
     user_id,
     experience = 0,
+    clan,
     file,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = this.ormRepository.create({
@@ -22,6 +23,7 @@ class CharactersRepository implements ICharactersRepository {
       email,
       user_id,
       experience,
+      clan,
       file,
     });
 
