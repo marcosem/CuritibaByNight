@@ -85,6 +85,10 @@ export const ProfileImage = styled.div`
 
   background: transparent;
 
+  input {
+    display: none;
+  }
+
   img {
     cursor: pointer;
     width: 192px;

@@ -110,7 +110,7 @@ const Profile: React.FC = () => {
 
         addToast({
           type: 'error',
-          title: 'Erro na ataulização',
+          title: 'Erro na atualização',
           description: 'Erro ao atualizar o perfil, tente novamente.',
         });
       }

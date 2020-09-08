@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
               updated_at: new Date(char.updated_at),
               character_url: char.character_url,
               clan: char.clan,
-              avatar: char.avatar_url,
+              avatar_url: char.avatar_url,
               formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),
             };
             return newChar;
@@ -102,6 +102,7 @@ const Dashboard: React.FC = () => {
             {charList.map(char => (
               <CharacterCard
                 key={char.id}
+                charId={char.id}
                 name={char.name}
                 experience={char.experience}
                 sheetFile={char.character_url}
