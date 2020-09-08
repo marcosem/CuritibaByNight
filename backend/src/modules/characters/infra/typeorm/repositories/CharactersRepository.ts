@@ -27,13 +27,25 @@ class CharactersRepository implements ICharactersRepository {
 
     await this.ormRepository.save(char);
 
-    return char;
+    // Return what is saved with user relationship attached.
+    let savedChar = await this.findById(char.id);
+    if (!savedChar) {
+      savedChar = char;
+    }
+
+    return savedChar;
   }
 
   public async update(char: Character): Promise<Character> {
     await this.ormRepository.save(char);
 
-    return char;
+    // Return what is saved with user relationship attached.
+    let savedChar = await this.findById(char.id);
+    if (!savedChar) {
+      savedChar = char;
+    }
+
+    return savedChar;
   }
 
   public async findById(char_id: string): Promise<Character | undefined> {
