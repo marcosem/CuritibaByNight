@@ -76,7 +76,7 @@ export const CardSquare = styled.div<ICardProps>`
 
 export const ProfileImage = styled.div`
   position: absolute;
-  top: 28px;
+  top: 29px;
   left: 46px;
 
   width: 192px;
