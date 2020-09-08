@@ -31,12 +31,14 @@ export default class CharacterController {
       char_email: email,
       char_name: '',
       char_xp: 0,
+      char_clan: '',
       sheetFilename: fileName,
     };
 
     if (parsedChar) {
       inputData.char_name = parsedChar.name;
       inputData.char_xp = parsedChar.experience;
+      inputData.char_clan = parsedChar.clan;
     }
 
     const char = await createCharacterSheetService.execute(inputData);
@@ -94,12 +96,14 @@ export default class CharacterController {
       char_id: character_id,
       char_name: '',
       char_xp: 0,
+      char_clan: '',
       sheetFilename: fileName,
     };
 
     if (parsedChar) {
       inputData.char_name = parsedChar.name;
       inputData.char_xp = parsedChar.experience;
+      inputData.char_clan = parsedChar.clan;
     }
 
     const updateCharacterSheetService = container.resolve(
