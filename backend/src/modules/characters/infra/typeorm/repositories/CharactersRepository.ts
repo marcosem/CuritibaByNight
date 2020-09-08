@@ -63,6 +63,7 @@ class CharactersRepository implements ICharactersRepository {
   public async findByUserId(user_id: string): Promise<Character[]> {
     const charList = await this.ormRepository.find({
       where: { user_id },
+      order: { name: 'ASC' },
     });
 
     // if not found, return undefined

@@ -69,7 +69,7 @@ class UsersRepository implements IUsersRepository {
   }
 
   public async listAll(): Promise<User[]> {
-    const userList = await this.ormRepository.find();
+    const userList = await this.ormRepository.find({ order: { name: 'ASC' } });
 
     return userList;
   }
