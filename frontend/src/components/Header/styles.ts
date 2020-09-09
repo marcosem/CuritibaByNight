@@ -8,6 +8,7 @@ interface ProfileProps {
 export const Container = styled.header`
   padding: 10px 0;
   background: #989797;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 `;
 
 export const HeaderContent = styled.div`
