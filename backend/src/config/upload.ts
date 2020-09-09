@@ -67,7 +67,9 @@ export default function upload(type: string): IUploadReturn {
         destination: tmpFolder,
         filename(request, file, callback) {
           const fileHash = crypto.randomBytes(10).toString('hex');
-          const fileName = `${fileHash}-${file.originalname.toLowerCase()}`;
+          const fileName = `${fileHash}-${file.originalname
+            .toLowerCase()
+            .replace(/\s/g, '')}`;
 
           return callback(null, fileName);
         },
