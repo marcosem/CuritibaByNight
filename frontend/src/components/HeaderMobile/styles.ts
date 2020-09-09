@@ -6,6 +6,7 @@ interface IProfileProps {
 }
 
 export const Container = styled.header`
+  position: sticky;
   padding: 5px 0;
   background: #989797;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);

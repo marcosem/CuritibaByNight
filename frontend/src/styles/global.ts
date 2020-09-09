@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 export default createGlobalStyle`
   * {
@@ -11,8 +12,10 @@ export default createGlobalStyle`
   body {
     color: #d5d5d5;
     -webkit-font-smoothing: antialiased;
+    background-attachment: fixed;
     background: linear-gradient(0deg, #080707 0%, #989797 100%);
   }
+
 
   body, input, button {
     font-family: 'Roboto', sans-serif;
@@ -28,4 +31,5 @@ export default createGlobalStyle`
   }
 `;
 
+// background: linear-gradient(0deg, #080707 0%, #989797 100%);
 //     background: #282727;

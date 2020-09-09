@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { format } from 'date-fns';
 import { isMobile } from 'react-device-detect';
-import { Container, Content, Character } from './styles';
+import { Container, TitleBox, Scroll, Content, Character } from './styles';
 
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
@@ -85,7 +85,7 @@ const Dashboard: React.FC = () => {
 
       {!isBusy && (
         <Content isMobile={mobileVer}>
-          <div>
+          <TitleBox>
             {charList.length > 0 ? (
               <strong>
                 Clique no nome do personagem para visualizar a ficha:
@@ -96,24 +96,24 @@ const Dashboard: React.FC = () => {
                 personagem, peça ao narrador para incluí-lo no sistema.
               </strong>
             )}
-          </div>
-
-          <Character isMobile={mobileVer}>
-            {charList.map(char => (
-              <CharacterCard
-                key={char.id}
-                charId={char.id}
-                name={char.name}
-                experience={char.experience}
-                sheetFile={char.character_url}
-                clan={char.clan}
-                avatar={char.avatar_url}
-                updatedAt={char.formatedDate}
-                isMobile={mobileVer}
-              />
-            ))}
-            <div />
-          </Character>
+          </TitleBox>
+          <Scroll>
+            <Character isMobile={mobileVer}>
+              {charList.map(char => (
+                <CharacterCard
+                  key={char.id}
+                  charId={char.id}
+                  name={char.name}
+                  experience={char.experience}
+                  sheetFile={char.character_url}
+                  clan={char.clan}
+                  avatar={char.avatar_url}
+                  updatedAt={char.formatedDate}
+                  isMobile={mobileVer}
+                />
+              ))}
+            </Character>
+          </Scroll>
         </Content>
       )}
     </Container>

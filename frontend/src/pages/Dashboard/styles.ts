@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import PerfectScrollBar from 'react-perfect-scrollbar';
 
 interface ICharacterProps {
   isMobile: boolean;
@@ -12,13 +13,6 @@ export const Content = styled.main<ICharacterProps>`
   max-width: 1120px;
   margin: 18px auto;
 
-  > div {
-    margin: 0 0 10px 20px;
-    > strong {
-      color: #eee;
-    }
-  }
-
   ${props =>
     props.isMobile &&
     css`
@@ -26,7 +20,20 @@ export const Content = styled.main<ICharacterProps>`
     `}
 `;
 
-export const Character = styled.div<ICharacterProps>`
+export const TitleBox = styled.div`
+  padding: 20px;
+  margin: 10px auto;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+
+  > strong {
+    color: #eee;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+  }
+`;
+
+export const Character = styled.ul<ICharacterProps>`
   max-width: 1120px;
   background: transparent;
   display: flex;
@@ -39,4 +46,10 @@ export const Character = styled.div<ICharacterProps>`
       flex-direction: column;
       align-items: center;
     `}
+`;
+
+export const Scroll = styled(PerfectScrollBar)`
+  max-height: 600px;
+  padding: 5px 20px;
+  margin-top: 5px;
 `;
