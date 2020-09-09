@@ -87,15 +87,10 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
     <Container isMobile={isMobile}>
       <CardSquare clan={clan}>
         <span>{updatedAt}</span>
-        <label htmlFor="avatar">
+        <label htmlFor={charId}>
           <ProfileImage>
-            <img src={charImg} alt="Profile" />
-            <input
-              type="file"
-              name=""
-              id="avatar"
-              onChange={handleAvatarChange}
-            />
+            <img src={charImg} alt={name} />
+            <input type="file" id={charId} onChange={handleAvatarChange} />
           </ProfileImage>
         </label>
         <CharInfo>

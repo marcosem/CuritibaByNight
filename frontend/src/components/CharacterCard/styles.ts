@@ -1,6 +1,5 @@
 import styled, { keyframes, css } from 'styled-components';
 import { lighten } from 'polished';
-// import cardBackground from '../../assets/char_profile.png';
 import getCardImg from './getCardImg';
 
 interface ICharacterProps {
@@ -58,6 +57,7 @@ export const CardSquare = styled.div<ICardProps>`
 
   background-repeat: no-repeat;
   background-size: cover;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
 
   > span {
     cursor: default;
@@ -123,7 +123,7 @@ export const CharInfo = styled.div`
     cursor: pointer;
     font-size: 14px;
     font-style: normal;
-    font-weight: normal;
+    font-weight: 500;
     text-decoration: none;
     transition: color 0.2s;
 
