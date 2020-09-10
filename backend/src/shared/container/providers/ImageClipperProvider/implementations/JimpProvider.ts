@@ -21,25 +21,45 @@ class JimpProvider implements IImageClipper {
       newWidth = width;
       newHeight = Math.round((width / propX) * propY);
 
+      if (newHeight > height) {
+        newHeight = height;
+        cutY = 0;
+      } else {
+        cutY = Math.round((height - newHeight) / 2);
+      }
       cutX = 0;
-      cutY = Math.round((height - newHeight) / 2);
     } else if (width > height) {
       newHeight = height;
       newWidth = Math.round((height / propY) * propX);
 
-      cutX = Math.round((width - newWidth) / 2);
+      if (newWidth > width) {
+        newWidth = width;
+        cutX = 0;
+      } else {
+        cutX = Math.round((width - newWidth) / 2);
+      }
       cutY = 0;
     } else if (propX > propY) {
       newWidth = width;
       newHeight = Math.round((height / propX) * propY);
 
+      if (newHeight > height) {
+        newHeight = height;
+        cutY = 0;
+      } else {
+        cutY = Math.round((height - newHeight) / 2);
+      }
       cutX = 0;
-      cutY = Math.round((height - newHeight) / 2);
     } else if (propY > propX) {
       newHeight = height;
       newWidth = Math.round((width / propY) * propX);
 
-      cutX = Math.round((width - newWidth) / 2);
+      if (newWidth > width) {
+        newWidth = width;
+        cutX = 0;
+      } else {
+        cutX = Math.round((width - newWidth) / 2);
+      }
       cutY = 0;
     } else {
       return file;
