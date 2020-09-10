@@ -11,6 +11,7 @@ export default class CharacterAvatarController {
     const char = await updateCharAvatar.execute({
       user_id: req.user.id,
       char_id: id,
+      avatarPath: req.file.destination,
       avatarFilename: req.file.filename,
     });
 

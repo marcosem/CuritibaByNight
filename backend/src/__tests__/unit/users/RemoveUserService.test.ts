@@ -1,12 +1,14 @@
 import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
+import FakeImageClipperProvider from '@shared/container/providers/ImageClipperProvider/fakes/FakeImageClipperProvider';
 import RemoveUserService from '@modules/users/services/RemoveUserService';
 import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
+let fakeImageClipperProvider: FakeImageClipperProvider;
 let removeUserService: RemoveUserService;
 let updateUserAvatar: UpdateUserAvatarService;
 
@@ -108,9 +110,11 @@ describe('RemoveUser', () => {
   });
 
   it('Should delete avatar file when removing an user', async () => {
+    fakeImageClipperProvider = new FakeImageClipperProvider();
     updateUserAvatar = new UpdateUserAvatarService(
       fakeUsersRepository,
       fakeStorageProvider,
+      fakeImageClipperProvider,
     );
 
     const user = await fakeUsersRepository.create({
@@ -122,6 +126,7 @@ describe('RemoveUser', () => {
 
     await updateUserAvatar.execute({
       user_id: user.id,
+      avatarPath: '/does not matter',
       avatarFilename: 'avatar.jpg',
     });
 

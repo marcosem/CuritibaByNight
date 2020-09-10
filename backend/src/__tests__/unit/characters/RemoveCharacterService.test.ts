@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
+// import FakeImageClipperProvider from '@shared/container/providers/ImageClipperProvider/fakes/FakeImageClipperProvider';
 import RemoveCharacterService from '@modules/characters/services/RemoveCharacterService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
 let fakeCharactersRepository: FakeCharactersRepository;
+// let fakeImageClipperProvider: FakeImageClipperProvider;
 let removeCharacter: RemoveCharacterService;
 
 describe('RemoveCharacter', () => {

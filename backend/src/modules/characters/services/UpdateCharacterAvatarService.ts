@@ -4,10 +4,12 @@ import AppError from '@shared/errors/AppError';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
+import IImageClipperProvider from '@shared/container/providers/ImageClipperProvider/models/IImageClipper';
 
 interface IRequestDTO {
   user_id: string;
   char_id: string;
+  avatarPath: string;
   avatarFilename: string;
 }
 
@@ -20,11 +22,14 @@ class UpdateChracterAvatarService {
     private usersRespository: IUsersRepository,
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
+    @inject('ImageClipperProvider')
+    private imageClipperProvider: IImageClipperProvider,
   ) {}
 
   public async execute({
     user_id,
     char_id,
+    avatarPath,
     avatarFilename,
   }: IRequestDTO): Promise<Character> {
     const user = await this.usersRespository.findById(user_id);
@@ -47,10 +52,22 @@ class UpdateChracterAvatarService {
       this.storageProvider.deleteFile(char.avatar, 'avatar');
     }
 
-    const filename = await this.storageProvider.saveFile(
+    const croppedFile = await this.imageClipperProvider.cropImage(
       avatarFilename,
-      'avatar',
+      avatarPath,
+      192,
+      255,
     );
+
+    let newFilename: string;
+    if (avatarFilename !== croppedFile) {
+      this.storageProvider.deleteFile(avatarFilename, '');
+      newFilename = croppedFile;
+    } else {
+      newFilename = avatarFilename;
+    }
+
+    const filename = await this.storageProvider.saveFile(newFilename, 'avatar');
 
     // user.avatar = avatarFilename;
     char.avatar = filename;
