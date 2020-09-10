@@ -67,9 +67,16 @@ class JimpProvider implements IImageClipper {
 
     const newFileName = `x${file}`;
 
-    imageData
-      .crop(cutX, cutY, newWidth, newHeight)
-      .write(resolve(path, newFileName));
+    if (newWidth > 500 || newHeight > 500) {
+      imageData
+        .crop(cutX, cutY, newWidth, newHeight)
+        .scaleToFit(500, 500)
+        .write(resolve(path, newFileName));
+    } else {
+      imageData
+        .crop(cutX, cutY, newWidth, newHeight)
+        .write(resolve(path, newFileName));
+    }
 
     return newFileName;
   }
