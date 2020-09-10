@@ -98,7 +98,7 @@ const SignUp: React.FC = () => {
 
         await api.post('/users/complete', {
           name: data.name,
-          email: data.email,
+          email: data.email.toLowerCase(),
           phone: data.phone,
           password: data.password,
           password_confirmation: data.passwordConfirm,
@@ -192,15 +192,3 @@ const SignUp: React.FC = () => {
 };
 
 export default SignUp;
-
-/*
-handlerChangeBrazilianPhone = (ev) => {
-  const brazilianPhone = ev.target.value.replace(/[^0-9]+/g, '')
-  this.setState({ brazilianPhone })
-}
-...
-mask={this.state.brazilianPhone.length <= 10 ? '(99) 9999-9999?' : '(99) 99999-9999'}
-formatChars={{ 9: '[0-9]', '?': '[0-9 ]' }}
-onChange={this.handlerChangeBrazilianPhone}
-value={this.state.brazilianPhone}
-*/

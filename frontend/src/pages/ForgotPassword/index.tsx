@@ -45,7 +45,7 @@ const ResetPassword: React.FC = () => {
         await schema.validate(data, { abortEarly: false });
 
         await api.post('/password/forgot', {
-          email: data.email,
+          email: data.email.toLowerCase(),
         });
 
         addToast({

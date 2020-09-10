@@ -76,7 +76,7 @@ const Profile: React.FC = () => {
         const formData = {
           profile_id: user.id,
           name: data.name,
-          email: data.email,
+          email: data.email.toLowerCase(),
           phone: data.phone,
           storyteller: user.storyteller,
           ...(data.password
