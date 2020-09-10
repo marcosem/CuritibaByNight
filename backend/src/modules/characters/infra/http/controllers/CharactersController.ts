@@ -80,7 +80,7 @@ export default class CharacterController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
-    const { character_id } = req.body;
+    const { character_id, comments } = req.body;
     const fileName = req.file.filename;
 
     const parseCharacterSheetService = container.resolve(
@@ -98,6 +98,7 @@ export default class CharacterController {
       char_xp: 0,
       char_clan: '',
       sheetFilename: fileName,
+      update: comments,
     };
 
     if (parsedChar) {

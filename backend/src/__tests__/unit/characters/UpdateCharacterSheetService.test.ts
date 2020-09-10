@@ -55,6 +55,7 @@ describe('UpdateCharacterSheet', () => {
       char_xp: 1,
       char_clan: 'Nosferatu',
       sheetFilename: 'nosferatu.pdf',
+      update: 'Updated',
     });
 
     expect(charUpdated).toMatchObject({
@@ -81,6 +82,7 @@ describe('UpdateCharacterSheet', () => {
         char_xp: 999,
         char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
+        update: 'Updated',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -105,6 +107,7 @@ describe('UpdateCharacterSheet', () => {
         char_xp: 999,
         char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
+        update: 'Updated',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -130,6 +133,7 @@ describe('UpdateCharacterSheet', () => {
         char_xp: 999,
         char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.jpg',
+        update: 'Updated',
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -155,6 +159,7 @@ describe('UpdateCharacterSheet', () => {
         char_xp: 999,
         char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
+        update: 'Updated',
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -203,6 +208,7 @@ describe('UpdateCharacterSheet', () => {
       char_xp: 999,
       char_clan: 'Nosferatu',
       sheetFilename: 'nosferatu.pdf',
+      update: 'Updated',
     });
 
     expect(charUpdated).toMatchObject({
@@ -245,6 +251,7 @@ describe('UpdateCharacterSheet', () => {
         char_xp: 1,
         char_clan: 'Nosferatu',
         sheetFilename: 'nosferatu.pdf',
+        update: 'Updated',
       }),
     ).rejects.toBeInstanceOf(AppError);
 

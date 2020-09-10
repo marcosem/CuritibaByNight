@@ -14,6 +14,7 @@ interface IRequestDTO {
   char_xp: number;
   char_clan: string;
   sheetFilename: string;
+  update: string;
 }
 
 @injectable()
@@ -36,6 +37,7 @@ class UpdateCharacterSheetService {
     char_xp,
     char_clan,
     sheetFilename,
+    update,
   }: IRequestDTO): Promise<Character> {
     const user = await this.usersRepository.findById(user_id);
 
@@ -114,6 +116,7 @@ class UpdateCharacterSheetService {
           name: userNames[0],
           char_name: char.name,
           char_xp: xpMessage,
+          update,
           link: `${process.env.APP_WEB_URL}`,
           imgLogo: 'curitibabynight.png',
           imgCharSheet: 'character_sheet.jpg',
