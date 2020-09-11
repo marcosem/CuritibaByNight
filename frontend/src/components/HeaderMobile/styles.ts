@@ -105,9 +105,9 @@ export const MyPages = styled.div`
   flex-direction: row;
 
   svg {
-    width: 32px;
-    height: 32px;
-    margin: 0 16px;
+    width: 24px;
+    height: 24px;
+    margin: 0 8px;
     color: #2c2f33;
 
     &:hover {

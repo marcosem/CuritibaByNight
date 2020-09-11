@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiPower } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaInstagram, FaDiscord } from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaDiscord, FaSpotify } from 'react-icons/fa';
 import { useAuth } from '../../hooks/auth';
 
 import imgLogoHeader from '../../assets/logo_header.svg';
@@ -48,6 +48,16 @@ const HeaderMobile: React.FC = () => {
               rel="noopener noreferrer"
             >
               <FaInstagram />
+            </a>
+          </div>
+
+          <div>
+            <a
+              href="https://open.spotify.com/playlist/0oaY20yvD69OtJ3rEftmGM?si=2HX7f7dOS7mhXpY3e8fHmg"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaSpotify />
             </a>
           </div>
         </MyPages>

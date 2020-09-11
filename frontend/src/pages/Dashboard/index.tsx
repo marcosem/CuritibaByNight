@@ -76,6 +76,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     setMobile(isMobile);
+    // setMobile(true);
     loadCharacters();
   }, [loadCharacters]);
 
