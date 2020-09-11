@@ -40,6 +40,27 @@ export const HeaderContent = styled.div`
   }
 `;
 
+export const ButtonMenu = styled.div`
+  overflow: hidden;
+  display: block;
+  border-radius: 10px;
+  width: 35px;
+  height: 35px;
+  margin-right: auto;
+
+  background-color: #860209;
+  opacity: 0.8;
+  transition: width 0.3s 0.5s ease, border-radius 1.1s ease;
+
+  > svg {
+    padding-top: 2px;
+    padding-left: 3px;
+    color: #ddd;
+    width: 32px;
+    height: 32px;
+  }
+`;
+
 export const Profile = styled.div<ProfileProps>`
   display: flex;
   align-items: center;
@@ -87,7 +108,8 @@ export const Profile = styled.div<ProfileProps>`
     transition: color 0.3s;
 
     &:hover {
-      color: ${shade(0.2, '#860209')};
+      color: ${lighten(0.14, '#860209')};
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
   }
 `;

@@ -6,6 +6,10 @@ interface ICharacterProps {
   isMobile: boolean;
 }
 
+interface IImageProps {
+  locked: boolean;
+}
+
 interface ICardProps {
   clan: string;
 }
@@ -74,7 +78,7 @@ export const CardSquare = styled.div<ICardProps>`
   }
 `;
 
-export const ProfileImage = styled.div`
+export const ProfileImage = styled.div<IImageProps>`
   position: absolute;
   top: 29px;
   left: 46px;
@@ -90,16 +94,20 @@ export const ProfileImage = styled.div`
   }
 
   img {
-    cursor: pointer;
     width: 192px;
     height: 252px;
     border-radius: 50%;
 
     transition: opacity 0.2s;
 
-    &:hover {
-      opacity: 0.5;
-    }
+    ${props =>
+      !props.locked &&
+      css`
+        &:hover {
+          cursor: pointer;
+          opacity: 0.5;
+        }
+      `}
   }
 `;
 

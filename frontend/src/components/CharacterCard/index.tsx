@@ -23,6 +23,7 @@ interface ICharacterCardProps {
   clan: string;
   updatedAt: string;
   isMobile: boolean;
+  locked?: boolean;
 }
 
 const CharacterCard: React.FC<ICharacterCardProps> = ({
@@ -34,6 +35,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   clan,
   updatedAt,
   isMobile,
+  locked = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
   const { addToast } = useToast();
@@ -88,9 +90,11 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
       <CardSquare clan={clan}>
         <span>{updatedAt}</span>
         <label htmlFor={charId}>
-          <ProfileImage>
+          <ProfileImage locked={locked}>
             <img src={charImg} alt={name} />
-            <input type="file" id={charId} onChange={handleAvatarChange} />
+            {!locked && (
+              <input type="file" id={charId} onChange={handleAvatarChange} />
+            )}
           </ProfileImage>
         </label>
         <CharInfo>

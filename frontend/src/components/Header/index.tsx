@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/auth';
 
 import imgLogoHeader from '../../assets/logo_header.svg';
 import { Container, HeaderContent, Profile, MyPages } from './styles';
+import STMenuButton from '../STMenuButton';
 
 const Header: React.FC = () => {
   const { signOut, user } = useAuth();
@@ -14,14 +15,17 @@ const Header: React.FC = () => {
     <Container>
       <HeaderContent>
         <img src={imgLogoHeader} alt="Curitiba By Night" />
+
         <Profile isST={user.storyteller}>
-          <img
-            src={
-              user.avatar_url ||
-              `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
-            }
-            alt={user.name}
-          />
+          <Link to="/profile">
+            <img
+              src={
+                user.avatar_url ||
+                `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
+              }
+              alt={user.name}
+            />
+          </Link>
           <div>
             <span>Bem-vindo,</span>
             <Link to="/profile">
@@ -58,6 +62,8 @@ const Header: React.FC = () => {
               <FaInstagram />
             </a>
           </div>
+
+          {user.storyteller && <STMenuButton isMobile={false} />}
         </MyPages>
 
         <button type="button" onClick={signOut}>

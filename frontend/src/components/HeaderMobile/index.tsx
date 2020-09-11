@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/auth';
 
 import imgLogoHeader from '../../assets/logo_header.svg';
 import { Container, HeaderContent, Profile, MyPages } from './styles';
+import STMenuButton from '../STMenuButton';
 
 const HeaderMobile: React.FC = () => {
   const { signOut, user } = useAuth();
@@ -21,6 +22,7 @@ const HeaderMobile: React.FC = () => {
       <HeaderContent>
         <img src={imgLogoHeader} alt="Curitiba By Night" />
         <MyPages>
+          {user.storyteller && <STMenuButton isMobile />}
           <div>
             <a
               href="https://www.facebook.com/groups/283920641632885/"
@@ -54,14 +56,15 @@ const HeaderMobile: React.FC = () => {
         </button>
       </HeaderContent>
       <Profile isST={user.storyteller}>
-        <img
-          src={
-            user.avatar_url ||
-            `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
-          }
-          alt={user.name}
-        />
-
+        <Link to="/profile">
+          <img
+            src={
+              user.avatar_url ||
+              `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
+            }
+            alt={user.name}
+          />
+        </Link>
         <div>
           <span>Olá,</span>
           <Link to="/profile">

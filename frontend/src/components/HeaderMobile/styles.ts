@@ -90,7 +90,8 @@ export const Profile = styled.div<IProfileProps>`
       transition: color 0.3s;
 
       &:hover {
-        color: ${shade(0.2, '#860209')};
+        color: ${lighten(0.14, '#860209')};
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
     }
   }

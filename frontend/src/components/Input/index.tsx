@@ -5,7 +5,6 @@ import ReactInputMask, { Props as InputProps } from 'react-input-mask';
 import { useField } from '@unform/core';
 import { Container, Error } from './styles';
 
-// interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 interface InputPropsEx extends InputProps {
   name: string;
   // eslint-disable-next-line @typescript-eslint/ban-types
