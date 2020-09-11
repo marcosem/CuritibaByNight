@@ -57,6 +57,7 @@ export const MenuList = styled.div`
   border-radius: 10px;
   background-color: #0d0d0d;
   transition: width 0.3s ease, height 0.3s ease;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 
   &::after {
     transition: all 0.3s ease;
