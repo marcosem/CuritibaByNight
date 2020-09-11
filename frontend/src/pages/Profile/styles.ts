@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { shade } from 'polished';
+import PerfectScrollBar from 'react-perfect-scrollbar';
 
 export const Container = styled.div`
   height: 100vh;
@@ -123,4 +124,12 @@ export const AvatarInput = styled.div`
       background: ${shade(0.2, '#860209')};
     }
   }
+`;
+
+export const Scroll = styled(PerfectScrollBar)`
+  max-height: 600px;
+  max-width: 340px;
+
+  padding: 5px;
+  margin: 5px 10px;
 `;

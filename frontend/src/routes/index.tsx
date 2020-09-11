@@ -8,6 +8,7 @@ import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
+import Players from '../pages/Players';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -18,6 +19,8 @@ const Routes: React.FC = () => (
 
     <Route path="/dashboard" component={Dashboard} isPrivate />
     <Route path="/profile" component={Profile} isPrivate />
+
+    <Route path="/players" component={Players} isPrivate isStoryteller />
   </Switch>
 );
 

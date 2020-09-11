@@ -10,7 +10,7 @@ import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import { Container, Content, AvatarInput } from './styles';
+import { Container, Content, AvatarInput, Scroll } from './styles';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -177,53 +177,55 @@ const Profile: React.FC = () => {
             </label>
           </AvatarInput>
 
-          <h1>Meu Perfil</h1>
-          <Input
-            name="name"
-            icon={FiUser}
-            mask=""
-            placeholder="Nome do Jogador"
-          />
-          <Input
-            name="email"
-            icon={FiMail}
-            mask=""
-            placeholder="E-Mail do Jogador"
-          />
-          <Input
-            name="phone"
-            icon={FaWhatsapp}
-            mask="99-9999tt999?"
-            formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
-            maskChar={null}
-            placeholder="Celular"
-          />
+          <Scroll options={{ suppressScrollX: true }}>
+            <h1>Meu Perfil</h1>
+            <Input
+              name="name"
+              icon={FiUser}
+              mask=""
+              placeholder="Nome do Jogador"
+            />
+            <Input
+              name="email"
+              icon={FiMail}
+              mask=""
+              placeholder="E-Mail do Jogador"
+            />
+            <Input
+              name="phone"
+              icon={FaWhatsapp}
+              mask="99-9999tt999?"
+              formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
+              maskChar={null}
+              placeholder="Celular"
+            />
 
-          <Input
-            containerStyle={{ marginTop: 24 }}
-            name="oldPassword"
-            icon={FiLock}
-            type="password"
-            mask=""
-            placeholder="Senha Atual"
-          />
+            <Input
+              containerStyle={{ marginTop: 24 }}
+              name="oldPassword"
+              icon={FiLock}
+              type="password"
+              mask=""
+              placeholder="Senha Atual"
+            />
 
-          <Input
-            name="password"
-            icon={FiLock}
-            type="password"
-            mask=""
-            placeholder="Nova Senha"
-          />
-          <Input
-            name="passwordConfirm"
-            icon={FiLock}
-            type="password"
-            mask=""
-            placeholder="Confirme a Senha"
-          />
+            <Input
+              name="password"
+              icon={FiLock}
+              type="password"
+              mask=""
+              placeholder="Nova Senha"
+            />
+            <Input
+              name="passwordConfirm"
+              icon={FiLock}
+              type="password"
+              mask=""
+              placeholder="Confirme a Senha"
+            />
 
-          <Button type="submit">Confirmar Alterações</Button>
+            <Button type="submit">Confirmar Alterações</Button>
+          </Scroll>
         </Form>
       </Content>
     </Container>

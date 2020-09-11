@@ -18,12 +18,17 @@ const appearFromLeft = keyframes`
   from {
     opacity: 0;
     transform: translateX(-50px);
+    z-index: 10; transform: rotateZ(-10deg);
   }
   to {
     opacity: 1;
     transform: translateX(1);
+    transform: rotateZ(0deg);
   }
 `;
+
+// transform: rotateZ(0deg);
+// z-index: 10; transform: rotateZ(-2deg);
 
 export const Container = styled.div<ICharacterProps>`
   width: 248px;
@@ -43,7 +48,7 @@ export const Container = styled.div<ICharacterProps>`
           `}
   }
 
-  animation: ${appearFromLeft} 1s;
+  animation: ${appearFromLeft} 0.6s;
 `;
 
 export const CardSquare = styled.div<ICardProps>`

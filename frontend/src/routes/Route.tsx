@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/auth';
 
 interface NewRouteProps extends RouteProps {
   isPrivate?: boolean;
+  isStoryteller?: boolean;
   component: React.ComponentType;
 }
 
@@ -15,6 +16,7 @@ interface NewRouteProps extends RouteProps {
 
 const Route: React.FC<NewRouteProps> = ({
   isPrivate = false,
+  isStoryteller = false,
   component: Component,
   ...rest
 }) => {
@@ -24,6 +26,29 @@ const Route: React.FC<NewRouteProps> = ({
     <ReactDOMRoute
       {...rest}
       render={({ location }) => {
+        if (isPrivate === !!user) {
+          if ((isStoryteller && user.storyteller) || !isStoryteller) {
+            return <Component />;
+          }
+          return (
+            <Redirect
+              to={{
+                pathname: '/dashboard',
+                state: { from: location },
+              }}
+            />
+          );
+        }
+        return (
+          <Redirect
+            to={{
+              pathname: isPrivate ? '/' : '/dashboard',
+              state: { from: location },
+            }}
+          />
+        );
+
+        /*
         return isPrivate === !!user ? (
           <Component />
         ) : (
@@ -34,6 +59,7 @@ const Route: React.FC<NewRouteProps> = ({
             }}
           />
         );
+        */
       }}
     />
   );
