@@ -15,7 +15,8 @@ export default class UserAvatarController {
 
     // Do not show user password
     // delete user.password;
-    delete user.secret;
+    // delete user.secret;
+    user.secret = '';
 
     return res.json(classToClass(user));
   }

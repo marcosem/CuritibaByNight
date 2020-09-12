@@ -36,6 +36,9 @@ class User {
   @Column()
   secret: string;
 
+  @Column()
+  active: boolean;
+
   @Column('timestamp with time zone')
   lastLogin_at: Date;
 

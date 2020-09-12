@@ -15,8 +15,7 @@ export default class InitialUsersController {
     const user = await getUserService.execute({ secret: id });
 
     // delete user.password;
-    delete user.secret;
-    delete user.storyteller;
+    user.secret = '';
 
     return res.json(classToClass(user));
   }
@@ -36,7 +35,6 @@ export default class InitialUsersController {
 
     // Do not show user password
     // delete user.password;
-    delete user.storyteller;
 
     return res.json(classToClass(user));
   }
@@ -56,8 +54,7 @@ export default class InitialUsersController {
 
     // Do not show user password
     // delete user.password;
-    delete user.secret;
-    delete user.storyteller;
+    user.secret = '';
 
     return res.json(classToClass(user));
   }

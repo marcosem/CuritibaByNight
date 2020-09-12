@@ -12,7 +12,8 @@ export default class SessionsController {
     const { user, token } = await authenticateUser.execute({ email, password });
 
     // delete user.password;
-    delete user.secret;
+    // delete user.secret;
+    user.secret = '';
 
     return res.json({ user: classToClass(user), token });
   }

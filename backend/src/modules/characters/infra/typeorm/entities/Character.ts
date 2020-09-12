@@ -43,6 +43,9 @@ class Character {
   @Column()
   clan: string;
 
+  @Column()
+  situation: string;
+
   @CreateDateColumn()
   created_at: Date;
 

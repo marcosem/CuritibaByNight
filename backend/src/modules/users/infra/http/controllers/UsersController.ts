@@ -15,7 +15,8 @@ export default class UsersController {
     const usersListProtected = usersList.map(user => {
       const newUser = user;
       // delete newUser.password;
-      delete newUser.secret;
+      // delete newUser.secret;
+      newUser.secret = '';
       return classToClass(newUser);
     });
 
@@ -33,7 +34,8 @@ export default class UsersController {
     const user = await getUser.execute(profileID);
 
     // delete user.password;
-    delete user.secret;
+    // delete user.secret;
+    user.secret = '';
 
     return res.json(classToClass(user));
   }
@@ -65,7 +67,8 @@ export default class UsersController {
     });
 
     // delete user.password;
-    delete user.secret;
+    // delete user.secret;
+    user.secret = '';
 
     return res.json(classToClass(user));
   }
