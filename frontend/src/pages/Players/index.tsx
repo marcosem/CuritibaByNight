@@ -7,7 +7,7 @@ import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
-import { Container } from './styles';
+import { Container, TableWrapper, Table } from './styles';
 import { useToast } from '../../hooks/toast';
 
 interface IPlayer {
@@ -15,6 +15,7 @@ interface IPlayer {
   name: string;
   email: string;
   phone: string;
+  active: boolean;
   storyteller: boolean;
   avatar_url: string;
 }
@@ -38,12 +39,12 @@ const Players: React.FC = () => {
             name: user.name,
             email: user.email,
             phone: user.phone,
+            active: user.active,
+            storyteller: user.storyteller,
             avatar_url: user.avatar_url,
           };
           return newUser;
         });
-
-        console.log(newArray);
 
         setPlayerList(newArray);
       });
@@ -72,15 +73,34 @@ const Players: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <ul>
-          {playerList.map(player => (
-            <li>
-              <div>
-                <span>{player.name}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <TableWrapper>
+          <Table>
+            <thead>
+              <tr>
+                <th style={{ width: 40 }}>Avatar</th>
+                <th>Jogador</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {playerList.map(player => (
+                <tr>
+                  <td>
+                    {player.avatar_url && (
+                      <img src={player.avatar_url} alt="" />
+                    )}
+                  </td>
+                  <td>{player.name}</td>
+                  <td>{player.email}</td>
+                  <td>{player.phone}</td>
+                  <td>{player.active ? 'Ativo' : 'Inativo'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableWrapper>
       )}
     </Container>
   );
