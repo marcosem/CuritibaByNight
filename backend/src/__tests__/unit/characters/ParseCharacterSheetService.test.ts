@@ -24,6 +24,7 @@ describe('ParseCharacterSheet', () => {
   it('Should be able to parse a PDF file', async () => {
     const char = await parseCharacterSheet.execute({
       sheetFilename: 'filename.pdf',
+      mimetype: 'application/pdf',
     });
     expect(char).toBeInstanceOf(Character);
   });
@@ -32,7 +33,23 @@ describe('ParseCharacterSheet', () => {
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
 
     await expect(
-      parseCharacterSheet.execute({ sheetFilename: '' }),
+      parseCharacterSheet.execute({
+        sheetFilename: '',
+        mimetype: 'application/pdf',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    expect(deleteFile).toBeCalled();
+  });
+
+  it('Should not allow non PDF files', async () => {
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    await expect(
+      parseCharacterSheet.execute({
+        sheetFilename: 'filename.rtf',
+        mimetype: 'application/rtf',
+      }),
     ).rejects.toBeInstanceOf(AppError);
 
     expect(deleteFile).toBeCalled();

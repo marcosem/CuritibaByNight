@@ -12,6 +12,7 @@ export default class CharacterController {
   public async create(req: Request, res: Response): Promise<Response> {
     const { player_id, email } = req.body;
     const fileName = req.file.filename;
+    const { mimetype } = req.file;
 
     const parseCharacterSheetService = container.resolve(
       ParseCharacterSheetService,
@@ -19,6 +20,7 @@ export default class CharacterController {
 
     const parsedChar = await parseCharacterSheetService.execute({
       sheetFilename: fileName,
+      mimetype,
     });
 
     const createCharacterSheetService = container.resolve(
@@ -82,6 +84,7 @@ export default class CharacterController {
   public async update(req: Request, res: Response): Promise<Response> {
     const { character_id, comments } = req.body;
     const fileName = req.file.filename;
+    const { mimetype } = req.file;
 
     const parseCharacterSheetService = container.resolve(
       ParseCharacterSheetService,
@@ -89,6 +92,7 @@ export default class CharacterController {
 
     const parsedChar = await parseCharacterSheetService.execute({
       sheetFilename: fileName,
+      mimetype,
     });
 
     const inputData = {

@@ -55,11 +55,6 @@ class UpdateCharacterSheetService {
       );
     }
 
-    if (sheetFilename.indexOf('.pdf') === -1) {
-      await this.storageProvider.deleteFile(sheetFilename, 'sheet');
-      throw new AppError('File must be in PDF format', 400);
-    }
-
     const char = await this.charactersRepository.findById(char_id);
 
     if (!char) {

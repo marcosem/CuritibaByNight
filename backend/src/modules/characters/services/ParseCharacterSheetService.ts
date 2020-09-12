@@ -6,6 +6,7 @@ import IStorageProvider from '@shared/container/providers/StorageProvider/models
 
 interface IRequestDTO {
   sheetFilename: string;
+  mimetype: string;
 }
 
 @injectable()
@@ -19,7 +20,13 @@ class ParseCharacterSheetService {
 
   public async execute({
     sheetFilename,
+    mimetype,
   }: IRequestDTO): Promise<Character | undefined> {
+    if (mimetype !== 'application/pdf') {
+      await this.storageProvider.deleteFile(sheetFilename, '');
+      throw new AppError('File must be in PDF format', 400);
+    }
+
     const character = await this.pdfParserProvider.parse(sheetFilename);
 
     if (!character) {
