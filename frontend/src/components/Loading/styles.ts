@@ -1,0 +1,27 @@
+import styled, { keyframes } from 'styled-components';
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const Container = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 54px;
+  height: 54px;
+  background: transparent;
+
+  > svg {
+    width: 54px;
+    height: 54px;
+    color: #fff;
+
+    animation: ${rotate} 2s linear infinite;
+  }
+`;

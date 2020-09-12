@@ -13,6 +13,7 @@ import getValidationErrors from '../../utils/getValidationErrors';
 
 import { Container, Content, AnimationContainer, Background } from './styles';
 
+import Loading from '../../components/Loading';
 import Logo from '../../components/Logo';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -31,9 +32,13 @@ interface InitialUserData {
   phone?: string;
 }
 
+interface IRouteParams {
+  id: string;
+}
+
 const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
-  const { id } = useParams();
+  const { id } = useParams<IRouteParams>();
   const [isBusy, setBusy] = useState(true);
   const [userData, setUserData] = useState<InitialUserData>(
     {} as InitialUserData,
@@ -136,55 +141,63 @@ const SignUp: React.FC = () => {
       <Background />
 
       <Content>
-        {!isBusy && userData.name && (
-          <AnimationContainer>
-            <Logo />
+        {isBusy ? (
+          <Loading />
+        ) : (
+          userData.name && (
+            <AnimationContainer>
+              <Logo />
 
-            <Form onSubmit={handleSubmit} ref={formRef} initialData={userData}>
-              <h1>Faça seu Cadastro</h1>
-              <Input
-                name="name"
-                icon={FiUser}
-                mask=""
-                placeholder="Nome do Jogador"
-              />
-              <Input
-                name="email"
-                icon={FiMail}
-                mask=""
-                placeholder="E-Mail do Jogador"
-              />
-              <Input
-                name="phone"
-                icon={FaWhatsapp}
-                mask="99-9999tt999?"
-                formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
-                maskChar={null}
-                placeholder="Celular"
-              />
+              <Form
+                onSubmit={handleSubmit}
+                ref={formRef}
+                initialData={userData}
+              >
+                <h1>Faça seu Cadastro</h1>
+                <Input
+                  name="name"
+                  icon={FiUser}
+                  mask=""
+                  placeholder="Nome do Jogador"
+                />
+                <Input
+                  name="email"
+                  icon={FiMail}
+                  mask=""
+                  placeholder="E-Mail do Jogador"
+                />
+                <Input
+                  name="phone"
+                  icon={FaWhatsapp}
+                  mask="99-9999tt999?"
+                  formatChars={{ '9': '[0-9]', t: '[0-9-]', '?': '[0-9 ]' }}
+                  maskChar={null}
+                  placeholder="Celular"
+                />
 
-              <Input
-                name="password"
-                icon={FiLock}
-                type="password"
-                mask=""
-                placeholder="Senha"
-              />
-              <Input
-                name="passwordConfirm"
-                icon={FiLock}
-                type="password"
-                mask=""
-                placeholder="Confirme a Senha"
-              />
+                <Input
+                  name="password"
+                  icon={FiLock}
+                  type="password"
+                  mask=""
+                  placeholder="Senha"
+                />
+                <Input
+                  name="passwordConfirm"
+                  icon={FiLock}
+                  type="password"
+                  mask=""
+                  placeholder="Confirme a Senha"
+                />
 
-              <Button type="submit">Cadastrar</Button>
-            </Form>
-            <Link to="/">
-              <FiArrowLeft />
-              Voltar para Login
-            </Link>
-          </AnimationContainer>
+                <Button type="submit">Cadastrar</Button>
+              </Form>
+              <Link to="/">
+                <FiArrowLeft />
+                Voltar para Login
+              </Link>
+            </AnimationContainer>
+          )
         )}
       </Content>
     </Container>

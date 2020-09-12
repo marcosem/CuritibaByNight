@@ -5,6 +5,8 @@ import api from '../../services/api';
 
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
+import Loading from '../../components/Loading';
+
 import { Container } from './styles';
 import { useToast } from '../../hooks/toast';
 
@@ -67,7 +69,9 @@ const Players: React.FC = () => {
   return (
     <Container>
       {mobileVer ? <HeaderMobile /> : <Header page="Painel de Jogadores" />}
-      {!isBusy && (
+      {isBusy ? (
+        <Loading />
+      ) : (
         <ul>
           {playerList.map(player => (
             <li>

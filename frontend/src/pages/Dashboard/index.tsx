@@ -7,6 +7,7 @@ import { Container, TitleBox, Scroll, Content, Character } from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import CharacterCard from '../../components/CharacterCard';
+import Loading from '../../components/Loading';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -84,7 +85,9 @@ const Dashboard: React.FC = () => {
     <Container>
       {mobileVer ? <HeaderMobile /> : <Header />}
 
-      {!isBusy && (
+      {isBusy ? (
+        <Loading />
+      ) : (
         <Content isMobile={mobileVer}>
           <TitleBox>
             {charList.length > 0 ? (

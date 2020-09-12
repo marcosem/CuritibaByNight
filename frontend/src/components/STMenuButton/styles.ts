@@ -13,7 +13,6 @@ export const Container = styled.div<IMenuProps>`
   margin: 0 16px;
 
   > svg {
-    color: #ddd;
     width: 32px;
     height: 32px;
     margin: 0;
