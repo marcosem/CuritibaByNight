@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import usersRouter from '@modules/users/infra/http/routes/users.routes';
+import userCharactersRouter from '@modules/characters/infra/http/routes/userCharacters.routes';
 import charactersRouter from '@modules/characters/infra/http/routes/characters.routes';
 import passwordRouter from '@modules/users/infra/http/routes/password.routes';
 import sessionsRouter from '@modules/users/infra/http/routes/sessions.routes';
@@ -14,7 +15,8 @@ routes.use('/images', express.static(assetsMulter));
 routes.use('/avatar', express.static(avatarMulter));
 
 routes.use('/users', usersRouter);
-routes.use('/character', charactersRouter);
+routes.use('/character', userCharactersRouter);
+routes.use('/characters', charactersRouter);
 routes.use('/password', passwordRouter);
 routes.use('/sessions', sessionsRouter);
 routes.use('/profile', profileRouter);
