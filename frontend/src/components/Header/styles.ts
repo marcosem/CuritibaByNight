@@ -23,6 +23,11 @@ export const HeaderContent = styled.div`
     }
   }
 
+  > h1 {
+    margin: auto;
+    color: #860209;
+  }
+
   button {
     margin-left: auto;
     background: transparent;

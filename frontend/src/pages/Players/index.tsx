@@ -1,13 +1,14 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
+import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
-import { Container, TableWrapper, Table } from './styles';
+import { Container, TableWrapper, Table, TableCell } from './styles';
 import { useToast } from '../../hooks/toast';
 
 interface IPlayer {
@@ -55,7 +56,7 @@ const Players: React.FC = () => {
         addToast({
           type: 'error',
           title: 'Erro ao tentar listar jogadores',
-          description: `Erro: '${message}`,
+          description: `Erro: '${message}'`,
         });
       }
     }
@@ -67,6 +68,10 @@ const Players: React.FC = () => {
     loadPlayers();
   }, [loadPlayers]);
 
+  const handleProfile = useCallback((profile: IPlayer) => {
+    console.log(profile);
+  }, []);
+
   return (
     <Container>
       {mobileVer ? <HeaderMobile /> : <Header page="Painel de Jogadores" />}
@@ -77,7 +82,7 @@ const Players: React.FC = () => {
           <Table>
             <thead>
               <tr>
-                <th style={{ width: 40 }}>Avatar</th>
+                <th>Avatar</th>
                 <th>Jogador</th>
                 <th>E-mail</th>
                 <th>Telefone</th>
@@ -86,16 +91,30 @@ const Players: React.FC = () => {
             </thead>
             <tbody>
               {playerList.map(player => (
-                <tr>
+                <tr key={player.id} onClick={() => handleProfile(player)}>
                   <td>
-                    {player.avatar_url && (
-                      <img src={player.avatar_url} alt="" />
+                    <img
+                      src={
+                        player.avatar_url ||
+                        `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
+                      }
+                      alt=""
+                    />
+                  </td>
+                  <td>
+                    <TableCell>{player.name}</TableCell>
+                  </td>
+                  <td>
+                    <TableCell>{player.email}</TableCell>
+                  </td>
+                  <td>{player.phone}</td>
+                  <td>
+                    {player.active ? (
+                      <FaCheckCircle color="green" />
+                    ) : (
+                      <FaMinusCircle color="red" />
                     )}
                   </td>
-                  <td>{player.name}</td>
-                  <td>{player.email}</td>
-                  <td>{player.phone}</td>
-                  <td>{player.active ? 'Ativo' : 'Inativo'}</td>
                 </tr>
               ))}
             </tbody>

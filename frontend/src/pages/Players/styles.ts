@@ -11,13 +11,14 @@ export const Container = styled.div`
 `;
 
 export const TableWrapper = styled.div`
-  margin: 10px 70px 70px;
-  box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
+  margin: 25px 70px 70px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
   max-width: 1120px;
+  border-radius: 11px;
 `;
 
 export const Table = styled.table`
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: normal;
   border: none;
@@ -26,21 +27,37 @@ export const Table = styled.table`
   max-width: 100%;
   white-space: nowrap;
   background-color: white;
+  opacity: 0.9;
 
   td {
     text-align: center;
     padding: 8px;
-    border-right: 1px solid #f8f8f8;
     font-size: 12px;
-    color: #333;
+    color: #000;
+
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+
+    &:first-child {
+      border-left: 0;
+    }
+
+    &:last-child {
+      border-right: 0;
+    }
 
     img {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       background: #888;
 
       border: 2px solid #860209;
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
     }
   }
 
@@ -51,22 +68,71 @@ export const Table = styled.table`
 
   thead {
     th {
-      color: #ffffff;
-      background: #4fc3a1;
+      color: #fff;
+      background: #560209;
 
       &:nth-child(odd) {
-        color: #ffffff;
-        background: #324960;
+        color: #fff;
+        background: #0d0d0d;
+      }
+
+      &:first-child {
+        width: 40px;
+        border-radius: 10px 0 0 0;
+      }
+
+      &:last-child {
+        width: 40px;
+        border-radius: 0 10px 0 0;
       }
     }
   }
 
   tr {
     &:nth-child(even) {
-      background: #f8f8f8;
+      background: #e8e7e7;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: #aaa;
+      td {
+        color: #fff;
+      }
+    }
+
+    &:last-child {
+      td {
+        &:first-child {
+          border-radius: 0 0 0 10px;
+        }
+
+        &:last-child {
+          border-radius: 0 0 10px 0;
+        }
+      }
     }
   }
 `;
+
+export const TableCell = styled.div`
+  display: flex;
+  align-items: left;
+
+  img {
+    width: 30px;
+    height: 30px;
+    padding: 0 16px;
+    border-radius: 50%;
+    background: #888;
+
+    border: 2px solid #860209;
+  }
+`;
+
+// #0d0d0d #860209
+// background: #4fc3a1;
+// background: #324960;
 
 /*
       ${props =>

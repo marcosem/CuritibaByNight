@@ -98,14 +98,19 @@ export const MenuList = styled.div`
     }
 
     ul {
+      list-style-type: none;
       opacity: 1;
       height: 100%;
       margin-top: 30px;
+
       transition: all 1s ease;
 
       li {
+        margin: 0;
+        padding: 0;
         height: 25px;
         transition: height 1s ease;
+
         &:hover {
           border-bottom: 1px solid darken(#e9e5e5, 10);
         }
