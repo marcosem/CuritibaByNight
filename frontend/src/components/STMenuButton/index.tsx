@@ -21,7 +21,7 @@ const STMenuButton: React.FC<MenuButtonProps> = ({ isMobile }) => {
             </Link>
           </li>
           <li>
-            <a href="#characters">
+            <a href="/characters">
               <GiVampireDracula />
               Personagens
             </a>

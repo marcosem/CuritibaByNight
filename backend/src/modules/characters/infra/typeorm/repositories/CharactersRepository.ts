@@ -71,7 +71,10 @@ class CharactersRepository implements ICharactersRepository {
   }
 
   public async listAll(): Promise<Character[]> {
-    const charList = await this.ormRepository.find({ order: { name: 'ASC' } });
+    const charList = await this.ormRepository.find({
+      order: { name: 'ASC' },
+      relations: ['user'],
+    });
 
     return charList;
   }
