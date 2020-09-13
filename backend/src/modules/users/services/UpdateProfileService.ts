@@ -38,7 +38,10 @@ class UpdateProfileService {
     const profileID = profile_id || user_id;
 
     if (!user) {
-      throw new AppError('Only authenticated users update the profile', 401);
+      throw new AppError(
+        'Only authenticated users can update the profile',
+        401,
+      );
     } else if (!user.storyteller && user_id !== profileID) {
       throw new AppError(
         'Only authenticated Storytellers can update other players profile',

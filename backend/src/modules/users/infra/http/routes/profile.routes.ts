@@ -25,6 +25,15 @@ profileRouter.put(
   }),
   usersController.update,
 );
-profileRouter.post('/', usersController.show);
+
+profileRouter.post(
+  '/',
+  celebrate({
+    [Segments.BODY]: {
+      profile_id: Joi.string().uuid(),
+    },
+  }),
+  usersController.show,
+);
 
 export default profileRouter;
