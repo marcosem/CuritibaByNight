@@ -36,7 +36,7 @@ export default async function ensureSTAuthenticated(
     const decoded = verify(token, authConfig.jwt.secret);
 
     const { sub } = decoded as ITokenPayload;
-    const user = await getUsers.execute(sub);
+    const user = await getUsers.execute({ user_id: sub });
     const isST = user ? user.storyteller : false;
 
     if (!isST) {
