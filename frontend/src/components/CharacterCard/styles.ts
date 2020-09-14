@@ -140,6 +140,11 @@ export const CharInfo = styled.div`
     text-decoration: none;
     transition: color 0.2s;
 
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
     color: #000;
 
     &:hover {
