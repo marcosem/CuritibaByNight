@@ -140,6 +140,7 @@ export const CharInfo = styled.div`
     text-decoration: none;
     transition: color 0.2s;
 
+    word-wrap: break-word;
     overflow-wrap: break-word;
 
     color: #000;
