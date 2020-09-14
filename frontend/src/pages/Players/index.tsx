@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
+import { isMobile } from 'react-device-detect';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
@@ -21,6 +22,7 @@ interface IPlayer {
 
 const Players: React.FC = () => {
   const [playerList, setPlayerList] = useState<IPlayer[]>([]);
+  const [mobileVer, setMobile] = useState(false);
   const [isBusy, setBusy] = useState(true);
 
   const { addToast } = useToast();
@@ -61,6 +63,7 @@ const Players: React.FC = () => {
   }, [addToast]);
 
   useEffect(() => {
+    setMobile(isMobile);
     loadPlayers();
   }, [loadPlayers]);
 
@@ -80,8 +83,12 @@ const Players: React.FC = () => {
               <tr>
                 <th>Avatar</th>
                 <th>Jogador</th>
-                <th>E-mail</th>
-                <th>Telefone</th>
+                {!mobileVer && (
+                  <>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                  </>
+                )}
                 <th>Situação</th>
               </tr>
             </thead>
@@ -100,10 +107,15 @@ const Players: React.FC = () => {
                   <td>
                     <TableCell>{player.name}</TableCell>
                   </td>
-                  <td>
-                    <TableCell>{player.email}</TableCell>
-                  </td>
-                  <td>{player.phone}</td>
+                  {!mobileVer && (
+                    <>
+                      <td>
+                        <TableCell>{player.email}</TableCell>
+                      </td>
+                      <td>{player.phone}</td>
+                    </>
+                  )}
+
                   <td>
                     {player.active ? (
                       <FaCheckCircle color="green" />

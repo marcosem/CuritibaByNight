@@ -2,7 +2,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { format } from 'date-fns';
 import { isMobile } from 'react-device-detect';
-// import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
