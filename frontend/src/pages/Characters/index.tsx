@@ -59,7 +59,7 @@ const Players: React.FC = () => {
           return newChar;
         });
 
-        const splitNum = mobileVer ? 1 : 4;
+        const splitNum = mobileVer ? 1 : 3;
 
         const rowArray: [ICharacter[]] = [newArray.splice(0, splitNum)];
         while (newArray.length > 0) {
