@@ -143,8 +143,7 @@ export const CharInfo = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 188px;
-    word-break: break-all;
-    white-space: nowrap;
+    white-space: pre-wrap;
 
     color: #000;
 
