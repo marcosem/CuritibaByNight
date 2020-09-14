@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 // import React, { useCallback, MouseEvent } from 'react';
 // import html2canvas from 'html2canvas';
 import api from '../../services/api';
+import getCardImg from './getCardImg';
 
 import {
   Container,
@@ -38,11 +39,16 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   locked = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
+  const [clanImg, setClanImg] = useState<string>('');
   const { addToast } = useToast();
 
   useEffect(() => {
     setCharImg(avatar || tempProfileImg);
   }, [avatar]);
+
+  useEffect(() => {
+    setClanImg(getCardImg(clan));
+  }, [clan]);
 
   /*
   const saveCard = useCallback((e: MouseEvent<HTMLDivElement>) => {
@@ -87,7 +93,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
 
   return (
     <Container isMobile={isMobile}>
-      <CardSquare clan={clan}>
+      <CardSquare clanImg={clanImg}>
         <span>{updatedAt}</span>
         <label htmlFor={charId}>
           <ProfileImage locked={locked}>

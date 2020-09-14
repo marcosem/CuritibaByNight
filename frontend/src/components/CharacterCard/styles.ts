@@ -1,6 +1,5 @@
 import styled, { keyframes, css } from 'styled-components';
 import { lighten } from 'polished';
-import getCardImg from './getCardImg';
 
 interface ICharacterProps {
   isMobile: boolean;
@@ -11,7 +10,7 @@ interface IImageProps {
 }
 
 interface ICardProps {
-  clan: string;
+  clanImg: string;
 }
 
 const appearFromLeft = keyframes`
@@ -61,7 +60,7 @@ export const CardSquare = styled.div<ICardProps>`
   border-radius: 10px;
 
   ${props => css`
-    background: url(${getCardImg(props.clan)});
+    background: url(${props.clanImg});
   `}
 
   background-repeat: no-repeat;
@@ -153,13 +152,6 @@ export const CharInfo = styled.div`
     }
   }
 `;
-
-/*
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 188px;
-*/
 
 export const CharXPTitle = styled.div`
   position: absolute;
