@@ -141,6 +141,7 @@ export const CharInfo = styled.div`
     transition: color 0.2s;
 
     overflow: hidden;
+    word-break: break-all;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3;
