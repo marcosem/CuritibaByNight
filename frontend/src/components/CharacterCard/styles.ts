@@ -140,11 +140,11 @@ export const CharInfo = styled.div`
     text-decoration: none;
     transition: color 0.2s;
 
-    white-space: nowrap;
     overflow: hidden;
-    height: 3.6em; /* exactly three lines */
-    text-overflow: -o-ellipsis-lastline;
-    max-width: 188px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 
     color: #000;
 
@@ -154,6 +154,13 @@ export const CharInfo = styled.div`
     }
   }
 `;
+
+/*
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 188px;
+*/
 
 export const CharXPTitle = styled.div`
   position: absolute;
