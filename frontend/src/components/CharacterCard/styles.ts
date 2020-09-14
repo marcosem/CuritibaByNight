@@ -142,7 +142,8 @@ export const CharInfo = styled.div`
 
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    height: 3.6em; /* exactly three lines */
+    text-overflow: -o-ellipsis-lastline;
     max-width: 188px;
 
     color: #000;
