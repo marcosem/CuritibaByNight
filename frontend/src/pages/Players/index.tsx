@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
-import { isMobile } from 'react-device-detect';
 import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
 import api from '../../services/api';
 
@@ -22,7 +21,6 @@ interface IPlayer {
 
 const Players: React.FC = () => {
   const [playerList, setPlayerList] = useState<IPlayer[]>([]);
-  const [mobileVer, setMobile] = useState(false);
   const [isBusy, setBusy] = useState(true);
 
   const { addToast } = useToast();
@@ -63,7 +61,6 @@ const Players: React.FC = () => {
   }, [addToast]);
 
   useEffect(() => {
-    setMobile(isMobile);
     loadPlayers();
   }, [loadPlayers]);
 
