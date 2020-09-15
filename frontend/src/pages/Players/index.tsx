@@ -8,6 +8,7 @@ import Header from '../../components/Header';
 import Loading from '../../components/Loading';
 
 import { Container, TableWrapper, Table, TableCell } from './styles';
+import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 
 interface IPlayer {
@@ -24,7 +25,7 @@ const Players: React.FC = () => {
   const [playerList, setPlayerList] = useState<IPlayer[]>([]);
   const [mobileVer, setMobile] = useState(false);
   const [isBusy, setBusy] = useState(true);
-
+  const { signOut } = useAuth();
   const { addToast } = useToast();
 
   const loadPlayers = useCallback(async () => {
@@ -52,15 +53,25 @@ const Players: React.FC = () => {
       if (error.response) {
         const { message } = error.response.data;
 
-        addToast({
-          type: 'error',
-          title: 'Erro ao tentar listar jogadores',
-          description: `Erro: '${message}'`,
-        });
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar jogadores',
+            description: `Erro: '${message}'`,
+          });
+        }
       }
     }
     setBusy(false);
-  }, [addToast]);
+  }, [addToast, signOut]);
 
   useEffect(() => {
     setMobile(isMobile);

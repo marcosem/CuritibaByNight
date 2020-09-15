@@ -9,6 +9,7 @@ import Loading from '../../components/Loading';
 import CharacterCard from '../../components/CharacterCard';
 
 import { Container, TitleBox, Scroll, Content, Character } from './styles';
+import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 
 interface ICharacter {
@@ -30,7 +31,7 @@ const Players: React.FC = () => {
   const [charList, setCharList] = useState<[ICharacter[]]>([[]]);
   const [mobileVer, setMobile] = useState(false);
   const [isBusy, setBusy] = useState(true);
-
+  const { signOut } = useAuth();
   const { addToast } = useToast();
 
   const loadCharacters = useCallback(async () => {
@@ -70,15 +71,25 @@ const Players: React.FC = () => {
       if (error.response) {
         const { message } = error.response.data;
 
-        addToast({
-          type: 'error',
-          title: 'Erro ao tentar listar personagens',
-          description: `Erro: '${message}'`,
-        });
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar personagens',
+            description: `Erro: '${message}'`,
+          });
+        }
       }
     }
     setBusy(false);
-  }, [addToast, mobileVer]);
+  }, [addToast, mobileVer, signOut]);
 
   useEffect(() => {
     setMobile(isMobile);
