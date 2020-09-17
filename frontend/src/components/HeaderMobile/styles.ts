@@ -34,8 +34,8 @@ export const HeaderContent = styled.div`
 
     svg {
       color: #cc030e;
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
 
       transition: color 0.3s;
 
@@ -49,7 +49,7 @@ export const HeaderContent = styled.div`
 export const Profile = styled.div<ProfileProps>`
   display: flex;
   align-items: center;
-  margin: auto 12px auto auto;
+  margin: auto 8px auto auto;
   padding: 3px 5px;
   border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0);
@@ -61,8 +61,8 @@ export const Profile = styled.div<ProfileProps>`
   }
 
   img {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     margin: auto;
     border: 3px solid #cc030e;
@@ -80,7 +80,7 @@ export const Profile = styled.div<ProfileProps>`
     display: flex;
     flex-direction: column;
     line-height: 24px;
-    margin: auto 16px auto auto;
+    margin: auto 14px auto auto;
 
     strong {
       font-size: 14px;
@@ -131,8 +131,8 @@ export const MyPages = styled.div`
     }
 
     svg {
-      width: 30px;
-      height: 30px;
+      width: 24px;
+      height: 24px;
       margin: 0 8px;
       color: #999;
 
