@@ -133,7 +133,7 @@ export const TableCell = styled.div`
 `;
 
 export const Scroll = styled(PerfectScrollBar)`
-  max-height: 600px;
+  max-height: 100vh;
   padding: 5px 20px;
   margin-top: 5px;
 `;
