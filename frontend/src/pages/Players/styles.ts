@@ -11,9 +11,10 @@ export const Container = styled.div`
 `;
 
 export const TableWrapper = styled.div`
-  margin: 25px 70px 70px;
+  margin: 25px auto;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-  max-width: 1120px;
+  min-width: 340px;
+  max-width: 1012px;
   border-radius: 11px;
 `;
 
@@ -24,7 +25,8 @@ export const Table = styled.table`
   border: none;
   border-collapse: collapse;
   width: 100%;
-  max-width: 100%;
+  min-width: 340px;
+  max-width: 1012px;
   white-space: nowrap;
   background-color: white;
   opacity: 0.9;
@@ -93,14 +95,6 @@ export const Table = styled.table`
       background: #e8e7e7;
     }
 
-    &:hover {
-      cursor: pointer;
-      background-color: #aaa;
-      td {
-        color: #fff;
-      }
-    }
-
     &:last-child {
       td {
         &:first-child {
@@ -109,6 +103,18 @@ export const Table = styled.table`
 
         &:last-child {
           border-radius: 0 0 10px 0;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      &:hover {
+        cursor: pointer;
+        background-color: #aaa;
+        td {
+          color: #fff;
         }
       }
     }

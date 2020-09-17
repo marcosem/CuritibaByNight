@@ -83,7 +83,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Container>
-      {mobileVer ? <HeaderMobile /> : <Header />}
+      {mobileVer ? <HeaderMobile /> : <Header page="dashboard" />}
 
       {isBusy ? (
         <Loading />

@@ -98,7 +98,7 @@ const Players: React.FC = () => {
 
   return (
     <Container>
-      <Header page="Painel de Personagens" />
+      <Header page="characters" />
       {isBusy ? (
         <Loading />
       ) : (

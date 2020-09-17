@@ -10,7 +10,8 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.main<ICharacterProps>`
-  max-width: 1120px;
+  min-width: 340px;
+  max-width: 1012px;
   margin: 18px auto;
 
   ${props =>
@@ -34,7 +35,8 @@ export const TitleBox = styled.div`
 `;
 
 export const Character = styled.ul<ICharacterProps>`
-  max-width: 1120px;
+  min-width: 340px;
+  max-width: 1012px;
   background: transparent;
   display: flex;
   flex-direction: row;

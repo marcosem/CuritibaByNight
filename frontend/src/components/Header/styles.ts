@@ -1,141 +1,213 @@
 import styled, { css } from 'styled-components';
 import { lighten, shade } from 'polished';
+import bgImg from '../../assets/header_bg.png';
+import navBgImg from '../../assets/nav_bg.png';
 
 interface ProfileProps {
   isST: boolean;
 }
 
 export const Container = styled.header`
-  padding: 10px 0;
-  background: #989797;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  background: url(${bgImg}) repeat-x;
+  height: 131px;
+  margin-bottom: 16px;
 `;
 
 export const HeaderContent = styled.div`
-  max-width: 1120px;
+  min-width: 340px;
+  max-width: 1012px;
   margin: 0 auto;
   display: flex;
-  align-items: center;
 
   > a {
+    float: left;
     img {
       height: 80px;
     }
   }
 
-  > h1 {
-    margin: auto;
-    color: #860209;
-  }
-
   button {
-    margin-left: auto;
+    margin-right: 0;
     background: transparent;
     border: 0;
 
     svg {
-      color: #860209;
+      color: #cc030e;
       width: 32px;
       height: 32px;
 
       transition: color 0.3s;
 
       &:hover {
-        color: ${lighten(0.14, '#860209')};
+        color: ${lighten(0.14, '#cc030e')};
       }
     }
-  }
-`;
-
-export const ButtonMenu = styled.div`
-  overflow: hidden;
-  display: block;
-  border-radius: 10px;
-  width: 35px;
-  height: 35px;
-  margin-right: auto;
-
-  background-color: #860209;
-  opacity: 0.8;
-  transition: width 0.3s 0.5s ease, border-radius 1.1s ease;
-
-  > svg {
-    padding-top: 2px;
-    padding-left: 3px;
-    color: #ddd;
-    width: 32px;
-    height: 32px;
   }
 `;
 
 export const Profile = styled.div<ProfileProps>`
   display: flex;
   align-items: center;
-  margin-left: 80px;
+  margin: auto 32px auto auto;
+  padding: 3px 5px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0);
+
+  a {
+    display: flex;
+    flex-direction: row;
+    text-decoration: none;
+  }
 
   img {
-    width: 56px;
-    height: 56px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    margin: auto;
+    border: 3px solid #cc030e;
 
     transition: border-color 0.3s;
-
-    border: 3px solid #860209;
-
-    &:hover {
-      border-color: ${lighten(0.14, '#860209')};
-    }
 
     ${props =>
       props.isST &&
       css`
         border: 3px solid #ffd700;
-
-        &:hover {
-          border-color: ${shade(0.2, '#ffd700')};
-        }
       `}
   }
 
   div {
     display: flex;
     flex-direction: column;
-    margin-left: 16px;
     line-height: 24px;
+    margin-right: 16px;
+
+    span {
+      color: #fff;
+    }
+
+    strong {
+      color: #cc030e;
+      transition: color 0.3s;
+    }
   }
 
-  span {
-    color: #000;
-  }
+  transition: border-color 0.3s, box-shadow 0.3s;
 
-  a {
-    text-decoration: none;
-    color: #860209;
+  &:hover {
+    border: 1px #888 solid;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
-    transition: color 0.3s;
-
-    &:hover {
-      color: ${lighten(0.14, '#860209')};
+    strong {
+      color: ${lighten(0.14, '#cc030e')};
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    img {
+      border-color: ${lighten(0.14, '#cc030e')};
+
+      ${props =>
+        props.isST &&
+        css`
+          border-color: ${shade(0.2, '#ffd700')};
+        `}
     }
   }
 `;
 
 export const MyPages = styled.div`
-  margin-left: auto;
+  margin: auto;
   background: transparent;
   border: 0;
   display: flex;
   flex-direction: row;
 
-  svg {
-    width: 32px;
-    height: 32px;
-    margin: 0 16px;
-    color: #2c2f33;
+  a {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+
+    span {
+      margin: 3px auto auto auto;
+      font-size: 10px;
+      color: #999;
+    }
+
+    svg {
+      width: 32px;
+      height: 32px;
+      margin: 0 16px;
+      color: #999;
+
+      transition: color 0.3s;
+    }
 
     &:hover {
-      color: ${lighten(0.1, '#2c2c2c')};
+      span {
+        color: ${lighten(0.3, '#999')};
+      }
+
+      svg {
+        color: ${lighten(0.3, '#999')};
+      }
     }
+  }
+`;
+
+export const Navigation = styled.div`
+  background: url(${navBgImg}) repeat-x;
+  height: 39px;
+  padding: 10px 0 0 25px;
+
+  font-size: 12px;
+  border-top: 1px #888 solid;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  table {
+    display: flex;
+    flex-direction: row;
+
+    td {
+      padding-right: 20px;
+
+      a {
+        color: #999;
+        text-decoration: none;
+        display: flex;
+        flex-direction: row;
+
+        transition: color 0.3s;
+
+        svg {
+          color: #999;
+          height: 16px;
+          width: 16px;
+          margin: auto 7px auto 0;
+
+          transition: color 0.3s;
+        }
+
+        &:hover {
+          color: ${lighten(0.3, '#999')};
+          svg {
+            color: ${lighten(0.3, '#999')};
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const NavSpan = styled.span`
+  cursor: default;
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+
+  svg {
+    color: #fff;
+    height: 16px;
+    width: 16px;
+    margin: auto 7px auto 0;
   }
 `;
