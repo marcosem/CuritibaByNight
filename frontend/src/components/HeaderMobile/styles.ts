@@ -23,7 +23,7 @@ export const HeaderContent = styled.div`
   > a {
     float: left;
     img {
-      height: 80px;
+      height: 60px;
     }
   }
 
@@ -56,7 +56,7 @@ export const Profile = styled.div<ProfileProps>`
 
   a {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     text-decoration: none;
   }
 
@@ -77,13 +77,11 @@ export const Profile = styled.div<ProfileProps>`
   }
 
   div {
-    display: flex;
-    flex-direction: column;
     line-height: 24px;
-    margin: auto 14px auto auto;
+    margin: auto;
 
     strong {
-      font-size: 14px;
+      font-size: 12px;
       color: #cc030e;
       transition: color 0.3s;
     }
@@ -131,9 +129,9 @@ export const MyPages = styled.div`
     }
 
     svg {
-      width: 28px;
-      height: 28px;
-      margin: 0 12px;
+      width: 26px;
+      height: 26px;
+      margin: 0 10px;
       color: #999;
 
       transition: color 0.3s;

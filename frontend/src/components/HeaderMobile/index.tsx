@@ -86,10 +86,6 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
 
         <Profile isST={user.storyteller}>
           <Link to="/profile">
-            <div>
-              <strong>{firstName}</strong>
-            </div>
-
             <img
               src={
                 user.avatar_url ||
@@ -97,6 +93,9 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
               }
               alt={firstName}
             />
+            <div>
+              <strong>{firstName}</strong>
+            </div>
           </Link>
         </Profile>
 
