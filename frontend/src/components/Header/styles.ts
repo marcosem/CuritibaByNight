@@ -164,33 +164,37 @@ export const Navigation = styled.div`
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
   table {
-    display: flex;
-    flex-direction: row;
+    border: none;
+    tbody {
+      border: none;
+      display: flex;
+      flex-direction: row;
 
-    td {
-      padding-right: 20px;
+      td {
+        padding-right: 20px;
 
-      a {
-        color: #999;
-        text-decoration: none;
-        display: flex;
-        flex-direction: row;
-
-        transition: color 0.3s;
-
-        svg {
+        a {
           color: #999;
-          height: 16px;
-          width: 16px;
-          margin: auto 7px auto 0;
+          text-decoration: none;
+          display: flex;
+          flex-direction: row;
 
           transition: color 0.3s;
-        }
 
-        &:hover {
-          color: ${lighten(0.3, '#999')};
           svg {
+            color: #999;
+            height: 16px;
+            width: 16px;
+            margin: auto 7px auto 0;
+
+            transition: color 0.3s;
+          }
+
+          &:hover {
             color: ${lighten(0.3, '#999')};
+            svg {
+              color: ${lighten(0.3, '#999')};
+            }
           }
         }
       }

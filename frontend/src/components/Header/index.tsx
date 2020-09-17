@@ -101,71 +101,73 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
       </HeaderContent>
       <Navigation>
         <table>
-          <tr>
-            <td>
-              {page === 'dashboard' ? (
-                <NavSpan>
-                  <FaHome />
-                  Dashboard
-                </NavSpan>
-              ) : (
-                <Link to="/dashboard">
-                  <FaHome />
-                  Dashboard
-                </Link>
-              )}
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                {page === 'dashboard' ? (
+                  <NavSpan>
+                    <FaHome />
+                    Home
+                  </NavSpan>
+                ) : (
+                  <Link to="/dashboard">
+                    <FaHome />
+                    Home
+                  </Link>
+                )}
+              </td>
+            </tr>
 
-          {user.storyteller && (
-            <>
-              <tr>
-                <td>
-                  {page === 'players' ? (
-                    <NavSpan>
-                      <GiDarkSquad />
-                      Jogadores
-                    </NavSpan>
-                  ) : (
-                    <Link to="/players">
-                      <GiDarkSquad />
-                      Jogadores
-                    </Link>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  {page === 'characters' ? (
-                    <NavSpan>
-                      <GiVampireDracula />
-                      Personagens
-                    </NavSpan>
-                  ) : (
-                    <Link to="/characters">
-                      <GiVampireDracula />
-                      Personagens
-                    </Link>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  {page === 'npcs' ? (
-                    <NavSpan>
-                      <GiMinions />
-                      NPCs
-                    </NavSpan>
-                  ) : (
-                    <Link to="/characters">
-                      <GiMinions />
-                      NPCs
-                    </Link>
-                  )}
-                </td>
-              </tr>
-            </>
-          )}
+            {user.storyteller && (
+              <>
+                <tr>
+                  <td>
+                    {page === 'players' ? (
+                      <NavSpan>
+                        <GiDarkSquad />
+                        Jogadores
+                      </NavSpan>
+                    ) : (
+                      <Link to="/players">
+                        <GiDarkSquad />
+                        Jogadores
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    {page === 'characters' ? (
+                      <NavSpan>
+                        <GiVampireDracula />
+                        Personagens
+                      </NavSpan>
+                    ) : (
+                      <Link to="/characters">
+                        <GiVampireDracula />
+                        Personagens
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    {page === 'npcs' ? (
+                      <NavSpan>
+                        <GiMinions />
+                        NPCs
+                      </NavSpan>
+                    ) : (
+                      <Link to="/characters">
+                        <GiMinions />
+                        NPCs
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+              </>
+            )}
+          </tbody>
         </table>
       </Navigation>
     </Container>

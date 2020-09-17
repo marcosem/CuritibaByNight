@@ -113,6 +113,7 @@ export const Table = styled.table`
       &:hover {
         cursor: pointer;
         background-color: #aaa;
+
         td {
           color: #fff;
         }

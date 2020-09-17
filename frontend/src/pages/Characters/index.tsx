@@ -5,6 +5,7 @@ import { isMobile } from 'react-device-detect';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
+import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 import CharacterCard from '../../components/CharacterCard';
 
@@ -98,7 +99,11 @@ const Players: React.FC = () => {
 
   return (
     <Container>
-      <Header page="characters" />
+      {mobileVer ? (
+        <HeaderMobile page="characters" />
+      ) : (
+        <Header page="characters" />
+      )}
       {isBusy ? (
         <Loading />
       ) : (

@@ -1,28 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { FiPower } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaInstagram, FaDiscord, FaSpotify } from 'react-icons/fa';
+import {
+  FaHome,
+  FaFacebook,
+  FaInstagram,
+  FaDiscord,
+  FaSpotify,
+} from 'react-icons/fa';
+import { GiDarkSquad, GiVampireDracula, GiMinions } from 'react-icons/gi';
 import { useAuth } from '../../hooks/auth';
-
 import imgLogoHeader from '../../assets/logo_header.svg';
-import { Container, HeaderContent, Profile, MyPages } from './styles';
-import STMenuButton from '../STMenuButton';
+import {
+  Container,
+  HeaderContent,
+  Navigation,
+  NavSpan,
+  Profile,
+  MyPages,
+} from './styles';
 
-const HeaderMobile: React.FC = () => {
+interface HeaderProps {
+  page?: string;
+}
+
+const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
   const { signOut, user } = useAuth();
-  const [firstName, setFirstName] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>();
 
   useEffect(() => {
-    const names = user.name.split(' ');
-    setFirstName(names[0]);
-  }, [user.name]);
+    const userNames = user.name.split(' ');
+    setFirstName(userNames[0]);
+  }, [user]);
 
   return (
     <Container>
       <HeaderContent>
-        <img src={imgLogoHeader} alt="Curitiba By Night" />
+        <Link to="/">
+          <img src={imgLogoHeader} alt="Curitiba By Night" />
+        </Link>
+
         <MyPages>
-          {user.storyteller && <STMenuButton isMobile />}
           <div>
             <a
               href="https://www.facebook.com/groups/283920641632885/"
@@ -30,6 +48,7 @@ const HeaderMobile: React.FC = () => {
               rel="noopener noreferrer"
             >
               <FaFacebook />
+              <span>Facebook</span>
             </a>
           </div>
           <div>
@@ -39,6 +58,7 @@ const HeaderMobile: React.FC = () => {
               rel="noopener noreferrer"
             >
               <FaDiscord />
+              <span>Discord</span>
             </a>
           </div>
           <div>
@@ -48,6 +68,7 @@ const HeaderMobile: React.FC = () => {
               rel="noopener noreferrer"
             >
               <FaInstagram />
+              <span>Instagram</span>
             </a>
           </div>
 
@@ -58,30 +79,102 @@ const HeaderMobile: React.FC = () => {
               rel="noopener noreferrer"
             >
               <FaSpotify />
+              <span>Spotify</span>
             </a>
           </div>
         </MyPages>
+
+        <Profile isST={user.storyteller}>
+          <Link to="/profile">
+            <div>
+              <strong>{firstName}</strong>
+            </div>
+
+            <img
+              src={
+                user.avatar_url ||
+                `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
+              }
+              alt={firstName}
+            />
+          </Link>
+        </Profile>
+
         <button type="button" onClick={signOut}>
           <FiPower />
         </button>
       </HeaderContent>
-      <Profile isST={user.storyteller}>
-        <Link to="/profile">
-          <img
-            src={
-              user.avatar_url ||
-              `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
-            }
-            alt={user.name}
-          />
-        </Link>
-        <div>
-          <span>Olá,</span>
-          <Link to="/profile">
-            <strong>{firstName}</strong>
-          </Link>
-        </div>
-      </Profile>
+      <Navigation>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                {page === 'dashboard' ? (
+                  <NavSpan>
+                    <FaHome />
+                    Home
+                  </NavSpan>
+                ) : (
+                  <Link to="/dashboard">
+                    <FaHome />
+                    Home
+                  </Link>
+                )}
+              </td>
+            </tr>
+
+            {user.storyteller && (
+              <>
+                <tr>
+                  <td>
+                    {page === 'players' ? (
+                      <NavSpan>
+                        <GiDarkSquad />
+                        Jogadores
+                      </NavSpan>
+                    ) : (
+                      <Link to="/players">
+                        <GiDarkSquad />
+                        Jogadores
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    {page === 'characters' ? (
+                      <NavSpan>
+                        <GiVampireDracula />
+                        PCs
+                      </NavSpan>
+                    ) : (
+                      <Link to="/characters">
+                        <GiVampireDracula />
+                        PCs
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    {page === 'npcs' ? (
+                      <NavSpan>
+                        <GiMinions />
+                        NPCs
+                      </NavSpan>
+                    ) : (
+                      <Link to="/characters">
+                        <GiMinions />
+                        NPCs
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+              </>
+            )}
+          </tbody>
+        </table>
+      </Navigation>
     </Container>
   );
 };
