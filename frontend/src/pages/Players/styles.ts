@@ -6,7 +6,7 @@ export const Container = styled.div`
 `;
 
 export const TableWrapper = styled.div`
-  margin: 25px auto;
+  margin: 10px auto;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
   min-width: 340px;
   max-width: 1012px;
@@ -133,7 +133,7 @@ export const TableCell = styled.div`
 `;
 
 export const Scroll = styled(PerfectScrollBar)`
-  max-height: 100vh;
+  max-height: 82vh;
   padding: 5px 20px;
   margin-top: 5px;
 `;

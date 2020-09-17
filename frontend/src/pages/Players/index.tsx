@@ -89,8 +89,8 @@ const Players: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <TableWrapper>
-          <Scroll>
+        <Scroll>
+          <TableWrapper>
             <Table>
               <thead>
                 <tr>
@@ -140,8 +140,8 @@ const Players: React.FC = () => {
                 ))}
               </tbody>
             </Table>
-          </Scroll>
-        </TableWrapper>
+          </TableWrapper>
+        </Scroll>
       )}
     </Container>
   );
