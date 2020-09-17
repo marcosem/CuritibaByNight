@@ -8,7 +8,7 @@ import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
-import { Container, TableWrapper, Table, TableCell } from './styles';
+import { Container, TableWrapper, Table, TableCell, Scroll } from './styles';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 
@@ -89,57 +89,59 @@ const Players: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <TableWrapper>
-          <Table>
-            <thead>
-              <tr>
-                <th>Avatar</th>
-                <th>Jogador</th>
-                {!mobileVer && (
-                  <>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                  </>
-                )}
-                <th>Situação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {playerList.map(player => (
-                <tr key={player.id} onClick={() => handleProfile(player)}>
-                  <td>
-                    <img
-                      src={
-                        player.avatar_url ||
-                        `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
-                      }
-                      alt=""
-                    />
-                  </td>
-                  <td>
-                    <TableCell>{player.name}</TableCell>
-                  </td>
+        <Scroll>
+          <TableWrapper>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Avatar</th>
+                  <th>Jogador</th>
                   {!mobileVer && (
                     <>
-                      <td>
-                        <TableCell>{player.email}</TableCell>
-                      </td>
-                      <td>{player.phone}</td>
+                      <th>E-mail</th>
+                      <th>Telefone</th>
                     </>
                   )}
-
-                  <td>
-                    {player.active ? (
-                      <FaCheckCircle color="green" />
-                    ) : (
-                      <FaMinusCircle color="red" />
-                    )}
-                  </td>
+                  <th>Situação</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableWrapper>
+              </thead>
+              <tbody>
+                {playerList.map(player => (
+                  <tr key={player.id} onClick={() => handleProfile(player)}>
+                    <td>
+                      <img
+                        src={
+                          player.avatar_url ||
+                          `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
+                        }
+                        alt=""
+                      />
+                    </td>
+                    <td>
+                      <TableCell>{player.name}</TableCell>
+                    </td>
+                    {!mobileVer && (
+                      <>
+                        <td>
+                          <TableCell>{player.email}</TableCell>
+                        </td>
+                        <td>{player.phone}</td>
+                      </>
+                    )}
+
+                    <td>
+                      {player.active ? (
+                        <FaCheckCircle color="green" />
+                      ) : (
+                        <FaMinusCircle color="red" />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrapper>
+        </Scroll>
       )}
     </Container>
   );

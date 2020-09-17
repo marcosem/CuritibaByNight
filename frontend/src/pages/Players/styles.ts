@@ -1,10 +1,5 @@
 import styled from 'styled-components';
-
-/*
-interface ITableProps {
-  isST: boolean;
-}
-*/
+import PerfectScrollBar from 'react-perfect-scrollbar';
 
 export const Container = styled.div`
   height: 100vh;
@@ -137,14 +132,8 @@ export const TableCell = styled.div`
   }
 `;
 
-// #0d0d0d #860209
-// background: #4fc3a1;
-// background: #324960;
-
-/*
-      ${props =>
-        props.isST &&
-        css`
-          border: 3px solid #ffd700;
-        `}
-*/
+export const Scroll = styled(PerfectScrollBar)`
+  max-height: 600px;
+  padding: 5px 20px;
+  margin-top: 5px;
+`;
