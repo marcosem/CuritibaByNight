@@ -34,8 +34,8 @@ export const HeaderContent = styled.div`
 
     svg {
       color: #cc030e;
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
 
       transition: color 0.3s;
 
@@ -61,8 +61,8 @@ export const Profile = styled.div<ProfileProps>`
   }
 
   img {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     margin: auto;
     border: 3px solid #cc030e;
@@ -131,9 +131,9 @@ export const MyPages = styled.div`
     }
 
     svg {
-      width: 24px;
-      height: 24px;
-      margin: 0 8px;
+      width: 28px;
+      height: 28px;
+      margin: 0 12px;
       color: #999;
 
       transition: color 0.3s;
