@@ -23,7 +23,7 @@ export const Content = styled.main<ICharacterProps>`
 
 export const TitleBox = styled.div`
   padding: 20px;
-  margin: 10px auto;
+  margin: 10px auto 0 auto;
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
@@ -59,7 +59,7 @@ export const Character = styled.div<ICharacterProps>`
 `;
 
 export const Scroll = styled(PerfectScrollBar)`
-  max-height: 600px;
-  padding: 5px 20px;
+  max-height: 74vh;
+  padding: 0 20px;
   margin-top: 5px;
 `;
