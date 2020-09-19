@@ -32,7 +32,7 @@ const Characters: React.FC = () => {
         // Get list of clan
         const clanList = res.map((char: ICharacter) => {
           const clanFilter1 = char.clan.split(':');
-          const clanFilter2 = clanFilter1[0].split('(');
+          const clanFilter2 = clanFilter1[0].split(' (');
 
           return clanFilter2[0];
         });

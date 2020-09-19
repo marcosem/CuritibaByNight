@@ -42,7 +42,7 @@ export const Select = styled.select`
   outline: none;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
-  width: 170px;
+  width: 190px;
   margin-left: auto;
 
   background: #111;
