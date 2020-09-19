@@ -10,8 +10,7 @@ interface ProfileProps {
 export const Container = styled.header`
   position: relative;
   background: url(${bgImg}) repeat-x;
-  height: 131px;
-  margin-bottom: 16px;
+  height: 126px;
 `;
 
 export const HeaderContent = styled.div`
