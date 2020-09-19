@@ -29,7 +29,8 @@ const CharacterList: React.FC<ICharacterListProps> = ({
     let tempArray: ICharacter[];
 
     const newArray: ICharacter[] = chars.map((char: ICharacter) => {
-      const filteredClan = char.clan.split(':');
+      const filteredClan1 = char.clan.split(':');
+      const filteredClan2 = filteredClan1[0].split('(');
 
       const newChar = {
         id: char.id,
@@ -37,7 +38,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
         experience: char.experience,
         updated_at: new Date(char.updated_at),
         character_url: char.character_url,
-        clan: filteredClan[0],
+        clan: filteredClan2[0],
         avatar_url: char.avatar_url,
         situation: char.situation,
         formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),

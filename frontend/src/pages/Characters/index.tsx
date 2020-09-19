@@ -31,8 +31,10 @@ const Characters: React.FC = () => {
 
         // Get list of clan
         const clanList = res.map((char: ICharacter) => {
-          const clan = char.clan.split(':');
-          return clan[0];
+          const clanFilter1 = char.clan.split(':');
+          const clanFilter2 = clanFilter1[0].split('(');
+
+          return clanFilter2[0];
         });
         // Sort clan list and remove duplicated
         const filteredClanList = clanList
