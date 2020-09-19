@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 // import React, { useCallback, MouseEvent } from 'react';
 // import html2canvas from 'html2canvas';
+import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
+import { FiClock } from 'react-icons/fi';
+import { IconType } from 'react-icons';
 import api from '../../services/api';
 import getCardImg from './getCardImg';
 
@@ -9,11 +12,13 @@ import {
   CardSquare,
   ProfileImage,
   CharInfo,
+  CharSituation,
   CharXPTitle,
   CharXP,
 } from './styles';
 import tempProfileImg from '../../assets/sign-up-background.png';
 import { useToast } from '../../hooks/toast';
+import { useMobile } from '../../hooks/mobile';
 
 interface ICharacterCardProps {
   charId: string;
@@ -23,7 +28,7 @@ interface ICharacterCardProps {
   sheetFile: string;
   clan: string;
   updatedAt: string;
-  isMobile: boolean;
+  situation?: string;
   locked?: boolean;
 }
 
@@ -35,12 +40,15 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   sheetFile,
   clan,
   updatedAt,
-  isMobile,
+  situation = 'active',
   locked = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
   const [clanImg, setClanImg] = useState<string>('');
+  const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
+  const [situationTitle, setSituationTitle] = useState<string>('');
   const { addToast } = useToast();
+  const { isMobileVersion } = useMobile();
 
   useEffect(() => {
     setCharImg(avatar || tempProfileImg);
@@ -49,6 +57,28 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   useEffect(() => {
     setClanImg(getCardImg(clan));
   }, [clan]);
+
+  useEffect(() => {
+    if (situation !== 'active') {
+      switch (situation) {
+        case 'dead':
+        case 'destroyed':
+          setSituationIcon(GiFangedSkull);
+          setSituationTitle('Destruído');
+          break;
+        case 'torpor':
+          setSituationIcon(GiCoffin);
+          setSituationTitle('Em Torpor');
+          break;
+        case 'inactive':
+          setSituationIcon(FiClock);
+          setSituationTitle('Inativo');
+          break;
+        default:
+          setSituationIcon(null);
+      }
+    }
+  }, [situation]);
 
   /*
   const saveCard = useCallback((e: MouseEvent<HTMLDivElement>) => {
@@ -92,7 +122,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   );
 
   return (
-    <Container isMobile={isMobile}>
+    <Container isMobile={isMobileVersion}>
       <CardSquare clanImg={clanImg}>
         <span>{updatedAt}</span>
         <label htmlFor={charId}>
@@ -108,6 +138,11 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
             {name}
           </a>
         </CharInfo>
+
+        {situation !== 'active' && (
+          <CharSituation title={situationTitle}>{situationIcon}</CharSituation>
+        )}
+
         <CharXPTitle>
           <span>XP:</span>
         </CharXPTitle>

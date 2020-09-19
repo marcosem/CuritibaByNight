@@ -134,7 +134,6 @@ const Players: React.FC = () => {
                             clan={char.clan}
                             avatar={char.avatar_url}
                             updatedAt={char.formatedDate}
-                            isMobile={isMobileVersion}
                             locked
                           />
                         </td>

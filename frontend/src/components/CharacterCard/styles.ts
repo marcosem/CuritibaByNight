@@ -1,5 +1,6 @@
 import styled, { keyframes, css } from 'styled-components';
 import { lighten } from 'polished';
+import CardToolTip from '../CardToolTip';
 
 interface ICharacterProps {
   isMobile: boolean;
@@ -206,5 +207,23 @@ export const CharXP = styled.div`
     font-weight: 500;
     color: ${lighten(0.5, '#eee')};
     background: ${lighten(0.2, '#860209')};
+  }
+`;
+
+// export const CharSituation = styled.div`
+export const CharSituation = styled(CardToolTip)`
+  position: absolute;
+  top: 300px;
+  left: 6px;
+
+  width: 24px;
+  height: 24px;
+
+  background: transparent;
+
+  > svg {
+    width: 24px;
+    height: 24px;
+    color: #eee;
   }
 `;
