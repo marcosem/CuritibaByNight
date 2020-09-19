@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import PerfectScrollBar from 'react-perfect-scrollbar';
 
 interface ICharacterProps {
   isMobile: boolean;
@@ -32,28 +31,6 @@ export const TitleBox = styled.div`
     color: #eee;
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
   }
-`;
-
-export const Character = styled.ul<ICharacterProps>`
-  min-width: 340px;
-  max-width: 1012px;
-  background: transparent;
-  display: flex;
-  flex-direction: row;
-
-  ${props =>
-    props.isMobile &&
-    css`
-      max-width: 340px;
-      flex-direction: column;
-      align-items: center;
-    `}
-`;
-
-export const Scroll = styled(PerfectScrollBar)`
-  max-height: 600px;
-  padding: 5px 20px;
-  margin-top: 5px;
 `;
 
 /*

@@ -1,28 +1,17 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
-import { format } from 'date-fns';
-import { Container, TitleBox, Scroll, Content, Character } from './styles';
+import { Container, TitleBox, Content } from './styles';
 
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
-import CharacterCard from '../../components/CharacterCard';
+import CharacterList from '../../components/CharacterList';
+import ICharacter from '../../components/CharacterList/ICharacter';
+
 import Loading from '../../components/Loading';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
-
-interface ICharacter {
-  id: string;
-  name: string;
-  clan: string;
-  avatar_url: string;
-  experience: string;
-  updated_at: Date;
-  situation: string;
-  formatedDate: string;
-  character_url: string;
-}
 
 const Dashboard: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
@@ -41,22 +30,7 @@ const Dashboard: React.FC = () => {
         })
         .then(response => {
           const res = response.data;
-          const newArray = res.map((char: ICharacter) => {
-            const newChar = {
-              id: char.id,
-              name: char.name,
-              experience: char.experience,
-              updated_at: new Date(char.updated_at),
-              character_url: char.character_url,
-              clan: char.clan,
-              avatar_url: char.avatar_url,
-              situation: char.situation,
-              formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),
-            };
-            return newChar;
-          });
-
-          setCharList(newArray);
+          setCharList(res);
         });
     } catch (error) {
       if (error.response) {
@@ -77,7 +51,6 @@ const Dashboard: React.FC = () => {
   }, [addToast, signOut, user.id]);
 
   useEffect(() => {
-    // setMobile(true);
     loadCharacters();
   }, [loadCharacters]);
 
@@ -105,23 +78,7 @@ const Dashboard: React.FC = () => {
               </strong>
             )}
           </TitleBox>
-          <Scroll>
-            <Character isMobile={isMobileVersion}>
-              {charList.map(char => (
-                <CharacterCard
-                  key={char.id}
-                  charId={char.id}
-                  name={char.name}
-                  experience={char.experience}
-                  sheetFile={char.character_url}
-                  clan={char.clan}
-                  avatar={char.avatar_url}
-                  updatedAt={char.formatedDate}
-                  situation={char.situation}
-                />
-              ))}
-            </Character>
-          </Scroll>
+          <CharacterList chars={charList} />
         </Content>
       )}
     </Container>

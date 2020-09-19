@@ -1,35 +1,20 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
-import { format } from 'date-fns';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
-import CharacterCard from '../../components/CharacterCard';
 
-import { Container, TitleBox, Scroll, Content, Character } from './styles';
+import { Container, TitleBox, Content } from './styles';
+import CharacterList from '../../components/CharacterList';
+import ICharacter from '../../components/CharacterList/ICharacter';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 
-interface ICharacter {
-  id: string;
-  name: string;
-  clan: string;
-  avatar_url: string;
-  experience: string;
-  updated_at: Date;
-  formatedDate: string;
-  character_url: string;
-  user: {
-    id: string;
-    name: string;
-  };
-}
-
-const Players: React.FC = () => {
-  const [charList, setCharList] = useState<[ICharacter[]]>([[]]);
+const Characters: React.FC = () => {
+  const [charList, setCharList] = useState<ICharacter[]>([]);
   const [isBusy, setBusy] = useState(true);
   const { signOut } = useAuth();
   const { addToast } = useToast();
@@ -41,32 +26,7 @@ const Players: React.FC = () => {
     try {
       await api.get('characters/list').then(response => {
         const res = response.data;
-        const newArray = res.map((char: ICharacter) => {
-          const newChar = {
-            id: char.id,
-            name: char.name,
-            experience: char.experience,
-            updated_at: new Date(char.updated_at),
-            character_url: char.character_url,
-            clan: char.clan,
-            avatar_url: char.avatar_url,
-            formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),
-            user: {
-              id: char.user.id,
-              name: char.user.name,
-            },
-          };
-          return newChar;
-        });
-
-        const splitNum = isMobileVersion ? 1 : 3;
-
-        const rowArray: [ICharacter[]] = [newArray.splice(0, splitNum)];
-        while (newArray.length > 0) {
-          rowArray.push(newArray.splice(0, splitNum));
-        }
-
-        setCharList(rowArray);
+        setCharList(res);
       });
     } catch (error) {
       if (error.response) {
@@ -90,7 +50,7 @@ const Players: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, isMobileVersion, signOut]);
+  }, [addToast, signOut]);
 
   useEffect(() => {
     loadCharacters();
@@ -118,36 +78,11 @@ const Players: React.FC = () => {
               </strong>
             )}
           </TitleBox>
-          <Scroll>
-            <Character isMobile={isMobileVersion}>
-              <table>
-                <tbody>
-                  {charList.map(row => (
-                    <tr key={`row:${row[0].id}`}>
-                      {row.map(char => (
-                        <td key={char.id}>
-                          <CharacterCard
-                            charId={char.id}
-                            name={char.name}
-                            experience={char.experience}
-                            sheetFile={char.character_url}
-                            clan={char.clan}
-                            avatar={char.avatar_url}
-                            updatedAt={char.formatedDate}
-                            locked
-                          />
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Character>
-          </Scroll>
+          <CharacterList chars={charList} locked />
         </Content>
       )}
     </Container>
   );
 };
 
-export default Players;
+export default Characters;
