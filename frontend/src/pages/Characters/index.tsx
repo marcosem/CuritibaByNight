@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { format } from 'date-fns';
-import { isMobile } from 'react-device-detect';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
@@ -12,6 +11,7 @@ import CharacterCard from '../../components/CharacterCard';
 import { Container, TitleBox, Scroll, Content, Character } from './styles';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useMobile } from '../../hooks/mobile';
 
 interface ICharacter {
   id: string;
@@ -30,10 +30,10 @@ interface ICharacter {
 
 const Players: React.FC = () => {
   const [charList, setCharList] = useState<[ICharacter[]]>([[]]);
-  const [mobileVer, setMobile] = useState(false);
   const [isBusy, setBusy] = useState(true);
   const { signOut } = useAuth();
   const { addToast } = useToast();
+  const { isMobileVersion } = useMobile();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -59,7 +59,7 @@ const Players: React.FC = () => {
           return newChar;
         });
 
-        const splitNum = mobileVer ? 1 : 3;
+        const splitNum = isMobileVersion ? 1 : 3;
 
         const rowArray: [ICharacter[]] = [newArray.splice(0, splitNum)];
         while (newArray.length > 0) {
@@ -90,16 +90,15 @@ const Players: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, mobileVer, signOut]);
+  }, [addToast, isMobileVersion, signOut]);
 
   useEffect(() => {
-    setMobile(isMobile);
     loadCharacters();
   }, [loadCharacters]);
 
   return (
     <Container>
-      {mobileVer ? (
+      {isMobileVersion ? (
         <HeaderMobile page="characters" />
       ) : (
         <Header page="characters" />
@@ -107,7 +106,7 @@ const Players: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <Content isMobile={mobileVer}>
+        <Content isMobile={isMobileVersion}>
           <TitleBox>
             {charList.length > 0 ? (
               <strong>
@@ -120,7 +119,7 @@ const Players: React.FC = () => {
             )}
           </TitleBox>
           <Scroll>
-            <Character isMobile={mobileVer}>
+            <Character isMobile={isMobileVersion}>
               <table>
                 <tbody>
                   {charList.map(row => (
@@ -135,7 +134,7 @@ const Players: React.FC = () => {
                             clan={char.clan}
                             avatar={char.avatar_url}
                             updatedAt={char.formatedDate}
-                            isMobile={mobileVer}
+                            isMobile={isMobileVersion}
                             locked
                           />
                         </td>

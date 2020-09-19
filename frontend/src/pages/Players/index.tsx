@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
-import { isMobile } from 'react-device-detect';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
@@ -11,6 +10,7 @@ import Loading from '../../components/Loading';
 import { Container, TableWrapper, Table, TableCell, Scroll } from './styles';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useMobile } from '../../hooks/mobile';
 
 interface IPlayer {
   id: string;
@@ -24,10 +24,10 @@ interface IPlayer {
 
 const Players: React.FC = () => {
   const [playerList, setPlayerList] = useState<IPlayer[]>([]);
-  const [mobileVer, setMobile] = useState(false);
   const [isBusy, setBusy] = useState(true);
   const { signOut } = useAuth();
   const { addToast } = useToast();
+  const { isMobileVersion } = useMobile();
 
   const loadPlayers = useCallback(async () => {
     setBusy(true);
@@ -75,7 +75,6 @@ const Players: React.FC = () => {
   }, [addToast, signOut]);
 
   useEffect(() => {
-    setMobile(isMobile);
     loadPlayers();
   }, [loadPlayers]);
 
@@ -85,7 +84,11 @@ const Players: React.FC = () => {
 
   return (
     <Container>
-      {mobileVer ? <HeaderMobile page="players" /> : <Header page="players" />}
+      {isMobileVersion ? (
+        <HeaderMobile page="players" />
+      ) : (
+        <Header page="players" />
+      )}
       {isBusy ? (
         <Loading />
       ) : (
@@ -96,7 +99,7 @@ const Players: React.FC = () => {
                 <tr>
                   <th>Avatar</th>
                   <th>Jogador</th>
-                  {!mobileVer && (
+                  {!isMobileVersion && (
                     <>
                       <th>E-mail</th>
                       <th>Telefone</th>
@@ -120,7 +123,7 @@ const Players: React.FC = () => {
                     <td>
                       <TableCell>{player.name}</TableCell>
                     </td>
-                    {!mobileVer && (
+                    {!isMobileVersion && (
                       <>
                         <td>
                           <TableCell>{player.email}</TableCell>

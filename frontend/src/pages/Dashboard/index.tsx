@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { format } from 'date-fns';
-import { isMobile } from 'react-device-detect';
 import { Container, TitleBox, Scroll, Content, Character } from './styles';
 
 import Header from '../../components/Header';
@@ -11,6 +10,7 @@ import Loading from '../../components/Loading';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useMobile } from '../../hooks/mobile';
 
 interface ICharacter {
   id: string;
@@ -26,10 +26,9 @@ interface ICharacter {
 const Dashboard: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [isBusy, setBusy] = useState(true);
-  const [mobileVer, setMobile] = useState(false);
   const { user, signOut } = useAuth();
-
   const { addToast } = useToast();
+  const { isMobileVersion } = useMobile();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -76,14 +75,13 @@ const Dashboard: React.FC = () => {
   }, [addToast, signOut, user.id]);
 
   useEffect(() => {
-    setMobile(isMobile);
     // setMobile(true);
     loadCharacters();
   }, [loadCharacters]);
 
   return (
     <Container>
-      {mobileVer ? (
+      {isMobileVersion ? (
         <HeaderMobile page="dashboard" />
       ) : (
         <Header page="dashboard" />
@@ -92,7 +90,7 @@ const Dashboard: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <Content isMobile={mobileVer}>
+        <Content isMobile={isMobileVersion}>
           <TitleBox>
             {charList.length > 0 ? (
               <strong>
@@ -106,7 +104,7 @@ const Dashboard: React.FC = () => {
             )}
           </TitleBox>
           <Scroll>
-            <Character isMobile={mobileVer}>
+            <Character isMobile={isMobileVersion}>
               {charList.map(char => (
                 <CharacterCard
                   key={char.id}
@@ -117,7 +115,7 @@ const Dashboard: React.FC = () => {
                   clan={char.clan}
                   avatar={char.avatar_url}
                   updatedAt={char.formatedDate}
-                  isMobile={mobileVer}
+                  isMobile={isMobileVersion}
                 />
               ))}
             </Character>
