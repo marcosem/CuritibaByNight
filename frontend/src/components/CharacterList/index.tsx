@@ -72,7 +72,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
   return charList[0][0] === undefined ? (
     <Loading />
   ) : (
-    <Scroll>
+    <Scroll options={{ suppressScrollX: true }}>
       <Character isMobile={isMobileVersion}>
         <table>
           <tbody>

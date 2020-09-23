@@ -27,7 +27,7 @@ export const HeaderContent = styled.div`
   }
 
   button {
-    margin-right: 0;
+    margin-right: 25px;
     background: transparent;
     border: 0;
 

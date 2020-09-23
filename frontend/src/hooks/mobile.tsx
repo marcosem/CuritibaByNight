@@ -14,6 +14,7 @@ const MobileProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     setMobileVer(isMobile);
+    // setMobileVer(true);
   }, []);
 
   return (

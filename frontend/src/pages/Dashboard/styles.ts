@@ -22,7 +22,7 @@ export const Content = styled.main<ICharacterProps>`
 
 export const TitleBox = styled.div`
   padding: 20px;
-  margin: 10px auto;
+  margin: 10px auto 0 auto;
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);

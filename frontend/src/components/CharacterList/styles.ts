@@ -12,13 +12,6 @@ export const Character = styled.div<ICharacterProps>`
   display: flex;
   flex-direction: row;
 
-  ${props =>
-    props.isMobile &&
-    css`
-      max-width: 340px;
-      align-items: center;
-    `}
-
   table {
     width: 100%;
     min-width: 340px;
@@ -27,10 +20,21 @@ export const Character = styled.div<ICharacterProps>`
     border-collapse: separate;
     border-spacing: 32px;
   }
+
+  ${props =>
+    props.isMobile &&
+    css`
+      max-width: 340px;
+      align-items: center;
+
+      table {
+        max-width: 340px;
+      }
+    `}
 `;
 
 export const Scroll = styled(PerfectScrollBar)`
   max-height: 74vh;
   padding: 0 20px;
-  margin-top: 5px;
+  margin-top: 3px;
 `;

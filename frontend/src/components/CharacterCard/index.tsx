@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
-// import React, { useCallback, MouseEvent } from 'react';
 // import html2canvas from 'html2canvas';
 import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
 import { FiClock } from 'react-icons/fi';
@@ -47,6 +46,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   const [clanImg, setClanImg] = useState<string>('');
   const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
   const [situationTitle, setSituationTitle] = useState<string>('');
+  // const [myCard, setMyCard] = useState<string>('');
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
 
@@ -83,11 +83,11 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   /*
   const saveCard = useCallback((e: MouseEvent<HTMLDivElement>) => {
     html2canvas(e.currentTarget).then(canvas => {
-      const data = canvas.toDataURL('image/jpeg', 1);
-      window.open(data, '_blank');
+      const data = canvas.toDataURL('image/png', 1);
+      setMyCard(data);
     });
   }, []);
-*/
+  */
 
   const handleAvatarChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
