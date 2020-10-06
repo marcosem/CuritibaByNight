@@ -107,9 +107,9 @@ export const Table = styled.table`
     tr {
       &:hover {
         cursor: pointer;
-        background-color: #aaa;
 
         td {
+          background-color: #aaa;
           color: #fff;
         }
       }
