@@ -8,7 +8,8 @@ interface ProfileProps {
 }
 
 export const Container = styled.header`
-  position: relative;
+  position: sticky;
+  top: 0;
   background: url(${bgImg}) repeat-x;
   height: 126px;
 `;
