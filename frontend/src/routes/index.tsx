@@ -10,6 +10,7 @@ import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import Players from '../pages/Players';
 import Characters from '../pages/Characters';
+import Locals from '../pages/Locals';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -21,6 +22,7 @@ const Routes: React.FC = () => (
     <Route path="/dashboard" component={Dashboard} isPrivate />
     <Route path="/profile" component={Profile} isPrivate />
 
+    <Route path="/locals" component={Locals} isPrivate />
     <Route path="/players" component={Players} isPrivate isStoryteller />
     <Route path="/characters" component={Characters} isPrivate isStoryteller />
   </Switch>

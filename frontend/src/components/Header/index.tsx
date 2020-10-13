@@ -8,7 +8,12 @@ import {
   FaDiscord,
   FaSpotify,
 } from 'react-icons/fa';
-import { GiDarkSquad, GiVampireDracula, GiMinions } from 'react-icons/gi';
+import {
+  GiDarkSquad,
+  GiVampireDracula,
+  GiMinions,
+  GiPositionMarker,
+} from 'react-icons/gi';
 import { useAuth } from '../../hooks/auth';
 import imgLogoHeader from '../../assets/logo_header.svg';
 import {
@@ -161,6 +166,21 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
                       <Link to="/characters">
                         <GiMinions />
                         NPCs
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    {page === 'locals' ? (
+                      <NavSpan>
+                        <GiPositionMarker />
+                        Locais Importantes
+                      </NavSpan>
+                    ) : (
+                      <Link to="/locals">
+                        <GiPositionMarker />
+                        Locais Importantes
                       </Link>
                     )}
                   </td>
