@@ -29,8 +29,14 @@ const CharacterList: React.FC<ICharacterListProps> = ({
     let tempArray: ICharacter[];
 
     const newArray: ICharacter[] = chars.map((char: ICharacter) => {
-      const filteredClan1 = char.clan.split(':');
-      const filteredClan2 = filteredClan1[0].split(' (');
+      let filteredClan2: string[];
+
+      if (char.clan) {
+        const filteredClan1 = char.clan.split(':');
+        filteredClan2 = filteredClan1[0].split(' (');
+      } else {
+        filteredClan2 = [''];
+      }
 
       const newChar = {
         id: char.id,
