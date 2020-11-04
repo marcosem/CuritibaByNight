@@ -116,12 +116,10 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
                 {page === 'dashboard' ? (
                   <NavSpan>
                     <FaHome />
-                    Home
                   </NavSpan>
                 ) : (
                   <Link to="/dashboard">
                     <FaHome />
-                    Home
                   </Link>
                 )}
               </td>

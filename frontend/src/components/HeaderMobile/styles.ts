@@ -163,7 +163,7 @@ export const Navigation = styled.div`
       flex-direction: row;
 
       td {
-        padding-right: 20px;
+        padding-right: 10px;
 
         a {
           color: #999;
