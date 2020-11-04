@@ -73,12 +73,12 @@ const Dashboard: React.FC = () => {
               </strong>
             ) : (
               <strong>
-                Você não tem nenhum personagem cadastrado, caso tenha um
+                Você não tem nenhum personagem ativo cadastrado, caso tenha um
                 personagem, peça ao narrador para incluí-lo no sistema.
               </strong>
             )}
           </TitleBox>
-          <CharacterList chars={charList} />
+          {charList.length > 0 && <CharacterList chars={charList} />}
         </Content>
       )}
     </Container>
