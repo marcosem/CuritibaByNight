@@ -46,7 +46,7 @@ const Locals: React.FC = () => {
         </Map>
 
         {user.storyteller && (
-          <Link to="">
+          <Link to="/dashboard">
             <FiPlus />
           </Link>
         )}
