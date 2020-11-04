@@ -77,6 +77,7 @@ userCharactersRouter.post(
   celebrate({
     [Segments.BODY]: {
       player_id: Joi.string().uuid().required(),
+      situation: Joi.string(),
     },
   }),
   userCharactersController.index,

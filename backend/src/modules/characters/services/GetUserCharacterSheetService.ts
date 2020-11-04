@@ -7,6 +7,7 @@ import Character from '@modules/characters/infra/typeorm/entities/Character';
 interface IRequestDTO {
   user_id: string;
   player_id: string;
+  situation: string;
 }
 
 @injectable()
@@ -21,6 +22,7 @@ class GetUserCharacterSheet {
   public async execute({
     user_id,
     player_id,
+    situation,
   }: IRequestDTO): Promise<Character[]> {
     const user = await this.usersRepository.findById(user_id);
 
@@ -42,7 +44,10 @@ class GetUserCharacterSheet {
       throw new AppError('Player not found', 400);
     }
 
-    const charList = await this.charactersRepository.findByUserId(player_id);
+    const charList = await this.charactersRepository.findByUserId(
+      player_id,
+      situation,
+    );
 
     if (charList.length === 0) {
       throw new AppError('User does not have any character sheet saved', 400);

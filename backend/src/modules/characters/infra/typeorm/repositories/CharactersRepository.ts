@@ -16,6 +16,7 @@ class CharactersRepository implements ICharactersRepository {
     user_id,
     experience = 0,
     clan,
+    situation = 'active',
     file,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = this.ormRepository.create({
@@ -24,6 +25,7 @@ class CharactersRepository implements ICharactersRepository {
       user_id,
       experience,
       clan,
+      situation,
       file,
     });
 
@@ -60,9 +62,14 @@ class CharactersRepository implements ICharactersRepository {
     return charFound;
   }
 
-  public async findByUserId(user_id: string): Promise<Character[]> {
+  public async findByUserId(
+    user_id: string,
+    situation: string,
+  ): Promise<Character[]> {
+    const where = situation === 'all' ? { user_id } : { user_id, situation };
+
     const charList = await this.ormRepository.find({
-      where: { user_id },
+      where,
       order: { name: 'ASC' },
     });
 

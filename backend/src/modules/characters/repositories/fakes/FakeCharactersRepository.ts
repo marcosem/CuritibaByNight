@@ -13,6 +13,7 @@ class FakeCharactersRepository implements ICharactersRepository {
     user_id,
     experience = 0,
     clan,
+    situation = 'active',
     file,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = new Character();
@@ -24,6 +25,7 @@ class FakeCharactersRepository implements ICharactersRepository {
       user_id,
       experience,
       clan,
+      situation,
       file,
     });
 
@@ -46,8 +48,15 @@ class FakeCharactersRepository implements ICharactersRepository {
     return findChar;
   }
 
-  public async findByUserId(user_id: string): Promise<Character[]> {
-    const charList = this.chars.filter(char => char.user_id === user_id);
+  public async findByUserId(
+    user_id: string,
+    situation: string,
+  ): Promise<Character[]> {
+    const charList = this.chars.filter(
+      char =>
+        char.user_id === user_id &&
+        (situation === 'all' ? true : char.situation === situation),
+    );
 
     return charList;
   }

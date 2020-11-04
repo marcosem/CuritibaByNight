@@ -47,6 +47,7 @@ describe('GetUserCharacterSheet', () => {
     const charList = await getUserCharacterSheet.execute({
       user_id: user.id,
       player_id: user.id,
+      situation: 'all',
     });
 
     expect(charList).toHaveLength(2);
@@ -66,11 +67,54 @@ describe('GetUserCharacterSheet', () => {
     });
   });
 
-  it('Should be allow invalid users to get character sheets', async () => {
+  it('Should be able to load only characters sheets of specific situation', async () => {
+    // Create a user
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      email: 'dracula@vampyr.com',
+    });
+
+    await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Nosferatu',
+      experience: 999,
+      file: 'nosferatu.pdf',
+      situation: 'inactive',
+      email: 'nosferatu@vampyr.com',
+    });
+
+    const charList = await getUserCharacterSheet.execute({
+      user_id: user.id,
+      player_id: user.id,
+      situation: 'inactive',
+    });
+
+    expect(charList).toHaveLength(1);
+    expect(charList[0]).toMatchObject({
+      user_id: user.id,
+      name: 'Nosferatu',
+      experience: 999,
+      file: 'nosferatu.pdf',
+      email: 'nosferatu@vampyr.com',
+    });
+  });
+
+  it('Should not allow invalid users to get character sheets', async () => {
     await expect(
       getUserCharacterSheet.execute({
         user_id: 'I am invalid user',
         player_id: 'Does not matter',
+        situation: 'all',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
@@ -93,6 +137,7 @@ describe('GetUserCharacterSheet', () => {
       getUserCharacterSheet.execute({
         user_id: nonSTUser.id,
         player_id: user.id,
+        situation: 'all',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
@@ -110,6 +155,7 @@ describe('GetUserCharacterSheet', () => {
       getUserCharacterSheet.execute({
         user_id: user.id,
         player_id: 'I do not exist',
+        situation: 'all',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -127,6 +173,7 @@ describe('GetUserCharacterSheet', () => {
       getUserCharacterSheet.execute({
         user_id: user.id,
         player_id: user.id,
+        situation: 'all',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });

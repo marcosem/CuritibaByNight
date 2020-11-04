@@ -63,6 +63,7 @@ export default class UserCharactersController {
 
   public async index(req: Request, res: Response): Promise<Response> {
     const { player_id } = req.body;
+    const situation = req.body.situation ? req.body.situation : 'active';
 
     const getUserCharacterSheet = container.resolve(
       GetUserCharacterSheetService,
@@ -71,6 +72,7 @@ export default class UserCharactersController {
     const charList = await getUserCharacterSheet.execute({
       user_id: req.user.id,
       player_id: player_id || req.user.id,
+      situation,
     });
 
     const charListUpdated = charList.map(char => {
