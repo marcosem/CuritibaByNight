@@ -22,6 +22,10 @@ class ParseCharacterSheetService {
     sheetFilename,
     mimetype,
   }: IRequestDTO): Promise<Character | undefined> {
+    if (sheetFilename === '') {
+      throw new AppError('You must send a character sheet file', 400);
+    }
+
     if (mimetype !== 'application/pdf') {
       await this.storageProvider.deleteFile(sheetFilename, '');
       throw new AppError('File must be in PDF format', 400);

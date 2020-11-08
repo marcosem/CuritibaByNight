@@ -3,7 +3,7 @@ import Character from '@modules/characters/infra/typeorm/entities/Character';
 
 class FakePDFParserProvider implements IPDFParserProvider {
   public async parse(filename: string): Promise<Character | undefined> {
-    if (filename === '') {
+    if (filename === '' || filename.indexOf('.pdf') < 0) {
       return undefined;
     }
 

@@ -84,9 +84,16 @@ export default class UserCharactersController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
-    const { character_id, comments } = req.body;
-    const fileName = req.file.filename;
-    const { mimetype } = req.file;
+    const { character_id, situation, comments } = req.body;
+    const fileName = req.file ? req.file.filename : '';
+    const mimetype = req.file ? req.file.mimetype : '';
+
+    const getCharacterService = container.resolve(GetCharacterService);
+
+    const oldChar = await getCharacterService.execute({
+      user_id: req.user.id,
+      char_id: character_id,
+    });
 
     const parseCharacterSheetService = container.resolve(
       ParseCharacterSheetService,
@@ -100,9 +107,10 @@ export default class UserCharactersController {
     const inputData = {
       user_id: req.user.id,
       char_id: character_id,
-      char_name: '',
-      char_xp: 0,
-      char_clan: '',
+      char_name: oldChar.name,
+      char_xp: oldChar.experience,
+      char_clan: oldChar.clan,
+      char_situation: situation || oldChar.situation,
       sheetFilename: fileName,
       update: comments,
     };

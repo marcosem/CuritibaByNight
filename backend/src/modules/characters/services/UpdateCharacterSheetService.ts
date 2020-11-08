@@ -13,6 +13,7 @@ interface IRequestDTO {
   char_name: string;
   char_xp: number;
   char_clan: string;
+  char_situation: string;
   sheetFilename: string;
   update: string;
 }
@@ -36,6 +37,7 @@ class UpdateCharacterSheetService {
     char_name,
     char_xp,
     char_clan,
+    char_situation,
     sheetFilename,
     update,
   }: IRequestDTO): Promise<Character> {
@@ -74,6 +76,7 @@ class UpdateCharacterSheetService {
     char.name = char_name;
     char.experience = char_xp;
     char.clan = char_clan;
+    char.situation = char_situation;
     char.file = filename;
 
     await this.charactersRepository.update(char);

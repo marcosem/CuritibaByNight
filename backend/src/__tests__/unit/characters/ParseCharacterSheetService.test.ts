@@ -34,12 +34,21 @@ describe('ParseCharacterSheet', () => {
 
     await expect(
       parseCharacterSheet.execute({
-        sheetFilename: '',
+        sheetFilename: 'invalidPDFFile',
         mimetype: 'application/pdf',
       }),
     ).rejects.toBeInstanceOf(AppError);
 
     expect(deleteFile).toBeCalled();
+  });
+
+  it('Should handle empty file names', async () => {
+    await expect(
+      parseCharacterSheet.execute({
+        sheetFilename: '',
+        mimetype: 'application/pdf',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it('Should not allow non PDF files', async () => {
