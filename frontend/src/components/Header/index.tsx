@@ -16,6 +16,7 @@ import {
 } from 'react-icons/gi';
 import { useAuth } from '../../hooks/auth';
 import imgLogoHeader from '../../assets/logo_header.svg';
+import imgProfile from '../../assets/profile.jpg';
 import {
   Container,
   HeaderContent,
@@ -92,8 +93,8 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
 
             <img
               src={
-                user.avatar_url ||
-                `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
+                user.avatar_url || imgProfile
+                // `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
               }
               alt={user.name}
             />

@@ -11,6 +11,7 @@ import { Container, TableWrapper, Table, TableCell, Scroll } from './styles';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
+import imgProfile from '../../assets/profile.jpg';
 
 interface IPlayer {
   id: string;
@@ -114,8 +115,8 @@ const Players: React.FC = () => {
                     <td>
                       <img
                         src={
-                          player.avatar_url ||
-                          `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
+                          player.avatar_url || imgProfile
+                          // `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
                         }
                         alt=""
                       />

@@ -15,6 +15,7 @@ import { Container, Content, AvatarInput, Scroll } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { useAuth } from '../../hooks/auth';
+import imgProfile from '../../assets/profile.jpg';
 
 interface FormData {
   name: string;
@@ -161,8 +162,8 @@ const Profile: React.FC = () => {
           <AvatarInput>
             <img
               src={
-                user.avatar_url ||
-                `https://api.adorable.io/avatars/186/${user.name}@adorable.png`
+                user.avatar_url || imgProfile
+                // `https://api.adorable.io/avatars/186/${user.name}@adorable.png`
               }
               alt={user.name}
             />
