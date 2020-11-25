@@ -33,7 +33,6 @@ describe('GetCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     const charLoaded = await getCharacter.execute({
@@ -46,7 +45,6 @@ describe('GetCharacter', () => {
       name: char.name,
       experience: char.experience,
       file: char.file,
-      email: char.email,
     });
   });
 
@@ -73,7 +71,6 @@ describe('GetCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     await expect(
@@ -103,7 +100,6 @@ describe('GetCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
     await expect(
       getCharacter.execute({

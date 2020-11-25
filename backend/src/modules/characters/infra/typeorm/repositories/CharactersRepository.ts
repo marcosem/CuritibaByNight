@@ -12,7 +12,6 @@ class CharactersRepository implements ICharactersRepository {
 
   public async create({
     name,
-    email = '',
     user_id,
     experience = 0,
     clan,
@@ -21,7 +20,6 @@ class CharactersRepository implements ICharactersRepository {
   }: ICreateCharacterDTO): Promise<Character> {
     const char = this.ormRepository.create({
       name,
-      email,
       user_id,
       experience,
       clan,

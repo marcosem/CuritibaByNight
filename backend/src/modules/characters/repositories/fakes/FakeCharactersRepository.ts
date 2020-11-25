@@ -9,7 +9,6 @@ class FakeCharactersRepository implements ICharactersRepository {
 
   public async create({
     name,
-    email = '',
     user_id,
     experience = 0,
     clan,
@@ -21,7 +20,6 @@ class FakeCharactersRepository implements ICharactersRepository {
     Object.assign(char, {
       id: uuid(),
       name,
-      email,
       user_id,
       experience,
       clan,

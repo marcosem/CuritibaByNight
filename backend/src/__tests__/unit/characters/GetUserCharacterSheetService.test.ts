@@ -33,7 +33,6 @@ describe('GetUserCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     await fakeCharactersRepository.create({
@@ -41,7 +40,6 @@ describe('GetUserCharacterSheet', () => {
       name: 'Nosferatu',
       experience: 999,
       file: 'nosferatu.pdf',
-      email: 'nosferatu@vampyr.com',
     });
 
     const charList = await getUserCharacterSheet.execute({
@@ -56,14 +54,12 @@ describe('GetUserCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
     expect(charList[1]).toMatchObject({
       user_id: user.id,
       name: 'Nosferatu',
       experience: 999,
       file: 'nosferatu.pdf',
-      email: 'nosferatu@vampyr.com',
     });
   });
 
@@ -81,7 +77,6 @@ describe('GetUserCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     await fakeCharactersRepository.create({
@@ -90,7 +85,6 @@ describe('GetUserCharacterSheet', () => {
       experience: 999,
       file: 'nosferatu.pdf',
       situation: 'inactive',
-      email: 'nosferatu@vampyr.com',
     });
 
     const charList = await getUserCharacterSheet.execute({
@@ -105,7 +99,6 @@ describe('GetUserCharacterSheet', () => {
       name: 'Nosferatu',
       experience: 999,
       file: 'nosferatu.pdf',
-      email: 'nosferatu@vampyr.com',
     });
   });
 

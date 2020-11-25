@@ -39,7 +39,6 @@ describe('CreateCharacterSheet', () => {
       char_xp: 666,
       char_clan: 'Tzimisce',
       sheetFilename: 'dracula.pdf',
-      char_email: 'dracula@vampyr.com',
     });
 
     expect(char).toHaveProperty('id');
@@ -48,7 +47,6 @@ describe('CreateCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
   });
 
@@ -63,7 +61,6 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.pdf',
-        char_email: 'dracula@vampyr.com',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -88,7 +85,6 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.pdf',
-        char_email: 'dracula@vampyr.com',
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -114,7 +110,6 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.jpg',
-        char_email: 'dracula@vampyr.com',
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -140,7 +135,6 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.pdf',
-        char_email: 'dracula@vampyr.com',
       }),
     ).rejects.toBeInstanceOf(AppError);
 

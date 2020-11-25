@@ -29,9 +29,6 @@ class Character {
   user: User;
 
   @Column()
-  email: string;
-
-  @Column()
   experience: number;
 
   @Column()

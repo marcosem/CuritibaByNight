@@ -8,7 +8,6 @@ import IStorageProvider from '@shared/container/providers/StorageProvider/models
 interface IRequestDTO {
   user_id: string;
   player_id: string;
-  char_email?: string;
   char_name: string;
   char_xp: number;
   char_clan: string;
@@ -29,7 +28,6 @@ class UploadCharacterSheetService {
   public async execute({
     user_id,
     player_id,
-    char_email,
     char_name,
     char_xp,
     char_clan,
@@ -71,7 +69,6 @@ class UploadCharacterSheetService {
     const char = await this.charactersRepository.create({
       user_id: player_id,
       name: char_name,
-      email: char_email,
       experience: char_xp,
       clan: char_clan,
       file: filename,

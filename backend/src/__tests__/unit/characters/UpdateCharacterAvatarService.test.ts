@@ -42,7 +42,6 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     const charWithAvatar = await updateCharacterAvatar.execute({
@@ -70,7 +69,6 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     await updateCharacterAvatar.execute({
@@ -133,7 +131,6 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     const notOwnerUser = await fakeUsersRepository.create({
@@ -167,7 +164,6 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     jest

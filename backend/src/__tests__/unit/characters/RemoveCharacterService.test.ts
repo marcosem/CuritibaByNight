@@ -38,7 +38,6 @@ describe('RemoveCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     const initialListSize = await fakeCharactersRepository.listAll();

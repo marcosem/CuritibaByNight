@@ -43,7 +43,6 @@ describe('UpdateCharacterSheet', () => {
       experience: 666,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
-      email: 'dracula@vampyr.com',
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
@@ -64,7 +63,6 @@ describe('UpdateCharacterSheet', () => {
       user_id: user.id,
       name: 'Nosferatu',
       experience: 1,
-      email: char.email,
       clan: 'Nosferatu',
       file: 'nosferatu.pdf',
     });
@@ -186,7 +184,6 @@ describe('UpdateCharacterSheet', () => {
       experience: 666,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
-      email: 'dracula@vampyr.com',
     });
 
     jest
@@ -198,7 +195,6 @@ describe('UpdateCharacterSheet', () => {
           id: char.id,
           name: char.name,
           experience: char.experience,
-          email: char.email,
           user_id: char.user_id,
         });
         return charFake;
@@ -222,7 +218,6 @@ describe('UpdateCharacterSheet', () => {
       user_id: user.id,
       name: 'Nosferatu',
       experience: 999,
-      email: char.email,
       file: 'nosferatu.pdf',
     });
 
@@ -244,7 +239,6 @@ describe('UpdateCharacterSheet', () => {
       experience: 666,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
-      email: 'dracula@vampyr.com',
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');

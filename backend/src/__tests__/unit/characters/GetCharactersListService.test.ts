@@ -34,7 +34,6 @@ describe('GetCharactersListService', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     await fakeCharactersRepository.create({
@@ -42,7 +41,6 @@ describe('GetCharactersListService', () => {
       name: 'Nosferatu',
       experience: 999,
       file: 'nosferatu.pdf',
-      email: 'nosferatu@vampyr.com',
       situation: 'inactive',
     });
 
@@ -56,14 +54,12 @@ describe('GetCharactersListService', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
     expect(charList[1]).toMatchObject({
       user_id: user.id,
       name: 'Nosferatu',
       experience: 999,
       file: 'nosferatu.pdf',
-      email: 'nosferatu@vampyr.com',
     });
   });
 
@@ -81,7 +77,6 @@ describe('GetCharactersListService', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     await expect(
@@ -110,7 +105,6 @@ describe('GetCharactersListService', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
-      email: 'dracula@vampyr.com',
     });
 
     await expect(
