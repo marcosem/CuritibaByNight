@@ -21,6 +21,7 @@ interface IPlayer {
   active: boolean;
   storyteller: boolean;
   avatar_url: string;
+  lastLogin_at: string;
 }
 
 const Players: React.FC = () => {
@@ -42,9 +43,10 @@ const Players: React.FC = () => {
             name: user.name,
             email: user.email,
             phone: user.phone,
-            active: user.active,
+            active: !!(user.active && user.lastLogin_at),
             storyteller: user.storyteller,
             avatar_url: user.avatar_url,
+            lastLogin_at: user.lastLogin_at,
           };
           return newUser;
         });
