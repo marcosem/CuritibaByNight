@@ -65,6 +65,7 @@ export const Profile = styled.div<ProfileProps>`
     border-radius: 50%;
     margin: auto;
     border: 3px solid #cc030e;
+    background: #888;
 
     transition: border-color 0.3s;
 

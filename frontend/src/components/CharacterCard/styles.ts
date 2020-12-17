@@ -83,6 +83,8 @@ export const CardSquare = styled.div<ICardProps>`
   }
 `;
 
+//   background: transparent;
+
 export const ProfileImage = styled.div<IImageProps>`
   position: absolute;
   top: 29px;
@@ -92,7 +94,7 @@ export const ProfileImage = styled.div<IImageProps>`
   height: 252px;
   border-radius: 50%;
 
-  background: transparent;
+  background: #888;
 
   input {
     display: none;

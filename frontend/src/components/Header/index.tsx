@@ -96,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
                 user.avatar_url || imgProfile
                 // `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
               }
-              alt={user.name}
+              alt=""
             />
           </Link>
         </Profile>

@@ -165,7 +165,7 @@ const Profile: React.FC = () => {
                 user.avatar_url || imgProfile
                 // `https://api.adorable.io/avatars/186/${user.name}@adorable.png`
               }
-              alt={user.name}
+              alt=""
             />
             <label htmlFor="avatar">
               <FiCamera />

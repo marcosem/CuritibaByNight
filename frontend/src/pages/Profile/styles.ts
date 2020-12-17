@@ -91,6 +91,7 @@ export const AvatarInput = styled.div`
     height: 186px;
     border-radius: 50%;
     border: 3px solid #860209;
+    background: #888;
   }
 
   label {
