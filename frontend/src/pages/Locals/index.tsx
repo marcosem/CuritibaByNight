@@ -16,7 +16,7 @@ import { useAuth } from '../../hooks/auth';
 // import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 
-import mapMakerIcon from '../../assets/mapMakerIconSmall.svg';
+import mapMakerIcon from '../../assets/mapMakerIcon.svg';
 import pacoDaLiberdade from '../../assets/paco-da-liberdade.png';
 import elysiumToreador from '../../assets/elysium-toreador.png';
 
