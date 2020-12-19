@@ -125,6 +125,21 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
                 )}
               </td>
             </tr>
+            <tr>
+              <td>
+                {page === 'locals' ? (
+                  <NavSpan>
+                    <GiPositionMarker />
+                    Locais
+                  </NavSpan>
+                ) : (
+                  <Link to="/locals">
+                    <GiPositionMarker />
+                    Locais
+                  </Link>
+                )}
+              </td>
+            </tr>
 
             {user.storyteller && (
               <>
@@ -169,21 +184,6 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
                       <Link to="/characters">
                         <GiMinions />
                         NPCs
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    {page === 'locals' ? (
-                      <NavSpan>
-                        <GiPositionMarker />
-                        Locais
-                      </NavSpan>
-                    ) : (
-                      <Link to="/locals">
-                        <GiPositionMarker />
-                        Locais
                       </Link>
                     )}
                   </td>
