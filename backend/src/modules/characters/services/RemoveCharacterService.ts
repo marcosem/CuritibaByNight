@@ -43,6 +43,10 @@ class RemoveCharacterService {
 
     this.storageProvider.deleteFile(char.file, 'sheet');
 
+    if (char.avatar) {
+      this.storageProvider.deleteFile(char.avatar, 'avatar');
+    }
+
     await this.charactersRepository.delete(char.id);
   }
 }

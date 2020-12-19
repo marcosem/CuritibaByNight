@@ -2,14 +2,12 @@ import 'reflect-metadata';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
-// import FakeImageClipperProvider from '@shared/container/providers/ImageClipperProvider/fakes/FakeImageClipperProvider';
 import RemoveCharacterService from '@modules/characters/services/RemoveCharacterService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
 let fakeCharactersRepository: FakeCharactersRepository;
-// let fakeImageClipperProvider: FakeImageClipperProvider;
 let removeCharacter: RemoveCharacterService;
 
 describe('RemoveCharacter', () => {
@@ -51,6 +49,35 @@ describe('RemoveCharacter', () => {
     const findChar = await fakeCharactersRepository.findById(char.id);
     expect(finalListSize.length).toEqual(initialListSize.length - 1);
     expect(findChar).toBeUndefined();
+  });
+
+  it('Should delete avatar when removing character', async () => {
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    // Create a Storyteller user
+    const stUser = await fakeUsersRepository.create({
+      name: 'St User',
+      email: 'stUser@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: stUser.id,
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+    });
+
+    char.avatar = 'avatar.jpg';
+    const charWithAvatar = await fakeCharactersRepository.update(char);
+
+    await removeCharacter.execute({
+      user_id: stUser.id,
+      character_id: charWithAvatar.id,
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('avatar.jpg', 'avatar');
   });
 
   it('Should not allow invalid users to remove a character', async () => {

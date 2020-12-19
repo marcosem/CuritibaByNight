@@ -15,7 +15,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class UploadCharacterSheetService {
+class CreateCharacterSheetService {
   constructor(
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
@@ -78,4 +78,4 @@ class UploadCharacterSheetService {
   }
 }
 
-export default UploadCharacterSheetService;
+export default CreateCharacterSheetService;

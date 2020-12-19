@@ -17,9 +17,9 @@ interface IRequestDTO {
 class UpdateChracterAvatarService {
   constructor(
     @inject('CharactersRepository')
-    private charactersRespository: ICharactersRepository,
+    private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
-    private usersRespository: IUsersRepository,
+    private usersRepository: IUsersRepository,
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
     @inject('ImageClipperProvider')
@@ -32,13 +32,13 @@ class UpdateChracterAvatarService {
     avatarPath,
     avatarFilename,
   }: IRequestDTO): Promise<Character> {
-    const user = await this.usersRespository.findById(user_id);
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError('Only authenticated users can change avatar', 401);
     }
 
-    const char = await this.charactersRespository.findById(char_id);
+    const char = await this.charactersRepository.findById(char_id);
 
     if (!char) {
       throw new AppError('Character not found', 400);
@@ -71,7 +71,7 @@ class UpdateChracterAvatarService {
 
     // user.avatar = avatarFilename;
     char.avatar = filename;
-    await this.charactersRespository.update(char);
+    await this.charactersRepository.update(char);
 
     return char;
   }

@@ -5,6 +5,8 @@ class FakeStorageProvider implements IStorageProvider {
 
   private storageSheet: string[] = [];
 
+  private storageLocations: string[] = [];
+
   private storage: string[] = [];
 
   public async saveFile(file: string, type: string): Promise<string> {
@@ -14,6 +16,9 @@ class FakeStorageProvider implements IStorageProvider {
         break;
       case 'sheet':
         this.storageSheet.push(file);
+        break;
+      case 'locations':
+        this.storageLocations.push(file);
         break;
       default:
         this.storage.push(file);
@@ -40,6 +45,14 @@ class FakeStorageProvider implements IStorageProvider {
         );
 
         this.storageSheet.splice(findIndex, 1);
+
+        break;
+      case 'locations':
+        findIndex = this.storageLocations.findIndex(
+          storageFile => storageFile === file,
+        );
+
+        this.storageLocations.splice(findIndex, 1);
 
         break;
       default:

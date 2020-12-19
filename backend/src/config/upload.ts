@@ -49,6 +49,18 @@ export default function upload(type: string): IUploadReturn {
       );
       bucket = 'img-curitibabynight';
       break;
+    case 'locations':
+      uploadsFolder = resolve(
+        __dirname,
+        '..',
+        '..',
+        'tmp',
+        'uploads',
+        'locations',
+      );
+      bucket = 'img-curitibabynight';
+      break;
+
     case 'sheet':
       uploadsFolder = resolve(__dirname, '..', '..', 'tmp', 'uploads', 'sheet');
       bucket = 'sheet-curitibabynight';
