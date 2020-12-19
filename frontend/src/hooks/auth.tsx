@@ -13,6 +13,11 @@ interface IUser {
   avatar_url: string;
 }
 
+interface ICharacter {
+  id: string;
+  clan: string;
+}
+
 interface AuthState {
   token: string;
   user: IUser;
@@ -25,9 +30,11 @@ interface SingInCreadentials {
 
 interface AuthContextData {
   user: IUser;
+  char: ICharacter;
   signIn(credentials: SingInCreadentials): Promise<void>;
   signOut(): void;
   updateUser(user: IUser): void;
+  setChar(char: ICharacter): void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -44,6 +51,16 @@ const AuthProvider: React.FC = ({ children }) => {
     }
 
     return {} as AuthState;
+  });
+
+  const [character, setCharacter] = useState<ICharacter>(() => {
+    const char = localStorage.getItem('@CuritibaByNight:character');
+
+    if (char) {
+      return JSON.parse(char);
+    }
+
+    return {} as ICharacter;
   });
 
   const signIn = useCallback(async ({ email, password }) => {
@@ -65,6 +82,7 @@ const AuthProvider: React.FC = ({ children }) => {
   const signOut = useCallback(() => {
     localStorage.removeItem('@CuritibaByNight:token');
     localStorage.removeItem('@CuritibaByNight:user');
+    localStorage.removeItem('@CuritibaByNight:character');
 
     setData({} as AuthState);
   }, []);
@@ -81,9 +99,22 @@ const AuthProvider: React.FC = ({ children }) => {
     [data.token],
   );
 
+  const setChar = useCallback((char: ICharacter) => {
+    setCharacter(char);
+
+    localStorage.setItem('@CuritibaByNight:character', JSON.stringify(char));
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ user: data.user, signIn, signOut, updateUser }}
+      value={{
+        user: data.user,
+        char: character,
+        signIn,
+        signOut,
+        updateUser,
+        setChar,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -16,7 +16,7 @@ import { useMobile } from '../../hooks/mobile';
 const Dashboard: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [isBusy, setBusy] = useState(true);
-  const { user, signOut } = useAuth();
+  const { user, signOut, setChar } = useAuth();
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
 
@@ -31,6 +31,7 @@ const Dashboard: React.FC = () => {
         .then(response => {
           const res = response.data;
           setCharList(res);
+          setChar(res[0]);
         });
     } catch (error) {
       if (error.response) {
@@ -48,7 +49,7 @@ const Dashboard: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, signOut, user.id]);
+  }, [addToast, signOut, user.id, setChar]);
 
   useEffect(() => {
     loadCharacters();

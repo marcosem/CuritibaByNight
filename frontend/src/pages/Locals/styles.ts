@@ -56,21 +56,19 @@ export const Content = styled.main<ICharacterProps>`
     }
   }
 `;
-/*
-export const MapMarkerContainer = styled.div`
-  width: 90px;
-  height: 70px;
-  background: #860209;
+
+export const MapToolTip = styled.div`
   display: flex;
   flex-direction: column;
-  border-radius: 8;
-  overflow: hidden;
-  align-items: center;
+  font-size: 12px;
+  text-align: left;
 
   img {
-    width: 90px;
-    height: 45px;
-    background: transparent;
+    width: 200px;
+  }
+
+  strong {
+    text-align: center;
+    font-weight: 550;
   }
 `;
-*/
