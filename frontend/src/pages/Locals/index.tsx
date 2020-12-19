@@ -11,6 +11,7 @@ import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 import 'leaflet/dist/leaflet.css';
+import imgBuilding from '../../assets/building.jpg';
 
 // import Loading from '../../components/Loading';
 // import api from '../../services/api';
@@ -74,7 +75,7 @@ const Locals: React.FC = () => {
           const res = response.data;
           const newArray = res.map((location: ILocation) => {
             const icon = Leaflet.icon({
-              iconUrl: location.picture_url,
+              iconUrl: location.picture_url || imgBuilding,
               iconSize: [48, 48],
               shadowUrl: mapMakerIcon,
               shadowAnchor: [28, 65],
@@ -89,7 +90,7 @@ const Locals: React.FC = () => {
               address: location.address,
               latitude: location.latitude,
               longitude: location.longitude,
-              picture_url: location.picture_url,
+              picture_url: location.picture_url || imgBuilding,
               icon,
             };
             return newLocation;
