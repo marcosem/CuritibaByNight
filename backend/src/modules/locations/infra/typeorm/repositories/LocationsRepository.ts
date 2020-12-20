@@ -51,10 +51,17 @@ class LocationsRepository implements ILocationsRepository {
   }
 
   public async update(location: Location): Promise<Location> {
+    /*
+    if (location.responsible_char) {
+      location.responsible_char = undefined;
+    }
+    */
+
     await this.ormRepository.save(location);
 
     // Return what is saved with user relationship attached.
     let savedLocation = await this.findById(location.id);
+
     if (!savedLocation) {
       savedLocation = location;
     }

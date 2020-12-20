@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  // ManyToMany,
   JoinColumn,
 } from 'typeorm';
 
@@ -52,7 +53,7 @@ class Location {
 
   @ManyToOne(() => Character)
   @JoinColumn({ name: 'responsible' })
-  responsible_char: Character;
+  responsible_char?: Character;
 
   @Column()
   picture: string;
