@@ -33,6 +33,7 @@ interface ILocation {
 interface ICharacter {
   id: string | undefined;
   name: string;
+  situation: string;
 }
 
 const Locals: React.FC = () => {
@@ -40,7 +41,8 @@ const Locals: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>({
     id: undefined,
-    name: '',
+    name: 'Narrador',
+    situation: 'active',
   });
   const [isBusy, setBusy] = useState(true);
   const { addToast } = useToast();
@@ -55,7 +57,13 @@ const Locals: React.FC = () => {
         const res = response.data;
         // const stArray = [{id: undefined, name: 'Narrador'}];
 
-        setCharList(res);
+        const fullList: ICharacter[] = res;
+
+        const filteredList = fullList.filter(
+          character => character.situation === 'active',
+        );
+
+        setCharList(filteredList);
       });
     } catch (error) {
       if (error.response) {
@@ -147,6 +155,7 @@ const Locals: React.FC = () => {
       const selChar = {
         id: char.id,
         name: '',
+        situation: 'active',
       };
 
       setSelectedChar(selChar);
@@ -167,6 +176,7 @@ const Locals: React.FC = () => {
         selectedCharacter = {
           id: undefined,
           name: 'Narrador',
+          situation: 'active',
         };
       }
 
