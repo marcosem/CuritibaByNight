@@ -32,6 +32,9 @@ export const TitleBox = styled.div`
   > strong {
     color: #eee;
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+    font-weight: 500px;
+    margin: auto 0;
   }
 `;
 

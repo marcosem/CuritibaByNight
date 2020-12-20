@@ -79,10 +79,14 @@ export const MapToolTip = styled.div`
 `;
 
 export const TitleBox = styled.div`
+  min-width: 340px;
+  max-width: 1012px;
+  position: relative;
+
   display: flex;
   flex-direction: space-between;
   padding: 10px;
-  margin: 0 auto 10px auto;
+  margin: 5px auto 10px auto;
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
@@ -90,6 +94,9 @@ export const TitleBox = styled.div`
   > strong {
     color: #eee;
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+    font-weight: 500px;
+    margin: auto 0;
   }
 `;
 
@@ -100,7 +107,7 @@ export const Select = styled.select`
   outline: none;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
-  width: 190px;
+  width: 250px;
   margin-left: auto;
 
   background: #111;

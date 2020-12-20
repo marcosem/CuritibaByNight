@@ -196,7 +196,7 @@ const Locals: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <Content isMobile={isMobileVersion} isSt={user.storyteller}>
+        <>
           {user.storyteller && (
             <TitleBox>
               {charList.length > 0 ? (
@@ -225,45 +225,47 @@ const Locals: React.FC = () => {
             </TitleBox>
           )}
 
-          <Map
-            center={[-25.442152, -49.2742434]}
-            zoom={12}
-            style={{
-              border: 'solid #888 1px',
-              width: '100%',
-              height: '100%',
-            }}
-          >
-            {/* <TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" /> */}
-            <TileLayer
-              url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
-            />
+          <Content isMobile={isMobileVersion} isSt={user.storyteller}>
+            <Map
+              center={[-25.442152, -49.2742434]}
+              zoom={12}
+              style={{
+                border: 'solid #888 1px',
+                width: '100%',
+                height: '100%',
+              }}
+            >
+              {/* <TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" /> */}
+              <TileLayer
+                url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
+              />
 
-            <>
-              {locationsList.map(location => (
-                <Marker
-                  icon={location.icon}
-                  position={[location.latitude, location.longitude]}
-                >
-                  <Tooltip>
-                    <MapToolTip>
-                      <img width="200" src={location.picture_url} alt="" />
-                      <strong>{location.name}</strong>
-                      <span>{location.description}</span>
-                      <span>{location.address}</span>
-                    </MapToolTip>
-                  </Tooltip>
-                </Marker>
-              ))}
-            </>
-          </Map>
+              <>
+                {locationsList.map(location => (
+                  <Marker
+                    icon={location.icon}
+                    position={[location.latitude, location.longitude]}
+                  >
+                    <Tooltip>
+                      <MapToolTip>
+                        <img width="200" src={location.picture_url} alt="" />
+                        <strong>{location.name}</strong>
+                        <span>{location.description}</span>
+                        <span>{location.address}</span>
+                      </MapToolTip>
+                    </Tooltip>
+                  </Marker>
+                ))}
+              </>
+            </Map>
 
-          {user.storyteller && (
-            <Link to="/dashboard">
-              <FiPlus />
-            </Link>
-          )}
-        </Content>
+            {user.storyteller && (
+              <Link to="/dashboard">
+                <FiPlus />
+              </Link>
+            )}
+          </Content>
+        </>
       )}
     </Container>
   );
