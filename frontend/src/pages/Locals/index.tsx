@@ -137,7 +137,7 @@ const Locals: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <Content isMobile={isMobileVersion}>
+        <Content isMobile={isMobileVersion} isSt={user.storyteller}>
           <Map
             center={[-25.442152, -49.2742434]}
             zoom={12}

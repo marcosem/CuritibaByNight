@@ -3,6 +3,7 @@ import { shade } from 'polished';
 
 interface ICharacterProps {
   isMobile: boolean;
+  isSt: boolean;
 }
 
 export const Container = styled.div`
@@ -26,35 +27,39 @@ export const Content = styled.main<ICharacterProps>`
     z-index: 5;
   }
 
-  a {
-    position: absolute;
-    right: 40px;
-    bottom: 40px;
+  ${props =>
+    props.isSt &&
+    css`
+      > a {
+        position: absolute;
+        right: 40px;
+        bottom: 40px;
 
-    width: 64px;
-    height: 64px;
+        width: 64px;
+        height: 64px;
 
-    z-index: 10;
+        z-index: 10;
 
-    background: #860209;
-    border-radius: 20px;
+        background: #860209;
+        border-radius: 20px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-    transition: background-color 0.2s;
+        transition: background-color 0.2s;
 
-    &:hover {
-      background: ${shade(0.2, '#860209')};
-    }
+        &:hover {
+          background: ${shade(0.2, '#860209')};
+        }
 
-    svg {
-      width: 32px;
-      height: 32px;
-      color: #ccc;
-    }
-  }
+        svg {
+          width: 32px;
+          height: 32px;
+          color: #ccc;
+        }
+      }
+    `}
 `;
 
 export const MapToolTip = styled.div`
