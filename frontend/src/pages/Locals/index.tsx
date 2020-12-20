@@ -1,20 +1,18 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import { Map, TileLayer, Marker, Tooltip } from 'react-leaflet';
 import Leaflet from 'leaflet';
 import api from '../../services/api';
 
-import { Container, Content, MapToolTip } from './styles';
+import { Container, Content, MapToolTip, TitleBox, Select } from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 import 'leaflet/dist/leaflet.css';
 import imgBuilding from '../../assets/building.jpg';
 
-// import Loading from '../../components/Loading';
-// import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
@@ -32,36 +30,56 @@ interface ILocation {
   icon: Leaflet.Icon<Leaflet.IconOptions>;
 }
 
-/*
-const mapPaco = Leaflet.icon({
-  iconUrl: pacoDaLiberdade,
-  iconSize: [48, 48],
-  shadowUrl: mapMakerIcon,
-  // shadowSize: [32, 32],
-  shadowAnchor: [28, 65],
-  iconAnchor: [24, 61],
-  tooltipAnchor: [24, -32],
-});
-
-
-
-const mapToreador = Leaflet.icon({
-  iconUrl: elysiumToreador,
-  iconSize: [48, 48],
-  shadowUrl: mapMakerIcon,
-  // shadowSize: [32, 32],
-  shadowAnchor: [28, 65],
-  iconAnchor: [24, 61],
-  tooltipAnchor: [24, -32],
-});
-*/
+interface ICharacter {
+  id: string | undefined;
+  name: string;
+}
 
 const Locals: React.FC = () => {
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
+  const [charList, setCharList] = useState<ICharacter[]>([]);
+  const [selectedChar, setSelectedChar] = useState<ICharacter>({
+    id: undefined,
+    name: '',
+  });
   const [isBusy, setBusy] = useState(true);
   const { addToast } = useToast();
   const { user, char, signOut } = useAuth();
   const { isMobileVersion } = useMobile();
+
+  const loadCharacters = useCallback(async () => {
+    setBusy(true);
+
+    try {
+      await api.get('characters/list').then(response => {
+        const res = response.data;
+        // const stArray = [{id: undefined, name: 'Narrador'}];
+
+        setCharList(res);
+      });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar personagens',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+    setBusy(false);
+  }, [addToast, signOut]);
 
   const loadLocations = useCallback(async () => {
     setBusy(true);
@@ -69,7 +87,7 @@ const Locals: React.FC = () => {
     try {
       await api
         .post('locations/list', {
-          char_id: user.storyteller ? undefined : char.id,
+          char_id: selectedChar.id, // user.storyteller ? undefined : char.id,
         })
         .then(response => {
           const res = response.data;
@@ -120,11 +138,42 @@ const Locals: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, char.id, signOut, user.storyteller]);
+  }, [addToast, selectedChar, signOut]);
 
   useEffect(() => {
+    if (user.storyteller) {
+      loadCharacters();
+    } else {
+      const selChar = {
+        id: char.id,
+        name: '',
+      };
+
+      setSelectedChar(selChar);
+    }
+
     loadLocations();
-  }, [loadLocations]);
+  }, [loadLocations, loadCharacters, user.storyteller, char.id]);
+
+  const handleCharacterChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const char_name = event.target.value;
+
+      let selectedCharacter = charList.find(
+        character => character.name === char_name,
+      );
+
+      if (!selectedCharacter) {
+        selectedCharacter = {
+          id: undefined,
+          name: 'Narrador',
+        };
+      }
+
+      setSelectedChar(selectedCharacter);
+    },
+    [charList],
+  );
 
   return (
     <Container>
@@ -138,6 +187,34 @@ const Locals: React.FC = () => {
         <Loading />
       ) : (
         <Content isMobile={isMobileVersion} isSt={user.storyteller}>
+          {user.storyteller && (
+            <TitleBox>
+              {charList.length > 0 ? (
+                <>
+                  <strong>Ver o mapa como:</strong>
+
+                  <Select
+                    name="character"
+                    id="character"
+                    value={selectedChar.name}
+                    onChange={handleCharacterChange}
+                  >
+                    <option value="">Selecione um personagem:</option>
+                    {charList.map(character => (
+                      <option key={character.id} value={character.name}>
+                        {character.name}
+                      </option>
+                    ))}
+                  </Select>
+                </>
+              ) : (
+                <strong>
+                  Não foi encontrado nenhum personagem na base de dados.
+                </strong>
+              )}
+            </TitleBox>
+          )}
+
           <Map
             center={[-25.442152, -49.2742434]}
             zoom={12}

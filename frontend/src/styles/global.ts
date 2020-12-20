@@ -24,7 +24,6 @@ export default createGlobalStyle`
 
   }
 
-
   body, input, button {
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
@@ -38,6 +37,3 @@ export default createGlobalStyle`
     cursor: pointer;
   }
 `;
-
-// background: linear-gradient(0deg, #080707 0%, #989797 100%);
-//     background: #282727;

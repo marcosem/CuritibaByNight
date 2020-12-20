@@ -13,7 +13,7 @@ export const Container = styled.div`
 export const Content = styled.main<ICharacterProps>`
   min-width: 340px;
   max-width: 1012px;
-  margin: 18px auto;
+  margin: 5px auto;
   position: relative;
   height: 74vh;
 
@@ -76,4 +76,38 @@ export const MapToolTip = styled.div`
     text-align: center;
     font-weight: 550;
   }
+`;
+
+export const TitleBox = styled.div`
+  display: flex;
+  flex-direction: space-between;
+  padding: 10px;
+  margin: 0 auto 10px auto;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+
+  > strong {
+    color: #eee;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+  }
+`;
+
+export const Select = styled.select`
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  width: 190px;
+  margin-left: auto;
+
+  background: #111;
+  border-radius: 4px;
+  border: 0;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 500px;
+  color: #888;
 `;
