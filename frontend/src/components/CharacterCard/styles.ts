@@ -106,20 +106,11 @@ export const ProfileImage = styled.div<IImageProps>`
     border-radius: 50%;
 
     transition: opacity 0.2s;
-
-    ${props =>
-      !props.locked &&
-      css`
-        &:hover {
-          cursor: pointer;
-          opacity: 0.5;
-        }
-      `}
   }
 
   svg {
     position: absolute;
-    top: 103px;
+    top: 92px;
     left: 73px;
 
     width: 46px;
@@ -137,7 +128,8 @@ export const ProfileImage = styled.div<IImageProps>`
     position: absolute;
     opacity: 0.5;
     font-size: 16px;
-    top: 150px;
+    font-weight: 550;
+    top: 140px;
     left: 55px;
 
     visibility: hidden;
@@ -149,12 +141,18 @@ export const ProfileImage = styled.div<IImageProps>`
     !props.locked &&
     css`
       &:hover {
+        cursor: pointer;
+
         svg {
           visibility: visible;
         }
 
         span {
           visibility: visible;
+        }
+
+        img {
+          opacity: 0.5;
         }
       }
     `}
