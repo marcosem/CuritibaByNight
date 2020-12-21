@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 // import html2canvas from 'html2canvas';
 import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
-import { FiClock } from 'react-icons/fi';
+import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import api from '../../services/api';
 import getCardImg from './getCardImg';
@@ -131,6 +131,8 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
             {!locked && (
               <input type="file" id={charId} onChange={handleAvatarChange} />
             )}
+            <FiCamera />
+            <span>Trocar Foto</span>
           </ProfileImage>
         </label>
         <CharInfo>

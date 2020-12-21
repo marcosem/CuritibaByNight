@@ -116,6 +116,48 @@ export const ProfileImage = styled.div<IImageProps>`
         }
       `}
   }
+
+  svg {
+    position: absolute;
+    top: 103px;
+    left: 73px;
+
+    width: 46px;
+    height: 46px;
+
+    color: #fff;
+
+    opacity: 0.5;
+    visibility: hidden;
+
+    transition: visibility 0.2s;
+  }
+
+  span {
+    position: absolute;
+    opacity: 0.5;
+    font-size: 16px;
+    top: 150px;
+    left: 55px;
+
+    visibility: hidden;
+
+    transition: visibility 0.2s;
+  }
+
+  ${props =>
+    !props.locked &&
+    css`
+      &:hover {
+        svg {
+          visibility: visible;
+        }
+
+        span {
+          visibility: visible;
+        }
+      }
+    `}
 `;
 
 export const CharInfo = styled.div`
