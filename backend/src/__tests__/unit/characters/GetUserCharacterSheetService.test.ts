@@ -20,7 +20,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should be able get a list of users character sheets', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -64,7 +63,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should be able to load only characters sheets of specific situation', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -113,7 +111,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should not allow non storyteller user to get character sheets from others users', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -136,7 +133,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should not allow to get non existant users character sheets', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -154,7 +150,6 @@ describe('GetUserCharacterSheet', () => {
   });
 
   it('Should not allow to get a non existant list of character sheets', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

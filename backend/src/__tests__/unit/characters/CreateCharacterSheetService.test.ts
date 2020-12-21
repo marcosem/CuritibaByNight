@@ -24,7 +24,6 @@ describe('CreateCharacterSheet', () => {
   });
 
   it('Should be able to create a character sheet to an user', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -68,7 +67,6 @@ describe('CreateCharacterSheet', () => {
   });
 
   it('Should not allow non storyteller user to create character sheets', async () => {
-    // Create a user
     const noSTUser = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -92,7 +90,6 @@ describe('CreateCharacterSheet', () => {
   });
 
   it('Should not allow to create character sheets with a non PDF file', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -117,7 +114,6 @@ describe('CreateCharacterSheet', () => {
   });
 
   it('Should not allow to create character sheets for non existant users', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

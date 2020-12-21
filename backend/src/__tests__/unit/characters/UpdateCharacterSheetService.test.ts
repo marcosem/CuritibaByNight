@@ -29,7 +29,6 @@ describe('UpdateCharacterSheet', () => {
   });
 
   it('Should be able to update an existant character sheet', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -116,7 +115,6 @@ describe('UpdateCharacterSheet', () => {
   });
 
   it('Should not allow update character sheet with a non PDF file', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -143,7 +141,6 @@ describe('UpdateCharacterSheet', () => {
   });
 
   it('Should not allow update a non existant character sheet', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -170,7 +167,6 @@ describe('UpdateCharacterSheet', () => {
   });
 
   it('Should allow to update character sheet for character without file', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -225,7 +221,6 @@ describe('UpdateCharacterSheet', () => {
   });
 
   it('Should not allow to update character sheet for non existant user', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

@@ -24,7 +24,6 @@ describe('UpdateUserAvatar', () => {
   });
 
   it('Should be able to update the user avatar', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -44,7 +43,6 @@ describe('UpdateUserAvatar', () => {
   it('Should delete old avatar before add new', async () => {
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
 
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -79,7 +77,6 @@ describe('UpdateUserAvatar', () => {
   });
 
   it('Should use the adjusted avatar file when have some adjust', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

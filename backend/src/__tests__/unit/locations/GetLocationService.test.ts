@@ -3,13 +3,14 @@ import FakeLocationRepository from '@modules/locations/repositories/fakes/FakeLo
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import GetLocationService from '@modules/locations/services/GetLocationService';
+import AppError from '@shared/errors/AppError';
 
 let fakeLocationRepository: FakeLocationRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let getLocation: GetLocationService;
 
-describe('GetLocationService', () => {
+describe('GetLocation', () => {
   beforeEach(() => {
     fakeLocationRepository = new FakeLocationRepository();
     fakeUsersRepository = new FakeUsersRepository();
@@ -227,7 +228,7 @@ describe('GetLocationService', () => {
         user_id: user.id,
         location_id: 'I do not exist',
       }),
-    ).rejects.toMatchObject({ statusCode: 400 });
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it('Should not allow get clan location other than the character one', async () => {
@@ -282,6 +283,6 @@ describe('GetLocationService', () => {
         char_id: 'I do not exist',
         location_id: location.id,
       }),
-    ).rejects.toMatchObject({ statusCode: 400 });
+    ).rejects.toBeInstanceOf(AppError);
   });
 });

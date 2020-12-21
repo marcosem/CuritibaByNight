@@ -29,7 +29,6 @@ describe('updateCharacterAvatar', () => {
   });
 
   it('Should be able to update the character avatar', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -151,7 +150,6 @@ describe('updateCharacterAvatar', () => {
   });
 
   it('Should use the adjusted avatar file when have some adjust', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

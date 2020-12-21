@@ -20,7 +20,6 @@ describe('GetCharacter', () => {
   });
 
   it('Should be able get a character sheet', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -58,7 +57,6 @@ describe('GetCharacter', () => {
   });
 
   it('Should be allow invalid users to get character sheets', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -82,7 +80,6 @@ describe('GetCharacter', () => {
   });
 
   it('Should not allow non storyteller user to get character sheets from others users', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

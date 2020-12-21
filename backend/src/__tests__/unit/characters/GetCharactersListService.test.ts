@@ -9,7 +9,7 @@ let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let getCharactersList: GetCharactersListService;
 
-describe('GetCharactersListService', () => {
+describe('GetCharactersList', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
@@ -21,7 +21,6 @@ describe('GetCharactersListService', () => {
   });
 
   it('Should be able get a list of all characters sheet', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -64,7 +63,6 @@ describe('GetCharactersListService', () => {
   });
 
   it('Should not allow invalid users to get character sheets', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -87,7 +85,6 @@ describe('GetCharactersListService', () => {
   });
 
   it('Should not allow non storyteller user to get character sheets from others users', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

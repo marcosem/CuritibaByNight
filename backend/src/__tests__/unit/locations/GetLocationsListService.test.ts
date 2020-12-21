@@ -3,13 +3,14 @@ import FakeLocationRepository from '@modules/locations/repositories/fakes/FakeLo
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import GetLocationsListService from '@modules/locations/services/GetLocationsListService';
+import AppError from '@shared/errors/AppError';
 
 let fakeLocationRepository: FakeLocationRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let getLocationsList: GetLocationsListService;
 
-describe('GetLocationsListService', () => {
+describe('GetLocationsList', () => {
   beforeAll(async () => {
     fakeLocationRepository = new FakeLocationRepository();
 
@@ -159,6 +160,6 @@ describe('GetLocationsListService', () => {
         user_id: noStUser.id,
         char_id: 'I am invalid',
       }),
-    ).rejects.toMatchObject({ statusCode: 400 });
+    ).rejects.toBeInstanceOf(AppError);
   });
 });

@@ -3,13 +3,14 @@ import FakeLocationRepository from '@modules/locations/repositories/fakes/FakeLo
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import CreateLocationService from '@modules/locations/services/CreateLocationService';
+import AppError from '@shared/errors/AppError';
 
 let fakeLocationRepository: FakeLocationRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let createLocation: CreateLocationService;
 
-describe('CreateLocationService', () => {
+describe('CreateLocation', () => {
   beforeEach(() => {
     fakeLocationRepository = new FakeLocationRepository();
     fakeUsersRepository = new FakeUsersRepository();
@@ -23,7 +24,6 @@ describe('CreateLocationService', () => {
   });
 
   it('Should be able to create a location', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -66,7 +66,6 @@ describe('CreateLocationService', () => {
   });
 
   it('Should not allow non storyteller user to create location', async () => {
-    // Create a user
     const noStUser = await fakeUsersRepository.create({
       name: 'Not a ST User',
       email: 'user@user.com',
@@ -85,7 +84,6 @@ describe('CreateLocationService', () => {
   });
 
   it('Should be able to create a location with a responsible character', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -132,7 +130,6 @@ describe('CreateLocationService', () => {
   });
 
   it('Should not allow to create a location with a non existant character as responsible', async () => {
-    // Create a user
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -149,6 +146,6 @@ describe('CreateLocationService', () => {
         longitude: -49.2713069,
         char_id: 'I do not exist',
       }),
-    ).rejects.toMatchObject({ statusCode: 400 });
+    ).rejects.toBeInstanceOf(AppError);
   });
 });
