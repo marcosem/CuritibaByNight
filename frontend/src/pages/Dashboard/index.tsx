@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <Content isMobile={isMobileVersion}>
+        <>
           <TitleBox>
             {charList.length > 0 ? (
               <strong>
@@ -79,8 +79,10 @@ const Dashboard: React.FC = () => {
               </strong>
             )}
           </TitleBox>
-          {charList.length > 0 && <CharacterList chars={charList} />}
-        </Content>
+          <Content isMobile={isMobileVersion}>
+            {charList.length > 0 && <CharacterList chars={charList} />}
+          </Content>
+        </>
       )}
     </Container>
   );

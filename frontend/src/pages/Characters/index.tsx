@@ -92,7 +92,7 @@ const Characters: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <Content isMobile={isMobileVersion}>
+        <>
           <TitleBox>
             {charList.length > 0 ? (
               <>
@@ -121,8 +121,11 @@ const Characters: React.FC = () => {
               </strong>
             )}
           </TitleBox>
-          <CharacterList chars={charList} locked filterClan={selectedClan} />
-        </Content>
+
+          <Content isMobile={isMobileVersion}>
+            <CharacterList chars={charList} locked filterClan={selectedClan} />
+          </Content>
+        </>
       )}
     </Container>
   );

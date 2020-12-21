@@ -86,7 +86,9 @@ export const TitleBox = styled.div`
   display: flex;
   flex-direction: space-between;
   padding: 10px;
+
   margin: 5px auto 10px auto;
+
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
@@ -113,7 +115,7 @@ export const Select = styled.select`
   background: #111;
   border-radius: 4px;
   border: 0;
-  padding: 4px 8px;
+  padding: 0 8px;
   font-size: 14px;
   font-weight: 500px;
   color: #888;

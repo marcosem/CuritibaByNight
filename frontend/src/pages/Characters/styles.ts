@@ -11,7 +11,7 @@ export const Container = styled.div`
 export const Content = styled.main<ICharacterProps>`
   min-width: 340px;
   max-width: 1012px;
-  margin: 18px auto;
+  margin: 0 auto;
 
   ${props =>
     props.isMobile &&
@@ -21,10 +21,16 @@ export const Content = styled.main<ICharacterProps>`
 `;
 
 export const TitleBox = styled.div`
+  min-width: 340px;
+  max-width: 1012px;
+  position: relative;
+
   display: flex;
   flex-direction: space-between;
-  padding: 20px;
-  margin: 10px auto 0 auto;
+  padding: 10px;
+
+  margin: 5px auto 5px auto;
+
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
@@ -45,13 +51,13 @@ export const Select = styled.select`
   outline: none;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
-  width: 190px;
+  width: 250px;
   margin-left: auto;
 
   background: #111;
   border-radius: 4px;
   border: 0;
-  padding: 4px 8px;
+  padding: 0 8px;
   font-size: 14px;
   font-weight: 500px;
   color: #888;
