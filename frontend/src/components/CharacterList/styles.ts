@@ -18,7 +18,7 @@ export const Character = styled.div<ICharacterProps>`
     max-width: 1012px;
     white-space: nowrap;
     border-collapse: separate;
-    border-spacing: 32px;
+    border-spacing: 24px;
   }
 
   ${props =>
