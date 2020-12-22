@@ -1,23 +1,23 @@
 import 'reflect-metadata';
-import FakeLocationRepository from '@modules/locations/repositories/fakes/FakeLocationRepository';
+import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import RemoveLocationService from '@modules/locations/services/RemoveLocationService';
 import AppError from '@shared/errors/AppError';
 
-let fakeLocationRepository: FakeLocationRepository;
+let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
 let removeLocation: RemoveLocationService;
 
 describe('RemoveLocation', () => {
   beforeEach(() => {
-    fakeLocationRepository = new FakeLocationRepository();
+    fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeStorageProvider = new FakeStorageProvider();
 
     removeLocation = new RemoveLocationService(
-      fakeLocationRepository,
+      fakeLocationsRepository,
       fakeUsersRepository,
       fakeStorageProvider,
     );
@@ -31,22 +31,22 @@ describe('RemoveLocation', () => {
       storyteller: true,
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
       longitude: -49.2713069,
     });
 
-    const initialListSize = await fakeLocationRepository.listAll();
+    const initialListSize = await fakeLocationsRepository.listAll();
 
     await removeLocation.execute({
       user_id: user.id,
       location_id: location.id,
     });
 
-    const finalListSize = await fakeLocationRepository.listAll();
-    const findLocation = await fakeLocationRepository.findById(location.id);
+    const finalListSize = await fakeLocationsRepository.listAll();
+    const findLocation = await fakeLocationsRepository.findById(location.id);
 
     expect(finalListSize.length).toEqual(initialListSize.length - 1);
     expect(findLocation).toBeUndefined();
@@ -62,7 +62,7 @@ describe('RemoveLocation', () => {
       storyteller: true,
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -70,7 +70,7 @@ describe('RemoveLocation', () => {
     });
 
     location.picture = 'picture.jpg';
-    const locationWithPicture = await fakeLocationRepository.update(location);
+    const locationWithPicture = await fakeLocationsRepository.update(location);
 
     await removeLocation.execute({
       user_id: user.id,

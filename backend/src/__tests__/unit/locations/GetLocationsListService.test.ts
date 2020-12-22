@@ -1,20 +1,22 @@
 import 'reflect-metadata';
-import FakeLocationRepository from '@modules/locations/repositories/fakes/FakeLocationRepository';
+import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import GetLocationsListService from '@modules/locations/services/GetLocationsListService';
+import FakeLocationsCharactersRepository from '@modules/locations/repositories/fakes/FakeLocationsCharactersRepository';
 import AppError from '@shared/errors/AppError';
 
-let fakeLocationRepository: FakeLocationRepository;
+let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
+let fakeLocationsCharactersRepository: FakeLocationsCharactersRepository;
 let getLocationsList: GetLocationsListService;
 
 describe('GetLocationsList', () => {
   beforeAll(async () => {
-    fakeLocationRepository = new FakeLocationRepository();
+    fakeLocationsRepository = new FakeLocationsRepository();
 
-    await fakeLocationRepository.create({
+    await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -23,7 +25,7 @@ describe('GetLocationsList', () => {
       clan: 'Ventrue',
     });
 
-    await fakeLocationRepository.create({
+    await fakeLocationsRepository.create({
       name: 'Paço da Liberdade',
       description: 'Elysium Tremere',
       latitude: -25.4166496,
@@ -32,7 +34,7 @@ describe('GetLocationsList', () => {
       clan: 'Tremere',
     });
 
-    await fakeLocationRepository.create({
+    await fakeLocationsRepository.create({
       name: 'Ateliê Victor Gentil',
       description: 'Refúgio Toreador',
       latitude: -25.4166496,
@@ -44,11 +46,13 @@ describe('GetLocationsList', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
+    fakeLocationsCharactersRepository = new FakeLocationsCharactersRepository();
 
     getLocationsList = new GetLocationsListService(
-      fakeLocationRepository,
+      fakeLocationsRepository,
       fakeUsersRepository,
       fakeCharactersRepository,
+      fakeLocationsCharactersRepository,
     );
   });
 
@@ -146,6 +150,128 @@ describe('GetLocationsList', () => {
       elysium: true,
       clan: 'Tremere',
     });
+  });
+
+  it('Should allow get public and elysiums locations', async () => {
+    const noStUser = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: noStUser.id,
+      name: 'Dracula',
+      experience: 666,
+      clan: 'Tzimisce',
+      file: 'dracula.pdf',
+    });
+
+    const locationsList = await getLocationsList.execute({
+      user_id: noStUser.id,
+      char_id: char.id,
+    });
+
+    expect(locationsList).toHaveLength(2);
+    expect(locationsList[0]).toMatchObject({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      property: 'public',
+      clan: 'Ventrue',
+    });
+
+    expect(locationsList[1]).toMatchObject({
+      name: 'Paço da Liberdade',
+      description: 'Elysium Tremere',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      elysium: true,
+      clan: 'Tremere',
+    });
+  });
+
+  it('Should allow get locations the character is aware of', async () => {
+    const noStUser = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: noStUser.id,
+      name: 'Dracula',
+      experience: 666,
+      clan: 'Tzimisce',
+      file: 'dracula.pdf',
+    });
+
+    const secretLocation = await fakeLocationsRepository.create({
+      name: 'Secret Chamber',
+      description: 'Hidden',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      property: 'private',
+    });
+
+    await fakeLocationsCharactersRepository.addCharToLocation(
+      char.id,
+      secretLocation.id,
+    );
+
+    const locationsList = await getLocationsList.execute({
+      user_id: noStUser.id,
+      char_id: char.id,
+    });
+
+    expect(locationsList[2]).toMatchObject({
+      name: 'Secret Chamber',
+      description: 'Hidden',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      property: 'private',
+    });
+  });
+
+  it('Should allow add invalid character-locations to the list', async () => {
+    const noStUser = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: noStUser.id,
+      name: 'Dracula',
+      experience: 666,
+      clan: 'Tzimisce',
+      file: 'dracula.pdf',
+    });
+
+    const secretLocation = await fakeLocationsRepository.create({
+      name: 'Secret Chamber',
+      description: 'Hidden',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      property: 'private',
+    });
+
+    await fakeLocationsCharactersRepository.addCharToLocation(
+      char.id,
+      secretLocation.id,
+    );
+
+    jest
+      .spyOn(fakeLocationsRepository, 'findById')
+      .mockReturnValue(Promise.resolve(undefined));
+
+    const locationsList = await getLocationsList.execute({
+      user_id: noStUser.id,
+      char_id: char.id,
+    });
+
+    expect(locationsList[2]).toBeUndefined();
   });
 
   it('Should not allow invalid characters to get locations list', async () => {

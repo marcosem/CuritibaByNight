@@ -1,23 +1,23 @@
 import 'reflect-metadata';
-import FakeLocationRepository from '@modules/locations/repositories/fakes/FakeLocationRepository';
+import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import CreateLocationService from '@modules/locations/services/CreateLocationService';
 import AppError from '@shared/errors/AppError';
 
-let fakeLocationRepository: FakeLocationRepository;
+let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let createLocation: CreateLocationService;
 
 describe('CreateLocation', () => {
   beforeEach(() => {
-    fakeLocationRepository = new FakeLocationRepository();
+    fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
 
     createLocation = new CreateLocationService(
-      fakeLocationRepository,
+      fakeLocationsRepository,
       fakeUsersRepository,
       fakeCharactersRepository,
     );
@@ -53,7 +53,7 @@ describe('CreateLocation', () => {
     });
   });
 
-  it('Should not allow not existant user to create location', async () => {
+  it('Should not allow invalid user to create location', async () => {
     await expect(
       createLocation.execute({
         user_id: 'I am invalid',

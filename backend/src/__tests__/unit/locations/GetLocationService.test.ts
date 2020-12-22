@@ -1,23 +1,23 @@
 import 'reflect-metadata';
-import FakeLocationRepository from '@modules/locations/repositories/fakes/FakeLocationRepository';
+import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import GetLocationService from '@modules/locations/services/GetLocationService';
 import AppError from '@shared/errors/AppError';
 
-let fakeLocationRepository: FakeLocationRepository;
+let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let getLocation: GetLocationService;
 
 describe('GetLocation', () => {
   beforeEach(() => {
-    fakeLocationRepository = new FakeLocationRepository();
+    fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
 
     getLocation = new GetLocationService(
-      fakeLocationRepository,
+      fakeLocationsRepository,
       fakeUsersRepository,
       fakeCharactersRepository,
     );
@@ -31,7 +31,7 @@ describe('GetLocation', () => {
       storyteller: true,
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -60,7 +60,7 @@ describe('GetLocation', () => {
       storyteller: true,
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -91,7 +91,7 @@ describe('GetLocation', () => {
       storyteller: true,
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -128,7 +128,7 @@ describe('GetLocation', () => {
       file: 'dracula.pdf',
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -167,7 +167,7 @@ describe('GetLocation', () => {
       file: 'dracula.pdf',
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -246,7 +246,7 @@ describe('GetLocation', () => {
       file: 'dracula.pdf',
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
@@ -270,7 +270,7 @@ describe('GetLocation', () => {
       password: '123456',
     });
 
-    const location = await fakeLocationRepository.create({
+    const location = await fakeLocationsRepository.create({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
