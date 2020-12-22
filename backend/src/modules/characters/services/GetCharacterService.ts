@@ -19,12 +19,6 @@ class GetCharacterService {
   ) {}
 
   public async execute({ user_id, char_id }: IRequestDTO): Promise<Character> {
-    const char = await this.charactersRepository.findById(char_id);
-
-    if (!char) {
-      throw new AppError('Character not found', 400);
-    }
-
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
@@ -32,7 +26,15 @@ class GetCharacterService {
         'Only authenticated users can load his characters sheets',
         401,
       );
-    } else if (!user.storyteller && user_id !== char.user_id) {
+    }
+
+    const char = await this.charactersRepository.findById(char_id);
+
+    if (!char) {
+      throw new AppError('Character not found', 400);
+    }
+
+    if (!user.storyteller && user_id !== char.user_id) {
       throw new AppError(
         'Only authenticated Storytellers can get other players character sheets',
         401,

@@ -4,6 +4,7 @@ import Location from '@modules/locations/infra/typeorm/entities/Location';
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
+import ILocationsCharactersRepository from '@modules/locations/repositories/ILocationsCharactersRepository';
 
 interface IRequestDTO {
   user_id: string;
@@ -19,6 +20,8 @@ class GetLocationsListService {
     private usersRepository: IUsersRepository,
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
+    @inject('LocationsCharactersRepository')
+    private locationsCharactersRepository: ILocationsCharactersRepository,
   ) {}
 
   public async execute({ user_id, char_id }: IRequestDTO): Promise<Location[]> {
@@ -48,6 +51,21 @@ class GetLocationsListService {
         char_id,
         char.clan,
       );
+
+      const awareList = await this.locationsCharactersRepository.listLocationsByCharacter(
+        char_id,
+      );
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const locationId of awareList) {
+        // eslint-disable-next-line no-await-in-loop
+        const resLocation = await this.locationsRepository.findById(locationId);
+
+        if (resLocation !== undefined) {
+          const location: Location = resLocation;
+          locationList.push(location);
+        }
+      }
     }
 
     return locationList;
