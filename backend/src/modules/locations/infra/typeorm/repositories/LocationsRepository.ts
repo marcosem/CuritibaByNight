@@ -3,8 +3,6 @@ import Location from '@modules/locations/infra/typeorm/entities/Location';
 import ICreateLocationDTO from '@modules/locations/dtos/ICreateLocationDTO';
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 
-// import { uuid } from 'uuidv4';
-
 class LocationsRepository implements ILocationsRepository {
   private ormRepository: Repository<Location>;
 
@@ -51,12 +49,6 @@ class LocationsRepository implements ILocationsRepository {
   }
 
   public async update(location: Location): Promise<Location> {
-    /*
-    if (location.responsible_char) {
-      location.responsible_char = undefined;
-    }
-    */
-
     await this.ormRepository.save(location);
 
     // Return what is saved with user relationship attached.
@@ -113,6 +105,7 @@ class LocationsRepository implements ILocationsRepository {
     const location = await this.ormRepository.findOne({
       where: { id: location_id },
     });
+
     if (location) {
       await this.ormRepository.remove(location);
     }

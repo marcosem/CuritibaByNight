@@ -1,4 +1,5 @@
 import Character from '@modules/characters/infra/typeorm/entities/Character';
+
 import {
   Entity,
   Column,
@@ -6,7 +7,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  // ManyToMany,
   JoinColumn,
 } from 'typeorm';
 
