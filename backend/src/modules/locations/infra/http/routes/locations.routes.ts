@@ -87,12 +87,13 @@ locationsRouter.delete(
 );
 
 // Show a location
-locationsRouter.get(
-  '/:id',
+locationsRouter.post(
+  '/show',
   ensureAuthenticated,
   celebrate({
-    [Segments.PARAMS]: {
-      id: Joi.string().uuid().required(),
+    [Segments.BODY]: {
+      location_id: Joi.string().uuid().required(),
+      char_id: Joi.string().uuid().optional(),
     },
   }),
   locationsController.show,

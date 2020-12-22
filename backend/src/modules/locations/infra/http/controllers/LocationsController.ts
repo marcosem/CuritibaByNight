@@ -47,14 +47,14 @@ export default class LocationsController {
   }
 
   public async show(req: Request, res: Response): Promise<Response> {
-    const { id, char_id } = req.params;
+    const { location_id, char_id } = req.body;
 
     const getLocationService = container.resolve(GetLocationService);
 
     const location = await getLocationService.execute({
       user_id: req.user.id,
       char_id,
-      location_id: id,
+      location_id,
     });
 
     return res.json(classToClass(location));
