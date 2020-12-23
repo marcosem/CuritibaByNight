@@ -55,7 +55,6 @@ const Locals: React.FC = () => {
     try {
       await api.get('characters/list').then(response => {
         const res = response.data;
-        // const stArray = [{id: undefined, name: 'Narrador'}];
 
         const fullList: ICharacter[] = res;
 
@@ -95,7 +94,7 @@ const Locals: React.FC = () => {
     try {
       await api
         .post('locations/list', {
-          char_id: selectedChar.id, // user.storyteller ? undefined : char.id,
+          char_id: user.storyteller ? selectedChar.id : char.id,
         })
         .then(response => {
           const res = response.data;
@@ -146,23 +145,15 @@ const Locals: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, selectedChar, signOut]);
+  }, [addToast, char.id, selectedChar.id, signOut, user.storyteller]);
 
   useEffect(() => {
     if (user.storyteller) {
       loadCharacters();
-    } else {
-      const selChar = {
-        id: char.id,
-        name: '',
-        situation: 'active',
-      };
-
-      setSelectedChar(selChar);
     }
 
     loadLocations();
-  }, [loadLocations, loadCharacters, user.storyteller, char.id]);
+  }, [loadLocations, loadCharacters, user.storyteller]);
 
   const handleCharacterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -235,7 +226,6 @@ const Locals: React.FC = () => {
                 height: '100%',
               }}
             >
-              {/* <TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" /> */}
               <TileLayer
                 url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
               />
@@ -243,6 +233,7 @@ const Locals: React.FC = () => {
               <>
                 {locationsList.map(location => (
                   <Marker
+                    key={location.id}
                     icon={location.icon}
                     position={[location.latitude, location.longitude]}
                   >
