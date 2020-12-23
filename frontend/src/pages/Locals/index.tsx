@@ -184,80 +184,78 @@ const Locals: React.FC = () => {
         <Header page="locals" />
       )}
 
-      {isBusy ? (
-        <Loading />
-      ) : (
-        <>
-          {user.storyteller && (
-            <TitleBox>
-              {charList.length > 0 ? (
-                <>
-                  <strong>Ver o mapa como:</strong>
+      {user.storyteller && (
+        <TitleBox>
+          {charList.length > 0 ? (
+            <>
+              <strong>Ver o mapa como:</strong>
 
-                  <Select
-                    name="character"
-                    id="character"
-                    value={selectedChar.name}
-                    onChange={handleCharacterChange}
-                  >
-                    <option value="">Selecione um personagem:</option>
-                    {charList.map(character => (
-                      <option key={character.id} value={character.name}>
-                        {character.name}
-                      </option>
-                    ))}
-                  </Select>
-                </>
-              ) : (
-                <strong>
-                  Não foi encontrado nenhum personagem na base de dados.
-                </strong>
-              )}
-            </TitleBox>
-          )}
-
-          <Content isMobile={isMobileVersion} isSt={user.storyteller}>
-            <Map
-              center={[-25.442152, -49.2742434]}
-              zoom={12}
-              style={{
-                border: 'solid #888 1px',
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <TileLayer
-                url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
-              />
-
-              <>
-                {locationsList.map(location => (
-                  <Marker
-                    key={location.id}
-                    icon={location.icon}
-                    position={[location.latitude, location.longitude]}
-                  >
-                    <Tooltip>
-                      <MapToolTip>
-                        <img width="200" src={location.picture_url} alt="" />
-                        <strong>{location.name}</strong>
-                        <span>{location.description}</span>
-                        <span>{location.address}</span>
-                      </MapToolTip>
-                    </Tooltip>
-                  </Marker>
+              <Select
+                name="character"
+                id="character"
+                value={selectedChar.name}
+                onChange={handleCharacterChange}
+              >
+                <option value="">Selecione um personagem:</option>
+                {charList.map(character => (
+                  <option key={character.id} value={character.name}>
+                    {character.name}
+                  </option>
                 ))}
-              </>
-            </Map>
-
-            {user.storyteller && (
-              <Link to="/dashboard">
-                <FiPlus />
-              </Link>
-            )}
-          </Content>
-        </>
+              </Select>
+            </>
+          ) : (
+            <strong>
+              Não foi encontrado nenhum personagem na base de dados.
+            </strong>
+          )}
+        </TitleBox>
       )}
+
+      <Content isMobile={isMobileVersion} isSt={user.storyteller}>
+        <Map
+          center={[-25.442152, -49.2742434]}
+          zoom={12}
+          style={{
+            border: 'solid #888 1px',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <TileLayer
+            url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
+          />
+
+          {isBusy ? (
+            <Loading />
+          ) : (
+            <>
+              {locationsList.map(location => (
+                <Marker
+                  key={location.id}
+                  icon={location.icon}
+                  position={[location.latitude, location.longitude]}
+                >
+                  <Tooltip>
+                    <MapToolTip>
+                      <img width="200" src={location.picture_url} alt="" />
+                      <strong>{location.name}</strong>
+                      <span>{location.description}</span>
+                      <span>{location.address}</span>
+                    </MapToolTip>
+                  </Tooltip>
+                </Marker>
+              ))}
+            </>
+          )}
+        </Map>
+
+        {user.storyteller && (
+          <Link to="/dashboard">
+            <FiPlus />
+          </Link>
+        )}
+      </Content>
     </Container>
   );
 };
