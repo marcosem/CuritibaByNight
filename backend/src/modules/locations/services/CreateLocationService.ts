@@ -4,6 +4,9 @@ import Location from '@modules/locations/infra/typeorm/entities/Location';
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import User from '@modules/users/infra/typeorm/entities/User';
+import { resolve } from 'path';
 
 interface IRequestDTO {
   user_id: string;
@@ -29,6 +32,8 @@ class CreateLocationService {
     private usersRepository: IUsersRepository,
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   public async execute({
@@ -59,12 +64,18 @@ class CreateLocationService {
       );
     }
 
+    let player: User | undefined;
+    let char_name: string | undefined;
+
     if (char_id) {
       const char = await this.charactersRepository.findById(char_id);
 
       if (!char) {
         throw new AppError('Character not found', 400);
       }
+
+      char_name = char.name;
+      player = await this.usersRepository.findById(char.user_id);
     }
 
     const location = await this.locationsRepository.create({
@@ -80,6 +91,37 @@ class CreateLocationService {
       clan,
       responsible: char_id,
     });
+
+    if (player && char_name) {
+      const locationUpdateTemplate = resolve(
+        __dirname,
+        '..',
+        'views',
+        'character_location_add.hbs',
+      );
+
+      const userNames = player.name.split(' ');
+
+      await this.mailProvider.sendMail({
+        to: {
+          name: player.name,
+          email: player.email,
+        },
+        subject: `[Curitiba By Night] Localização atualizada para o Personagem '${char_name}' no mapa do sistema`,
+        templateData: {
+          file: locationUpdateTemplate,
+          variables: {
+            name: userNames[0],
+            loc_name: location.name,
+            loc_desc: location.description,
+            char_name,
+            link: `${process.env.APP_WEB_URL}`,
+            imgLogo: 'curitibabynight.png',
+            imgMap: 'curitiba_old_map.jpg',
+          },
+        },
+      });
+    }
 
     return location;
   }

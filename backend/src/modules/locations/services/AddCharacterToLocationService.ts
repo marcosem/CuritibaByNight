@@ -5,6 +5,8 @@ import ILocationsCharactersRepository from '@modules/locations/repositories/ILoc
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import { resolve } from 'path';
 
 interface IRequestDTO {
   user_id: string;
@@ -23,6 +25,8 @@ class AddCharacterToLocationService {
     private locationsRepository: ILocationsRepository,
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   public async execute({
@@ -78,6 +82,39 @@ class AddCharacterToLocationService {
       char_id,
       location_id,
     );
+
+    const player = await this.usersRepository.findById(char.user_id);
+
+    if (player) {
+      const locationUpdateTemplate = resolve(
+        __dirname,
+        '..',
+        'views',
+        'character_location_add.hbs',
+      );
+
+      const userNames = player.name.split(' ');
+
+      await this.mailProvider.sendMail({
+        to: {
+          name: player.name,
+          email: player.email,
+        },
+        subject: `[Curitiba By Night] Localização atualizada para o Personagem '${char.name}' no mapa do sistema`,
+        templateData: {
+          file: locationUpdateTemplate,
+          variables: {
+            name: userNames[0],
+            loc_name: location.name,
+            loc_desc: location.description,
+            char_name: char.name,
+            link: `${process.env.APP_WEB_URL}`,
+            imgLogo: 'curitibabynight.png',
+            imgMap: 'curitiba_old_map.jpg',
+          },
+        },
+      });
+    }
 
     return locationCharacter;
   }

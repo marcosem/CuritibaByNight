@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
+import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
 import CreateLocationService from '@modules/locations/services/CreateLocationService';
 import AppError from '@shared/errors/AppError';
 
 let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
+let fakeMailProvider: FakeMailProvider;
 let createLocation: CreateLocationService;
 
 describe('CreateLocation', () => {
@@ -15,11 +17,13 @@ describe('CreateLocation', () => {
     fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
+    fakeMailProvider = new FakeMailProvider();
 
     createLocation = new CreateLocationService(
       fakeLocationsRepository,
       fakeUsersRepository,
       fakeCharactersRepository,
+      fakeMailProvider,
     );
   });
 
@@ -84,6 +88,8 @@ describe('CreateLocation', () => {
   });
 
   it('Should be able to create a location with a responsible character', async () => {
+    const sendMail = jest.spyOn(fakeMailProvider, 'sendMail');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -127,6 +133,7 @@ describe('CreateLocation', () => {
       clan: 'Ventrue',
       responsible: char.id,
     });
+    expect(sendMail).toHaveBeenCalled();
   });
 
   it('Should not allow to create a location with a non existant character as responsible', async () => {
