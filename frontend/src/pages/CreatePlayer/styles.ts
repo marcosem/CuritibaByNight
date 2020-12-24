@@ -17,6 +17,10 @@ export const Container = styled.div`
       width: 100%;
       max-width: 1120px;
       margin: 0 auto;
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
     }
 
     svg {
@@ -28,6 +32,13 @@ export const Container = styled.div`
         color: ${shade(0.2, '#860209')};
       }
     }
+
+    h1 {
+      font-size: 30px;
+      padding-left: 20px;
+      color: #860209;
+      margin: auto 0 auto auto;
+    }
   }
 `;
 
@@ -36,7 +47,6 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  align-items: center;
   margin: -125px auto 0;
 
   width: 100%;
@@ -44,8 +54,6 @@ export const Content = styled.div`
   form {
     margin: 30px 0;
     width: 340px;
-    min-width: 340px;
-
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -82,7 +90,7 @@ export const Content = styled.div`
   }
 `;
 
-export const AvatarInput = styled.div`
+export const Avatar = styled.div`
   position: relative;
   align-self: center;
   margin-bottom: 32px;

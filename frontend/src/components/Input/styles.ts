@@ -70,6 +70,7 @@ export const Error = styled(ToolTip)`
   }
 
   span {
+    z-index: 1500;
     background: #860209;
     color: #d5d5d5;
 

@@ -1,13 +1,22 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
+import { FiPlus } from 'react-icons/fi';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
-import { Container, TableWrapper, Table, TableCell, Scroll } from './styles';
+import {
+  Container,
+  TableWrapper,
+  Table,
+  TableCell,
+  Scroll,
+  AddLink,
+} from './styles';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
@@ -95,59 +104,68 @@ const Players: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <Scroll>
-          <TableWrapper>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Avatar</th>
-                  <th>Jogador</th>
-                  {!isMobileVersion && (
-                    <>
-                      <th>E-mail</th>
-                      <th>Telefone</th>
-                    </>
-                  )}
-                  <th>Situação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {playerList.map(player => (
-                  <tr key={player.id} onClick={() => handleProfile(player)}>
-                    <td>
-                      <img
-                        src={
-                          player.avatar_url || imgProfile
-                          // `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
-                        }
-                        alt=""
-                      />
-                    </td>
-                    <td>
-                      <TableCell>{player.name}</TableCell>
-                    </td>
+        <>
+          <Scroll>
+            <TableWrapper>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Avatar</th>
+                    <th>Jogador</th>
                     {!isMobileVersion && (
                       <>
-                        <td>
-                          <TableCell>{player.email}</TableCell>
-                        </td>
-                        <td>{player.phone}</td>
+                        <th>E-mail</th>
+                        <th>Telefone</th>
                       </>
                     )}
-
-                    <td>
-                      {player.active ? (
-                        <FaCheckCircle color="green" />
-                      ) : (
-                        <FaMinusCircle color="red" />
-                      )}
-                    </td>
+                    <th>Situação</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </TableWrapper>
-        </Scroll>
+                </thead>
+                <tbody>
+                  {playerList.map(player => (
+                    <tr key={player.id} onClick={() => handleProfile(player)}>
+                      <td>
+                        <img
+                          src={
+                            player.avatar_url || imgProfile
+                            // `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
+                          }
+                          alt=""
+                        />
+                      </td>
+                      <td>
+                        <TableCell>{player.name}</TableCell>
+                      </td>
+                      {!isMobileVersion && (
+                        <>
+                          <td>
+                            <TableCell>{player.email}</TableCell>
+                          </td>
+                          <td>{player.phone}</td>
+                        </>
+                      )}
+
+                      <td>
+                        {player.active ? (
+                          <FaCheckCircle color="green" />
+                        ) : (
+                          <FaMinusCircle color="red" />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </TableWrapper>
+          </Scroll>
+          {!isMobileVersion && (
+            <AddLink>
+              <Link to="/addplayer">
+                <FiPlus />
+              </Link>
+            </AddLink>
+          )}
+        </>
       )}
     </Container>
   );

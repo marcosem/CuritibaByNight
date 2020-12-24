@@ -11,6 +11,7 @@ import Profile from '../pages/Profile';
 import Players from '../pages/Players';
 import Characters from '../pages/Characters';
 import Locals from '../pages/Locals';
+import CreatePlayer from '../pages/CreatePlayer';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -24,6 +25,7 @@ const Routes: React.FC = () => (
 
     <Route path="/locals" component={Locals} isPrivate />
     <Route path="/players" component={Players} isPrivate isStoryteller />
+    <Route path="/addplayer" component={CreatePlayer} isPrivate isStoryteller />
     <Route path="/characters" component={Characters} isPrivate isStoryteller />
   </Switch>
 );

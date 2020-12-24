@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import PerfectScrollBar from 'react-perfect-scrollbar';
+import { shade } from 'polished';
 
 export const Container = styled.div`
   height: 100vh;
@@ -67,6 +68,7 @@ export const Table = styled.table`
     th {
       color: #fff;
       background: #560209;
+      font-weight: 450;
 
       &:nth-child(odd) {
         color: #fff;
@@ -136,4 +138,34 @@ export const Scroll = styled(PerfectScrollBar)`
   max-height: 82vh;
   padding: 5px 20px;
   margin-top: 5px;
+`;
+
+export const AddLink = styled.div`
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+
+  background: #860209;
+  border-radius: 20px;
+
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: ${shade(0.2, '#860209')};
+  }
+
+  a {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      color: #ccc;
+    }
+  }
 `;

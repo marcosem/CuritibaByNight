@@ -97,7 +97,7 @@ export const TitleBox = styled.div`
     color: #eee;
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
     font-size: 14px;
-    font-weight: 500px;
+    font-weight: 500;
     margin: auto 0;
   }
 `;
@@ -117,6 +117,6 @@ export const Select = styled.select`
   border: 0;
   padding: 0 8px;
   font-size: 14px;
-  font-weight: 500px;
+  font-weight: 500;
   color: #888;
 `;
