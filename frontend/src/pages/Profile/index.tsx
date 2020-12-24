@@ -26,12 +26,6 @@ interface FormData {
   passwordConfirm: string;
 }
 
-interface InitialUserData {
-  name: string;
-  email?: string;
-  phone?: string;
-}
-
 const Profile: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();

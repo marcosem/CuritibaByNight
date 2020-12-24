@@ -157,13 +157,18 @@ const Locals: React.FC = () => {
 
   const handleCharacterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
-      const char_name = event.target.value;
+      const selIndex = event.target.selectedIndex;
 
-      let selectedCharacter = charList.find(
-        character => character.name === char_name,
-      );
+      let selectedCharacter: ICharacter;
+      if (selIndex > 0) {
+        const selChar = charList[selIndex - 1];
 
-      if (!selectedCharacter) {
+        selectedCharacter = {
+          id: selChar.id,
+          name: selChar.name,
+          situation: selChar.situation,
+        };
+      } else {
         selectedCharacter = {
           id: undefined,
           name: 'Narrador',
