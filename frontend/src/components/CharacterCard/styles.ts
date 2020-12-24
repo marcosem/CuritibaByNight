@@ -27,9 +27,6 @@ const appearFromLeft = keyframes`
   }
 `;
 
-// transform: rotateZ(0deg);
-// z-index: 10; transform: rotateZ(-2deg);
-
 export const Container = styled.div<ICharacterProps>`
   width: 248px;
   height: 350px;
@@ -82,8 +79,6 @@ export const CardSquare = styled.div<ICardProps>`
     left: 44px;
   }
 `;
-
-//   background: transparent;
 
 export const ProfileImage = styled.div<IImageProps>`
   position: absolute;

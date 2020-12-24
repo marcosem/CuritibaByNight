@@ -1,12 +1,20 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { FiPlus, FiUpload } from 'react-icons/fi';
 import api from '../../services/api';
-
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
-import { Container, TitleBox, Content, Select } from './styles';
+import {
+  Container,
+  TitleBox,
+  Content,
+  Select,
+  Functions,
+  FunctionLink,
+} from './styles';
 import CharacterList from '../../components/CharacterList';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import { useAuth } from '../../hooks/auth';
@@ -125,6 +133,21 @@ const Characters: React.FC = () => {
           <Content isMobile={isMobileVersion}>
             <CharacterList chars={charList} locked filterClan={selectedClan} />
           </Content>
+
+          {!isMobileVersion && (
+            <Functions>
+              <FunctionLink>
+                <Link to="/updatechar">
+                  <FiUpload />
+                </Link>
+              </FunctionLink>
+              <FunctionLink>
+                <Link to="/">
+                  <FiPlus />
+                </Link>
+              </FunctionLink>
+            </Functions>
+          )}
         </>
       )}
     </Container>

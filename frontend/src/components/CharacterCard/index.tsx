@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
-// import html2canvas from 'html2canvas';
 import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
 import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';

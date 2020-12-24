@@ -1,4 +1,5 @@
 import React, { ButtonHTMLAttributes } from 'react';
+import { FaSpinner } from 'react-icons/fa';
 import { Container } from './styles';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -13,7 +14,14 @@ const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => (
   <Container type="button" {...rest}>
-    {loading ? loadingMessage : children}
+    {loading ? (
+      <>
+        <FaSpinner />
+        <span>{loadingMessage}</span>
+      </>
+    ) : (
+      children
+    )}
   </Container>
 );
 
