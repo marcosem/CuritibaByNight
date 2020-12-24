@@ -19,6 +19,11 @@ export const Container = styled.div`
       margin: 0 auto;
     }
 
+    button {
+      border: none;
+      background: transparent;
+    }
+
     svg {
       color: #860209;
       width: 24px;

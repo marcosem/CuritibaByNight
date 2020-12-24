@@ -4,7 +4,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 
@@ -93,7 +93,7 @@ const Profile: React.FC = () => {
 
         updateUser(response.data);
 
-        history.push('/');
+        history.goBack();
 
         addToast({
           type: 'success',
@@ -139,13 +139,17 @@ const Profile: React.FC = () => {
     [addToast, updateUser],
   );
 
+  const handleGoBackClick = useCallback(() => {
+    history.goBack();
+  }, [history]);
+
   return (
     <Container>
       <header>
         <div>
-          <Link to="/">
+          <button type="button" onClick={handleGoBackClick}>
             <FiArrowLeft />
-          </Link>
+          </button>
         </div>
       </header>
 

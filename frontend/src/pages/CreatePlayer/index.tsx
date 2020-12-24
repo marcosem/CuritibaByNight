@@ -4,7 +4,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 
@@ -57,7 +57,7 @@ const CreatePlayer: React.FC = () => {
         await api.post('/users/create', formData);
 
         setLoading(false);
-        history.push('/players');
+        history.goBack();
 
         addToast({
           type: 'success',
@@ -86,13 +86,17 @@ const CreatePlayer: React.FC = () => {
     [history, addToast],
   );
 
+  const handleGoBackClick = useCallback(() => {
+    history.goBack();
+  }, [history]);
+
   return (
     <Container>
       <header>
         <div>
-          <Link to="/players">
+          <button type="button" onClick={handleGoBackClick}>
             <FiArrowLeft />
-          </Link>
+          </button>
           <h1>Criar Perfil de Jogador</h1>
         </div>
       </header>

@@ -23,6 +23,11 @@ export const Container = styled.div`
       align-items: center;
     }
 
+    button {
+      border: none;
+      background: transparent;
+    }
+
     svg {
       color: #860209;
       width: 24px;
