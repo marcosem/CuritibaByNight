@@ -159,6 +159,7 @@ const CharacterUpdate: React.FC = () => {
 
         await api.patch('/character/update', formData).then(response => {
           const savedChar: ICharacter = response.data;
+
           savedChar.formatedDate = format(
             new Date(savedChar.updated_at),
             'dd/MM/yyyy',
@@ -243,6 +244,16 @@ const CharacterUpdate: React.FC = () => {
           new Date(selChar.updated_at),
           'dd/MM/yyyy',
         );
+
+        let filteredClan: string[];
+        if (selChar.clan) {
+          filteredClan = selChar.clan.split(' (');
+        } else {
+          filteredClan = [''];
+        }
+
+        const clanIndex = 0;
+        selChar.clan = filteredClan[clanIndex];
 
         selectedCharacter = selChar;
       } else {
