@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { shade } from 'polished';
+import { lighten } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
 export const Container = styled.div`
@@ -147,15 +147,15 @@ export const InputFileBox = styled.div`
 
   span {
     font-size: 16px !important;
+    margin-left: 0 !important;
   }
 
   label {
     max-width: 340px;
     position: relative;
-    background: #1f533b;
+    background: #100909;
     padding: 16px;
     font-size: 16px;
-    font-weight: 500;
     color: #eee;
 
     border-radius: 10px;
@@ -166,7 +166,7 @@ export const InputFileBox = styled.div`
     transition: background-color 0.2s;
 
     &:hover {
-      background: ${shade(0.2, '#1f533b')};
+      background: ${lighten(0.05, '#100909')};
       cursor: pointer;
     }
 

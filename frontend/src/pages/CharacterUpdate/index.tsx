@@ -347,7 +347,7 @@ const CharacterUpdate: React.FC = () => {
                     <InputFileBox>
                       <label htmlFor="sheet">
                         <FiUpload />
-                        Selecionar Ficha (.pdf)...
+                        Selecionar a ficha em .pdf...
                         <input
                           type="file"
                           name=""
