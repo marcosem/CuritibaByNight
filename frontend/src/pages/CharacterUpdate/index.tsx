@@ -12,7 +12,6 @@ import {
   Content,
   CharCardContainer,
   CharacterFormContainer,
-  CharacterDataRow,
   SelectSituation,
   InputBox,
   InputFileBox,
@@ -115,73 +114,8 @@ const CharacterUpdate: React.FC = () => {
     setBusy(false);
   }, [addToast, signOut, uploading]);
 
-  useEffect(() => {
-    loadCharacters();
-  }, [loadCharacters]);
-
-  useEffect(() => {
-    if (selectedChar) {
-      const selSituation = situationList.find(
-        sit => sit.titleEn === selectedChar.situation,
-      );
-
-      setCharSituation(selSituation);
-    }
-  }, [selectedChar, setCharSituation]);
-
-  const handleSituationChange = useCallback(
-    (event: ChangeEvent<HTMLSelectElement>) => {
-      const selIndex = event.target.selectedIndex;
-
-      let selectedSituation: ISituation | undefined;
-      if (selIndex > 0) {
-        const selSituation = situationList[selIndex - 1];
-        selectedSituation = selSituation;
-      } else {
-        selectedSituation = undefined;
-      }
-
-      setCharSituation(selectedSituation);
-    },
-    [],
-  );
-
-  const handleCharacterChange = useCallback(
-    (event: ChangeEvent<HTMLSelectElement>) => {
-      const selIndex = event.target.selectedIndex;
-
-      let selectedCharacter: ICharacter | undefined;
-      if (selIndex > 0) {
-        const selChar = charList[selIndex - 1];
-        selChar.formatedDate = format(
-          new Date(selChar.updated_at),
-          'dd/MM/yyyy',
-        );
-
-        selectedCharacter = selChar;
-      } else {
-        selectedCharacter = undefined;
-      }
-
-      setSelectedChar(selectedCharacter);
-      setCharSheet(undefined);
-    },
-    [charList],
-  );
-
-  const handleSheetChange = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        const file = e.target.files[0];
-        setCharSheet(file);
-      }
-    },
-    [],
-  );
-
   const handleSubmit = useCallback(
     async ({ comments }) => {
-      // setBusy(true);
       try {
         if (!charSheet) {
           addToast({
@@ -251,6 +185,70 @@ const CharacterUpdate: React.FC = () => {
     [charSheet, selectedChar, charSituation, addToast, loadCharacters],
   );
 
+  const handleSituationChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      let selectedSituation: ISituation | undefined;
+      if (selIndex > 0) {
+        const selSituation = situationList[selIndex - 1];
+        selectedSituation = selSituation;
+      } else {
+        selectedSituation = undefined;
+      }
+
+      setCharSituation(selectedSituation);
+    },
+    [],
+  );
+
+  const handleCharacterChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      let selectedCharacter: ICharacter | undefined;
+      if (selIndex > 0) {
+        const selChar = charList[selIndex - 1];
+        selChar.formatedDate = format(
+          new Date(selChar.updated_at),
+          'dd/MM/yyyy',
+        );
+
+        selectedCharacter = selChar;
+      } else {
+        selectedCharacter = undefined;
+      }
+
+      setSelectedChar(selectedCharacter);
+      setCharSheet(undefined);
+    },
+    [charList],
+  );
+
+  const handleSheetChange = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const file = e.target.files[0];
+        setCharSheet(file);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (selectedChar) {
+      const selSituation = situationList.find(
+        sit => sit.titleEn === selectedChar.situation,
+      );
+
+      setCharSituation(selSituation);
+    }
+  }, [selectedChar, setCharSituation]);
+
+  useEffect(() => {
+    loadCharacters();
+  }, [loadCharacters]);
+
   return (
     <Container>
       <Header page="characterupdate" />
@@ -303,28 +301,28 @@ const CharacterUpdate: React.FC = () => {
                   />
                 </CharCardContainer>
                 <CharacterFormContainer>
-                  <CharacterDataRow>
+                  <div>
                     <h1>{selectedChar.name}</h1>
                     <h1>{selectedChar.clan}</h1>
-                  </CharacterDataRow>
-                  <CharacterDataRow>
+                  </div>
+                  <div>
                     <strong>Experiêcia disponível:</strong>
                     <span>{selectedChar.experience}</span>
-                  </CharacterDataRow>
-                  <CharacterDataRow>
+                  </div>
+                  <div>
                     <strong>Jogador:</strong>
                     <span>{selectedChar.user?.name}</span>
-                  </CharacterDataRow>
+                  </div>
                   <Form
                     onSubmit={handleSubmit}
                     initialData={{
                       comments: lastComment,
                     }}
                   >
-                    <CharacterDataRow>
+                    <div>
                       <h1>Entre com os novos dados do Personagem:</h1>
-                    </CharacterDataRow>
-                    <CharacterDataRow>
+                    </div>
+                    <div>
                       <strong>Situação:</strong>
                       <SelectSituation
                         name="situation"
@@ -345,19 +343,7 @@ const CharacterUpdate: React.FC = () => {
                           </option>
                         ))}
                       </SelectSituation>
-                    </CharacterDataRow>
-                    <CharacterDataRow>
-                      <strong>Motivo da Atualização:</strong>
-                    </CharacterDataRow>
-                    <InputBox>
-                      <Input
-                        name="comments"
-                        icon={FiMessageSquare}
-                        mask=""
-                        placeholder="Motivo da Atualização"
-                        readOnly={uploading}
-                      />
-                    </InputBox>
+                    </div>
                     <InputFileBox>
                       <label htmlFor="sheet">
                         <FiUpload />
@@ -373,6 +359,16 @@ const CharacterUpdate: React.FC = () => {
                       <strong>Arquivo:</strong>
                       <span>{charSheet ? charSheet.name : 'Nenhum'}</span>
                     </InputFileBox>
+                    <InputBox>
+                      <Input
+                        name="comments"
+                        icon={FiMessageSquare}
+                        mask=""
+                        placeholder="Motivo da Atualização"
+                        readOnly={uploading}
+                      />
+                    </InputBox>
+
                     <ButtonBox>
                       <Button
                         type="submit"

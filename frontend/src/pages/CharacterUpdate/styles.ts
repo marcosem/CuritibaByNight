@@ -76,39 +76,35 @@ export const CharacterFormContainer = styled.div`
     border-top: 2px solid #333;
     padding-top: 10px;
   }
-`;
 
-export const CharacterDataRow = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: space-between;
+  div {
+    display: flex;
+    width: 100%;
+    margin-bottom: 5px;
 
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 16px;
 
-  margin-bottom: 5px;
-
-  h1 {
-    font-size: 24px;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 16px;
-
-    &:not(:first-child) {
-      margin-left: auto;
+      &:not(:first-child) {
+        margin-left: auto;
+      }
     }
-  }
 
-  strong {
-    font-size: 18px;
-    font-weight: 500;
-    color: #333;
-  }
+    strong {
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+    }
 
-  span {
-    font-size: 18px;
-    font-weight: 400;
-    color: #333;
-    margin-left: 10px;
+    span {
+      font-size: 18px;
+      font-weight: 400;
+      color: #333;
+      margin-left: 10px;
+    }
   }
 `;
 
@@ -138,18 +134,29 @@ export const InputBox = styled.div`
 `;
 
 export const InputFileBox = styled.div`
-  margin: 5px 0 24px;
+  margin: 5px 0;
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  strong {
+    font-size: 16px !important;
+    margin: 0 5px 0 10px;
+  }
+
+  span {
+    font-size: 16px !important;
+  }
 
   label {
     max-width: 340px;
     position: relative;
-    background: #1f533b; //#860209;
+    background: #1f533b;
     padding: 16px;
     font-size: 16px;
     font-weight: 500;
     color: #eee;
-    // text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 
     border-radius: 10px;
     margin: 16px 0;
@@ -172,21 +179,6 @@ export const InputFileBox = styled.div`
     input {
       display: none;
     }
-  }
-
-  strong {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    margin: 0 5px 0 10px;
-  }
-
-  span {
-    font-size: 12px;
-    font-weight: 400;
-    color: #333;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   }
 `;
 
