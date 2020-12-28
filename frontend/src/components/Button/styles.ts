@@ -40,5 +40,8 @@ export const Container = styled.button`
 
   span {
     margin-right: auto;
+    font-size: 16px !important;
+    color: #d5d5d5 !important;
+    font-weight: 500 !important;
   }
 `;

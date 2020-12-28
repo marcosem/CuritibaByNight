@@ -3,6 +3,8 @@ import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { FiMessageSquare, FiUpload } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { format } from 'date-fns';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
 
 import {
@@ -202,6 +204,34 @@ const CharacterUpdate: React.FC = () => {
     [],
   );
 
+  const handleConfirm = useCallback(
+    ({ comments }) => {
+      const charName = selectedChar ? selectedChar.name : '';
+      const charSheetName = charSheet ? charSheet.name : '';
+
+      if (charSheetName.indexOf(charName) === -1) {
+        confirmAlert({
+          title: 'Confirmar atualização',
+          message: `O nome do personagem [${charName}] não combina com o nome do arquivo [${charSheetName}], confirma a atualização?`,
+          buttons: [
+            {
+              label: 'Sim',
+              onClick: () => handleSubmit({ comments }),
+            },
+            {
+              label: 'Não',
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              onClick: () => {},
+            },
+          ],
+        });
+      } else {
+        handleSubmit({ comments });
+      }
+    },
+    [charSheet, handleSubmit, selectedChar],
+  );
+
   const handleCharacterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const selIndex = event.target.selectedIndex;
@@ -314,7 +344,7 @@ const CharacterUpdate: React.FC = () => {
                     <span>{selectedChar.user?.name}</span>
                   </div>
                   <Form
-                    onSubmit={handleSubmit}
+                    onSubmit={handleConfirm}
                     initialData={{
                       comments: lastComment,
                     }}
@@ -357,7 +387,9 @@ const CharacterUpdate: React.FC = () => {
                         />
                       </label>
                       <strong>Arquivo:</strong>
-                      <span>{charSheet ? charSheet.name : 'Nenhum'}</span>
+                      <span>
+                        {charSheet ? `"${charSheet.name}"` : 'Nenhum'}
+                      </span>
                     </InputFileBox>
                     <InputBox>
                       <Input
