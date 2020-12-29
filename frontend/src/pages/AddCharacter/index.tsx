@@ -199,7 +199,7 @@ const AddCharacter: React.FC = () => {
                 defaultValue={selectedPlayer ? selectedPlayer.name : undefined}
                 onChange={handlePlayerChange}
               >
-                <option value="">Selecione um jogador:</option>
+                <option value="">Selecione o jogador:</option>
                 {playerList.map(player => (
                   <option key={player.id} value={player.name}>
                     {player.name}
