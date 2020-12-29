@@ -31,7 +31,6 @@ const SignIn: React.FC = () => {
     async (data: SignInFormData) => {
       try {
         formRef.current?.setErrors({});
-        // const phoneRegExp = /^$|(\d{2}-\d{4,5}-?\d{4})$/;
 
         const schema = Yup.object().shape({
           email: Yup.string()

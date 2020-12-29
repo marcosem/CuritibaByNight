@@ -13,6 +13,7 @@ import Characters from '../pages/Characters';
 import Locals from '../pages/Locals';
 import CreatePlayer from '../pages/CreatePlayer';
 import CharacterUpdate from '../pages/CharacterUpdate';
+import AddCharacter from '../pages/AddCharacter';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -34,6 +35,7 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
+    <Route path="/addchar" component={AddCharacter} isPrivate isStoryteller />
   </Switch>
 );
 

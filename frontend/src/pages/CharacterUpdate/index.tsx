@@ -292,7 +292,7 @@ const CharacterUpdate: React.FC = () => {
 
   return (
     <Container>
-      <Header page="characterupdate" />
+      <Header page="updatechar" />
 
       <TitleBox>
         {charList.length > 0 ? (

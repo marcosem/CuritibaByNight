@@ -142,7 +142,7 @@ const Characters: React.FC = () => {
                 </Link>
               </FunctionLink>
               <FunctionLink>
-                <Link to="/">
+                <Link to="/addchar">
                   <FiPlus />
                 </Link>
               </FunctionLink>
