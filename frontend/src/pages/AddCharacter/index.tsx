@@ -246,7 +246,7 @@ const AddCharacter: React.FC = () => {
               </div>
               <Form onSubmit={handleSubmit}>
                 <div>
-                  <h1>Entre com os novos dados do Personagem:</h1>
+                  <h1>Selecione a ficha do novo Personagem:</h1>
                 </div>
                 <InputFileBox>
                   <label htmlFor="sheet">
