@@ -37,7 +37,7 @@ const AddCharacter: React.FC = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<IPlayer>();
   const [savedChar, setSavedChar] = useState<ICharacter>({
     id: '',
-    name: 'Personagem',
+    name: 'Novo Personagem',
     clan: 'Clã',
     avatar_url: '',
     updated_at: new Date(Date.now()),
