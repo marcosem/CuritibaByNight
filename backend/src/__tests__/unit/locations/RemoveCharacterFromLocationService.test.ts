@@ -38,6 +38,7 @@ describe('RemoveCharacterFromLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -113,6 +114,7 @@ describe('RemoveCharacterFromLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({

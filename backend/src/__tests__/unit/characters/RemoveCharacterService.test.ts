@@ -36,6 +36,7 @@ describe('RemoveCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const initialListSize = await fakeCharactersRepository.listAll();
@@ -67,6 +68,7 @@ describe('RemoveCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     char.avatar = 'avatar.jpg';

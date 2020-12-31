@@ -125,6 +125,7 @@ describe('GetLocationsList', () => {
       experience: 666,
       clan: 'Tzimisce',
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const locationsList = await getLocationsList.execute({
@@ -165,6 +166,7 @@ describe('GetLocationsList', () => {
       experience: 666,
       clan: 'Tzimisce',
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const locationsList = await getLocationsList.execute({
@@ -205,6 +207,7 @@ describe('GetLocationsList', () => {
       experience: 666,
       clan: 'Tzimisce',
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const secretLocation = await fakeLocationsRepository.create({
@@ -247,6 +250,7 @@ describe('GetLocationsList', () => {
       experience: 666,
       clan: 'Tzimisce',
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const secretLocation = await fakeLocationsRepository.create({

@@ -91,6 +91,7 @@ describe('UpdateLocation', () => {
       experience: 666,
       clan: 'Tzimisce',
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const newLocation = {

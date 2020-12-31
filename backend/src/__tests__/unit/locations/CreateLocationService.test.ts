@@ -102,6 +102,7 @@ describe('CreateLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await createLocation.execute({
@@ -134,6 +135,55 @@ describe('CreateLocation', () => {
       responsible: char.id,
     });
     expect(sendMail).toHaveBeenCalled();
+  });
+
+  it('Should be able to create a location with a responsible NPC character', async () => {
+    const sendMail = jest.spyOn(fakeMailProvider, 'sendMail');
+
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: true,
+    });
+
+    const location = await createLocation.execute({
+      user_id: user.id,
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      address: 'Av. Cândido de Abreu, 817',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      elysium: true,
+      type: 'haven',
+      level: 5,
+      property: 'clan',
+      clan: 'Ventrue',
+      char_id: char.id,
+    });
+
+    expect(location).toHaveProperty('id');
+    expect(location).toMatchObject({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      address: 'Av. Cândido de Abreu, 817',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      elysium: true,
+      type: 'haven',
+      level: 5,
+      property: 'clan',
+      clan: 'Ventrue',
+      responsible: char.id,
+    });
+    expect(sendMail).not.toHaveBeenCalled();
   });
 
   it('Should not allow to create a location with a non existant character as responsible', async () => {

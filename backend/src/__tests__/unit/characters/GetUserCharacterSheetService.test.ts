@@ -32,6 +32,7 @@ describe('GetUserCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     await fakeCharactersRepository.create({
@@ -39,6 +40,7 @@ describe('GetUserCharacterSheet', () => {
       name: 'Nosferatu',
       experience: 999,
       file: 'nosferatu.pdf',
+      npc: false,
     });
 
     const charList = await getUserCharacterSheet.execute({
@@ -75,6 +77,7 @@ describe('GetUserCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     await fakeCharactersRepository.create({
@@ -83,6 +86,7 @@ describe('GetUserCharacterSheet', () => {
       experience: 999,
       file: 'nosferatu.pdf',
       situation: 'inactive',
+      npc: false,
     });
 
     const charList = await getUserCharacterSheet.execute({

@@ -41,6 +41,7 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const charWithAvatar = await updateCharacterAvatar.execute({
@@ -68,6 +69,7 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     await updateCharacterAvatar.execute({
@@ -130,6 +132,7 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const notOwnerUser = await fakeUsersRepository.create({
@@ -162,6 +165,7 @@ describe('updateCharacterAvatar', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     jest

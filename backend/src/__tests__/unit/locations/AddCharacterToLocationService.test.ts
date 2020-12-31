@@ -47,6 +47,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -68,6 +69,46 @@ describe('AddCharacterToLocation', () => {
       location_id: location.id,
     });
     expect(sendMail).toHaveBeenCalled();
+  });
+
+  it('Should be able to add a NPC character to a location', async () => {
+    const sendMail = jest.spyOn(fakeMailProvider, 'sendMail');
+
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      // user_id: user.id,
+      name: 'Dracula',
+      clan: 'Tzimisce',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: true,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+    });
+
+    const locChar = await addCharacterToLocation.execute({
+      user_id: user.id,
+      char_id: char.id,
+      location_id: location.id,
+    });
+
+    expect(locChar).toHaveProperty('id');
+    expect(locChar).toMatchObject({
+      character_id: char.id,
+      location_id: location.id,
+    });
+    expect(sendMail).not.toHaveBeenCalled();
   });
 
   it('Should not allow invalid user to add character to a location', async () => {
@@ -126,6 +167,7 @@ describe('AddCharacterToLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     await expect(
@@ -150,6 +192,7 @@ describe('AddCharacterToLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -188,6 +231,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -221,6 +265,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -254,6 +299,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -287,6 +333,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -322,6 +369,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({

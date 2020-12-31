@@ -40,6 +40,7 @@ describe('GetCharacterLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -107,6 +108,7 @@ describe('GetCharacterLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     await expect(
@@ -137,6 +139,7 @@ describe('GetCharacterLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({
@@ -168,6 +171,7 @@ describe('GetCharacterLocation', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const location = await fakeLocationsRepository.create({

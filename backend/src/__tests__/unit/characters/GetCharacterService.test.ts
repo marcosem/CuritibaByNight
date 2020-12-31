@@ -32,6 +32,7 @@ describe('GetCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     const charLoaded = await getCharacter.execute({
@@ -90,6 +91,7 @@ describe('GetCharacter', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
     });
 
     await expect(

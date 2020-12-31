@@ -38,6 +38,7 @@ describe('CreateCharacterSheet', () => {
       char_xp: 666,
       char_clan: 'Tzimisce',
       sheetFilename: 'dracula.pdf',
+      is_npc: false,
     });
 
     expect(char).toHaveProperty('id');
@@ -46,6 +47,62 @@ describe('CreateCharacterSheet', () => {
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
+      npc: false,
+    });
+  });
+
+  it('Should be able to create a NPC character sheet', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await createCharacterSheet.execute({
+      user_id: user.id,
+      char_name: 'Dracula',
+      char_xp: 666,
+      char_clan: 'Tzimisce',
+      sheetFilename: 'dracula.pdf',
+      is_npc: true,
+    });
+
+    expect(char).toHaveProperty('id');
+    expect(char).toMatchObject({
+      user_id: null,
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: true,
+    });
+  });
+
+  it('Should create NPC character sheet withou setting up an user', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await createCharacterSheet.execute({
+      user_id: user.id,
+      player_id: user.id,
+      char_name: 'Dracula',
+      char_xp: 666,
+      char_clan: 'Tzimisce',
+      sheetFilename: 'dracula.pdf',
+      is_npc: true,
+    });
+
+    expect(char).toHaveProperty('id');
+    expect(char).toMatchObject({
+      user_id: null,
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: true,
     });
   });
 
@@ -60,6 +117,7 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.pdf',
+        is_npc: false,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -83,6 +141,7 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.pdf',
+        is_npc: false,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -107,6 +166,7 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.jpg',
+        is_npc: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -131,6 +191,7 @@ describe('CreateCharacterSheet', () => {
         char_xp: 666,
         char_clan: 'Tzimisce',
         sheetFilename: 'dracula.pdf',
+        is_npc: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
 
