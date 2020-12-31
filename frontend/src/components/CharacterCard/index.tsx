@@ -27,6 +27,7 @@ interface ICharacterCardProps {
   clan: string;
   updatedAt: string;
   situation?: string;
+  npc?: boolean;
   locked?: boolean;
 }
 
@@ -39,13 +40,13 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   clan,
   updatedAt,
   situation = 'active',
+  npc = false,
   locked = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
   const [clanImg, setClanImg] = useState<string>('');
   const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
   const [situationTitle, setSituationTitle] = useState<string>('');
-  // const [myCard, setMyCard] = useState<string>('');
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
 
@@ -78,15 +79,6 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
       }
     }
   }, [situation]);
-
-  /*
-  const saveCard = useCallback((e: MouseEvent<HTMLDivElement>) => {
-    html2canvas(e.currentTarget).then(canvas => {
-      const data = canvas.toDataURL('image/png', 1);
-      setMyCard(data);
-    });
-  }, []);
-  */
 
   const handleAvatarChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -144,12 +136,20 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
           <CharSituation title={situationTitle}>{situationIcon}</CharSituation>
         )}
 
-        <CharXPTitle>
-          <span>XP:</span>
-        </CharXPTitle>
-        <CharXP>
-          <span>{experience}</span>
-        </CharXP>
+        {npc ? (
+          <CharXP>
+            <span>NPC</span>
+          </CharXP>
+        ) : (
+          <>
+            <CharXPTitle>
+              <span>XP:</span>
+            </CharXPTitle>
+            <CharXP>
+              <span>{experience}</span>
+            </CharXP>
+          </>
+        )}
       </CardSquare>
     </Container>
   );

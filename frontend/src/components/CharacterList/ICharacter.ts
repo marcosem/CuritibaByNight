@@ -8,6 +8,7 @@ export default interface ICharacter {
   updated_at: Date;
   character_url: string;
   situation: string;
+  npc: boolean;
   formatedDate?: string;
   user?: {
     id: string;

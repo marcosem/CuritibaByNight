@@ -47,6 +47,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
         clan: filteredClan2[0],
         avatar_url: char.avatar_url,
         situation: char.situation,
+        npc: char.npc,
         formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),
         user: char.user,
       };
@@ -94,6 +95,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
                       clan={char.clan}
                       avatar={char.avatar_url}
                       updatedAt={char.formatedDate ? char.formatedDate : ''}
+                      npc={char.npc}
                       locked={locked}
                     />
                   </td>
