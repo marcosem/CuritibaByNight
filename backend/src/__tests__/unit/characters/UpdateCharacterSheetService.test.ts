@@ -42,6 +42,7 @@ describe('UpdateCharacterSheet', () => {
       experience: 666,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
+      npc: false,
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
@@ -55,6 +56,7 @@ describe('UpdateCharacterSheet', () => {
       char_situation: 'active',
       sheetFilename: 'nosferatu.pdf',
       update: 'Updated',
+      is_npc: false,
     });
 
     expect(charUpdated).toMatchObject({
@@ -64,6 +66,93 @@ describe('UpdateCharacterSheet', () => {
       experience: 1,
       clan: 'Nosferatu',
       file: 'nosferatu.pdf',
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('dracula.pdf', 'sheet');
+  });
+
+  it('Should be able to update an existant NPC character sheet', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      npc: true,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    const charUpdated = await updateCharacterSheet.execute({
+      user_id: user.id,
+      char_id: char.id,
+      char_name: 'Nosferatu',
+      char_xp: 1,
+      char_clan: 'Nosferatu',
+      char_situation: 'active',
+      sheetFilename: 'nosferatu.pdf',
+      update: 'Updated',
+      is_npc: true,
+    });
+
+    expect(charUpdated).toMatchObject({
+      id: char.id,
+      user_id: null,
+      name: 'Nosferatu',
+      experience: 1,
+      clan: 'Nosferatu',
+      file: 'nosferatu.pdf',
+      npc: true,
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('dracula.pdf', 'sheet');
+  });
+
+  it('Should be able to update an existant PC character sheet to NPC', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      npc: false,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    const charUpdated = await updateCharacterSheet.execute({
+      user_id: user.id,
+      char_id: char.id,
+      char_name: 'Nosferatu',
+      char_xp: 1,
+      char_clan: 'Nosferatu',
+      char_situation: 'active',
+      sheetFilename: 'nosferatu.pdf',
+      update: 'Updated',
+      is_npc: true,
+    });
+
+    expect(charUpdated).toMatchObject({
+      id: char.id,
+      user_id: null,
+      name: 'Nosferatu',
+      experience: 1,
+      clan: 'Nosferatu',
+      file: 'nosferatu.pdf',
+      npc: true,
     });
 
     expect(deleteFile).toHaveBeenCalledWith('dracula.pdf', 'sheet');
@@ -82,6 +171,7 @@ describe('UpdateCharacterSheet', () => {
         char_situation: 'active',
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
+        is_npc: false,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -108,6 +198,7 @@ describe('UpdateCharacterSheet', () => {
         char_situation: 'active',
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
+        is_npc: false,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -134,6 +225,7 @@ describe('UpdateCharacterSheet', () => {
         char_situation: 'active',
         sheetFilename: 'nosferatu.jpg',
         update: 'Updated',
+        is_npc: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -160,6 +252,7 @@ describe('UpdateCharacterSheet', () => {
         char_situation: 'active',
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
+        is_npc: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -180,6 +273,7 @@ describe('UpdateCharacterSheet', () => {
       experience: 666,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
+      npc: false,
     });
 
     jest
@@ -207,6 +301,7 @@ describe('UpdateCharacterSheet', () => {
       char_situation: 'active',
       sheetFilename: 'nosferatu.pdf',
       update: 'Updated',
+      is_npc: false,
     });
 
     expect(charUpdated).toMatchObject({
@@ -234,6 +329,7 @@ describe('UpdateCharacterSheet', () => {
       experience: 666,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
+      npc: false,
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
@@ -248,6 +344,7 @@ describe('UpdateCharacterSheet', () => {
         char_situation: 'active',
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
+        is_npc: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
 

@@ -21,12 +21,12 @@ class Character {
   name: string;
 
   @Column()
-  user_id: string;
+  user_id: string | null;
 
   // @ManyToOne(() => User, { eager: true })
   @ManyToOne(() => User, { cascade: true })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user?: User;
 
   @Column()
   experience: number;
@@ -42,6 +42,9 @@ class Character {
 
   @Column()
   situation: string;
+
+  @Column()
+  npc: boolean;
 
   @CreateDateColumn()
   created_at: Date;

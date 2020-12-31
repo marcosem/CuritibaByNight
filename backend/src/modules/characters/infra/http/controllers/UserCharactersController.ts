@@ -10,9 +10,11 @@ import { classToClass } from 'class-transformer';
 
 export default class UserCharactersController {
   public async create(req: Request, res: Response): Promise<Response> {
-    const { player_id, email } = req.body;
+    const { player_id, is_npc } = req.body;
     const fileName = req.file.filename;
     const { mimetype } = req.file;
+
+    const isNPC = is_npc === 'true';
 
     const parseCharacterSheetService = container.resolve(
       ParseCharacterSheetService,
@@ -30,10 +32,10 @@ export default class UserCharactersController {
     const inputData = {
       user_id: req.user.id,
       player_id,
-      char_email: email,
       char_name: '',
       char_xp: 0,
       char_clan: '',
+      is_npc: isNPC,
       sheetFilename: fileName,
     };
 
@@ -84,9 +86,11 @@ export default class UserCharactersController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
-    const { character_id, situation, comments } = req.body;
+    const { character_id, situation, comments, is_npc } = req.body;
     const fileName = req.file ? req.file.filename : '';
     const mimetype = req.file ? req.file.mimetype : '';
+
+    const isNPC = is_npc === 'true';
 
     const getCharacterService = container.resolve(GetCharacterService);
 
@@ -111,6 +115,7 @@ export default class UserCharactersController {
       char_xp: oldChar.experience,
       char_clan: oldChar.clan,
       char_situation: situation || oldChar.situation,
+      is_npc: oldChar.npc !== isNPC ? isNPC : oldChar.npc,
       sheetFilename: fileName,
       update: comments,
     };

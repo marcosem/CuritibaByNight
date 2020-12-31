@@ -6,6 +6,6 @@ export default interface ICharacterRepository {
   update(data: Character): Promise<Character>;
   findById(character_id: string): Promise<Character | undefined>;
   findByUserId(user_id: string, situation: string): Promise<Character[]>;
-  listAll(): Promise<Character[]>;
+  listAll(filter: string): Promise<Character[]>;
   delete(character_id: string): Promise<void>;
 }

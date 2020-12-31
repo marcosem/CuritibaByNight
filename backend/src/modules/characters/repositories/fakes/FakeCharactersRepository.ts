@@ -14,17 +14,19 @@ class FakeCharactersRepository implements ICharactersRepository {
     clan,
     situation = 'active',
     file,
+    npc = false,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = new Character();
 
     Object.assign(char, {
       id: uuid(),
       name,
-      user_id,
+      user_id: user_id === undefined ? null : user_id,
       experience,
       clan,
       situation,
       file,
+      npc,
     });
 
     this.chars.push(char);
@@ -59,8 +61,21 @@ class FakeCharactersRepository implements ICharactersRepository {
     return charList;
   }
 
-  public async listAll(): Promise<Character[]> {
-    return this.chars;
+  public async listAll(filter = 'all'): Promise<Character[]> {
+    let charList: Character[];
+
+    switch (filter) {
+      case 'npc':
+        charList = this.chars.filter(char => char.npc === true);
+        break;
+      case 'pc':
+        charList = this.chars.filter(char => char.npc === false);
+        break;
+      default:
+        charList = this.chars;
+    }
+
+    return charList;
   }
 
   public async delete(char_id: string): Promise<void> {

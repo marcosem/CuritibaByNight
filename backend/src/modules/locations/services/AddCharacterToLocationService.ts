@@ -83,7 +83,9 @@ class AddCharacterToLocationService {
       location_id,
     );
 
-    const player = await this.usersRepository.findById(char.user_id);
+    const player = char.user_id
+      ? await this.usersRepository.findById(char.user_id)
+      : undefined;
 
     if (player) {
       const locationUpdateTemplate = resolve(

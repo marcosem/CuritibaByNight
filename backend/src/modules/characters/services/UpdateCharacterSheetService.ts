@@ -14,6 +14,7 @@ interface IRequestDTO {
   char_xp: number;
   char_clan: string;
   char_situation: string;
+  is_npc: boolean;
   sheetFilename: string;
   update: string;
 }
@@ -38,6 +39,7 @@ class UpdateCharacterSheetService {
     char_xp,
     char_clan,
     char_situation,
+    is_npc,
     sheetFilename,
     update,
   }: IRequestDTO): Promise<Character> {
@@ -79,48 +81,60 @@ class UpdateCharacterSheetService {
     char.situation = char_situation;
     char.file = filename;
 
-    await this.charactersRepository.update(char);
+    let player;
+    if (char.user_id) {
+      player = await this.usersRepository.findById(char.user_id);
 
-    const player = await this.usersRepository.findById(char.user_id);
+      if (!player && !char.npc) {
+        await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+        throw new AppError('Character player not found', 400);
+      }
 
-    if (!player) {
-      await this.storageProvider.deleteFile(sheetFilename, 'sheet');
-      throw new AppError('Character player not found', 400);
+      if (is_npc) {
+        char.user_id = null;
+        delete char.user;
+      }
     }
 
-    const charUpdateTemplate = resolve(
-      __dirname,
-      '..',
-      'views',
-      'character_update.hbs',
-    );
+    char.npc = is_npc;
 
-    // getting user first name.
-    const userNames = player.name.split(' ');
-    const xpMessage =
-      char.experience === 1
-        ? `${char.experience} XP`
-        : `${char.experience} XPs`;
+    await this.charactersRepository.update(char);
 
-    await this.mailProvider.sendMail({
-      to: {
-        name: player.name,
-        email: player.email,
-      },
-      subject: `[Curitiba By Night] Personagem '${char.name}' atualizado no sistema`,
-      templateData: {
-        file: charUpdateTemplate,
-        variables: {
-          name: userNames[0],
-          char_name: char.name,
-          char_xp: xpMessage,
-          update,
-          link: `${process.env.APP_WEB_URL}`,
-          imgLogo: 'curitibabynight.png',
-          imgCharSheet: 'character_sheet.jpg',
+    if (player) {
+      const charUpdateTemplate = resolve(
+        __dirname,
+        '..',
+        'views',
+        'character_update.hbs',
+      );
+
+      // getting user first name.
+      const userNames = player.name.split(' ');
+      const xpMessage =
+        char.experience === 1
+          ? `${char.experience} XP`
+          : `${char.experience} XPs`;
+
+      await this.mailProvider.sendMail({
+        to: {
+          name: player.name,
+          email: player.email,
         },
-      },
-    });
+        subject: `[Curitiba By Night] Personagem '${char.name}' atualizado no sistema`,
+        templateData: {
+          file: charUpdateTemplate,
+          variables: {
+            name: userNames[0],
+            char_name: char.name,
+            char_xp: xpMessage,
+            update,
+            link: `${process.env.APP_WEB_URL}`,
+            imgLogo: 'curitibabynight.png',
+            imgCharSheet: 'character_sheet.jpg',
+          },
+        },
+      });
+    }
 
     return char;
   }

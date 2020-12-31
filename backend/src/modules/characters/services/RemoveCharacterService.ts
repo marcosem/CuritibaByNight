@@ -25,12 +25,12 @@ class RemoveCharacterService {
 
     if (!user) {
       throw new AppError(
-        'Only authenticated Storytellers can remove another users',
+        'Only authenticated Storytellers can remove characters',
         401,
       );
     } else if (!user.storyteller) {
       throw new AppError(
-        'Only authenticated Storytellers can remove another users',
+        'Only authenticated Storytellers can remove characters',
         401,
       );
     }

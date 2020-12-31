@@ -16,7 +16,6 @@ class UsersRepository implements IUsersRepository {
       where: { id: user_id },
     });
 
-    // if not found, return undefined
     return userFound;
   }
 
@@ -26,7 +25,6 @@ class UsersRepository implements IUsersRepository {
       where: { secret },
     });
 
-    // if not found, return undefined
     return userFound;
   }
 
@@ -36,7 +34,6 @@ class UsersRepository implements IUsersRepository {
       where: { email },
     });
 
-    // if not found, return undefined
     return userFound;
   }
 

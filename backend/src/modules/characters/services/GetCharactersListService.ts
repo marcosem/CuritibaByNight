@@ -6,6 +6,7 @@ import Character from '@modules/characters/infra/typeorm/entities/Character';
 
 interface IRequestDTO {
   user_id: string;
+  filter?: string;
 }
 
 @injectable()
@@ -17,7 +18,10 @@ class GetUserCharacterSheet {
     private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute({ user_id }: IRequestDTO): Promise<Character[]> {
+  public async execute({
+    user_id,
+    filter = 'all',
+  }: IRequestDTO): Promise<Character[]> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
@@ -32,7 +36,7 @@ class GetUserCharacterSheet {
       );
     }
 
-    const charList = await this.charactersRepository.listAll();
+    const charList = await this.charactersRepository.listAll(filter);
 
     return charList;
   }

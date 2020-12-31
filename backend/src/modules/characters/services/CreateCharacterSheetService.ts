@@ -7,10 +7,11 @@ import IStorageProvider from '@shared/container/providers/StorageProvider/models
 
 interface IRequestDTO {
   user_id: string;
-  player_id: string;
+  player_id?: string;
   char_name: string;
   char_xp: number;
   char_clan: string;
+  is_npc: boolean;
   sheetFilename: string;
 }
 
@@ -31,6 +32,7 @@ class CreateCharacterSheetService {
     char_name,
     char_xp,
     char_clan,
+    is_npc,
     sheetFilename,
   }: IRequestDTO): Promise<Character> {
     const user = await this.usersRepository.findById(user_id);
@@ -54,11 +56,13 @@ class CreateCharacterSheetService {
       throw new AppError('File must be in PDF format', 400);
     }
 
-    const player = await this.usersRepository.findById(player_id);
+    if (player_id && !is_npc) {
+      const player = await this.usersRepository.findById(player_id);
 
-    if (!player) {
-      await this.storageProvider.deleteFile(sheetFilename, 'sheet');
-      throw new AppError('Player not found', 400);
+      if (!player) {
+        await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+        throw new AppError('Player not found', 400);
+      }
     }
 
     const filename = await this.storageProvider.saveFile(
@@ -67,11 +71,12 @@ class CreateCharacterSheetService {
     );
 
     const char = await this.charactersRepository.create({
-      user_id: player_id,
+      user_id: !is_npc ? player_id : undefined,
       name: char_name,
       experience: char_xp,
       clan: char_clan,
       file: filename,
+      npc: is_npc,
     });
 
     return char;

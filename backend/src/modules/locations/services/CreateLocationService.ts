@@ -75,7 +75,9 @@ class CreateLocationService {
       }
 
       char_name = char.name;
-      player = await this.usersRepository.findById(char.user_id);
+
+      if (char.user_id)
+        player = await this.usersRepository.findById(char.user_id);
     }
 
     const location = await this.locationsRepository.create({
