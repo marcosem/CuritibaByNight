@@ -85,7 +85,7 @@ const CharacterUpdate: React.FC = () => {
     setBusy(true && !uploading);
 
     try {
-      await api.get('characters/list').then(response => {
+      await api.get('characters/list/pc').then(response => {
         const res = response.data;
 
         const fullList: ICharacter[] = res;

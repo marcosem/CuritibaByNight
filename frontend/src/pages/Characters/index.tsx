@@ -34,7 +34,7 @@ const Characters: React.FC = () => {
     setBusy(true);
 
     try {
-      await api.get('characters/list').then(response => {
+      await api.get('characters/list/pc').then(response => {
         const res = response.data;
 
         // Get list of clan

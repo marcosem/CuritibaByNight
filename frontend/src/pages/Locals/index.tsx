@@ -53,7 +53,7 @@ const Locals: React.FC = () => {
     setBusy(true);
 
     try {
-      await api.get('characters/list').then(response => {
+      await api.get('characters/list/all').then(response => {
         const res = response.data;
 
         const fullList: ICharacter[] = res;
