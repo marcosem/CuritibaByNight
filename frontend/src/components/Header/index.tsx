@@ -164,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
                         Personagens
                       </NavSpan>
                     ) : (
-                      <Link to="/characters">
+                      <Link to="/characters/pc">
                         <GiVampireDracula />
                         Personagens
                       </Link>
@@ -179,7 +179,7 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
                         NPCs
                       </NavSpan>
                     ) : (
-                      <Link to="/characters">
+                      <Link to="/characters/npc">
                         <GiMinions />
                         NPCs
                       </Link>
