@@ -44,8 +44,15 @@ class UpdateChracterAvatarService {
       throw new AppError('Character not found', 400);
     }
 
-    if (char.user_id !== user_id) {
-      throw new AppError('Only the character owner can change its avatar', 401);
+    if (char.npc === true) {
+      if (user.storyteller !== true) {
+        throw new AppError('Only the storyteller can change NPCs avatar', 401);
+      }
+    } else if (char.user_id !== user_id) {
+      throw new AppError(
+        'Only the character owner or can change its avatar',
+        401,
+      );
     }
 
     if (char.avatar) {
