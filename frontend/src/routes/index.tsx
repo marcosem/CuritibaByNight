@@ -28,14 +28,24 @@ const Routes: React.FC = () => (
     <Route path="/locals" component={Locals} isPrivate />
     <Route path="/players" component={Players} isPrivate isStoryteller />
     <Route path="/addplayer" component={CreatePlayer} isPrivate isStoryteller />
-    <Route path="/characters" component={Characters} isPrivate isStoryteller />
     <Route
-      path="/updatechar"
+      path="/characters/:filter"
+      component={Characters}
+      isPrivate
+      isStoryteller
+    />
+    <Route
+      path="/updatechar/:filter"
       component={CharacterUpdate}
       isPrivate
       isStoryteller
     />
-    <Route path="/addchar" component={AddCharacter} isPrivate isStoryteller />
+    <Route
+      path="/addchar/:filter"
+      component={AddCharacter}
+      isPrivate
+      isStoryteller
+    />
   </Switch>
 );
 

@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { useParams } from 'react-router';
 import { FiUpload } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { format } from 'date-fns';
@@ -18,9 +19,7 @@ import {
   ButtonBox,
 } from './styles';
 import Header from '../../components/Header';
-
 import Button from '../../components/Button';
-
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -32,24 +31,30 @@ interface IPlayer {
   name: string;
 }
 
+interface IRouteParams {
+  filter: string;
+}
+
 const AddCharacter: React.FC = () => {
+  const { filter } = useParams<IRouteParams>();
   const [playerList, setPlayerList] = useState<IPlayer[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<IPlayer>();
   const [savedChar, setSavedChar] = useState<ICharacter>({
     id: '',
-    name: 'Novo Personagem',
+    name: filter === 'npc' ? 'Novo NPC' : 'Novo Personagem',
     clan: 'Clã',
     avatar_url: '',
     updated_at: new Date(Date.now()),
     character_url: '',
     situation: 'active',
     experience: '0',
+    npc: filter === 'npc',
   });
   const [charSheet, setCharSheet] = useState<File>();
   const { addToast } = useToast();
   const { signOut } = useAuth();
   const history = useHistory();
-  const [isBusy, setBusy] = useState(true);
+  const [isBusy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
 
   const loadPlayers = useCallback(async () => {
@@ -103,18 +108,20 @@ const AddCharacter: React.FC = () => {
   );
 
   const handleSubmit = useCallback(async () => {
+    const characterType = filter === 'npc' ? 'NPC' : 'Personagem';
+
     try {
       if (!charSheet) {
         addToast({
           type: 'error',
           title: 'Ficha não selecionada',
-          description: 'Selecione uma Ficha de Personagem e tente novamente.',
+          description: `Selecione uma Ficha de ${characterType} e tente novamente.`,
         });
 
         return;
       }
 
-      if (selectedPlayer === undefined) {
+      if (filter !== 'npc' && selectedPlayer === undefined) {
         addToast({
           type: 'error',
           title: 'Jogador não selecionado',
@@ -125,7 +132,10 @@ const AddCharacter: React.FC = () => {
       }
 
       const formData = new FormData();
-      formData.append('player_id', selectedPlayer.id);
+      if (selectedPlayer !== undefined)
+        formData.append('player_id', selectedPlayer.id);
+
+      if (filter === 'npc') formData.append('is_npc', 'true');
       formData.append('sheet', charSheet);
 
       setUploading(true);
@@ -143,8 +153,8 @@ const AddCharacter: React.FC = () => {
 
       addToast({
         type: 'success',
-        title: 'Personagem Adicionado!',
-        description: 'Personagem adicionado com sucesso!',
+        title: `${characterType} Adicionado!`,
+        description: `${characterType} adicionado com sucesso!`,
       });
     } catch (err) {
       addToast({
@@ -152,11 +162,11 @@ const AddCharacter: React.FC = () => {
         title: 'Erro na atualização',
         description: err.response.data.message
           ? err.response.data.message
-          : 'Erro ao adicionar o personagem, tente novamente.',
+          : `Erro ao adicionar o ${characterType}, tente novamente.`,
       });
     }
     setUploading(false);
-  }, [charSheet, selectedPlayer, addToast]);
+  }, [charSheet, filter, selectedPlayer, addToast]);
 
   const handlePlayerChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -179,8 +189,8 @@ const AddCharacter: React.FC = () => {
   }, [history]);
 
   useEffect(() => {
-    loadPlayers();
-  }, [loadPlayers]);
+    if (filter !== 'npc') loadPlayers();
+  }, [filter, loadPlayers]);
 
   return (
     <Container>
@@ -211,7 +221,11 @@ const AddCharacter: React.FC = () => {
             )}
           </>
         ) : (
-          <strong>Não foi encontrado nenhum jogador de dados.</strong>
+          <strong>
+            {filter === 'npc'
+              ? 'Adicionar novo NPC'
+              : 'Não foi encontrado nenhum jogador de dados.'}
+          </strong>
         )}
       </TitleBox>
       <Content>
@@ -228,6 +242,7 @@ const AddCharacter: React.FC = () => {
                 clan={savedChar.clan}
                 avatar={savedChar.avatar_url}
                 updatedAt={savedChar.formatedDate ? savedChar.formatedDate : ''}
+                npc={savedChar.npc}
                 locked
               />
             </CharCardContainer>
@@ -236,17 +251,31 @@ const AddCharacter: React.FC = () => {
                 <h1>{savedChar.name}</h1>
                 <h1>{savedChar.clan}</h1>
               </div>
-              <div>
-                <strong>Experiêcia disponível:</strong>
-                <span>{savedChar.experience}</span>
-              </div>
-              <div>
-                <strong>Jogador:</strong>
-                <span>{selectedPlayer?.name}</span>
-              </div>
+
+              {filter === 'npc' ? (
+                <div>
+                  <strong>NPC</strong>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <strong>Experiêcia disponível:</strong>
+                    <span>{savedChar.experience}</span>
+                  </div>
+                  <div>
+                    <strong>Jogador:</strong>
+                    <span>{selectedPlayer?.name}</span>
+                  </div>
+                </>
+              )}
+
               <Form onSubmit={handleSubmit}>
                 <div>
-                  <h1>Selecione a ficha do novo Personagem:</h1>
+                  <h1>
+                    {filter === 'npc'
+                      ? 'Selecione a ficha do novo NPC:'
+                      : 'Selecione a ficha do novo Personagem:'}
+                  </h1>
                 </div>
                 <InputFileBox>
                   <label htmlFor="sheet">

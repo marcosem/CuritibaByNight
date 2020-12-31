@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { useParams } from 'react-router';
 import { FiMessageSquare, FiUpload } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { format } from 'date-fns';
@@ -70,7 +71,12 @@ const situationList: ISituation[] = [
   },
 ];
 
+interface IRouteParams {
+  filter: string;
+}
+
 const CharacterUpdate: React.FC = () => {
+  const { filter } = useParams<IRouteParams>();
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
   const [charSituation, setCharSituation] = useState<ISituation>();
@@ -84,8 +90,10 @@ const CharacterUpdate: React.FC = () => {
   const loadCharacters = useCallback(async () => {
     setBusy(true && !uploading);
 
+    const characterType = filter === 'npc' ? 'NPCs' : 'personagens';
+
     try {
-      await api.get('characters/list/pc').then(response => {
+      await api.get(`characters/list/${filter}`).then(response => {
         const res = response.data;
 
         const fullList: ICharacter[] = res;
@@ -107,23 +115,25 @@ const CharacterUpdate: React.FC = () => {
         } else {
           addToast({
             type: 'error',
-            title: 'Erro ao tentar listar personagens',
+            title: `Erro ao tentar listar ${characterType}`,
             description: `Erro: '${message}'`,
           });
         }
       }
     }
     setBusy(false);
-  }, [addToast, signOut, uploading]);
+  }, [addToast, filter, signOut, uploading]);
 
   const handleSubmit = useCallback(
     async ({ comments }) => {
+      const characterType = filter === 'npc' ? 'NPC' : 'Personagem';
+
       try {
         if (!charSheet) {
           addToast({
             type: 'error',
             title: 'Ficha não selecionada',
-            description: 'Selecione uma Ficha de Personagem e tente novamente.',
+            description: `Selecione uma Ficha de ${characterType} e tente novamente.`,
           });
 
           return;
@@ -132,8 +142,8 @@ const CharacterUpdate: React.FC = () => {
         if (selectedChar === undefined) {
           addToast({
             type: 'error',
-            title: 'Personagem não selecionado',
-            description: 'Selecione um Personagem e tente novamente.',
+            title: `${characterType} não selecionado`,
+            description: `Selecione um ${characterType} e tente novamente.`,
           });
 
           return;
@@ -145,6 +155,7 @@ const CharacterUpdate: React.FC = () => {
           formData.append('comments', comments);
           setLastComment(comments);
         }
+        if (filter === 'npc') formData.append('is_npc', 'true');
 
         if (
           charSituation?.titleEn !== selectedChar.situation &&
@@ -171,8 +182,8 @@ const CharacterUpdate: React.FC = () => {
 
         addToast({
           type: 'success',
-          title: 'Personagem Atualizado!',
-          description: 'Personagem atualizado com sucesso!',
+          title: `${characterType} Atualizado!`,
+          description: `${characterType} atualizado com sucesso!`,
         });
       } catch (err) {
         addToast({
@@ -180,12 +191,12 @@ const CharacterUpdate: React.FC = () => {
           title: 'Erro na atualização',
           description: err.response.data.message
             ? err.response.data.message
-            : 'Erro ao atualizar o personagem, tente novamente.',
+            : `Erro ao atualizar o ${characterType}, tente novamente.`,
         });
       }
       setUploading(false);
     },
-    [charSheet, selectedChar, charSituation, addToast, loadCharacters],
+    [filter, charSheet, selectedChar, charSituation, addToast, loadCharacters],
   );
 
   const handleSituationChange = useCallback(
@@ -209,11 +220,12 @@ const CharacterUpdate: React.FC = () => {
     ({ comments }) => {
       const charName = selectedChar ? selectedChar.name : '';
       const charSheetName = charSheet ? charSheet.name : '';
+      const characterType = filter === 'npc' ? 'NPC' : 'Personagem';
 
       if (charSheetName.indexOf(charName) === -1) {
         confirmAlert({
           title: 'Confirmar atualização',
-          message: `O nome do personagem [${charName}] não combina com o nome do arquivo [${charSheetName}], confirma a atualização?`,
+          message: `O nome do ${characterType} [${charName}] não combina com o nome do arquivo [${charSheetName}], confirma a atualização?`,
           buttons: [
             {
               label: 'Sim',
@@ -230,7 +242,7 @@ const CharacterUpdate: React.FC = () => {
         handleSubmit({ comments });
       }
     },
-    [charSheet, handleSubmit, selectedChar],
+    [charSheet, filter, handleSubmit, selectedChar],
   );
 
   const handleCharacterChange = useCallback(
@@ -297,7 +309,11 @@ const CharacterUpdate: React.FC = () => {
       <TitleBox>
         {charList.length > 0 ? (
           <>
-            <strong>Selecione o Personagem a ser Atualizado:</strong>
+            <strong>
+              {filter === 'npc'
+                ? 'Selecione o NPC a ser Atualizado:'
+                : 'Selecione o Personagem a ser Atualizado:'}
+            </strong>
 
             <Select
               name="character"
@@ -306,7 +322,11 @@ const CharacterUpdate: React.FC = () => {
               defaultValue={selectedChar ? selectedChar.name : undefined}
               onChange={handleCharacterChange}
             >
-              <option value="">Selecione um personagem:</option>
+              <option value="">
+                {filter === 'npc'
+                  ? 'Selecione um NPC:'
+                  : 'Selecione um Personagem:'}
+              </option>
               {charList.map(character => (
                 <option key={character.id} value={character.name}>
                   {character.name}
@@ -316,7 +336,9 @@ const CharacterUpdate: React.FC = () => {
           </>
         ) : (
           <strong>
-            Não foi encontrado nenhum personagem na base de dados.
+            {filter === 'npc'
+              ? 'Não foi encontrado nenhum NPC na base de dados.'
+              : 'Não foi encontrado nenhum Personagem na base de dados.'}
           </strong>
         )}
       </TitleBox>
@@ -338,7 +360,8 @@ const CharacterUpdate: React.FC = () => {
                     updatedAt={
                       selectedChar.formatedDate ? selectedChar.formatedDate : ''
                     }
-                    locked
+                    npc={selectedChar.npc}
+                    locked={filter !== 'npc'}
                   />
                 </CharCardContainer>
                 <CharacterFormContainer>
@@ -346,14 +369,24 @@ const CharacterUpdate: React.FC = () => {
                     <h1>{selectedChar.name}</h1>
                     <h1>{selectedChar.clan}</h1>
                   </div>
-                  <div>
-                    <strong>Experiêcia disponível:</strong>
-                    <span>{selectedChar.experience}</span>
-                  </div>
-                  <div>
-                    <strong>Jogador:</strong>
-                    <span>{selectedChar.user?.name}</span>
-                  </div>
+
+                  {filter === 'npc' ? (
+                    <div>
+                      <strong>NPC</strong>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <strong>Experiêcia disponível:</strong>
+                        <span>{selectedChar.experience}</span>
+                      </div>
+                      <div>
+                        <strong>Jogador:</strong>
+                        <span>{selectedChar.user?.name}</span>
+                      </div>
+                    </>
+                  )}
+
                   <Form
                     onSubmit={handleConfirm}
                     initialData={{
@@ -361,7 +394,11 @@ const CharacterUpdate: React.FC = () => {
                     }}
                   >
                     <div>
-                      <h1>Entre com os novos dados do Personagem:</h1>
+                      <h1>
+                        {filter === 'npc'
+                          ? 'Entre com os novos dados do NPC:'
+                          : 'Entre com os novos dados do Personagem:'}
+                      </h1>
                     </div>
                     <div>
                       <strong>Situação:</strong>
@@ -402,15 +439,17 @@ const CharacterUpdate: React.FC = () => {
                         {charSheet ? `"${charSheet.name}"` : 'Nenhum'}
                       </span>
                     </InputFileBox>
-                    <InputBox>
-                      <Input
-                        name="comments"
-                        icon={FiMessageSquare}
-                        mask=""
-                        placeholder="Motivo da Atualização"
-                        readOnly={uploading}
-                      />
-                    </InputBox>
+                    {filter !== 'npc' && (
+                      <InputBox>
+                        <Input
+                          name="comments"
+                          icon={FiMessageSquare}
+                          mask=""
+                          placeholder="Motivo da Atualização"
+                          readOnly={uploading}
+                        />
+                      </InputBox>
+                    )}
 
                     <ButtonBox>
                       <Button

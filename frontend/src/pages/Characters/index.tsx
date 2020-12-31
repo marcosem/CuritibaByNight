@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiUpload } from 'react-icons/fi';
 import api from '../../services/api';
@@ -21,11 +22,16 @@ import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 
+interface IRouteParams {
+  filter: string;
+}
+
 const Characters: React.FC = () => {
+  const { filter } = useParams<IRouteParams>();
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [filterList, setFilterList] = useState<string[]>([]);
   const [selectedClan, setSelectedClan] = useState<string>('');
-  const [isBusy, setBusy] = useState(true);
+  const [isBusy, setBusy] = useState(false);
   const { signOut } = useAuth();
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
@@ -34,7 +40,7 @@ const Characters: React.FC = () => {
     setBusy(true);
 
     try {
-      await api.get('characters/list/pc').then(response => {
+      await api.get(`characters/list/${filter}`).then(response => {
         const res = response.data;
 
         // Get list of clan
@@ -76,11 +82,15 @@ const Characters: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, signOut]);
+  }, [addToast, filter, signOut]);
 
   useEffect(() => {
     loadCharacters();
   }, [loadCharacters]);
+
+  useEffect(() => {
+    setSelectedClan('');
+  }, [filter]);
 
   const handleFilterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -93,9 +103,9 @@ const Characters: React.FC = () => {
   return (
     <Container>
       {isMobileVersion ? (
-        <HeaderMobile page="characters" />
+        <HeaderMobile page={filter === 'npc' ? 'npcs' : 'characters'} />
       ) : (
-        <Header page="characters" />
+        <Header page={filter === 'npc' ? 'npcs' : 'characters'} />
       )}
       {isBusy ? (
         <Loading />
@@ -105,7 +115,9 @@ const Characters: React.FC = () => {
             {charList.length > 0 ? (
               <>
                 <strong>
-                  Clique no nome do personagem para visualizar a ficha:
+                  {filter === 'npc'
+                    ? 'Clique no nome do NPC para visualizar a ficha:'
+                    : 'Clique no nome do personagem para visualizar a ficha:'}
                 </strong>
                 {filterList.length > 0 && (
                   <Select
@@ -125,7 +137,9 @@ const Characters: React.FC = () => {
               </>
             ) : (
               <strong>
-                Não foi encontrado nenhum personagem na base de dados.
+                {filter === 'npc'
+                  ? 'Não foi encontrado nenhum NPC na base de dados.'
+                  : 'Não foi encontrado nenhum personagem na base de dados.'}
               </strong>
             )}
           </TitleBox>
@@ -137,12 +151,12 @@ const Characters: React.FC = () => {
           {!isMobileVersion && (
             <Functions>
               <FunctionLink>
-                <Link to="/updatechar">
+                <Link to={`/updatechar/${filter}`}>
                   <FiUpload />
                 </Link>
               </FunctionLink>
               <FunctionLink>
-                <Link to="/addchar">
+                <Link to={`/addchar/${filter}`}>
                   <FiPlus />
                 </Link>
               </FunctionLink>
