@@ -166,7 +166,7 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
                         PCs
                       </NavSpan>
                     ) : (
-                      <Link to="/characters">
+                      <Link to="/characters/pc">
                         <GiVampireDracula />
                         PCs
                       </Link>
@@ -175,13 +175,13 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
                 </tr>
                 <tr>
                   <td>
-                    {page === 'npcs' ? (
+                    {page === 'npcs' ? ( 
                       <NavSpan>
                         <GiMinions />
                         NPCs
                       </NavSpan>
                     ) : (
-                      <Link to="/characters">
+                      <Link to="/characters/npc">
                         <GiMinions />
                         NPCs
                       </Link>
