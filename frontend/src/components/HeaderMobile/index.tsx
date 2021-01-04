@@ -175,7 +175,7 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
                 </tr>
                 <tr>
                   <td>
-                    {page === 'npcs' ? ( 
+                    {page === 'npcs' ? (
                       <NavSpan>
                         <GiMinions />
                         NPCs

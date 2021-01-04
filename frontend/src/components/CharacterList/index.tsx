@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import CharacterCard from '../CharacterCard';
 import { Scroll, Character } from './styles';
 import { useMobile } from '../../hooks/mobile';
-import Loading from '../Loading';
 import ICharacter from './ICharacter';
 
 interface ICharacterListProps {
@@ -77,7 +76,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
   }, [chars, isMobileVersion, filterClan, filterSituation]);
 
   return charList[0][0] === undefined ? (
-    <Loading />
+    <></>
   ) : (
     <Scroll options={{ suppressScrollX: true }}>
       <Character isMobile={isMobileVersion}>
