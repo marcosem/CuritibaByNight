@@ -19,6 +19,7 @@ export default class LocationsController {
       elysium,
       type,
       level,
+      mystical_level,
       property,
       clan,
       char_id,
@@ -36,6 +37,7 @@ export default class LocationsController {
       elysium,
       type,
       level,
+      mystical_level,
       property,
       clan,
       char_id,
@@ -89,6 +91,7 @@ export default class LocationsController {
       elysium,
       type,
       level,
+      mystical_level,
       property,
       clan,
       char_id,
@@ -112,6 +115,10 @@ export default class LocationsController {
       elysium,
       type: type || oldLocation.type,
       level: level || oldLocation.level,
+      mystical_level:
+        mystical_level !== oldLocation.mystical_level
+          ? mystical_level
+          : oldLocation.mystical_level,
       property: property || oldLocation.property,
       clan: clan || oldLocation.clan,
       char_id: char_id || oldLocation.responsible,

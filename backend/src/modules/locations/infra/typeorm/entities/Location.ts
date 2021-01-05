@@ -43,6 +43,9 @@ class Location {
   level: number;
 
   @Column()
+  mystical_level: number;
+
+  @Column()
   property: string;
 
   @Column()

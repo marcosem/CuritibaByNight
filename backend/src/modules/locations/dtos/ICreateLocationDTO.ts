@@ -7,6 +7,7 @@ export default interface ICreateCharacterDTO {
   elysium?: boolean;
   type?: string;
   level?: number;
+  mystical_level?: number;
   property?: string;
   clan?: string;
   responsible?: string;

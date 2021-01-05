@@ -16,6 +16,7 @@ interface IRequestDTO {
   elysium?: boolean;
   type?: string;
   level?: number;
+  mystical_level?: number;
   property?: string;
   clan?: string;
   char_id?: string;
@@ -43,6 +44,7 @@ class UpdateLocationService {
     elysium,
     type,
     level,
+    mystical_level,
     property,
     clan,
     char_id,
@@ -86,6 +88,7 @@ class UpdateLocationService {
     if (elysium) location.elysium = elysium;
     if (type) location.type = type;
     if (level) location.level = level;
+    if (mystical_level) location.mystical_level = mystical_level;
     if (property) location.property = property;
     if (clan) location.clan = clan;
 

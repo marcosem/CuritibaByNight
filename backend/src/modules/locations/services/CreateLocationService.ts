@@ -18,6 +18,7 @@ interface IRequestDTO {
   elysium?: boolean;
   type?: string;
   level?: number;
+  mystical_level?: number;
   property?: string;
   clan?: string;
   char_id?: string;
@@ -46,6 +47,7 @@ class CreateLocationService {
     elysium,
     type,
     level,
+    mystical_level,
     property,
     clan,
     char_id,
@@ -89,6 +91,7 @@ class CreateLocationService {
       elysium,
       type,
       level,
+      mystical_level,
       property,
       clan,
       responsible: char_id,

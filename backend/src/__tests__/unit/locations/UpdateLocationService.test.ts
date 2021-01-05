@@ -48,6 +48,7 @@ describe('UpdateLocation', () => {
       elysium: true,
       type: 'haven',
       level: 5,
+      mystical_level: 2,
       property: 'clan',
       clan: 'Ventrue',
     };
@@ -63,6 +64,7 @@ describe('UpdateLocation', () => {
       elysium: newLocation.elysium,
       type: newLocation.type,
       level: newLocation.level,
+      mystical_level: newLocation.mystical_level,
       property: newLocation.property,
       clan: newLocation.clan,
     });

@@ -53,6 +53,7 @@ describe('CreateLocation', () => {
       elysium: false,
       type: 'other',
       level: 1,
+      mystical_level: 0,
       property: 'private',
     });
   });
@@ -164,6 +165,7 @@ describe('CreateLocation', () => {
       elysium: true,
       type: 'haven',
       level: 5,
+      mystical_level: 0,
       property: 'clan',
       clan: 'Ventrue',
       char_id: char.id,
@@ -179,6 +181,7 @@ describe('CreateLocation', () => {
       elysium: true,
       type: 'haven',
       level: 5,
+      mystical_level: 0,
       property: 'clan',
       clan: 'Ventrue',
       responsible: char.id,
