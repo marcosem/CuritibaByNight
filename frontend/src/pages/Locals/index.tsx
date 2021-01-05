@@ -27,6 +27,7 @@ interface ILocation {
   latitude: number;
   longitude: number;
   responsible: string;
+  clan: string;
   level: number;
   mystical_level: number;
   picture_url: string;
@@ -121,6 +122,7 @@ const Locals: React.FC = () => {
               level: location.level,
               mystical_level: location.mystical_level,
               responsible: location.responsible,
+              clan: location.clan,
               picture_url: location.picture_url || imgBuilding,
               icon,
             };
@@ -252,7 +254,8 @@ const Locals: React.FC = () => {
                       <img width="200" src={location.picture_url} alt="" />
                       <strong>{location.name}</strong>
                       {(user.storyteller ||
-                        user.id === location.responsible) && (
+                        char.id === location.responsible ||
+                        char.clan === location.clan) && (
                         <strong>
                           Nível: {location.level}{' '}
                           {location.mystical_level > 0 &&
