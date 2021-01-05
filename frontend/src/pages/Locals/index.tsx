@@ -260,12 +260,12 @@ const Locals: React.FC = () => {
                         char.clan === location.clan) && (
                         <>
                           <span>
-                            <b>Refúgio Nível: {location.level}</b>
+                            <b>Nível: {location.level}</b>
                           </span>
                           <span>
                             <b>
                               {location.mystical_level > 0 &&
-                                `Lugar Místico Nível: ${location.mystical_level}`}
+                                `Nível Místico: ${location.mystical_level}`}
                             </b>
                           </span>
                         </>
