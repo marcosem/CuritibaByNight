@@ -43,6 +43,8 @@ const AddCharacter: React.FC = () => {
     id: '',
     name: filter === 'npc' ? 'Novo NPC' : 'Novo Personagem',
     clan: 'Clã',
+    title: '',
+    coterie: '',
     avatar_url: '',
     updated_at: new Date(Date.now()),
     character_url: '',
@@ -240,6 +242,8 @@ const AddCharacter: React.FC = () => {
                 experience={savedChar.experience}
                 sheetFile={savedChar.character_url}
                 clan={savedChar.clan}
+                title={savedChar.title}
+                coterie={savedChar.coterie}
                 avatar={savedChar.avatar_url}
                 updatedAt={savedChar.formatedDate ? savedChar.formatedDate : ''}
                 npc={savedChar.npc}

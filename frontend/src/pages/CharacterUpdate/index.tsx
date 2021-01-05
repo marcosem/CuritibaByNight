@@ -356,6 +356,8 @@ const CharacterUpdate: React.FC = () => {
                     experience={selectedChar.experience}
                     sheetFile={selectedChar.character_url}
                     clan={selectedChar.clan}
+                    title={selectedChar.title}
+                    coterie={selectedChar.coterie}
                     avatar={selectedChar.avatar_url}
                     updatedAt={
                       selectedChar.formatedDate ? selectedChar.formatedDate : ''

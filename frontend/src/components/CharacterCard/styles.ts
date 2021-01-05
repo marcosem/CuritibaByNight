@@ -171,7 +171,7 @@ export const CharInfo = styled.div`
 
   > a {
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-style: normal;
     font-weight: 500;
     text-decoration: none;

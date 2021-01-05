@@ -44,6 +44,8 @@ const CharacterList: React.FC<ICharacterListProps> = ({
         updated_at: new Date(char.updated_at),
         character_url: char.character_url,
         clan: filteredClan2[0],
+        title: char.title,
+        coterie: char.coterie,
         avatar_url: char.avatar_url,
         situation: char.situation,
         npc: char.npc,
@@ -92,6 +94,8 @@ const CharacterList: React.FC<ICharacterListProps> = ({
                       experience={char.experience}
                       sheetFile={char.character_url}
                       clan={char.clan}
+                      title={char.title}
+                      coterie={char.coterie}
                       avatar={char.avatar_url}
                       updatedAt={char.formatedDate ? char.formatedDate : ''}
                       npc={char.npc}

@@ -25,6 +25,8 @@ interface ICharacterCardProps {
   avatar: string;
   sheetFile: string;
   clan: string;
+  title: string;
+  coterie: string;
   updatedAt: string;
   situation?: string;
   npc?: boolean;
@@ -38,6 +40,8 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   avatar,
   sheetFile,
   clan,
+  title,
+  coterie,
   updatedAt,
   situation = 'active',
   npc = false,
@@ -128,7 +132,9 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
         </label>
         <CharInfo>
           <a href={sheetFile} target="_blank" rel="noopener noreferrer">
+            <b>{title !== '' && `${title}: `}</b>
             {name}
+            <i>{coterie !== '' && ` - ${coterie}`}</i>
           </a>
         </CharInfo>
 
