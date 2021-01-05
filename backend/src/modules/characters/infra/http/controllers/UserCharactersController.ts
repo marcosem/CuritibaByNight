@@ -35,6 +35,8 @@ export default class UserCharactersController {
       char_name: '',
       char_xp: 0,
       char_clan: '',
+      char_title: '',
+      char_coterie: '',
       is_npc: isNPC,
       sheetFilename: fileName,
     };
@@ -43,6 +45,8 @@ export default class UserCharactersController {
       inputData.char_name = parsedChar.name;
       inputData.char_xp = parsedChar.experience;
       inputData.char_clan = parsedChar.clan;
+      inputData.char_title = parsedChar.title;
+      inputData.char_coterie = parsedChar.coterie;
     }
 
     const char = await createCharacterSheetService.execute(inputData);
@@ -114,6 +118,8 @@ export default class UserCharactersController {
       char_name: oldChar.name,
       char_xp: oldChar.experience,
       char_clan: oldChar.clan,
+      char_title: oldChar.title,
+      char_coterie: oldChar.coterie,
       char_situation: situation || oldChar.situation,
       is_npc: oldChar.npc !== isNPC ? isNPC : oldChar.npc,
       sheetFilename: fileName,
@@ -124,6 +130,8 @@ export default class UserCharactersController {
       inputData.char_name = parsedChar.name;
       inputData.char_xp = parsedChar.experience;
       inputData.char_clan = parsedChar.clan;
+      inputData.char_title = parsedChar.title;
+      inputData.char_coterie = parsedChar.coterie;
     }
 
     const updateCharacterSheetService = container.resolve(

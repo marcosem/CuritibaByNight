@@ -37,6 +37,8 @@ describe('CreateCharacterSheet', () => {
       char_name: 'Dracula',
       char_xp: 666,
       char_clan: 'Tzimisce',
+      char_title: 'Priest',
+      char_coterie: 'Gangue do Parquinho',
       sheetFilename: 'dracula.pdf',
       is_npc: false,
     });
@@ -46,6 +48,9 @@ describe('CreateCharacterSheet', () => {
       user_id: user.id,
       name: 'Dracula',
       experience: 666,
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
       file: 'dracula.pdf',
       npc: false,
     });
@@ -64,6 +69,8 @@ describe('CreateCharacterSheet', () => {
       char_name: 'Dracula',
       char_xp: 666,
       char_clan: 'Tzimisce',
+      char_title: 'Priest',
+      char_coterie: 'Gangue do Parquinho',
       sheetFilename: 'dracula.pdf',
       is_npc: true,
     });
@@ -73,12 +80,15 @@ describe('CreateCharacterSheet', () => {
       user_id: null,
       name: 'Dracula',
       experience: 666,
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
       file: 'dracula.pdf',
       npc: true,
     });
   });
 
-  it('Should create NPC character sheet withou setting up an user', async () => {
+  it('Should create NPC character sheet without setting up an user', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -92,6 +102,8 @@ describe('CreateCharacterSheet', () => {
       char_name: 'Dracula',
       char_xp: 666,
       char_clan: 'Tzimisce',
+      char_title: 'Priest',
+      char_coterie: 'Gangue do Parquinho',
       sheetFilename: 'dracula.pdf',
       is_npc: true,
     });
@@ -101,6 +113,9 @@ describe('CreateCharacterSheet', () => {
       user_id: null,
       name: 'Dracula',
       experience: 666,
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
       file: 'dracula.pdf',
       npc: true,
     });
@@ -116,6 +131,8 @@ describe('CreateCharacterSheet', () => {
         char_name: 'Dracula',
         char_xp: 666,
         char_clan: 'Tzimisce',
+        char_title: 'Priest',
+        char_coterie: 'Gangue do Parquinho',
         sheetFilename: 'dracula.pdf',
         is_npc: false,
       }),
@@ -140,6 +157,8 @@ describe('CreateCharacterSheet', () => {
         char_name: 'Dracula',
         char_xp: 666,
         char_clan: 'Tzimisce',
+        char_title: 'Priest',
+        char_coterie: 'Gangue do Parquinho',
         sheetFilename: 'dracula.pdf',
         is_npc: false,
       }),
@@ -165,6 +184,8 @@ describe('CreateCharacterSheet', () => {
         char_name: 'Dracula',
         char_xp: 666,
         char_clan: 'Tzimisce',
+        char_title: 'Priest',
+        char_coterie: 'Gangue do Parquinho',
         sheetFilename: 'dracula.jpg',
         is_npc: false,
       }),
@@ -190,6 +211,8 @@ describe('CreateCharacterSheet', () => {
         char_name: 'Dracula',
         char_xp: 666,
         char_clan: 'Tzimisce',
+        char_title: 'Priest',
+        char_coterie: 'Gangue do Parquinho',
         sheetFilename: 'dracula.pdf',
         is_npc: false,
       }),

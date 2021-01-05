@@ -13,6 +13,8 @@ interface IRequestDTO {
   char_name: string;
   char_xp: number;
   char_clan: string;
+  char_title: string;
+  char_coterie: string;
   char_situation: string;
   is_npc: boolean;
   sheetFilename: string;
@@ -38,6 +40,8 @@ class UpdateCharacterSheetService {
     char_name,
     char_xp,
     char_clan,
+    char_title,
+    char_coterie,
     char_situation,
     is_npc,
     sheetFilename,
@@ -78,6 +82,8 @@ class UpdateCharacterSheetService {
     char.name = char_name;
     char.experience = char_xp;
     char.clan = char_clan;
+    char.title = char_title;
+    char.coterie = char_coterie;
     char.situation = char_situation;
     char.file = filename;
 

@@ -33,6 +33,8 @@ class PDFParseProvider implements IPDFParserProvider {
     let isParsed = false;
     let clan: string;
     let isMortal = false;
+    let title: string;
+    let coterie: string;
 
     rl.on('line', line => {
       index += 1;
@@ -56,6 +58,24 @@ class PDFParseProvider implements IPDFParserProvider {
           char.experience = experience;
           isParsed = true;
         }
+      } else if (line.indexOf('Title: ') >= 0 && !title) {
+        const startTitle = line.indexOf('Title: ') + 'Title: '.length;
+        const endString = isMortal ? 'Nature: ' : 'Demeanor: ';
+        const endTitle = line.indexOf(endString) - 1;
+
+        title = line.substring(startTitle, endTitle);
+        char.title = title;
+
+        if (isMortal) rl.close();
+      } else if (line.indexOf('Coterie/Pack: ') >= 0 && !coterie) {
+        const startCoterie =
+          line.indexOf('Coterie/Pack: ') + 'Coterie/Pack: '.length;
+        const endCoterie = line.indexOf('Sire: ') - 1;
+
+        coterie = line.substring(startCoterie, endCoterie);
+        char.coterie = coterie;
+
+        rl.close();
       } else if (!clan) {
         if (isMortal) {
           if (line.indexOf('Affiliation: ') >= 0) {
@@ -65,8 +85,6 @@ class PDFParseProvider implements IPDFParserProvider {
 
             clan = line.substring(startClan, endClan);
             char.clan = clan;
-
-            rl.close();
           }
         } else if (line.indexOf('Clan: ') >= 0) {
           const startClan = line.indexOf('Clan: ') + 'Clan: '.length;
@@ -74,8 +92,6 @@ class PDFParseProvider implements IPDFParserProvider {
 
           clan = line.substring(startClan, endClan);
           char.clan = clan;
-
-          rl.close();
         }
       }
     });

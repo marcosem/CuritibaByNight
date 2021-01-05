@@ -41,6 +41,12 @@ class Character {
   clan: string;
 
   @Column()
+  title: string;
+
+  @Column()
+  coterie: string;
+
+  @Column()
   situation: string;
 
   @Column()

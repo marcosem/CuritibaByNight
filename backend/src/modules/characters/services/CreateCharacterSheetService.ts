@@ -11,6 +11,8 @@ interface IRequestDTO {
   char_name: string;
   char_xp: number;
   char_clan: string;
+  char_title: string;
+  char_coterie: string;
   is_npc: boolean;
   sheetFilename: string;
 }
@@ -32,6 +34,8 @@ class CreateCharacterSheetService {
     char_name,
     char_xp,
     char_clan,
+    char_title,
+    char_coterie,
     is_npc,
     sheetFilename,
   }: IRequestDTO): Promise<Character> {
@@ -75,6 +79,8 @@ class CreateCharacterSheetService {
       name: char_name,
       experience: char_xp,
       clan: char_clan,
+      title: char_title,
+      coterie: char_coterie,
       file: filename,
       npc: is_npc,
     });
