@@ -253,17 +253,23 @@ const Locals: React.FC = () => {
                     <MapToolTip>
                       <img width="200" src={location.picture_url} alt="" />
                       <strong>{location.name}</strong>
+                      <span>{location.description}</span>
+                      <span>{location.address}</span>
                       {(user.storyteller ||
                         char.id === location.responsible ||
                         char.clan === location.clan) && (
-                        <strong>
-                          Nível: {location.level}{' '}
-                          {location.mystical_level > 0 &&
-                            `Nível Místico: ${location.mystical_level}`}
-                        </strong>
+                        <>
+                          <span>
+                            <b>Refúgio Nível: {location.level}</b>
+                          </span>
+                          <span>
+                            <b>
+                              {location.mystical_level > 0 &&
+                                `Lugar Místico Nível: ${location.mystical_level}`}
+                            </b>
+                          </span>
+                        </>
                       )}
-                      <span>{location.description}</span>
-                      <span>{location.address}</span>
                     </MapToolTip>
                   </Tooltip>
                 </Marker>
