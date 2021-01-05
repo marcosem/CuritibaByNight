@@ -26,6 +26,9 @@ interface ILocation {
   address: string;
   latitude: number;
   longitude: number;
+  responsible: string;
+  level: number;
+  mystical_level: number;
   picture_url: string;
   icon: Leaflet.Icon<Leaflet.IconOptions>;
 }
@@ -115,6 +118,9 @@ const Locals: React.FC = () => {
               address: location.address,
               latitude: location.latitude,
               longitude: location.longitude,
+              level: location.level,
+              mystical_level: location.mystical_level,
+              responsible: location.responsible,
               picture_url: location.picture_url || imgBuilding,
               icon,
             };
@@ -245,6 +251,14 @@ const Locals: React.FC = () => {
                     <MapToolTip>
                       <img width="200" src={location.picture_url} alt="" />
                       <strong>{location.name}</strong>
+                      {(user.storyteller ||
+                        user.id === location.responsible) && (
+                        <strong>
+                          Nível: {location.level}{' '}
+                          {location.mystical_level > 0 &&
+                            `Nível Místico: ${location.mystical_level}`}
+                        </strong>
+                      )}
                       <span>{location.description}</span>
                       <span>{location.address}</span>
                     </MapToolTip>
