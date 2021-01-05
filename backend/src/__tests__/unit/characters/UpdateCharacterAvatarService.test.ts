@@ -54,6 +54,57 @@ describe('updateCharacterAvatar', () => {
     expect(charWithAvatar).toHaveProperty('avatar', 'avatar.jpg');
   });
 
+  it('Should be able to update the NPC avatar as Storyteller', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      phone: '12-12345-1234',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: true,
+    });
+
+    const charWithAvatar = await updateCharacterAvatar.execute({
+      user_id: user.id,
+      char_id: char.id,
+      avatarPath: '/does not matter',
+      avatarFilename: 'avatar.jpg',
+    });
+
+    expect(charWithAvatar).toHaveProperty('avatar', 'avatar.jpg');
+  });
+
+  it('Should not be able to update the NPC avatar as ordinary user', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      phone: '12-12345-1234',
+    });
+
+    const char = await fakeCharactersRepository.create({
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: true,
+    });
+
+    await expect(
+      updateCharacterAvatar.execute({
+        user_id: user.id,
+        char_id: char.id,
+        avatarPath: '/does not matter',
+        avatarFilename: 'avatar.jpg',
+      }),
+    ).rejects.toMatchObject({ statusCode: 401 });
+  });
+
   it('Should delete old avatar before add new', async () => {
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
 
