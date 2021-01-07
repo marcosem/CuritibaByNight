@@ -10,59 +10,29 @@ class JimpProvider implements IImageClipper {
     propY: number,
   ): Promise<string> {
     const imageData = await jimp.read(resolve(path, file));
-    let newWidth: number;
-    let newHeight: number;
     let cutX: number;
     let cutY: number;
 
     const { width, height } = imageData.bitmap;
 
-    if (width < height) {
-      newWidth = width;
-      newHeight = Math.round((width / propX) * propY);
+    const propXY = propX / propY;
+    const propYX = propY / propX;
+    const refWidth = Math.round(height * propXY);
+    const refHeight = Math.round(width * propYX);
 
-      if (newHeight > height) {
-        newHeight = height;
-        cutY = 0;
-      } else {
-        cutY = Math.round((height - newHeight) / 2);
-      }
-      cutX = 0;
-    } else if (width > height) {
-      newHeight = height;
-      newWidth = Math.round((height / propY) * propX);
+    const newWidth = refWidth < width ? refWidth : width;
+    const newHeight = refHeight < height ? refHeight : height;
 
-      if (newWidth > width) {
-        newWidth = width;
-        cutX = 0;
-      } else {
-        cutX = Math.round((width - newWidth) / 2);
-      }
-      cutY = 0;
-    } else if (propX > propY) {
-      newWidth = width;
-      newHeight = Math.round((height / propX) * propY);
-
-      if (newHeight > height) {
-        newHeight = height;
-        cutY = 0;
-      } else {
-        cutY = Math.round((height - newHeight) / 2);
-      }
-      cutX = 0;
-    } else if (propY > propX) {
-      newHeight = height;
-      newWidth = Math.round((width / propY) * propX);
-
-      if (newWidth > width) {
-        newWidth = width;
-        cutX = 0;
-      } else {
-        cutX = Math.round((width - newWidth) / 2);
-      }
-      cutY = 0;
+    if (newWidth < width) {
+      cutX = Math.round((width - newWidth) / 2);
     } else {
-      return file;
+      cutX = 0;
+    }
+
+    if (newHeight < height) {
+      cutY = Math.round((height - newHeight) / 2);
+    } else {
+      cutY = 0;
     }
 
     const newFileName = `x${file}`;
