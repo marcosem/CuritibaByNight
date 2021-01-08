@@ -1,6 +1,9 @@
 /* eslint-disable camelcase */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
+import { toPng } from 'html-to-image';
+import download from 'downloadjs';
+import { confirmAlert } from 'react-confirm-alert';
 import CharacterCard from '../CharacterCard';
 import { Scroll, Character } from './styles';
 import { useMobile } from '../../hooks/mobile';
@@ -77,6 +80,28 @@ const CharacterList: React.FC<ICharacterListProps> = ({
     setCharList(rowArray);
   }, [chars, isMobileVersion, filterClan, filterSituation]);
 
+  const handleSaveCard = useCallback(async e => {
+    toPng(e.target).then(dataUrl => {
+      confirmAlert({
+        title: 'Cartão de Personagem',
+        message: 'Deseja fazer o download do cartão do personagem?',
+        buttons: [
+          {
+            label: 'Sim',
+            onClick: () => {
+              download(dataUrl, 'myCard.png');
+            },
+          },
+          {
+            label: 'Não',
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onClick: () => {},
+          },
+        ],
+      });
+    });
+  }, []);
+
   return charList[0][0] === undefined ? (
     <></>
   ) : (
@@ -87,7 +112,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
             {charList.map(row => (
               <tr key={`row:${row[0].id}`}>
                 {row.map(char => (
-                  <td key={char.id}>
+                  <td key={char.id} onDoubleClick={handleSaveCard}>
                     <CharacterCard
                       charId={char.id}
                       name={char.name}
