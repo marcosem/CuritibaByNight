@@ -124,11 +124,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
         <span>{updatedAt}</span>
         <label htmlFor={charId}>
           <ProfileImage locked={locked}>
-            <img
-              src={charImg}
-              alt=""
-              crossOrigin={saving ? 'anonymous' : 'use-credentials'}
-            />
+            <img src={charImg} alt="" crossOrigin={saving ? 'anonymous' : ''} />
             {/* <img src={charImg} alt="" /> */}
             {!locked && (
               <input type="file" id={charId} onChange={handleAvatarChange} />
