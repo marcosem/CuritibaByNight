@@ -103,6 +103,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
         ],
       });
     });
+    setSavingCard(false);
   }, []);
 
   return charList[0][0] === undefined ? (
