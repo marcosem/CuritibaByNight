@@ -156,9 +156,9 @@ export const ProfileImage = styled.div<IImageProps>`
 export const CharInfo = styled.div`
   position: absolute;
   top: 288px;
-  left: 49px;
+  left: 46px;
 
-  width: 188px;
+  width: 194px;
   height: 49px;
 
   background: transparent;
@@ -179,7 +179,7 @@ export const CharInfo = styled.div`
 
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 188px;
+    max-width: 194px;
     white-space: pre-wrap;
 
     color: #000;

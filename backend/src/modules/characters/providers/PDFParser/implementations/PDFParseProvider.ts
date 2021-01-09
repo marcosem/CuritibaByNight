@@ -42,11 +42,15 @@ class PDFParseProvider implements IPDFParserProvider {
       if (index === 3 && line.indexOf('Curitiba By Night') === -1) {
         isTitled = false;
         char.name = line.substring(0, line.length - 1);
-      } else if (index === 4 && line.indexOf('Mortal') >= 0) {
+      }
+
+      if (index === 4 && line.indexOf('Mortal') >= 0) {
         isMortal = true;
       } else if (index === 4 && isTitled) {
         char.name = line.substring(0, line.length - 1);
-      } else if (line.indexOf('Experience Unspent: ') >= 0 && !experience) {
+      }
+
+      if (line.indexOf('Experience Unspent: ') >= 0 && !experience) {
         const startXP =
           line.indexOf('Experience Unspent: ') + 'Experience Unspent: '.length;
         const endXP = line.indexOf('Date Printed: ') - 1;
@@ -58,7 +62,9 @@ class PDFParseProvider implements IPDFParserProvider {
           char.experience = experience;
           isParsed = true;
         }
-      } else if (line.indexOf('Title: ') >= 0 && !title) {
+      }
+
+      if (line.indexOf('Title: ') >= 0 && !title) {
         const startTitle = line.indexOf('Title: ') + 'Title: '.length;
         const endString = isMortal ? 'Nature: ' : 'Demeanor: ';
         const endTitle = line.indexOf(endString) - 1;
@@ -67,7 +73,9 @@ class PDFParseProvider implements IPDFParserProvider {
         char.title = title;
 
         if (isMortal) rl.close();
-      } else if (line.indexOf('Coterie/Pack: ') >= 0 && !coterie) {
+      }
+
+      if (line.indexOf('Coterie/Pack: ') >= 0 && !coterie) {
         const startCoterie =
           line.indexOf('Coterie/Pack: ') + 'Coterie/Pack: '.length;
         const endCoterie = line.indexOf('Sire: ') - 1;
@@ -76,7 +84,9 @@ class PDFParseProvider implements IPDFParserProvider {
         char.coterie = coterie;
 
         rl.close();
-      } else if (!clan) {
+      }
+
+      if (!clan) {
         if (isMortal) {
           if (line.indexOf('Affiliation: ') >= 0) {
             const startClan =
@@ -92,6 +102,28 @@ class PDFParseProvider implements IPDFParserProvider {
 
           clan = line.substring(startClan, endClan);
           char.clan = clan;
+        }
+      }
+
+      if (!coterie && isMortal) {
+        if (line.indexOf('Regnant/Guardian: ') >= 0) {
+          const startReg =
+            line.indexOf('Regnant/Guardian: ') + 'Regnant/Guardian: '.length;
+          const endReg = line.length - 1;
+
+          coterie = line.substring(startReg, endReg);
+
+          if (coterie !== '') {
+            if (clan) {
+              if (clan.indexOf('Ghoul') >= 0) {
+                char.coterie = `${coterie}' ghoul`;
+              } else if (clan.indexOf('Retainer') >= 0) {
+                char.coterie = `${coterie}' retainer`;
+              }
+            }
+          } else if (clan) {
+            char.coterie = clan;
+          }
         }
       }
     });
