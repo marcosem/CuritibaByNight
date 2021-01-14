@@ -175,11 +175,12 @@ export const CharInfo = styled.div`
     font-style: normal;
     font-weight: 500;
     text-decoration: none;
+    text-align: center;
     transition: color 0.2s;
 
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 194px;
+    width: 194px;
     white-space: pre-wrap;
 
     color: #000;
@@ -247,7 +248,6 @@ export const CharXP = styled.div`
   }
 `;
 
-// export const CharSituation = styled.div`
 export const CharSituation = styled(CardToolTip)`
   position: absolute;
   top: 300px;
