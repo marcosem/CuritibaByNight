@@ -166,6 +166,7 @@ export const CharInfo = styled.div`
   line-height: 90%;
 
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
@@ -189,6 +190,21 @@ export const CharInfo = styled.div`
       color: #860209;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
+  }
+
+  span {
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 192px;
+    white-space: pre-wrap;
+
+    color: #000;
   }
 `;
 

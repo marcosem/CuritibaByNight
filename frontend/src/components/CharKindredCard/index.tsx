@@ -141,8 +141,8 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
           <a href={sheetFile} target="_blank" rel="noopener noreferrer">
             <b>{title !== '' && `${title}: `}</b>
             {name}
-            <i>{coterie !== '' && ` - ${coterie}`}</i>
           </a>
+          <span>{coterie !== '' && `${coterie}`}</span>
         </CharInfo>
 
         {situation !== 'active' && (
