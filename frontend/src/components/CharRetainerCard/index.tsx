@@ -24,7 +24,6 @@ interface ICharacterCardProps {
   experience: string;
   avatar: string;
   sheetFile: string;
-  clan: string;
   title: string;
   coterie: string;
   updatedAt: string;
@@ -40,7 +39,6 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   experience,
   avatar,
   sheetFile,
-  clan = 'Ghoul',
   title,
   coterie,
   updatedAt,
