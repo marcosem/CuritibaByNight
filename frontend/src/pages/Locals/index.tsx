@@ -274,60 +274,36 @@ const Locals: React.FC = () => {
           ) : (
             <>
               {locationsList.map(location => (
-                <>
-                  <Marker
-                    key={location.id}
-                    icon={location.icon}
-                    position={[location.latitude, location.longitude]}
-                  >
-                    <Tooltip>
-                      <MapToolTip>
-                        <LocationCard
-                          locationId={location.id}
-                          name={location.name}
-                          description={location.description}
-                          address={location.address}
-                          elysium={location.elysium}
-                          type={location.type}
-                          property={location.property}
-                          responsibleId={location.responsible}
-                          responsibleName={
-                            location.responsible_char !== null
-                              ? location.responsible_char.name
-                              : ''
-                          }
-                          clan={location.clan}
-                          level={location.level}
-                          mysticalLevel={location.mystical_level}
-                          pictureUrl={location.picture_url}
-                          locked
-                        />
-                      </MapToolTip>
-                    </Tooltip>
-                  </Marker>
-                  {location.name === 'Marins Bertoldi Advogados' && (
-                    <LocationCard
-                      locationId={location.id}
-                      name={location.name}
-                      description={location.description}
-                      address={location.address}
-                      elysium={location.elysium}
-                      type={location.type}
-                      property={location.property}
-                      responsibleId={location.responsible}
-                      responsibleName={
-                        location.responsible_char !== null
-                          ? location.responsible_char.name
-                          : ''
-                      }
-                      clan={location.clan}
-                      level={location.level}
-                      mysticalLevel={location.mystical_level}
-                      pictureUrl={location.picture_url}
-                      locked
-                    />
-                  )}
-                </>
+                <Marker
+                  key={location.id}
+                  icon={location.icon}
+                  position={[location.latitude, location.longitude]}
+                >
+                  <Tooltip>
+                    <MapToolTip>
+                      <LocationCard
+                        locationId={location.id}
+                        name={location.name}
+                        description={location.description}
+                        address={location.address}
+                        elysium={location.elysium}
+                        type={location.type}
+                        property={location.property}
+                        responsibleId={location.responsible}
+                        responsibleName={
+                          location.responsible_char !== null
+                            ? location.responsible_char.name
+                            : ''
+                        }
+                        clan={location.clan}
+                        level={location.level}
+                        mysticalLevel={location.mystical_level}
+                        pictureUrl={location.picture_url}
+                        locked
+                      />
+                    </MapToolTip>
+                  </Tooltip>
+                </Marker>
               ))}
             </>
           )}
