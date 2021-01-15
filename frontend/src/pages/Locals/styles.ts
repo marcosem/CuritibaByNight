@@ -105,22 +105,6 @@ export const LocationLegend = styled.div`
   }
 `;
 
-export const MapToolTip = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 12px;
-  text-align: left;
-
-  img {
-    width: 200px;
-  }
-
-  strong {
-    text-align: center;
-    font-weight: 550;
-  }
-`;
-
 export const TitleBox = styled.div`
   min-width: 340px;
   max-width: 1012px;

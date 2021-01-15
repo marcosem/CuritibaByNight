@@ -16,14 +16,7 @@ import {
 } from 'react-icons/gi';
 import api from '../../services/api';
 
-import {
-  Container,
-  Content,
-  MapToolTip,
-  TitleBox,
-  Select,
-  LocationLegend,
-} from './styles';
+import { Container, Content, TitleBox, Select, LocationLegend } from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
@@ -280,28 +273,26 @@ const Locals: React.FC = () => {
                   position={[location.latitude, location.longitude]}
                 >
                   <Tooltip>
-                    <MapToolTip>
-                      <LocationCard
-                        locationId={location.id}
-                        name={location.name}
-                        description={location.description}
-                        address={location.address}
-                        elysium={location.elysium}
-                        type={location.type}
-                        property={location.property}
-                        responsibleId={location.responsible}
-                        responsibleName={
-                          location.responsible_char !== null
-                            ? location.responsible_char.name
-                            : ''
-                        }
-                        clan={location.clan}
-                        level={location.level}
-                        mysticalLevel={location.mystical_level}
-                        pictureUrl={location.picture_url}
-                        locked
-                      />
-                    </MapToolTip>
+                    <LocationCard
+                      locationId={location.id}
+                      name={location.name}
+                      description={location.description}
+                      address={location.address}
+                      elysium={location.elysium}
+                      type={location.type}
+                      property={location.property}
+                      responsibleId={location.responsible}
+                      responsibleName={
+                        location.responsible_char !== null
+                          ? location.responsible_char.name
+                          : ''
+                      }
+                      clan={location.clan}
+                      level={location.level}
+                      mysticalLevel={location.mystical_level}
+                      pictureUrl={location.picture_url}
+                      locked
+                    />
                   </Tooltip>
                 </Marker>
               ))}
