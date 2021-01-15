@@ -15,6 +15,10 @@ interface ICardProps {
   cardImg: string;
 }
 
+interface ICardTitle {
+  textLength: number;
+}
+
 const appearFromLeft = keyframes`
   from {
     opacity: 0;
@@ -71,27 +75,34 @@ export const CardSquare = styled.div<ICardProps>`
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
 `;
 
-export const CardTitle = styled.div`
+export const CardTitle = styled.div<ICardTitle>`
   position: absolute;
   top: 4px;
   left: 10px;
-
   width: 200px;
   height: 23px;
+  display: flex;
 
   background: transparent;
 
   span {
-    font-size: 16px;
+    ${props =>
+      props.textLength > 22
+        ? css`
+            font-size: 12px;
+          `
+        : css`
+            font-size: 16px;
+          `}
+
     font-style: normal;
     font-weight: 550;
     text-decoration: none;
-    // text-align: center;
+    max-width: 200px;
 
-    overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
-    width: 200px;
-    white-space: pre-wrap;
+    overflow: hidden;
 
     color: #fff;
   }

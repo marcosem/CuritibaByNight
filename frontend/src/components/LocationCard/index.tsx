@@ -195,8 +195,13 @@ const LocationCard: React.FC<ILocationCardProps> = ({
   return (
     <Container isMobile={isMobileVersion} locked={locked}>
       <CardSquare cardImg={cardLocation}>
-        <CardTitle>
-          <span>{description}</span>
+        <CardTitle
+          textLength={'Propriedade do Dom Joaquim de Oliveira da Silva'.length}
+        >
+          <span>
+            {/* description */}Propriedade do Dom Joaquim de Oliveira da Silva
+            Silva Medeiros
+          </span>
         </CardTitle>
 
         <label htmlFor={locationId}>
