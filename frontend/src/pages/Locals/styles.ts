@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
-interface ICharacterProps {
+interface ILocalsProps {
   isMobile: boolean;
   isSt: boolean;
 }
@@ -10,7 +10,7 @@ export const Container = styled.div`
   height: 100vh;
 `;
 
-export const Content = styled.main<ICharacterProps>`
+export const Content = styled.main<ILocalsProps>`
   min-width: 340px;
   max-width: 1012px;
   margin: 5px auto;
@@ -64,8 +64,8 @@ export const Content = styled.main<ICharacterProps>`
 
 export const LocationLegend = styled.div`
   position: absolute;
-  left: 40px;
-  bottom: 40px;
+  left: 20px;
+  bottom: 20px;
   display: flex;
   flex-direction: column;
 
