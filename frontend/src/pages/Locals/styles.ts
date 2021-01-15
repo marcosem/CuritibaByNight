@@ -62,6 +62,49 @@ export const Content = styled.main<ICharacterProps>`
     `}
 `;
 
+export const LocationLegend = styled.div`
+  position: absolute;
+  left: 40px;
+  bottom: 40px;
+  display: flex;
+  flex-direction: column;
+
+  width: 140px;
+  height: 193px;
+  background: #000;
+  opacity: 0.5;
+  border-radius: 4px;
+
+  strong {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 550;
+    margin: 5px auto;
+    color: #f00;
+  }
+
+  span {
+    display: flex;
+    flex-direction: row;
+
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 300;
+    text-decoration: none;
+    color: #fff;
+    margin: 1px 0 1px 5px;
+    margin-left: 5px;
+    // padding: 5px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      color: #fff;
+      margin-right: 5px;
+    }
+  }
+`;
+
 export const MapToolTip = styled.div`
   display: flex;
   flex-direction: column;

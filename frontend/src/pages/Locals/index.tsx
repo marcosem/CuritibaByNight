@@ -4,20 +4,42 @@ import { Link } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import { Map, TileLayer, Marker, Tooltip } from 'react-leaflet';
 import Leaflet from 'leaflet';
+
+import { MdLocalAirport, MdStore, MdLocationOn } from 'react-icons/md';
+import {
+  GiHouse,
+  GiCastle,
+  GiGreekTemple,
+  GiFamilyHouse,
+  GiBookshelf,
+  GiGuardedTower,
+} from 'react-icons/gi';
 import api from '../../services/api';
 
-import { Container, Content, MapToolTip, TitleBox, Select } from './styles';
+import {
+  Container,
+  Content,
+  MapToolTip,
+  TitleBox,
+  Select,
+  LocationLegend,
+} from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 import 'leaflet/dist/leaflet.css';
 import imgBuilding from '../../assets/building.jpg';
+import LocationCard from '../../components/LocationCard';
 
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 
 import mapMakerIcon from '../../assets/mapMakerIcon.svg';
+
+interface IResponsible {
+  name: string;
+}
 
 interface ILocation {
   id: string;
@@ -26,7 +48,11 @@ interface ILocation {
   address: string;
   latitude: number;
   longitude: number;
+  elysium: boolean;
+  type: string;
+  property: string;
   responsible: string;
+  responsible_char: IResponsible;
   clan: string;
   level: number;
   mystical_level: number;
@@ -119,10 +145,14 @@ const Locals: React.FC = () => {
               address: location.address,
               latitude: location.latitude,
               longitude: location.longitude,
+              responsible: location.responsible,
+              responsible_char: location.responsible_char,
+              elysium: location.elysium,
+              type: location.type,
+              property: location.property,
+              clan: location.clan,
               level: location.level,
               mystical_level: location.mystical_level,
-              responsible: location.responsible,
-              clan: location.clan,
               picture_url: location.picture_url || imgBuilding,
               icon,
             };
@@ -251,25 +281,26 @@ const Locals: React.FC = () => {
                 >
                   <Tooltip>
                     <MapToolTip>
-                      <img width="200" src={location.picture_url} alt="" />
-                      <strong>{location.name}</strong>
-                      <span>{location.description}</span>
-                      <span>{location.address}</span>
-                      {(user.storyteller ||
-                        char.id === location.responsible ||
-                        char.clan === location.clan) && (
-                        <>
-                          <span>
-                            <b>Nível: {location.level}</b>
-                          </span>
-                          <span>
-                            <b>
-                              {location.mystical_level > 0 &&
-                                `Nível Místico: ${location.mystical_level}`}
-                            </b>
-                          </span>
-                        </>
-                      )}
+                      <LocationCard
+                        locationId={location.id}
+                        name={location.name}
+                        description={location.description}
+                        address={location.address}
+                        elysium={location.elysium}
+                        type={location.type}
+                        property={location.property}
+                        responsibleId={location.responsible}
+                        responsibleName={
+                          location.responsible_char !== null
+                            ? location.responsible_char.name
+                            : ''
+                        }
+                        clan={location.clan}
+                        level={location.level}
+                        mysticalLevel={location.mystical_level}
+                        pictureUrl={location.picture_url}
+                        locked
+                      />
                     </MapToolTip>
                   </Tooltip>
                 </Marker>
@@ -277,6 +308,37 @@ const Locals: React.FC = () => {
             </>
           )}
         </Map>
+
+        <LocationLegend>
+          <strong>Legenda</strong>
+          <span>
+            <MdLocalAirport />- Aeroporto
+          </span>
+          <span>
+            <GiCastle />- Castelo
+          </span>
+          <span>
+            <MdStore />- Clube Noturno
+          </span>
+          <span>
+            <GiGuardedTower />- Elysium
+          </span>
+          <span>
+            <GiFamilyHouse />- Mansão
+          </span>
+          <span>
+            <GiGreekTemple />- Propriedade
+          </span>
+          <span>
+            <GiHouse />- Refúgio
+          </span>
+          <span>
+            <GiBookshelf />- Universidade
+          </span>
+          <span>
+            <MdLocationOn />- Outros
+          </span>
+        </LocationLegend>
 
         {user.storyteller && (
           <Link to="/dashboard">
