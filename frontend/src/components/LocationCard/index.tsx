@@ -127,7 +127,7 @@ const LocationCard: React.FC<ILocationCardProps> = ({
         if (responsibleName) {
           setPropertyTitle(`Propriedade Privada de ${responsibleName}`);
         } else {
-          setPropertyTitle('Localização Privada');
+          setPropertyTitle('Propriedade Privada');
         }
         break;
       }
