@@ -16,7 +16,6 @@ interface ICharacterCardProps {
   situation?: string;
   npc?: boolean;
   locked?: boolean;
-  saving?: boolean;
 }
 
 const CharacterCard: React.FC<ICharacterCardProps> = ({
@@ -32,7 +31,6 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   situation = 'active',
   npc = false,
   locked = false,
-  saving = false,
 }) => {
   return (
     <>
@@ -49,7 +47,6 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
           npc={npc}
           situation={situation}
           locked={locked}
-          saving={saving}
         />
       ) : (
         <CharKindredCard
@@ -65,7 +62,6 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
           situation={situation}
           npc={npc}
           locked={locked}
-          saving={saving}
         />
       )}
     </>

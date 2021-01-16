@@ -23,8 +23,6 @@ const CharacterList: React.FC<ICharacterListProps> = ({
   filterSituation = 'active',
 }) => {
   const [charList, setCharList] = useState<[ICharacter[]]>([[]]);
-  const [savingCard, setSavingCard] = useState<boolean>(false);
-
   const { isMobileVersion } = useMobile();
 
   useEffect(() => {
@@ -82,8 +80,6 @@ const CharacterList: React.FC<ICharacterListProps> = ({
   }, [chars, isMobileVersion, filterClan, filterSituation]);
 
   const handleSaveCard = useCallback(async e => {
-    setSavingCard(true);
-
     toPng(e.target).then(dataUrl => {
       confirmAlert({
         title: 'Cartão de Personagem',
@@ -103,7 +99,6 @@ const CharacterList: React.FC<ICharacterListProps> = ({
         ],
       });
     });
-    setSavingCard(false);
   }, []);
 
   return charList[0][0] === undefined ? (
@@ -129,7 +124,6 @@ const CharacterList: React.FC<ICharacterListProps> = ({
                       updatedAt={char.formatedDate ? char.formatedDate : ''}
                       npc={char.npc}
                       locked={locked}
-                      saving={savingCard}
                     />
                   </td>
                 ))}

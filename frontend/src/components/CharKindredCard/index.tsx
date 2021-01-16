@@ -31,7 +31,6 @@ interface ICharacterCardProps {
   situation?: string;
   npc?: boolean;
   locked?: boolean;
-  saving?: boolean;
 }
 
 const CharKindredCard: React.FC<ICharacterCardProps> = ({
@@ -47,7 +46,6 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
   situation = 'active',
   npc = false,
   locked = false,
-  saving = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
   const [clanImg, setClanImg] = useState<string>('');
@@ -124,11 +122,7 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
         <span>{updatedAt}</span>
         <label htmlFor={charId}>
           <ProfileImage locked={locked}>
-            {saving ? (
-              <img src={`${charImg}?canvas=true`} alt="" />
-            ) : (
-              <img src={`${charImg}?canvas=true`} alt="" />
-            )}
+            <img src={`${charImg}?t=${new Date()}`} alt="" />
 
             {!locked && (
               <input type="file" id={charId} onChange={handleAvatarChange} />
