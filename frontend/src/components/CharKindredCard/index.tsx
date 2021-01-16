@@ -127,7 +127,7 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
             {saving ? (
               <img src={`${charImg}?canvas=true`} alt="" />
             ) : (
-              <img src={charImg} alt="" />
+              <img src={`${charImg}?canvas=true`} alt="" />
             )}
 
             {!locked && (
