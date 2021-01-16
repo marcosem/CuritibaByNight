@@ -218,6 +218,17 @@ const CharacterUpdate: React.FC = () => {
 
   const handleConfirm = useCallback(
     ({ comments }) => {
+      if (!charSheet) {
+        addToast({
+          type: 'error',
+          title: 'Ficha não selecionada',
+          description:
+            'Nenhuma ficha foi selecionada, adicione uma ficha e tente novamente.',
+        });
+
+        return;
+      }
+
       const charName = selectedChar ? selectedChar.name : '';
       const charSheetName = charSheet ? charSheet.name : '';
       const characterType = filter === 'npc' ? 'NPC' : 'Personagem';
@@ -242,7 +253,7 @@ const CharacterUpdate: React.FC = () => {
         handleSubmit({ comments });
       }
     },
-    [charSheet, filter, handleSubmit, selectedChar],
+    [addToast, charSheet, filter, handleSubmit, selectedChar],
   );
 
   const handleCharacterChange = useCallback(
