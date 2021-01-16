@@ -44,7 +44,6 @@ interface ILocationCardProps {
   mysticalLevel: number;
   pictureUrl: string;
   locked?: boolean;
-  saving?: boolean;
 }
 
 const LocationCard: React.FC<ILocationCardProps> = ({
@@ -62,7 +61,6 @@ const LocationCard: React.FC<ILocationCardProps> = ({
   mysticalLevel,
   pictureUrl,
   locked = false,
-  saving = false,
 }) => {
   const [locationImg, setLocationImg] = useState<string>('');
   const [typeIcon, setTypeIcon] = useState<IconType | null>(null);
@@ -201,11 +199,7 @@ const LocationCard: React.FC<ILocationCardProps> = ({
 
         <label htmlFor={locationId}>
           <LocationImage locked={locked}>
-            {saving ? (
-              <img src={locationImg} alt="" crossOrigin="anonymous" />
-            ) : (
-              <img src={locationImg} alt="" />
-            )}
+            <img src={locationImg} alt="" />
 
             {!locked && (
               <input type="file" id={locationId} onChange={handleImageChange} />

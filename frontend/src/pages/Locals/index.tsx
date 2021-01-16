@@ -332,7 +332,7 @@ const Locals: React.FC = () => {
         </LocationLegend>
 
         {user.storyteller && (
-          <Link to="/dashboard">
+          <Link to="/addlocal">
             <FiPlus />
           </Link>
         )}

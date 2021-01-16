@@ -14,6 +14,7 @@ import Locals from '../pages/Locals';
 import CreatePlayer from '../pages/CreatePlayer';
 import CharacterUpdate from '../pages/CharacterUpdate';
 import AddCharacter from '../pages/AddCharacter';
+import AddLocation from '../pages/AddLocation';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -46,6 +47,7 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
+    <Route path="/addlocal" component={AddLocation} isPrivate isStoryteller />
   </Switch>
 );
 

@@ -1,0 +1,97 @@
+import styled from 'styled-components';
+// import { lighten } from 'polished';
+import bgImg from '../../assets/yellow-old-paper.jpg';
+
+export const Container = styled.div`
+  height: 100vh;
+`;
+
+export const Content = styled.main`
+  min-width: 340px;
+  max-width: 1012px;
+  margin: 0 auto;
+  background: url(${bgImg}) repeat;
+  display: flex;
+  flex-direction: row;
+  border-radius: 4px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+`;
+
+export const TitleBox = styled.div`
+  min-width: 340px;
+  max-width: 1012px;
+  position: relative;
+
+  display: flex;
+  flex-direction: space-between;
+  padding: 10px;
+
+  margin: 5px auto 10px auto;
+
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+
+  > strong {
+    color: #eee;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+    font-weight: 500;
+    margin: auto;
+  }
+`;
+
+export const LocationCardContainer = styled.div`
+  padding: 16px;
+`;
+
+export const LocationFormContainer = styled.div`
+  width: 100%;
+  margin: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  div {
+    display: flex;
+    width: 100%;
+    margin-bottom: 5px;
+
+    h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 16px;
+
+      &:not(:first-child) {
+        margin-left: auto;
+      }
+    }
+  }
+
+  form {
+    margin-top: 10px;
+    border-top: 2px solid #333;
+    padding-top: 10px;
+  }
+`;
+
+export const InputBox = styled.div`
+  margin: 5px auto 24px;
+  // max-width: 340px;
+
+  div {
+    &:first-child {
+      margin: 0 5px 0 0;
+    }
+
+    &:not(:first-child) {
+      margin: 0 0 0 5px;
+    }
+  }
+`;
+
+export const ButtonBox = styled.div`
+  margin: 50px auto 0 auto;
+  max-width: 340px;
+`;
