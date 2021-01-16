@@ -125,10 +125,7 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
         <label htmlFor={charId}>
           <ProfileImage locked={locked}>
             {saving ? (
-              <img
-                src={`https://cors-anywhere.herokuapp.com/${charImg}`}
-                alt=""
-              />
+              <img src={`${charImg}?t=${charId}`} alt="" />
             ) : (
               <img src={charImg} alt="" />
             )}
