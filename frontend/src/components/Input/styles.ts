@@ -58,6 +58,8 @@ export const Container = styled.div<ContainerProps>`
 
   svg {
     margin-right: 16px;
+    min-width: 20px !important;
+    min-height: 20px !important;
   }
 `;
 
@@ -66,7 +68,7 @@ export const Error = styled(ToolTip)`
   margin-left: 16px;
 
   svg {
-    margin: 0;
+    margin: 0 auto;
   }
 
   span {

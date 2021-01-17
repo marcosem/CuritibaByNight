@@ -10,7 +10,6 @@ import {
 } from 'react-icons/gi';
 
 import { FiCamera } from 'react-icons/fi';
-// import api from '../../services/api';
 import { IconType } from 'react-icons';
 import cardLocation from '../../assets/cards/card_location.png';
 import imgBuilding from '../../assets/building.jpg';

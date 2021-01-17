@@ -90,7 +90,7 @@ const Characters: React.FC = () => {
 
   useEffect(() => {
     setSelectedClan('');
-  }, [filter]);
+  }, []);
 
   const handleFilterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {

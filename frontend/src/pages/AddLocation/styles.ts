@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-// import { lighten } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
 export const Container = styled.div`
@@ -81,6 +80,8 @@ export const InputBox = styled.div`
   // max-width: 340px;
 
   div {
+    max-width: 340px;
+
     &:first-child {
       margin: 0 5px 0 0;
     }
@@ -89,6 +90,43 @@ export const InputBox = styled.div`
       margin: 0 0 0 5px;
     }
   }
+`;
+
+export const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // justify-content: center;
+  padding: 8px 0 0 0;
+
+  max-width: 340px;
+  width: 100%;
+
+  strong {
+    font-size: 16px !important;
+    color: #333;
+    font-weight: 500;
+  }
+`;
+
+export const Select = styled.select`
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  width: 200px;
+  // margin-left: 10px;
+
+  background: #222;
+  border-radius: 4px;
+  border: 0;
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ccc;
+  text-align: center;
 `;
 
 export const ButtonBox = styled.div`
