@@ -97,7 +97,7 @@ export const SelectContainer = styled.div`
   flex-direction: column;
   align-items: center;
   // justify-content: center;
-  padding: 8px 0 0 0;
+  padding: 16px 0 0 0;
 
   max-width: 340px;
   width: 100%;
@@ -127,6 +127,8 @@ export const Select = styled.select`
   font-weight: 500;
   color: #ccc;
   text-align: center;
+  text-align-last: center;
+  -moz-text-align-last: center;
 `;
 
 export const ButtonBox = styled.div`

@@ -126,6 +126,8 @@ export const SelectSituation = styled.select`
   font-weight: 500;
   color: #ccc;
   text-align: center;
+  text-align-last: center;
+  -moz-text-align-last: center;
 `;
 
 export const InputBox = styled.div`
