@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiUserPlus } from 'react-icons/fi';
 import { Map, TileLayer, Marker, Tooltip } from 'react-leaflet';
 import Leaflet from 'leaflet';
 
@@ -16,7 +16,14 @@ import {
 } from 'react-icons/gi';
 import api from '../../services/api';
 
-import { Container, Content, TitleBox, Select, LocationLegend } from './styles';
+import {
+  Container,
+  Content,
+  TitleBox,
+  Select,
+  LocationLegend,
+  FunctionsContainer,
+} from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
@@ -332,9 +339,17 @@ const Locals: React.FC = () => {
         </LocationLegend>
 
         {user.storyteller && !isMobileVersion && (
-          <Link to="/addlocal">
-            <FiPlus />
-          </Link>
+          <FunctionsContainer>
+            <Link to="/">
+              <FiEdit />
+            </Link>
+            <Link to="/">
+              <FiUserPlus />
+            </Link>
+            <Link to="/addlocal">
+              <FiPlus />
+            </Link>
+          </FunctionsContainer>
         )}
       </Content>
     </Container>

@@ -27,6 +27,7 @@ export const Content = styled.main<ILocalsProps>`
     z-index: 5;
   }
 
+  /*
   ${props =>
     props.isSt &&
     css`
@@ -60,6 +61,49 @@ export const Content = styled.main<ILocalsProps>`
         }
       }
     `}
+    */
+`;
+
+export const FunctionsContainer = styled.div`
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+
+  width: 64px;
+  height: 224px;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 10;
+
+  a {
+    width: 64px;
+    height: 64px;
+
+    background: #860209;
+    border-radius: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: ${shade(0.2, '#860209')};
+    }
+
+    &:not(:first-child) {
+      margin-top: 16px;
+    }
+
+    svg {
+      width: 32px;
+      height: 32px;
+      color: #ccc;
+    }
+  }
 `;
 
 export const LocationLegend = styled.div`
