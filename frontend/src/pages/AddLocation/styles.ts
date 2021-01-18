@@ -116,8 +116,8 @@ export const Select = styled.select`
   outline: none;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
+  height: 22px;
   width: 200px;
-  // margin-left: 10px;
 
   background: #222;
   border-radius: 4px;
