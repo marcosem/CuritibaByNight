@@ -331,7 +331,7 @@ const Locals: React.FC = () => {
           </span>
         </LocationLegend>
 
-        {user.storyteller && (
+        {user.storyteller && !isMobileVersion && (
           <Link to="/addlocal">
             <FiPlus />
           </Link>
