@@ -23,6 +23,7 @@ import {
   LocationCardContainer,
   LocationFormContainer,
   InputBox,
+  SelectLocation,
   SelectContainer,
   Select,
   ButtonBox,
@@ -117,8 +118,45 @@ interface ILocationCardProps {
   mysticalLevel: number;
 }
 
-const AddLocation: React.FC = () => {
+interface ILocation {
+  id?: string;
+  name: string;
+  description: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  elysium: boolean;
+  type: string;
+  property: string;
+  responsible: string;
+  responsible_char?: ICharacter;
+  clan: string;
+  level: number;
+  mystical_level: number;
+  picture_url?: string;
+}
+
+const LocationUpdate: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const [locationList, setLocationList] = useState<ILocation[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<ILocation>({
+    id: undefined,
+    name: '',
+    description: '',
+    address: '',
+    latitude: 0,
+    longitude: 0,
+    elysium: false,
+    type: 'other',
+    property: 'private',
+    responsible: '',
+    responsible_char: undefined,
+    clan: '',
+    level: 1,
+    mystical_level: 0,
+    picture_url: undefined,
+  });
+
   const { addToast } = useToast();
   const { signOut } = useAuth();
   const history = useHistory();
@@ -129,6 +167,7 @@ const AddLocation: React.FC = () => {
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
   const [clanList, setClanList] = useState<string[]>([]);
   const [selectedClan, setSelectedClan] = useState<string>('');
+  /*
   const [locationData, setLocationData] = useState<ILocationCardProps>({
     locationId: '',
     name: '',
@@ -143,6 +182,7 @@ const AddLocation: React.FC = () => {
     level: 1,
     mysticalLevel: 0,
   });
+  */
   const [isElysium, setIsElysium] = useState(false);
   const [locType, setLocType] = useState<ISelectableItem>(typeList[0]);
   const [locProperty, setLocProperty] = useState<ISelectableItem>(
@@ -199,8 +239,61 @@ const AddLocation: React.FC = () => {
     setBusy(false);
   }, [addToast, signOut]);
 
-  const handleSubmit = useCallback(
-    async (data: FormData) => {
+  const loadLocations = useCallback(async () => {
+    setBusy(true);
+
+    try {
+      await api.post('locations/list').then(response => {
+        const res = response.data;
+        const newArray = res.map((location: ILocation) => {
+          const newLocation = {
+            id: location.id,
+            name: location.name,
+            description: location.description,
+            address: location.address,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            responsible: location.responsible,
+            responsible_char: location.responsible_char,
+            elysium: location.elysium,
+            type: location.type,
+            property: location.property,
+            clan: location.clan,
+            level: location.level,
+            mystical_level: location.mystical_level,
+            picture_url: location.picture_url || undefined,
+          };
+          return newLocation;
+        });
+
+        setLocationList(newArray);
+      });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar os locais',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+    setBusy(false);
+  }, [addToast, signOut]);
+
+  const handleSubmit = useCallback(async (data: FormData) => {
+    /*
       try {
         formRef.current?.setErrors({});
         const latlongRegExp = /^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,6}/;
@@ -287,10 +380,9 @@ const AddLocation: React.FC = () => {
           description: 'Erro ao atualizar o perfil, tente novamente.',
         });
       }
-      setSaving(false);
-    },
-    [addToast, locationData, selectedChar],
-  );
+      */
+    setSaving(false);
+  }, []);
 
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -304,12 +396,12 @@ const AddLocation: React.FC = () => {
         elysium: e.target.checked,
       };
 
-      const newLocData = locationData;
+      const newLocData = selectedLocation;
       Object.assign(newLocData, tempLocationData);
 
-      setLocationData(newLocData);
+      setSelectedLocation(newLocData);
     },
-    [locationData],
+    [selectedLocation],
   );
 
   const handleLocTypeChange = useCallback(
@@ -331,12 +423,12 @@ const AddLocation: React.FC = () => {
         type: selectedType.titleEn,
       };
 
-      const newLocData = locationData;
+      const newLocData = selectedLocation;
       Object.assign(newLocData, tempLocationData);
 
-      setLocationData(newLocData);
+      setSelectedLocation(newLocData);
     },
-    [locationData],
+    [selectedLocation],
   );
 
   const handleLocPropertyChange = useCallback(
@@ -358,12 +450,12 @@ const AddLocation: React.FC = () => {
         property: selectedProperty.titleEn,
       };
 
-      const newLocData = locationData;
+      const newLocData = selectedLocation;
       Object.assign(newLocData, tempLocationData);
 
-      setLocationData(newLocData);
+      setSelectedLocation(newLocData);
     },
-    [locationData],
+    [selectedLocation],
   );
 
   const handleLocResponsibleChange = useCallback(
@@ -381,16 +473,16 @@ const AddLocation: React.FC = () => {
       setSelectedChar(selectedCharacter);
 
       const tempLocationData = {
-        responsibleId: selectedCharacter ? selectedCharacter.id : '',
-        responsibleName: selectedCharacter ? selectedCharacter.name : '',
+        responsible: selectedCharacter ? selectedCharacter.id : '',
+        responsible_char: selectedCharacter,
       };
 
-      const newLocData = locationData;
+      const newLocData = selectedLocation;
       Object.assign(newLocData, tempLocationData);
 
-      setLocationData(newLocData);
+      setSelectedLocation(newLocData);
     },
-    [charList, locationData],
+    [charList, selectedLocation],
   );
 
   const handleLocClanChange = useCallback(
@@ -411,12 +503,12 @@ const AddLocation: React.FC = () => {
         clan: selClan,
       };
 
-      const newLocData = locationData;
+      const newLocData = selectedLocation;
       Object.assign(newLocData, tempLocationData);
 
-      setLocationData(newLocData);
+      setSelectedLocation(newLocData);
     },
-    [clanList, locationData],
+    [clanList, selectedLocation],
   );
 
   const handleLocLevelChange = useCallback(
@@ -438,12 +530,12 @@ const AddLocation: React.FC = () => {
         level: selectedLevel,
       };
 
-      const newLocData = locationData;
+      const newLocData = selectedLocation;
       Object.assign(newLocData, tempLocationData);
 
-      setLocationData(newLocData);
+      setSelectedLocation(newLocData);
     },
-    [locationData],
+    [selectedLocation],
   );
 
   const handleLocMysticalLevelChange = useCallback(
@@ -465,17 +557,68 @@ const AddLocation: React.FC = () => {
         mysticalLevel: selectedLevel,
       };
 
-      const newLocData = locationData;
+      const newLocData = selectedLocation;
       Object.assign(newLocData, tempLocationData);
 
-      setLocationData(newLocData);
+      setSelectedLocation(newLocData);
     },
-    [locationData],
+    [selectedLocation],
+  );
+
+  const handleLocationChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      let newSelectedLocation: ILocation;
+
+      if (selIndex > 0) {
+        const selLocation = locationList[selIndex - 1];
+        newSelectedLocation = selLocation;
+        setIsElysium(selLocation.elysium);
+        setLocLevel(selLocation.level);
+        setLocMysticalLevel(selLocation.mystical_level);
+        // setLocType(selLocation.type);
+        // setLocProperty(selLocation.property);
+        setSelectedChar(selLocation.responsible_char);
+        console.log(selLocation.responsible_char);
+        setSelectedClan(selLocation.clan);
+      } else {
+        newSelectedLocation = {
+          id: '',
+          name: '',
+          description: '',
+          address: '',
+          latitude: 0,
+          longitude: 0,
+          elysium: false,
+          type: 'other',
+          property: 'private',
+          responsible: '',
+          responsible_char: undefined,
+          clan: '',
+          level: 1,
+          mystical_level: 0,
+          picture_url: undefined,
+        };
+
+        setIsElysium(false);
+        setLocLevel(1);
+        setLocMysticalLevel(0);
+        setLocType(typeList[0]);
+        setLocProperty(propertyList[0]);
+        setSelectedChar(undefined);
+        setSelectedClan('');
+      }
+
+      setSelectedLocation(newSelectedLocation);
+    },
+    [locationList],
   );
 
   useEffect(() => {
     loadCharacters();
-  }, [loadCharacters]);
+    loadLocations();
+  }, [loadCharacters, loadLocations]);
 
   useEffect(() => {
     setSelectedClan('');
@@ -486,7 +629,30 @@ const AddLocation: React.FC = () => {
       <Header page="addlocal" />
 
       <TitleBox>
-        <strong>Adicionar uma nova Localização</strong>
+        {charList.length > 0 ? (
+          <>
+            <strong>Selecione a Localização a ser Atualizada:</strong>
+
+            <SelectLocation
+              name="location"
+              id="location"
+              value={selectedLocation.id}
+              defaultValue={selectedLocation.id}
+              onChange={handleLocationChange}
+            >
+              <option value="">Seleciona uma Localização:</option>
+              {locationList.map(location => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
+                </option>
+              ))}
+            </SelectLocation>
+          </>
+        ) : (
+          <strong>
+            Não foi encontrada nenhuma Localização na base de dados.
+          </strong>
+        )}
       </TitleBox>
       <Content>
         {isBusy ? (
@@ -495,19 +661,27 @@ const AddLocation: React.FC = () => {
           <>
             <LocationCardContainer>
               <LocationCard
-                locationId={locationData.locationId}
-                name={locationData.name}
-                description={locationData.description}
-                address={locationData.address}
-                elysium={locationData.elysium}
-                type={locationData.type}
-                property={locationData.property}
-                responsibleId={locationData.responsibleId}
-                responsibleName={locationData.responsibleName}
-                clan={locationData.clan}
-                level={locationData.level}
-                mysticalLevel={locationData.mysticalLevel}
-                pictureUrl=""
+                locationId={selectedLocation.id ? selectedLocation.id : ''}
+                name={selectedLocation.name}
+                description={selectedLocation.description}
+                address={selectedLocation.address}
+                elysium={selectedLocation.elysium}
+                type={selectedLocation.type}
+                property={selectedLocation.property}
+                responsibleId={selectedLocation.responsible}
+                responsibleName={
+                  selectedLocation.responsible_char
+                    ? selectedLocation.responsible_char.name
+                    : ''
+                }
+                clan={selectedLocation.clan}
+                level={selectedLocation.level}
+                mysticalLevel={selectedLocation.mystical_level}
+                pictureUrl={
+                  selectedLocation.picture_url
+                    ? selectedLocation.picture_url
+                    : ''
+                }
                 locked={!saved}
               />
             </LocationCardContainer>
@@ -632,7 +806,7 @@ const AddLocation: React.FC = () => {
                     <Select
                       name="responsible"
                       id="responsible"
-                      value={selectedChar ? selectedChar.id : undefined}
+                      value={selectedChar ? selectedChar.id : ''}
                       defaultValue=""
                       onChange={handleLocResponsibleChange}
                     >
@@ -649,7 +823,7 @@ const AddLocation: React.FC = () => {
                     <Select
                       name="clan"
                       id="clan"
-                      value={selectedClan || undefined}
+                      value={selectedClan || ''}
                       defaultValue=""
                       onChange={handleLocClanChange}
                     >
@@ -722,4 +896,4 @@ const AddLocation: React.FC = () => {
   );
 };
 
-export default AddLocation;
+export default LocationUpdate;
