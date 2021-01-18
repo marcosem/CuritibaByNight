@@ -580,7 +580,6 @@ const LocationUpdate: React.FC = () => {
         // setLocType(selLocation.type);
         // setLocProperty(selLocation.property);
         setSelectedChar(selLocation.responsible_char);
-        console.log(selLocation.responsible_char);
         setSelectedClan(selLocation.clan);
       } else {
         newSelectedLocation = {
@@ -881,9 +880,9 @@ const LocationUpdate: React.FC = () => {
                     <Button
                       type="submit"
                       loading={saving}
-                      loadingMessage="Salvando Localização..."
+                      loadingMessage="Atualizando Localização..."
                     >
-                      Confirmar Inclusão
+                      Confirmar Atualização
                     </Button>
                   )}
                 </ButtonBox>
