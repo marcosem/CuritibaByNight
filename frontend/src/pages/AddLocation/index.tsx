@@ -509,7 +509,7 @@ const AddLocation: React.FC = () => {
                 level={locationData.level}
                 mysticalLevel={locationData.mysticalLevel}
                 pictureUrl=""
-                locked
+                locked={!saved}
               />
             </LocationCardContainer>
             <LocationFormContainer>

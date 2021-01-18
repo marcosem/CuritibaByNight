@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { MdLocalAirport, MdStore, MdLocationOn } from 'react-icons/md';
 import {
   GiHouse,
@@ -8,9 +8,9 @@ import {
   GiBookshelf,
   GiGuardedTower,
 } from 'react-icons/gi';
-
 import { FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
+import api from '../../services/api';
 import cardLocation from '../../assets/cards/card_location.png';
 import imgBuilding from '../../assets/building.jpg';
 
@@ -144,49 +144,39 @@ const LocationCard: React.FC<ILocationCardProps> = ({
     }
   }, [clan, property, responsibleName]);
 
-  /*
-  const handleAvatarChange = useCallback(
+  const handleImageChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
         try {
           const data = new FormData();
 
-          data.append('avatar', e.target.files[0]);
+          data.append('locations', e.target.files[0]);
 
-          const response = await api.patch(`/character/avatar/${charId}`, data);
+          const response = await api.patch(
+            `/locations/picture/${locationId}`,
+            data,
+          );
 
           const res = response.data;
-          if (res.avatar_url) {
-            setCharImg(res.avatar_url);
+          if (res.picture_url) {
+            setLocationImg(res.picture_url);
           }
 
           addToast({
             type: 'success',
-            title: 'Avatar Atualizado!',
-            description: `Avatar do personagem '${name}' atualizado com sucesso!`,
+            title: 'Imagem Atualizada!',
+            description: `Imagem da localização: '${name}' atualizada com sucesso!`,
           });
         } catch (err) {
           addToast({
             type: 'error',
             title: 'Erro na atualização',
-            description: 'Erro ao atualizar o avatar do personagem.',
+            description: 'Erro ao atualizar a imagem da localização.',
           });
         }
       }
     },
-    [addToast, charId, name],
-  );
-  */
-
-  const handleImageChange = useCallback(
-    async (/* e: ChangeEvent<HTMLInputElement> */) => {
-      addToast({
-        type: 'error',
-        title: 'Erro na atualização',
-        description: 'Erro ao atualizar a imagem da localização.',
-      });
-    },
-    [addToast],
+    [addToast, locationId, name],
   );
 
   return (
