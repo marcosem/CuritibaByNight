@@ -151,12 +151,12 @@ const Characters: React.FC = () => {
           {!isMobileVersion && (
             <Functions>
               <FunctionLink>
-                <Link to={`/updatechar/${filter}`}>
+                <Link to={`/updatechar/${filter}`} title="Atualizar Personagem">
                   <FiUpload />
                 </Link>
               </FunctionLink>
               <FunctionLink>
-                <Link to={`/addchar/${filter}`}>
+                <Link to={`/addchar/${filter}`} title="Adicionar Personagem">
                   <FiPlus />
                 </Link>
               </FunctionLink>

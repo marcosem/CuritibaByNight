@@ -160,7 +160,7 @@ const Players: React.FC = () => {
           </Scroll>
           {!isMobileVersion && (
             <AddLink>
-              <Link to="/addplayer">
+              <Link to="/addplayer" title="Adicionar Jogador">
                 <FiPlus />
               </Link>
             </AddLink>

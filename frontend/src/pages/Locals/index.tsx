@@ -340,13 +340,13 @@ const Locals: React.FC = () => {
 
         {user.storyteller && !isMobileVersion && (
           <FunctionsContainer>
-            <Link to="/">
+            <Link to="/" title="Editar Localização">
               <FiEdit />
             </Link>
-            <Link to="/">
+            <Link to="/" title="Definir quem conhece a Localização">
               <FiUserPlus />
             </Link>
-            <Link to="/addlocal">
+            <Link to="/addlocal" title="Adicionar Localização">
               <FiPlus />
             </Link>
           </FunctionsContainer>
