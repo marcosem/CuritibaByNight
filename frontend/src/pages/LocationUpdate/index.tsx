@@ -10,8 +10,6 @@ import { FiHome, FiFileText, FiMap, FiMapPin } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -103,28 +101,13 @@ interface FormData {
   longitude: string;
 }
 
-interface ILocationCardProps {
-  locationId: string;
-  name: string;
-  description: string;
-  address: string;
-  elysium: boolean;
-  type: string;
-  property: string;
-  responsibleId: string;
-  responsibleName: string;
-  clan: string;
-  level: number;
-  mysticalLevel: number;
-}
-
 interface ILocation {
   id?: string;
   name: string;
   description: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude: string;
+  longitude: string;
   elysium: boolean;
   type: string;
   property: string;
@@ -144,8 +127,8 @@ const LocationUpdate: React.FC = () => {
     name: '',
     description: '',
     address: '',
-    latitude: 0,
-    longitude: 0,
+    latitude: '',
+    longitude: '',
     elysium: false,
     type: 'other',
     property: 'private',
@@ -159,30 +142,12 @@ const LocationUpdate: React.FC = () => {
 
   const { addToast } = useToast();
   const { signOut } = useAuth();
-  const history = useHistory();
   const [isBusy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
   const [clanList, setClanList] = useState<string[]>([]);
   const [selectedClan, setSelectedClan] = useState<string>('');
-  /*
-  const [locationData, setLocationData] = useState<ILocationCardProps>({
-    locationId: '',
-    name: '',
-    description: '',
-    address: '',
-    elysium: false,
-    type: 'other',
-    property: 'private',
-    responsibleId: '',
-    responsibleName: '',
-    clan: '',
-    level: 1,
-    mysticalLevel: 0,
-  });
-  */
   const [isElysium, setIsElysium] = useState(false);
   const [locType, setLocType] = useState<ISelectableItem>(typeList[0]);
   const [locProperty, setLocProperty] = useState<ISelectableItem>(
@@ -292,8 +257,8 @@ const LocationUpdate: React.FC = () => {
     setBusy(false);
   }, [addToast, signOut]);
 
-  const handleSubmit = useCallback(async (data: FormData) => {
-    /*
+  const handleSubmit = useCallback(
+    async (data: FormData) => {
       try {
         formRef.current?.setErrors({});
         const latlongRegExp = /^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,6}/;
@@ -323,48 +288,51 @@ const LocationUpdate: React.FC = () => {
         const longitude = parseFloat(data.longitude);
 
         const formData = {
+          location_id: selectedLocation.id,
           name: data.name,
           description: data.description,
           address: parsedAddress,
           latitude,
           longitude,
-          elysium: locationData.elysium,
-          type: locationData.type,
+          elysium: selectedLocation.elysium,
+          type: selectedLocation.type,
           property:
-            locationData.property !== '' ? locationData.property : undefined,
-          clan: locationData.clan !== '' ? locationData.clan : undefined,
-          level: locationData.level,
-          mystical_level: locationData.mysticalLevel,
+            selectedLocation.property !== ''
+              ? selectedLocation.property
+              : undefined,
+          clan:
+            selectedLocation.clan !== '' ? selectedLocation.clan : undefined,
+          level: selectedLocation.level,
+          mystical_level: selectedLocation.mystical_level,
           char_id: selectedChar ? selectedChar.id : undefined,
         };
 
         setSaving(true);
 
-        const response = await api.post('/locations/add', formData);
+        const response = await api.patch('/locations/update', formData);
 
-        setLocationData({
-          locationId: response.data.id,
+        setSelectedLocation({
+          id: response.data.id,
           name: response.data.name,
           description: response.data.description,
           address: response.data.address,
+          latitude: response.data.latitude,
+          longitude: response.data.longitude,
           elysium: response.data.elysium,
           type: response.data.type,
-          property: response.data.id,
-          responsibleId: response.data.responsible && '',
-          responsibleName: response.data.responsible_char
-            ? response.data.responsible_char.name
-            : '',
+          property: response.data.property,
+          responsible: response.data.responsible,
+          responsible_char: response.data.responsible_char,
           clan: response.data.clan,
           level: response.data.level,
-          mysticalLevel: response.data.mystical_level,
+          mystical_level: response.data.mystical_level,
+          picture_url: response.data.picture_url || undefined,
         });
-
-        setSaved(true);
 
         addToast({
           type: 'success',
-          title: 'Localização adicionada!',
-          description: 'Localização adicionada com sucesso!',
+          title: 'Localização atualizada!',
+          description: 'Localização atualizada com sucesso!',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -377,16 +345,14 @@ const LocationUpdate: React.FC = () => {
         addToast({
           type: 'error',
           title: 'Erro na atualização',
-          description: 'Erro ao atualizar o perfil, tente novamente.',
+          description: 'Erro ao atualizar localização, tente novamente.',
         });
       }
-      */
-    setSaving(false);
-  }, []);
 
-  const handleGoBack = useCallback(() => {
-    history.goBack();
-  }, [history]);
+      setSaving(false);
+    },
+    [addToast, selectedChar, selectedLocation],
+  );
 
   const handleElysiumChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -574,6 +540,7 @@ const LocationUpdate: React.FC = () => {
       if (selIndex > 0) {
         const selLocation = locationList[selIndex - 1];
         newSelectedLocation = selLocation;
+
         setIsElysium(selLocation.elysium);
         setLocLevel(selLocation.level);
         setLocMysticalLevel(selLocation.mystical_level);
@@ -588,12 +555,12 @@ const LocationUpdate: React.FC = () => {
         setLocProperty(newProperty || propertyList[0]);
       } else {
         newSelectedLocation = {
-          id: '',
+          id: undefined,
           name: '',
           description: '',
           address: '',
-          latitude: 0,
-          longitude: 0,
+          latitude: '',
+          longitude: '',
           elysium: false,
           type: 'other',
           property: 'private',
@@ -623,10 +590,6 @@ const LocationUpdate: React.FC = () => {
     loadCharacters();
     loadLocations();
   }, [loadCharacters, loadLocations]);
-
-  useEffect(() => {
-    setSelectedClan('');
-  }, []);
 
   return (
     <Container>
@@ -686,7 +649,7 @@ const LocationUpdate: React.FC = () => {
                     ? selectedLocation.picture_url
                     : ''
                 }
-                locked={!saved}
+                locked={selectedLocation.id === undefined}
               />
             </LocationCardContainer>
             <LocationFormContainer>
@@ -694,7 +657,17 @@ const LocationUpdate: React.FC = () => {
                 <h1>Entre com os dados da nova localização:</h1>
               </div>
 
-              <Form onSubmit={handleSubmit} ref={formRef}>
+              <Form
+                onSubmit={handleSubmit}
+                ref={formRef}
+                initialData={{
+                  name: selectedLocation.name,
+                  description: selectedLocation.description,
+                  address: selectedLocation.address,
+                  latitude: `${selectedLocation.latitude}`,
+                  longitude: `${selectedLocation.longitude}`,
+                }}
+              >
                 <InputBox>
                   <Input
                     name="name"
@@ -738,13 +711,7 @@ const LocationUpdate: React.FC = () => {
                     name="latitude"
                     id="latitude"
                     icon={FiMapPin}
-                    mask="S9ZZ9999999"
-                    formatChars={{
-                      '9': '[0-9]',
-                      Z: '[0-9.]',
-                      S: '[0-9-]',
-                    }}
-                    maskChar={null}
+                    mask=""
                     placeholder="Latitude"
                     readOnly={saving}
                   />
@@ -752,13 +719,7 @@ const LocationUpdate: React.FC = () => {
                     name="longitude"
                     id="longitude"
                     icon={FiMapPin}
-                    mask="S9ZZZ9999999"
-                    formatChars={{
-                      '9': '[0-9]',
-                      Z: '[0-9.]',
-                      S: '[0-9-]',
-                    }}
-                    maskChar={null}
+                    mask=""
                     placeholder="Longitude"
                     readOnly={saving}
                   />
@@ -811,7 +772,7 @@ const LocationUpdate: React.FC = () => {
                       name="responsible"
                       id="responsible"
                       value={selectedChar ? selectedChar.id : ''}
-                      defaultValue=""
+                      // defaultValue=""
                       onChange={handleLocResponsibleChange}
                     >
                       <option value="">Personagem:</option>
@@ -828,7 +789,7 @@ const LocationUpdate: React.FC = () => {
                       name="clan"
                       id="clan"
                       value={selectedClan || ''}
-                      defaultValue=""
+                      // defaultValue=""
                       onChange={handleLocClanChange}
                     >
                       <option value="">Clã:</option>
@@ -877,19 +838,13 @@ const LocationUpdate: React.FC = () => {
                 </InputBox>
 
                 <ButtonBox>
-                  {saved ? (
-                    <Button type="button" onClick={handleGoBack}>
-                      Retornar
-                    </Button>
-                  ) : (
-                    <Button
-                      type="submit"
-                      loading={saving}
-                      loadingMessage="Atualizando Localização..."
-                    >
-                      Confirmar Atualização
-                    </Button>
-                  )}
+                  <Button
+                    type="submit"
+                    loading={saving}
+                    loadingMessage="Atualizando Localização..."
+                  >
+                    Confirmar Atualização
+                  </Button>
                 </ButtonBox>
               </Form>
             </LocationFormContainer>

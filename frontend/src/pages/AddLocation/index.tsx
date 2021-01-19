@@ -10,7 +10,6 @@ import { FiHome, FiFileText, FiMap, FiMapPin } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 
@@ -256,7 +255,7 @@ const AddLocation: React.FC = () => {
           address: response.data.address,
           elysium: response.data.elysium,
           type: response.data.type,
-          property: response.data.id,
+          property: response.data.property,
           responsibleId: response.data.responsible && '',
           responsibleName: response.data.responsible_char
             ? response.data.responsible_char.name
@@ -283,8 +282,8 @@ const AddLocation: React.FC = () => {
 
         addToast({
           type: 'error',
-          title: 'Erro na atualização',
-          description: 'Erro ao atualizar o perfil, tente novamente.',
+          title: 'Erro no cadastro de localização',
+          description: 'Erro ao adicionar localização, tente novamente.',
         });
       }
       setSaving(false);
@@ -476,10 +475,6 @@ const AddLocation: React.FC = () => {
   useEffect(() => {
     loadCharacters();
   }, [loadCharacters]);
-
-  useEffect(() => {
-    setSelectedClan('');
-  }, []);
 
   return (
     <Container>

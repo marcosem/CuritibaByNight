@@ -1,5 +1,4 @@
 import styled, { keyframes, css } from 'styled-components';
-// import { lighten } from 'polished';
 import CardToolTip from '../CardToolTip';
 
 interface ILocationProps {
@@ -129,8 +128,6 @@ export const LocationImage = styled.div<IImageProps>`
     width: 198px;
     height: 172px;
 
-    // border-radius: 50%;
-
     transition: opacity 0.2s;
   }
 
@@ -198,8 +195,6 @@ export const LocationInfo = styled.div`
 
   display: flex;
   flex-direction: column;
-  // align-items: center;
-  // justify-content: center;
   line-height: normal;
 
   strong {

@@ -12,6 +12,8 @@ export const Container = styled.header`
   top: 0;
   background: url(${bgImg}) repeat-x;
   height: 126px;
+
+  z-index: 1000;
 `;
 
 export const HeaderContent = styled.div`
