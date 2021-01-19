@@ -223,7 +223,7 @@ const LocationUpdate: React.FC = () => {
             elysium: location.elysium,
             type: location.type,
             property: location.property,
-            clan: location.clan,
+            clan: location.clan !== null ? location.clan : '',
             level: location.level,
             mystical_level: location.mystical_level,
             picture_url: location.picture_url || undefined,
@@ -581,6 +581,18 @@ const LocationUpdate: React.FC = () => {
         setSelectedClan('');
       }
 
+      formRef.current?.setFieldValue('name', newSelectedLocation.name);
+      formRef.current?.setFieldValue(
+        'description',
+        newSelectedLocation.description,
+      );
+      formRef.current?.setFieldValue('address', newSelectedLocation.address);
+      formRef.current?.setFieldValue('latitude', newSelectedLocation.latitude);
+      formRef.current?.setFieldValue(
+        'longitude',
+        newSelectedLocation.longitude,
+      );
+
       setSelectedLocation(newSelectedLocation);
     },
     [locationList],
@@ -654,20 +666,10 @@ const LocationUpdate: React.FC = () => {
             </LocationCardContainer>
             <LocationFormContainer>
               <div>
-                <h1>Entre com os dados da nova localização:</h1>
+                <h1>Atualize os dados da Localização:</h1>
               </div>
 
-              <Form
-                onSubmit={handleSubmit}
-                ref={formRef}
-                initialData={{
-                  name: selectedLocation.name,
-                  description: selectedLocation.description,
-                  address: selectedLocation.address,
-                  latitude: `${selectedLocation.latitude}`,
-                  longitude: `${selectedLocation.longitude}`,
-                }}
-              >
+              <Form onSubmit={handleSubmit} ref={formRef}>
                 <InputBox>
                   <Input
                     name="name"
