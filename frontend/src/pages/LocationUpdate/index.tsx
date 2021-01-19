@@ -577,10 +577,15 @@ const LocationUpdate: React.FC = () => {
         setIsElysium(selLocation.elysium);
         setLocLevel(selLocation.level);
         setLocMysticalLevel(selLocation.mystical_level);
-        // setLocType(selLocation.type);
-        // setLocProperty(selLocation.property);
         setSelectedChar(selLocation.responsible_char);
         setSelectedClan(selLocation.clan);
+
+        const newType = typeList.find(tp => tp.titleEn === selLocation.type);
+        setLocType(newType || typeList[0]);
+        const newProperty = propertyList.find(
+          pt => pt.titleEn === selLocation.property,
+        );
+        setLocProperty(newProperty || propertyList[0]);
       } else {
         newSelectedLocation = {
           id: '',
