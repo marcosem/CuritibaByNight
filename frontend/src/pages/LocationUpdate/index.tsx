@@ -312,8 +312,7 @@ const LocationUpdate: React.FC = () => {
         setSaving(true);
 
         const response = await api.patch('/locations/update', formData);
-
-        setSelectedLocation({
+        const newLocation = {
           id: response.data.id,
           name: response.data.name,
           description: response.data.description,
@@ -332,11 +331,13 @@ const LocationUpdate: React.FC = () => {
           mystical_level: response.data.mystical_level,
           picture_url: response.data.picture_url || undefined,
           myIndex: selectedLocation.myIndex,
-        });
+        };
 
-        const newLocationList = locationList.map(
-          (loc, _, locList) => locList.find(lc => lc.id === loc.id) || loc,
-        );
+        setSelectedLocation(newLocation);
+
+        const newLocationList = locationList.map(loc => {
+          return loc.id === newLocation.id ? newLocation : loc;
+        });
 
         setLocationList(newLocationList);
 
