@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import AddCharacterToLocationService from '@modules/locations/services/AddCharacterToLocationService';
 import GetCharacterLocationService from '@modules/locations/services/GetCharacterLocationService';
+import GetLocationCharactersListService from '@modules/locations/services/GetLocationCharactersListService';
 import RemoveCharacterFromLocationService from '@modules/locations/services/RemoveCharacterFromLocationService';
 
 import { container } from 'tsyringe';
@@ -39,6 +40,26 @@ export default class LocationsController {
     });
 
     return res.json(classToClass(locChar));
+  }
+
+  public async index(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+
+    const getLocationCharactersListService = container.resolve(
+      GetLocationCharactersListService,
+    );
+
+    const locCharList = await getLocationCharactersListService.execute({
+      user_id: req.user.id,
+      location_id: id,
+    });
+
+    const locCharListUpdated = locCharList.map(locChar => {
+      const newLocChar = locChar;
+      return classToClass(newLocChar);
+    });
+
+    return res.json(locCharListUpdated);
   }
 
   public async delete(req: Request, res: Response): Promise<Response> {

@@ -58,13 +58,12 @@ class FakeLocationsCharactersRepository
 
   public async listCharactersByLocation(
     location_id: string,
-  ): Promise<string[]> {
-    const resultList: string[] = [];
+  ): Promise<LocationCharacter[]> {
+    let resultList: LocationCharacter[] = [];
 
-    this.locationsCharacters.forEach(locChar => {
-      if (locChar.location_id === location_id)
-        resultList.push(locChar.character_id);
-    });
+    resultList = this.locationsCharacters.filter(
+      locChar => locChar.location_id === location_id,
+    );
 
     return resultList;
   }

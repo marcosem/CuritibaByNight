@@ -46,4 +46,16 @@ locationsCharactersRouter.post(
   locationCharacterController.show,
 );
 
+// List all characters of a location
+locationsCharactersRouter.get(
+  '/listchars/:id',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  locationCharacterController.index,
+);
+
 export default locationsCharactersRouter;
