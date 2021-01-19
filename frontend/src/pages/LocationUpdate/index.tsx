@@ -117,6 +117,7 @@ interface ILocation {
   level: number;
   mystical_level: number;
   picture_url?: string;
+  myIndex: number;
 }
 
 const LocationUpdate: React.FC = () => {
@@ -138,6 +139,7 @@ const LocationUpdate: React.FC = () => {
     level: 1,
     mystical_level: 0,
     picture_url: undefined,
+    myIndex: -1,
   });
 
   const { addToast } = useToast();
@@ -322,12 +324,21 @@ const LocationUpdate: React.FC = () => {
           type: response.data.type,
           property: response.data.property,
           responsible: response.data.responsible,
-          responsible_char: response.data.responsible_char,
-          clan: response.data.clan,
+          responsible_char: charList.find(
+            char => char.id === response.data.responsible,
+          ),
+          clan: response.data.clan !== null ? response.data.clan : '',
           level: response.data.level,
           mystical_level: response.data.mystical_level,
           picture_url: response.data.picture_url || undefined,
+          myIndex: selectedLocation.myIndex,
         });
+
+        const newLocationList = locationList.map(
+          (loc, _, locList) => locList.find(lc => lc.id === loc.id) || loc,
+        );
+
+        setLocationList(newLocationList);
 
         addToast({
           type: 'success',
@@ -351,7 +362,7 @@ const LocationUpdate: React.FC = () => {
 
       setSaving(false);
     },
-    [addToast, selectedChar, selectedLocation],
+    [addToast, charList, locationList, selectedChar, selectedLocation],
   );
 
   const handleElysiumChange = useCallback(
@@ -540,6 +551,7 @@ const LocationUpdate: React.FC = () => {
       if (selIndex > 0) {
         const selLocation = locationList[selIndex - 1];
         newSelectedLocation = selLocation;
+        newSelectedLocation.myIndex = selIndex - 1;
 
         setIsElysium(selLocation.elysium);
         setLocLevel(selLocation.level);
@@ -570,6 +582,7 @@ const LocationUpdate: React.FC = () => {
           level: 1,
           mystical_level: 0,
           picture_url: undefined,
+          myIndex: -1,
         };
 
         setIsElysium(false);
