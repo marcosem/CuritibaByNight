@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiEdit, FiUserPlus } from 'react-icons/fi';
 import { Map, TileLayer, Marker, Tooltip } from 'react-leaflet';
@@ -37,6 +38,10 @@ import { useMobile } from '../../hooks/mobile';
 
 import mapMakerIcon from '../../assets/mapMakerIcon.svg';
 
+interface IRouteParams {
+  local: string;
+}
+
 interface IResponsible {
   name: string;
 }
@@ -67,6 +72,11 @@ interface ICharacter {
 }
 
 const Locals: React.FC = () => {
+  const { local } = useParams<IRouteParams>();
+  const [coordLatitude, setCoordLatitude] = useState<number>(-25.442152);
+  const [coordLongitude, setCoordLongitude] = useState<number>(-49.2742434);
+  const [zoom, setZoom] = useState<number>(12);
+
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>({
@@ -128,6 +138,8 @@ const Locals: React.FC = () => {
         })
         .then(response => {
           const res = response.data;
+          let foundMyLocal = false;
+
           const newArray = res.map((location: ILocation) => {
             const icon = Leaflet.icon({
               iconUrl: location.picture_url || imgBuilding,
@@ -156,10 +168,27 @@ const Locals: React.FC = () => {
               picture_url: location.picture_url || imgBuilding,
               icon,
             };
+
+            if (location.id === local) {
+              setZoom(16);
+              setCoordLatitude(location.latitude);
+              setCoordLongitude(location.longitude);
+
+              foundMyLocal = true;
+            }
+
             return newLocation;
           });
 
           setLocationsList(newArray);
+
+          if (foundMyLocal === false && local) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar encontrar o local',
+              description: `Erro: Esta localização é desconhecida para seu personagem.`,
+            });
+          }
         });
     } catch (error) {
       if (error.response) {
@@ -183,7 +212,16 @@ const Locals: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, char.id, selectedChar.id, signOut, user.storyteller]);
+  }, [
+    addToast,
+    char.id,
+    local,
+    selectedChar.id,
+    setCoordLatitude,
+    setCoordLongitude,
+    signOut,
+    user.storyteller,
+  ]);
 
   useEffect(() => {
     if (user.storyteller) {
@@ -257,8 +295,9 @@ const Locals: React.FC = () => {
 
       <Content isMobile={isMobileVersion} isSt={user.storyteller}>
         <Map
-          center={[-25.442152, -49.2742434]}
-          zoom={12}
+          // center={[-25.442152, -49.2742434]}
+          center={[coordLatitude, coordLongitude]}
+          zoom={zoom}
           style={{
             border: 'solid #888 1px',
             width: '100%',

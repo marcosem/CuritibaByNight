@@ -27,6 +27,7 @@ const Routes: React.FC = () => (
     <Route path="/dashboard" component={Dashboard} isPrivate />
     <Route path="/profile" component={Profile} isPrivate />
 
+    <Route path="/locals/:local" component={Locals} isPrivate />
     <Route path="/locals" component={Locals} isPrivate />
     <Route path="/players" component={Players} isPrivate isStoryteller />
     <Route path="/addplayer" component={CreatePlayer} isPrivate isStoryteller />
