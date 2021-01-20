@@ -110,7 +110,7 @@ class AddCharacterToLocationService {
             loc_name: location.name,
             loc_desc: location.description,
             char_name: char.name,
-            link: `${process.env.APP_WEB_URL}`,
+            link: `${process.env.APP_WEB_URL}/locals/${location.id}`,
             imgLogo: 'curitibabynight.png',
             imgMap: 'curitiba_old_map.jpg',
           },
