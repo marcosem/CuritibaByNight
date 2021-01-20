@@ -73,9 +73,6 @@ class LocationsCharactersRepository implements ILocationsCharactersRepository {
       relations: ['characterId'],
     });
 
-    // locCharList.forEach(locChar => resultList.push(locChar.character_id));
-
-    // return resultList;
     return locCharList;
   }
 }
