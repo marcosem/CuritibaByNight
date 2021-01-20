@@ -493,72 +493,88 @@ const LocationCharList: React.FC = () => {
                 </div>
               )}
 
-              {selectedLocation.id && (
+              {selectedLocation.elysium ||
+              selectedLocation.property === 'public' ? (
+                <div>
+                  <strong>
+                    <b>
+                      <br />
+                      <br />
+                      Este local é de conhecimento de todos por ser Elysium ou
+                      Localização Pública.
+                    </b>
+                  </strong>
+                </div>
+              ) : (
                 <>
-                  <SelectContainer>
-                    <strong>Adicionar Personagem:</strong>
-                    <Select
-                      name="responsible"
-                      id="responsible"
-                      value={selectedChar ? selectedChar.id : ''}
-                      onChange={handleSelectedCharCharge}
-                    >
-                      <option value="">Personagem:</option>
-                      {charList.map(char => (
-                        <option key={char.id} value={char.id}>
-                          {char.name}
-                        </option>
-                      ))}
-                    </Select>
-                    {selectedChar && (
-                      <AddButton
-                        type="button"
-                        onClick={handleAddCharToLocation}
-                        disabled={saving}
-                      >
-                        {saving ? <FaSpinner /> : <FiPlus />}
-                      </AddButton>
-                    )}
-                  </SelectContainer>
-
-                  {locationChars !== undefined && locationChars.length > 0 && (
-                    <TableWrapper>
-                      <Table>
-                        <thead>
-                          <tr>
-                            <th>Personagem</th>
-                            <th>Clã</th>
-                            <th>Remover?</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {locationChars.map(locChar => (
-                            <tr key={locChar.character_id}>
-                              <td>
-                                <TableCell>
-                                  {locChar.characterId.name}
-                                </TableCell>
-                              </td>
-                              <td>
-                                <TableCell>
-                                  {locChar.characterId.clan}
-                                </TableCell>
-                              </td>
-                              <td>
-                                <RemoveButton
-                                  id={locChar.character_id}
-                                  type="button"
-                                  onClick={handleRemoveButton}
-                                  disabled={saving}
-                                >
-                                  {saving ? <FaSpinner /> : <FiTrash2 />}
-                                </RemoveButton>
-                              </td>
-                            </tr>
+                  {selectedLocation.id && (
+                    <>
+                      <SelectContainer>
+                        <strong>Adicionar Personagem:</strong>
+                        <Select
+                          name="responsible"
+                          id="responsible"
+                          value={selectedChar ? selectedChar.id : ''}
+                          onChange={handleSelectedCharCharge}
+                        >
+                          <option value="">Personagem:</option>
+                          {charList.map(char => (
+                            <option key={char.id} value={char.id}>
+                              {char.name}
+                            </option>
                           ))}
-                        </tbody>
-                      </Table>
-                    </TableWrapper>
+                        </Select>
+                        {selectedChar && (
+                          <AddButton
+                            type="button"
+                            onClick={handleAddCharToLocation}
+                            disabled={saving}
+                          >
+                            {saving ? <FaSpinner /> : <FiPlus />}
+                          </AddButton>
+                        )}
+                      </SelectContainer>
+
+                      {locationChars !== undefined && locationChars.length > 0 && (
+                        <TableWrapper>
+                          <Table>
+                            <thead>
+                              <tr>
+                                <th>Personagem</th>
+                                <th>Clã</th>
+                                <th>Remover?</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {locationChars.map(locChar => (
+                                <tr key={locChar.character_id}>
+                                  <td>
+                                    <TableCell>
+                                      {locChar.characterId.name}
+                                    </TableCell>
+                                  </td>
+                                  <td>
+                                    <TableCell>
+                                      {locChar.characterId.clan}
+                                    </TableCell>
+                                  </td>
+                                  <td>
+                                    <RemoveButton
+                                      id={locChar.character_id}
+                                      type="button"
+                                      onClick={handleRemoveButton}
+                                      disabled={saving}
+                                    >
+                                      {saving ? <FaSpinner /> : <FiTrash2 />}
+                                    </RemoveButton>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        </TableWrapper>
+                      )}
+                    </>
                   )}
                 </>
               )}
