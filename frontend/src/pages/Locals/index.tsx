@@ -295,7 +295,6 @@ const Locals: React.FC = () => {
 
       <Content isMobile={isMobileVersion} isSt={user.storyteller}>
         <Map
-          // center={[-25.442152, -49.2742434]}
           center={[coordLatitude, coordLongitude]}
           zoom={zoom}
           style={{
