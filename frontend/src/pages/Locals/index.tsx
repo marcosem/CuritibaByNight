@@ -381,7 +381,7 @@ const Locals: React.FC = () => {
             <Link to="/updatelocal" title="Editar Localização">
               <FiEdit />
             </Link>
-            <Link to="/" title="Definir quem conhece a Localização">
+            <Link to="/localchars" title="Definir quem conhece a Localização">
               <FiUserPlus />
             </Link>
             <Link to="/addlocal" title="Adicionar Localização">

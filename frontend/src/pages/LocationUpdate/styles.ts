@@ -61,10 +61,6 @@ export const LocationFormContainer = styled.div`
       font-weight: 500;
       color: #333;
       margin-bottom: 16px;
-
-      &:not(:first-child) {
-        margin-left: auto;
-      }
     }
   }
 

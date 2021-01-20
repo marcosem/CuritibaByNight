@@ -16,6 +16,7 @@ import CharacterUpdate from '../pages/CharacterUpdate';
 import AddCharacter from '../pages/AddCharacter';
 import AddLocation from '../pages/AddLocation';
 import LocationUpdate from '../pages/LocationUpdate';
+import LocationCharList from '../pages/LocationCharList';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -53,6 +54,12 @@ const Routes: React.FC = () => (
     <Route
       path="/updatelocal"
       component={LocationUpdate}
+      isPrivate
+      isStoryteller
+    />
+    <Route
+      path="/localchars"
+      component={LocationCharList}
       isPrivate
       isStoryteller
     />

@@ -89,7 +89,9 @@ export const Table = styled.table`
 
   tr {
     &:nth-child(even) {
-      background: #e8e7e7;
+      td {
+        background: #e8e7e7;
+      }
     }
 
     &:last-child {
