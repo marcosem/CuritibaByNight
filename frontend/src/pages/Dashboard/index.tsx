@@ -104,7 +104,7 @@ const CharacterUpdate: React.FC = () => {
           const res = response.data;
 
           const newArray = res.map((location: ILocation) => {
-            const newLocation = {
+            const newLocation: ILocation = {
               id: location.id,
               name: location.name,
               description: location.description,
@@ -113,6 +113,36 @@ const CharacterUpdate: React.FC = () => {
             };
 
             return newLocation;
+          });
+
+          newArray.sort((a: ILocation, b: ILocation) => {
+            const nameA = a
+              ? a.name
+                  .toUpperCase()
+                  .replace(/[ÁÀÃÂ]/gi, 'A')
+                  .replace(/[ÉÊ]/gi, 'E')
+                  .replace(/[Í]/gi, 'I')
+                  .replace(/[ÓÔÕ]/gi, 'O')
+                  .replace(/[Ú]/gi, 'U')
+              : '';
+            const nameB = b
+              ? b.name
+                  .toUpperCase()
+                  .replace(/[ÁÀÃÂ]/gi, 'A')
+                  .replace(/[ÉÊ]/gi, 'E')
+                  .replace(/[Í]/gi, 'I')
+                  .replace(/[ÓÔÕ]/gi, 'O')
+                  .replace(/[Ú]/gi, 'U')
+              : '';
+
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+            return 0;
           });
 
           setLocationsList(newArray);
