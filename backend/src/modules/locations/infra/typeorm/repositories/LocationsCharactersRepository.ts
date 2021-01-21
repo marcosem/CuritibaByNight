@@ -73,6 +73,36 @@ class LocationsCharactersRepository implements ILocationsCharactersRepository {
       relations: ['characterId'],
     });
 
+    locCharList.sort((a, b) => {
+      const nameA = a.characterId
+        ? a.characterId.name
+            .toUpperCase()
+            .replace(/[ÁÀÃÂ]/gi, 'A')
+            .replace(/[ÉÊ]/gi, 'E')
+            .replace(/[Í]/gi, 'I')
+            .replace(/[ÓÔÕ]/gi, 'O')
+            .replace(/[Ú]/gi, 'U')
+        : '';
+      const nameB = b.characterId
+        ? b.characterId.name
+            .toUpperCase()
+            .replace(/[ÁÀÃÂ]/gi, 'A')
+            .replace(/[ÉÊ]/gi, 'E')
+            .replace(/[Í]/gi, 'I')
+            .replace(/[ÓÔÕ]/gi, 'O')
+            .replace(/[Ú]/gi, 'U')
+        : '';
+
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+
+      return 0;
+    });
+
     return locCharList;
   }
 }
