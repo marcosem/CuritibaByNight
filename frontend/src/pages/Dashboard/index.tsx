@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, MouseEvent } from 'react';
+import { useHistory } from 'react-router-dom';
 import { format } from 'date-fns';
 
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -11,6 +12,9 @@ import {
   Content,
   CharCardContainer,
   CharacterContainer,
+  TableWrapper,
+  Table,
+  TableCell,
 } from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
@@ -22,9 +26,19 @@ import { useMobile } from '../../hooks/mobile';
 import CharacterCard from '../../components/CharacterCard';
 import ICharacter from '../../components/CharacterList/ICharacter';
 
+interface ILocation {
+  id: string;
+  name: string;
+  description: string;
+  elysium: string;
+  property: string;
+}
+
 const CharacterUpdate: React.FC = () => {
   const [myChar, setMyChar] = useState<ICharacter>();
+  const [locationsList, setLocationsList] = useState<ILocation[]>([]);
   const { addToast } = useToast();
+  const history = useHistory();
   const { user, signOut, setChar } = useAuth();
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
@@ -74,9 +88,77 @@ const CharacterUpdate: React.FC = () => {
     setBusy(false);
   }, [addToast, setChar, signOut, user.id]);
 
+  const loadLocations = useCallback(async () => {
+    if (myChar === undefined) {
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      await api
+        .post('locations/list', {
+          char_id: myChar.id,
+        })
+        .then(response => {
+          const res = response.data;
+
+          const newArray = res.map((location: ILocation) => {
+            const newLocation = {
+              id: location.id,
+              name: location.name,
+              description: location.description,
+              elysium: location.elysium,
+              property: location.property,
+            };
+
+            return newLocation;
+          });
+
+          setLocationsList(newArray);
+        });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar os locais',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+    setBusy(false);
+  }, [addToast, myChar, signOut]);
+
+  const handleLocationJump = useCallback(
+    async (e: MouseEvent<HTMLTableRowElement>) => {
+      const locationId = e.currentTarget.id;
+
+      history.push(`/locals/${locationId}`);
+    },
+    [history],
+  );
+
   useEffect(() => {
     loadCharacters();
   }, [loadCharacters]);
+
+  useEffect(() => {
+    if (myChar !== undefined) {
+      loadLocations();
+    }
+  }, [loadLocations, myChar]);
 
   return (
     <Container>
@@ -133,6 +215,42 @@ const CharacterUpdate: React.FC = () => {
                       <strong>Jogador:</strong>
                       <span>{user.name}</span>
                     </div>
+                    {locationsList.length > 0 && (
+                      <>
+                        <div>
+                          <strong>
+                            <br />
+                            Locais conhecidos pelo personagem:
+                          </strong>
+                        </div>
+                        <TableWrapper>
+                          <Table>
+                            <thead>
+                              <tr>
+                                <th>Local</th>
+                                <th>Descrição</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {locationsList.map(local => (
+                                <tr
+                                  key={local.id}
+                                  id={local.id}
+                                  onClick={handleLocationJump}
+                                >
+                                  <td>
+                                    <TableCell>{local.name}</TableCell>
+                                  </td>
+                                  <td>
+                                    <TableCell>{local.description}</TableCell>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        </TableWrapper>
+                      </>
+                    )}
                   </CharacterContainer>
                 )}
               </>
