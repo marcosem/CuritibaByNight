@@ -1,23 +1,19 @@
-import styled, { css } from 'styled-components';
-
-interface ICharacterProps {
-  isMobile: boolean;
-}
+import styled from 'styled-components';
+import bgImg from '../../assets/yellow-old-paper.jpg';
 
 export const Container = styled.div`
   height: 100vh;
 `;
 
-export const Content = styled.main<ICharacterProps>`
+export const Content = styled.main`
   min-width: 340px;
   max-width: 1012px;
   margin: 0 auto;
-
-  ${props =>
-    props.isMobile &&
-    css`
-      max-width: 340px;
-    `}
+  background: url(${bgImg}) repeat;
+  display: flex;
+  flex-direction: row;
+  border-radius: 4px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 `;
 
 export const TitleBox = styled.div`
@@ -25,7 +21,10 @@ export const TitleBox = styled.div`
   max-width: 1012px;
   position: relative;
 
+  display: flex;
+  flex-direction: space-between;
   padding: 10px;
+
   margin: 5px auto 10px auto;
 
   border-radius: 10px;
@@ -33,11 +32,58 @@ export const TitleBox = styled.div`
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 
   > strong {
-    font-size: 14px;
-    font-weight: 500px;
-    margin: auto 0;
-
     color: #eee;
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+    font-weight: 500;
+    margin: auto 0;
+  }
+`;
+
+export const CharCardContainer = styled.div`
+  padding: 16px;
+`;
+
+export const CharacterContainer = styled.div`
+  width: 100%;
+  margin: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  form {
+    margin-top: 10px;
+    border-top: 2px solid #333;
+    padding-top: 10px;
+  }
+
+  div {
+    display: flex;
+    width: 100%;
+    margin-bottom: 5px;
+
+    h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 16px;
+
+      &:not(:first-child) {
+        margin-left: auto;
+      }
+    }
+
+    strong {
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    span {
+      font-size: 18px;
+      font-weight: 400;
+      color: #333;
+      margin-left: 10px;
+    }
   }
 `;
