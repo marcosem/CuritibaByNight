@@ -300,6 +300,36 @@ const LocationCharList: React.FC = () => {
 
             if (locationChars !== undefined) {
               newLocationChars = [...locationChars, res];
+
+              newLocationChars.sort((a, b) => {
+                const nameA = a.characterId
+                  ? a.characterId.name
+                      .toUpperCase()
+                      .replace(/[ÁÀÃÂ]/gi, 'A')
+                      .replace(/[ÉÊ]/gi, 'E')
+                      .replace(/[Í]/gi, 'I')
+                      .replace(/[ÓÔÕ]/gi, 'O')
+                      .replace(/[Ú]/gi, 'U')
+                  : '';
+                const nameB = b.characterId
+                  ? b.characterId.name
+                      .toUpperCase()
+                      .replace(/[ÁÀÃÂ]/gi, 'A')
+                      .replace(/[ÉÊ]/gi, 'E')
+                      .replace(/[Í]/gi, 'I')
+                      .replace(/[ÓÔÕ]/gi, 'O')
+                      .replace(/[Ú]/gi, 'U')
+                  : '';
+
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+
+                return 0;
+              });
             } else {
               newLocationChars = [res];
             }
@@ -555,7 +585,15 @@ const LocationCharList: React.FC = () => {
                                   </td>
                                   <td>
                                     <TableCell>
-                                      {locChar.characterId.clan}
+                                      {locChar.characterId.clan.indexOf(' (') >
+                                      0
+                                        ? locChar.characterId.clan.substring(
+                                            0,
+                                            locChar.characterId.clan.indexOf(
+                                              ' (',
+                                            ),
+                                          )
+                                        : locChar.characterId.clan}
                                     </TableCell>
                                   </td>
                                   <td>
