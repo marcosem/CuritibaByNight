@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-// import PerfectScrollBar from 'react-perfect-scrollbar';
 import { shade } from 'polished';
 
 export const Container = styled.div`
@@ -154,12 +153,10 @@ export const Table = styled.table`
     td {
       &:first-child {
         width: 60px;
-        // border-radius: 10px 0 0 0;
       }
 
       &:last-child {
         width: 70px;
-        // border-radius: 0 10px 0 0;
       }
     }
 
@@ -194,14 +191,6 @@ export const TableCell = styled.div`
     border: 2px solid #860209;
   }
 `;
-
-/*
-export const Scroll = styled(PerfectScrollBar)`
-  max-height: 82vh;
-  padding: 5px 20px;
-  margin-top: 5px;
-`;
-*/
 
 export const AddLink = styled.div`
   position: absolute;
