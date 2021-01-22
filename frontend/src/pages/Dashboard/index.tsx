@@ -265,10 +265,7 @@ const CharacterUpdate: React.FC = () => {
                   {locationsList.length > 0 && (
                     <>
                       <div>
-                        <strong>
-                          <br />
-                          Locais conhecidos pelo personagem:
-                        </strong>
+                        <strong>Locais conhecidos pelo personagem:</strong>
                       </div>
                       <TableWrapper isMobile={isMobileVersion}>
                         <Table isMobile={isMobileVersion}>

@@ -96,6 +96,10 @@ export const CharacterContainer = styled.div<IDashboardProps>`
     strong {
       font-weight: 500;
       color: #333;
+
+      &:last-child {
+        padding-top: 24px;
+      }
     }
 
     span {
