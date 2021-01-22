@@ -44,51 +44,6 @@ const CharacterUpdate: React.FC = () => {
   const { isMobileVersion } = useMobile();
   // const isMobileVersion = true;
 
-  const loadCharacters = useCallback(async () => {
-    setBusy(true);
-
-    try {
-      await api
-        .post('character/list', {
-          player_id: user.id,
-        })
-        .then(response => {
-          const res = response.data;
-          const char: ICharacter = res[0];
-
-          char.formatedDate = format(new Date(char.updated_at), 'dd/MM/yyyy');
-
-          let filteredClan: string[];
-          if (char.clan) {
-            filteredClan = char.clan.split(' (');
-          } else {
-            filteredClan = [''];
-          }
-
-          const clanIndex = 0;
-          char.clan = filteredClan[clanIndex];
-
-          setMyChar(char);
-          setChar(char);
-        });
-    } catch (error) {
-      if (error.response) {
-        const { message } = error.response.data;
-
-        if (message.indexOf('token') > 0 && error.response.status === 401) {
-          addToast({
-            type: 'error',
-            title: 'Sessão Expirada',
-            description: 'Sessão de usuário expirada, faça o login novamente!',
-          });
-
-          signOut();
-        }
-      }
-    }
-    setBusy(false);
-  }, [addToast, setChar, signOut, user.id]);
-
   const loadLocations = useCallback(async () => {
     if (myChar === undefined) {
       return;
@@ -171,6 +126,51 @@ const CharacterUpdate: React.FC = () => {
     }
     setBusy(false);
   }, [addToast, myChar, signOut]);
+
+  const loadCharacters = useCallback(async () => {
+    setBusy(true);
+
+    try {
+      await api
+        .post('character/list', {
+          player_id: user.id,
+        })
+        .then(response => {
+          const res = response.data;
+          const char: ICharacter = res[0];
+
+          char.formatedDate = format(new Date(char.updated_at), 'dd/MM/yyyy');
+
+          let filteredClan: string[];
+          if (char.clan) {
+            filteredClan = char.clan.split(' (');
+          } else {
+            filteredClan = [''];
+          }
+
+          const clanIndex = 0;
+          char.clan = filteredClan[clanIndex];
+
+          setMyChar(char);
+          setChar(char);
+        });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        }
+      }
+    }
+    setBusy(false);
+  }, [addToast, setChar, signOut, user.id]);
 
   const handleLocationJump = useCallback(
     async (e: MouseEvent<HTMLTableRowElement>) => {
