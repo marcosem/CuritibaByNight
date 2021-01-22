@@ -237,7 +237,7 @@ export const Table = styled.table`
   min-width: 340px;
   max-width: 1012px;
   white-space: nowrap;
-  background-color: white;
+  background-color: transparent;
   opacity: 0.9;
 
   td {
@@ -278,6 +278,12 @@ export const Table = styled.table`
   }
 
   thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+
     th {
       color: #fff;
       background: #560209;
@@ -294,16 +300,26 @@ export const Table = styled.table`
       }
 
       &:last-child {
-        width: 40px;
+        width: 80px;
         border-radius: 0 10px 0 0;
       }
     }
   }
 
   tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+
     &:nth-child(even) {
       td {
         background: #e8e7e7;
+      }
+    }
+
+    &:nth-child(odd) {
+      td {
+        background: white;
       }
     }
 
@@ -315,6 +331,61 @@ export const Table = styled.table`
 
         &:last-child {
           border-radius: 0 0 10px 0;
+        }
+      }
+    }
+  }
+
+  tbody {
+    display: block;
+    max-height: 40vh;
+    overflow-y: auto;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+
+    scrollbar-width: thin;
+    scrollbar-color: #555;
+    scrollbar-track-color: #f5f5f5;
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar {
+      width: 12px;
+      background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      background-color: #555;
+    }
+
+    td {
+      &:first-child {
+        width: 70%;
+      }
+
+      &:last-child {
+        width: 75px;
+      }
+    }
+
+    tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+
+      &:hover {
+        cursor: pointer;
+
+        td {
+          background-color: #aaa;
+          color: #fff;
         }
       }
     }

@@ -75,7 +75,7 @@ const Locals: React.FC = () => {
   const { local } = useParams<IRouteParams>();
   const [coordLatitude, setCoordLatitude] = useState<number>(-25.442152);
   const [coordLongitude, setCoordLongitude] = useState<number>(-49.2742434);
-  const [zoom, setZoom] = useState<number>(12);
+  const [zoom, setZoom] = useState<number>(9);
 
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
   const [charList, setCharList] = useState<ICharacter[]>([]);
