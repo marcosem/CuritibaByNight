@@ -17,6 +17,7 @@ import AddCharacter from '../pages/AddCharacter';
 import AddLocation from '../pages/AddLocation';
 import LocationUpdate from '../pages/LocationUpdate';
 import LocationCharList from '../pages/LocationCharList';
+import CharacterDetails from '../pages/CharacterDetails';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -60,6 +61,12 @@ const Routes: React.FC = () => (
     <Route
       path="/localchars"
       component={LocationCharList}
+      isPrivate
+      isStoryteller
+    />
+    <Route
+      path="/character"
+      component={CharacterDetails}
       isPrivate
       isStoryteller
     />

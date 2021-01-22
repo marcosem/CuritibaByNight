@@ -1,12 +1,14 @@
 /* eslint-disable camelcase */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, MouseEvent } from 'react';
 import { format } from 'date-fns';
-import { toPng } from 'html-to-image';
-import download from 'downloadjs';
-import { confirmAlert } from 'react-confirm-alert';
+// import { toPng } from 'html-to-image';
+// import download from 'downloadjs';
+// import { confirmAlert } from 'react-confirm-alert';
+import { useHistory } from 'react-router-dom';
 import CharacterCard from '../CharacterCard';
 import { Scroll, Character } from './styles';
 import { useMobile } from '../../hooks/mobile';
+import { useSelection } from '../../hooks/selection';
 import ICharacter from './ICharacter';
 
 interface ICharacterListProps {
@@ -24,6 +26,8 @@ const CharacterList: React.FC<ICharacterListProps> = ({
 }) => {
   const [charList, setCharList] = useState<[ICharacter[]]>([[]]);
   const { isMobileVersion } = useMobile();
+  const { setChar } = useSelection();
+  const history = useHistory();
 
   useEffect(() => {
     const splitNum = isMobileVersion ? 1 : 3;
@@ -79,6 +83,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
     setCharList(rowArray);
   }, [chars, isMobileVersion, filterClan, filterSituation]);
 
+  /*
   const handleSaveCard = useCallback(async e => {
     toPng(e.target).then(dataUrl => {
       confirmAlert({
@@ -100,6 +105,21 @@ const CharacterList: React.FC<ICharacterListProps> = ({
       });
     });
   }, []);
+  */
+
+  const handleSelectChar = useCallback(
+    async (e: MouseEvent<HTMLTableCellElement>) => {
+      const charId = e.currentTarget.id;
+      const charRow = charList.find(cRow => cRow.find(ch => ch.id === charId));
+      const char = charRow?.find(ch => ch.id === charId);
+
+      if (char !== undefined) {
+        setChar(char);
+        history.push('/character');
+      }
+    },
+    [charList, history, setChar],
+  );
 
   return charList[0][0] === undefined ? (
     <></>
@@ -111,7 +131,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
             {charList.map(row => (
               <tr key={`row:${row[0].id}`}>
                 {row.map(char => (
-                  <td key={char.id} onDoubleClick={handleSaveCard}>
+                  <td key={char.id} id={char.id} onClick={handleSelectChar}>
                     <CharacterCard
                       charId={char.id}
                       name={char.name}

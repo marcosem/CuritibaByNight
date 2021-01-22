@@ -28,7 +28,7 @@ function useMobile(): IMobileContextData {
   const context = useContext(MobileContext);
 
   if (!context) {
-    throw new Error('useToast must be used within a MobileProvider');
+    throw new Error('useMobile must be used within a MobileProvider');
   }
 
   return context;
