@@ -22,9 +22,9 @@ const CharacterDetails: React.FC = () => {
   return (
     <Container>
       {isMobileVersion ? (
-        <HeaderMobile page="dashboard" />
+        <HeaderMobile page="character" />
       ) : (
-        <Header page="dashboard" />
+        <Header page="character" />
       )}
 
       {char && <CharacterPanel myChar={char} />}

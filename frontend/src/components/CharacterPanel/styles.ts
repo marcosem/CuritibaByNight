@@ -5,10 +5,6 @@ interface IDashboardProps {
   isMobile: boolean;
 }
 
-export const Container = styled.div`
-  height: 100vh; ;
-`;
-
 export const Content = styled.main<IDashboardProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;

@@ -10,7 +10,6 @@ import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 
 import {
-  Container,
   TitleBox,
   Content,
   CharCardContainer,
@@ -155,7 +154,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   }, [history]);
 
   return (
-    <Container>
+    <>
       <TitleBox>
         {myChar ? (
           <strong>Clique no nome do personagem para visualizar a ficha:</strong>
@@ -212,14 +211,26 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     </>
                   )}
 
-                  <div>
-                    <strong>Experiêcia disponível:</strong>
-                    <span>{myChar.experience}</span>
-                  </div>
-                  <div>
-                    <strong>Jogador:</strong>
-                    <span>{user.name}</span>
-                  </div>
+                  {myChar.npc ? (
+                    <div>
+                      <strong>NPC</strong>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <strong>Experiêcia disponível:</strong>
+                        <span>{myChar.experience}</span>
+                      </div>
+                      <div>
+                        <strong>Jogador:</strong>
+                        {dashboard ? (
+                          <span>{user.name}</span>
+                        ) : (
+                          <span>{myChar.user && myChar.user.name}</span>
+                        )}
+                      </div>
+                    </>
+                  )}
 
                   {locationsList.length > 0 && (
                     <>
@@ -268,7 +279,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
           </>
         )}
       </Content>
-    </Container>
+    </>
   );
 };
 
