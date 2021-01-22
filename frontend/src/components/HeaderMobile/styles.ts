@@ -29,7 +29,7 @@ export const HeaderContent = styled.div`
   }
 
   button {
-    margin-right: 45px;
+    margin-right: 35px;
     background: transparent;
     border: 0;
 
