@@ -186,9 +186,7 @@ const CharacterUpdate: React.FC = () => {
   }, [loadCharacters]);
 
   useEffect(() => {
-    if (myChar !== undefined) {
-      loadLocations();
-    }
+    loadLocations();
   }, [loadLocations, myChar]);
 
   return (
