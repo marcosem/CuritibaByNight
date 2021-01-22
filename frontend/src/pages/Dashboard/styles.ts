@@ -1,17 +1,32 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import bgImg from '../../assets/yellow-old-paper.jpg';
+
+interface IDashboardProps {
+  isMobile: boolean;
+}
 
 export const Container = styled.div`
   height: 100vh; ;
 `;
 
-export const Content = styled.main`
-  min-width: 340px;
-  max-width: 1012px;
+export const Content = styled.main<IDashboardProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
   display: flex;
-  flex-direction: row;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 340px;
+          flex-direction: column;
+        `
+      : css`
+          min-width: 340px;
+          max-width: 1012px;
+
+          flex-direction: row;
+        `}
+
   border-radius: 4px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 `;
@@ -40,41 +55,45 @@ export const TitleBox = styled.div`
   }
 `;
 
-export const CharCardContainer = styled.div`
+export const CharCardContainer = styled.div<IDashboardProps>`
   padding: 16px;
+
+  ${props =>
+    props.isMobile &&
+    css`
+      padding-bottom: 5px;
+
+      div {
+        margin: auto;
+      }
+    `}
 `;
 
-export const CharacterContainer = styled.div`
+export const CharacterContainer = styled.div<IDashboardProps>`
   width: 100%;
-  margin: 20px;
-
   display: flex;
   flex-direction: column;
 
-  form {
-    margin-top: 10px;
-    border-top: 2px solid #333;
-    padding-top: 10px;
-  }
+  ${props =>
+    props.isMobile
+      ? css`
+          margin: 10px;
+        `
+      : css`
+          margin: 20px;
+        `}
 
   div {
     display: flex;
+    flex-direction: row;
     width: 100%;
     margin-bottom: 5px;
 
     h1 {
-      font-size: 24px;
-      font-weight: 500;
       color: #333;
-      margin-bottom: 16px;
-
-      &:not(:first-child) {
-        margin-left: auto;
-      }
     }
 
     strong {
-      font-size: 18px;
       font-weight: 500;
       color: #333;
     }
@@ -85,33 +104,86 @@ export const CharacterContainer = styled.div`
       color: #333;
       margin-left: 10px;
     }
+
+    ${props =>
+      props.isMobile
+        ? css`
+            h1 {
+              font-size: 18px;
+              font-weight: 550;
+              margin: 0 auto;
+            }
+
+            strong {
+              font-size: 14px;
+            }
+
+            span {
+              font-size: 14px;
+            }
+          `
+        : css`
+            h1 {
+              font-size: 24px;
+              font-weight: 500;
+              margin-bottom: 16px;
+
+              &:not(:first-child) {
+                margin-left: auto;
+              }
+            }
+
+            strong {
+              font-size: 18px;
+            }
+
+            span {
+              font-size: 18px;
+            }
+          `}
   }
 `;
 
-export const TableWrapper = styled.div`
+export const TableWrapper = styled.div<IDashboardProps>`
   margin: 10px auto;
-  min-width: 340px;
-  max-width: 1012px;
+  min-width: 320px;
   border-radius: 11px;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 340px;
+        `
+      : css`
+          max-width: 1012px;
+        `}
 `;
 
-export const Table = styled.table`
+export const Table = styled.table<IDashboardProps>`
   border-radius: 10px;
-  font-size: 12px;
   font-weight: normal;
   border: none;
   border-collapse: collapse;
   width: 100%;
-  min-width: 340px;
-  max-width: 1012px;
+  min-width: 320px;
   white-space: nowrap;
   background-color: transparent;
   opacity: 0.9;
 
+  ${props =>
+    props.isMobile
+      ? css`
+          font-size: 10px;
+          max-width: 320px;
+        `
+      : css`
+          font-size: 12px;
+          max-width: 1012px;
+        `}
+
   td {
     text-align: center;
     padding: 8px;
-    font-size: 12px;
     color: #000;
 
     border-left: 1px solid #ddd;

@@ -42,6 +42,7 @@ const CharacterUpdate: React.FC = () => {
   const { user, signOut, setChar } = useAuth();
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
+  // const isMobileVersion = true;
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -208,14 +209,14 @@ const CharacterUpdate: React.FC = () => {
           </strong>
         )}
       </TitleBox>
-      <Content>
+      <Content isMobile={isMobileVersion}>
         {isBusy ? (
           <Loading />
         ) : (
           <>
             {myChar && (
               <>
-                <CharCardContainer>
+                <CharCardContainer isMobile={isMobileVersion}>
                   <CharacterCard
                     charId={myChar.id}
                     name={myChar.name}
@@ -230,59 +231,76 @@ const CharacterUpdate: React.FC = () => {
                     locked={false}
                   />
                 </CharCardContainer>
-                {!isMobileVersion && (
-                  <CharacterContainer>
-                    <div>
-                      <h1>{myChar.name}</h1>
-                      <h1>{myChar.clan}</h1>
-                    </div>
+                <CharacterContainer isMobile={isMobileVersion}>
+                  {isMobileVersion ? (
+                    <>
+                      <div>
+                        <h1>{myChar.name}</h1>
+                      </div>
+                      <div>
+                        <h1>{myChar.clan}</h1>
+                      </div>
+                      <div>
+                        <span>
+                          <br />
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <h1>{myChar.name}</h1>
+                        <h1>{myChar.clan}</h1>
+                      </div>
+                    </>
+                  )}
 
-                    <div>
-                      <strong>Experiêcia disponível:</strong>
-                      <span>{myChar.experience}</span>
-                    </div>
-                    <div>
-                      <strong>Jogador:</strong>
-                      <span>{user.name}</span>
-                    </div>
-                    {locationsList.length > 0 && (
-                      <>
-                        <div>
-                          <strong>
-                            <br />
-                            Locais conhecidos pelo personagem:
-                          </strong>
-                        </div>
-                        <TableWrapper>
-                          <Table>
-                            <thead>
-                              <tr>
-                                <th>Local</th>
-                                <th>Descrição</th>
+                  <div>
+                    <strong>Experiêcia disponível:</strong>
+                    <span>{myChar.experience}</span>
+                  </div>
+                  <div>
+                    <strong>Jogador:</strong>
+                    <span>{user.name}</span>
+                  </div>
+
+                  {locationsList.length > 0 && (
+                    <>
+                      <div>
+                        <strong>
+                          <br />
+                          Locais conhecidos pelo personagem:
+                        </strong>
+                      </div>
+                      <TableWrapper isMobile={isMobileVersion}>
+                        <Table isMobile={isMobileVersion}>
+                          <thead>
+                            <tr>
+                              <th>Local</th>
+                              <th>Descrição</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {locationsList.map(local => (
+                              <tr
+                                key={local.id}
+                                id={local.id}
+                                onClick={handleLocationJump}
+                              >
+                                <td>
+                                  <TableCell>{local.name}</TableCell>
+                                </td>
+                                <td>
+                                  <TableCell>{local.description}</TableCell>
+                                </td>
                               </tr>
-                            </thead>
-                            <tbody>
-                              {locationsList.map(local => (
-                                <tr
-                                  key={local.id}
-                                  id={local.id}
-                                  onClick={handleLocationJump}
-                                >
-                                  <td>
-                                    <TableCell>{local.name}</TableCell>
-                                  </td>
-                                  <td>
-                                    <TableCell>{local.description}</TableCell>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </Table>
-                        </TableWrapper>
-                      </>
-                    )}
-                  </CharacterContainer>
-                )}
+                            ))}
+                          </tbody>
+                        </Table>
+                      </TableWrapper>
+                    </>
+                  )}
+                </CharacterContainer>
               </>
             )}
           </>
