@@ -50,7 +50,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   const [retainerList, setRetainerList] = useState<ICharacter[]>([]);
   const { addToast } = useToast();
   const history = useHistory();
-  const { user, signOut } = useAuth();
+  const { user, char, signOut } = useAuth();
   const { setChar } = useSelection();
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
@@ -265,7 +265,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
                     npc={myChar.npc}
                     regnant={myChar.regnant ? myChar.regnant : ''}
-                    locked={false}
+                    locked={!user.storyteller && char.id !== myChar.id}
                   />
                 </CharCardContainer>
                 <CharacterContainer isMobile={isMobileVersion}>
