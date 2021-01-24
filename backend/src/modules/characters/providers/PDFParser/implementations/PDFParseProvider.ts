@@ -34,7 +34,7 @@ class PDFParseProvider implements IPDFParserProvider {
     let clan: string;
     let isMortal = false;
     let title: string;
-    let coterie: string;
+    let coterie = '';
     let retainerLevel = 0;
 
     let isParsedXP = false;
@@ -99,7 +99,7 @@ class PDFParseProvider implements IPDFParserProvider {
         if (isMortal) rl.close();
       }
 
-      if (line.indexOf('Coterie/Pack: ') >= 0 && !coterie) {
+      if (line.indexOf('Coterie/Pack: ') >= 0 && coterie === '') {
         const startCoterie =
           line.indexOf('Coterie/Pack: ') + 'Coterie/Pack: '.length;
         const endCoterie = line.indexOf('Sire: ') - 1;
