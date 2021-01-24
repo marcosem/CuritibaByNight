@@ -94,7 +94,7 @@ describe('UpdateRetainersXPService', () => {
     });
   });
 
-  it('Should skip retainers already updated', async () => {
+  it('Should skip PC retainers or retainers already updated', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -115,12 +115,13 @@ describe('UpdateRetainersXPService', () => {
     });
 
     const charRetainer1 = await fakeCharactersRepository.create({
+      user_id: user.id,
       name: 'Valdomiro Troca Tiro',
-      experience: 67,
-      experience_total: 67,
+      experience: 0,
+      experience_total: 0,
       file: 'valdomiro.pdf',
       clan: 'Ghoul: Tzimisce',
-      npc: true,
+      npc: false,
       regnant: char.id,
       retainer_level: 3,
     });
@@ -146,13 +147,13 @@ describe('UpdateRetainersXPService', () => {
 
     expect(finalList).toHaveLength(2);
     expect(finalList[0]).toMatchObject({
-      user_id: null,
+      user_id: user.id,
       id: charRetainer1.id,
       name: charRetainer1.name,
-      experience: 67,
-      experience_total: 67,
+      experience: 0,
+      experience_total: 0,
       file: 'valdomiro.pdf',
-      npc: true,
+      npc: false,
       regnant: char.id,
       retainer_level: 3,
     });

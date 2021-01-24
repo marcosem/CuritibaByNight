@@ -132,7 +132,7 @@ describe('CreateCharacterSheet', () => {
     });
   });
 
-  it('Should be able to create a retainer with regnant set', async () => {
+  it('Should be able to create a NPC retainer with regnant set', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -179,6 +179,59 @@ describe('CreateCharacterSheet', () => {
       coterie: '',
       file: 'Dracula - Valdomiro Troca Tiro.pdf',
       npc: true,
+      regnant: char.id,
+      retainer_level: 3,
+    });
+  });
+
+  it('Should be able to create a PC retainer with regnant set', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await createCharacterSheet.execute({
+      user_id: user.id,
+      player_id: user.id,
+      char_name: 'Dracula',
+      char_xp: 666,
+      char_xp_total: 667,
+      char_clan: 'Tzimisce',
+      char_title: 'Priest',
+      char_coterie: 'Gangue do Parquinho',
+      sheetFilename: 'dracula.pdf',
+      is_npc: false,
+      char_retainer_level: 0,
+    });
+
+    const charRetainer = await createCharacterSheet.execute({
+      user_id: user.id,
+      player_id: user.id,
+      char_name: 'Valdomiro Troca Tiro',
+      char_xp: 0,
+      char_xp_total: 0,
+      char_clan: 'Ghoul: Tzimisce',
+      char_title: '',
+      char_coterie: '',
+      sheetFilename: 'Dracula - Valdomiro Troca Tiro.pdf',
+      is_npc: false,
+      char_regnant: char.id,
+      char_retainer_level: 3,
+    });
+
+    expect(charRetainer).toHaveProperty('id');
+    expect(charRetainer).toMatchObject({
+      user_id: user.id,
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      clan: 'Ghoul: Tzimisce',
+      title: '',
+      coterie: '',
+      file: 'Dracula - Valdomiro Troca Tiro.pdf',
+      npc: false,
       regnant: char.id,
       retainer_level: 3,
     });
