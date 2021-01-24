@@ -50,6 +50,9 @@ const AddCharacter: React.FC = () => {
     character_url: '',
     situation: 'active',
     experience: '0',
+    experience_total: '0',
+    regnant: undefined,
+    retainer_level: '0',
     npc: filter === 'npc',
   });
   const [charSheet, setCharSheet] = useState<File>();
@@ -247,6 +250,7 @@ const AddCharacter: React.FC = () => {
                 avatar={savedChar.avatar_url}
                 updatedAt={savedChar.formatedDate ? savedChar.formatedDate : ''}
                 npc={savedChar.npc}
+                regnant={savedChar.regnant ? savedChar.regnant : ''}
                 locked
               />
             </CharCardContainer>

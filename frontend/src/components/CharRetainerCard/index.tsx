@@ -3,6 +3,7 @@ import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
 import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import api from '../../services/api';
+import ICharacter from '../CharacterList/ICharacter';
 import cardRetainer from '../../assets/cards/card_retainer.png';
 
 import {
@@ -25,7 +26,8 @@ interface ICharacterCardProps {
   avatar: string;
   sheetFile: string;
   title: string;
-  coterie: string;
+  clan: string;
+  regnant: string;
   updatedAt: string;
   situation?: string;
   npc?: boolean;
@@ -39,17 +41,42 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   avatar,
   sheetFile,
   title,
-  coterie,
+  clan,
+  regnant,
   updatedAt,
   situation = 'active',
   npc = false,
   locked = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
+  const [regnantName, setRegnantName] = useState<string>('');
   const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
   const [situationTitle, setSituationTitle] = useState<string>('');
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
+
+  const getRenantName = useCallback(async () => {
+    if (regnant === '' || regnant === null) {
+      setRegnantName('');
+      return;
+    }
+
+    try {
+      await api.get(`/character/${regnant}`).then(response => {
+        const res = response.data;
+        const char: ICharacter = res;
+
+        const regName = char.name;
+        setRegnantName(regName);
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao carregar Regente',
+        description: 'Erro ao carregar regente do mortal.',
+      });
+    }
+  }, [addToast, regnant]);
 
   useEffect(() => {
     setCharImg(avatar || tempProfileImg);
@@ -110,6 +137,10 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
     [addToast, charId, name],
   );
 
+  useEffect(() => {
+    getRenantName();
+  }, [getRenantName]);
+
   return (
     <Container isMobile={isMobileVersion}>
       <CardSquare clanImg={cardRetainer}>
@@ -130,7 +161,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
             <b>{title !== '' && `${title}: `}</b>
             {name}
           </a>
-          <span>{coterie !== '' && `${coterie}`}</span>
+          {regnantName !== '' && <span>{`${clan} de ${regnantName}`}</span>}
         </CharInfo>
 
         {situation !== 'active' && (

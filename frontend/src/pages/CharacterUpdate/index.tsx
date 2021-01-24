@@ -78,7 +78,9 @@ interface IRouteParams {
 const CharacterUpdate: React.FC = () => {
   const { filter } = useParams<IRouteParams>();
   const [charList, setCharList] = useState<ICharacter[]>([]);
+  const [regnantList, setRegnatList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
+  const [selectedRegnant, setSelectedRegnant] = useState<ICharacter>();
   const [charSituation, setCharSituation] = useState<ISituation>();
   const [charSheet, setCharSheet] = useState<File>();
   const [lastComment, setLastComment] = useState<string>();
@@ -99,6 +101,14 @@ const CharacterUpdate: React.FC = () => {
         const fullList: ICharacter[] = res;
 
         setCharList(fullList);
+      });
+
+      await api.get('characters/list/all').then(response => {
+        const res = response.data;
+
+        const fullList: ICharacter[] = res;
+
+        setRegnatList(fullList);
       });
     } catch (error) {
       if (error.response) {
@@ -164,6 +174,10 @@ const CharacterUpdate: React.FC = () => {
           formData.append('situation', charSituation.titleEn);
         }
 
+        if (selectedRegnant) {
+          formData.append('regnant_id', selectedRegnant.id);
+        }
+
         formData.append('sheet', charSheet);
 
         setUploading(true);
@@ -176,8 +190,23 @@ const CharacterUpdate: React.FC = () => {
             'dd/MM/yyyy',
           );
 
+          let filteredClan: string[];
+          if (savedChar.clan) {
+            filteredClan = savedChar.clan.split(' (');
+            filteredClan = filteredClan[0].split(':');
+          } else {
+            filteredClan = [''];
+          }
+
+          const clanIndex = 0;
+          savedChar.clan = filteredClan[clanIndex];
+
           setSelectedChar(savedChar);
           loadCharacters();
+        });
+
+        await api.patch('/character/updateretainers', {
+          character_id: selectedChar.id,
         });
 
         addToast({
@@ -196,7 +225,15 @@ const CharacterUpdate: React.FC = () => {
       }
       setUploading(false);
     },
-    [filter, charSheet, selectedChar, charSituation, addToast, loadCharacters],
+    [
+      filter,
+      charSheet,
+      selectedChar,
+      charSituation,
+      selectedRegnant,
+      addToast,
+      loadCharacters,
+    ],
   );
 
   const handleSituationChange = useCallback(
@@ -261,6 +298,7 @@ const CharacterUpdate: React.FC = () => {
       const selIndex = event.target.selectedIndex;
 
       let selectedCharacter: ICharacter | undefined;
+      let selRegnant: ICharacter | undefined;
       if (selIndex > 0) {
         const selChar = charList[selIndex - 1];
         selChar.formatedDate = format(
@@ -271,6 +309,7 @@ const CharacterUpdate: React.FC = () => {
         let filteredClan: string[];
         if (selChar.clan) {
           filteredClan = selChar.clan.split(' (');
+          filteredClan = filteredClan[0].split(':');
         } else {
           filteredClan = [''];
         }
@@ -278,15 +317,38 @@ const CharacterUpdate: React.FC = () => {
         const clanIndex = 0;
         selChar.clan = filteredClan[clanIndex];
 
+        selRegnant = selChar.regnant
+          ? regnantList.find(regChar => regChar.id === selChar.regnant)
+          : undefined;
+
         selectedCharacter = selChar;
       } else {
         selectedCharacter = undefined;
+        selRegnant = undefined;
       }
 
       setSelectedChar(selectedCharacter);
       setCharSheet(undefined);
+      setSelectedRegnant(selRegnant);
     },
-    [charList],
+    [charList, regnantList],
+  );
+
+  const handleRegnantChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      let selRegnant: ICharacter | undefined;
+      if (selIndex > 0) {
+        const selChar = regnantList[selIndex - 1];
+        selRegnant = selChar;
+      } else {
+        selRegnant = undefined;
+      }
+
+      setSelectedRegnant(selRegnant);
+    },
+    [regnantList],
   );
 
   const handleSheetChange = useCallback(
@@ -374,6 +436,7 @@ const CharacterUpdate: React.FC = () => {
                       selectedChar.formatedDate ? selectedChar.formatedDate : ''
                     }
                     npc={selectedChar.npc}
+                    regnant={selectedChar.regnant ? selectedChar.regnant : ''}
                     locked={filter !== 'npc'}
                   />
                 </CharCardContainer>
@@ -435,6 +498,27 @@ const CharacterUpdate: React.FC = () => {
                         ))}
                       </SelectSituation>
                     </div>
+
+                    {(selectedChar.clan.indexOf('Ghoul') >= 0 ||
+                      selectedChar.clan.indexOf('Retainer') >= 0) && (
+                      <div>
+                        <strong>Regente / Guardião:</strong>
+                        <Select
+                          name="regnant"
+                          id="regnant"
+                          value={selectedRegnant ? selectedRegnant.name : ''}
+                          onChange={handleRegnantChange}
+                        >
+                          <option value="">Selecione um Personagem</option>
+                          {regnantList.map(character => (
+                            <option key={character.id} value={character.name}>
+                              {character.name}
+                            </option>
+                          ))}
+                        </Select>
+                      </div>
+                    )}
+
                     <InputFileBox>
                       <label htmlFor="sheet">
                         <FiUpload />

@@ -184,6 +184,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     avatar={myChar.avatar_url}
                     updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
                     npc={myChar.npc}
+                    regnant={myChar.regnant ? myChar.regnant : ''}
                     locked={false}
                   />
                 </CharCardContainer>

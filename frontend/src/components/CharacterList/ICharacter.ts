@@ -7,10 +7,13 @@ export default interface ICharacter {
   coterie: string;
   avatar_url: string;
   experience: string;
+  experience_total: string;
   updated_at: Date;
   character_url: string;
   situation: string;
   npc: boolean;
+  regnant?: string;
+  retainer_level: string;
   formatedDate?: string;
   user?: {
     id: string;

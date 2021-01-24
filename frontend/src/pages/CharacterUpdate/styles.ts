@@ -105,6 +105,15 @@ export const CharacterFormContainer = styled.div`
       color: #333;
       margin-left: 10px;
     }
+
+    select {
+      background: #222;
+      margin-left: 10px;
+      color: #ccc;
+      text-align: center;
+      text-align-last: center;
+      -moz-text-align-last: center;
+    }
   }
 `;
 

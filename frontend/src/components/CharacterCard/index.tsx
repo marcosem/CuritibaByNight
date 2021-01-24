@@ -15,6 +15,7 @@ interface ICharacterCardProps {
   updatedAt: string;
   situation?: string;
   npc?: boolean;
+  regnant?: string;
   locked?: boolean;
 }
 
@@ -30,6 +31,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   updatedAt,
   situation = 'active',
   npc = false,
+  regnant = '',
   locked = false,
 }) => {
   return (
@@ -41,10 +43,11 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
           experience={experience}
           sheetFile={sheetFile}
           title={title}
-          coterie={coterie}
+          clan={clan}
           avatar={avatar}
           updatedAt={updatedAt}
           npc={npc}
+          regnant={regnant}
           situation={situation}
           locked={locked}
         />
