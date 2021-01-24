@@ -32,6 +32,9 @@ class Character {
   experience: number;
 
   @Column()
+  experience_total: number;
+
+  @Column()
   file: string;
 
   @Column()
@@ -51,6 +54,12 @@ class Character {
 
   @Column()
   npc: boolean;
+
+  @Column()
+  regnant: string;
+
+  @Column()
+  retainer_level: number;
 
   @CreateDateColumn()
   created_at: Date;

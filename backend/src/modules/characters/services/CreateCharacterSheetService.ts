@@ -4,16 +4,20 @@ import Character from '@modules/characters/infra/typeorm/entities/Character';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
+import calculateRetainerXP from '@modules/characters/utils/calculateRetainerXP';
 
 interface IRequestDTO {
   user_id: string;
   player_id?: string;
   char_name: string;
   char_xp: number;
+  char_xp_total: number;
   char_clan: string;
   char_title: string;
   char_coterie: string;
   is_npc: boolean;
+  char_regnant?: string;
+  char_retainer_level?: number;
   sheetFilename: string;
 }
 
@@ -33,10 +37,13 @@ class CreateCharacterSheetService {
     player_id,
     char_name,
     char_xp,
+    char_xp_total,
     char_clan,
     char_title,
     char_coterie,
     is_npc,
+    char_regnant,
+    char_retainer_level = 0,
     sheetFilename,
   }: IRequestDTO): Promise<Character> {
     const user = await this.usersRepository.findById(user_id);
@@ -69,6 +76,33 @@ class CreateCharacterSheetService {
       }
     }
 
+    let newCharTotalXP = char_xp_total;
+    let newCharXP = char_xp;
+
+    if (char_regnant) {
+      const charRegnant = await this.charactersRepository.findById(
+        char_regnant,
+      );
+
+      if (!charRegnant) {
+        await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+        throw new AppError('Regnant Character not found', 400);
+      }
+
+      if (char_clan.indexOf('Ghoul') < 0 && char_clan.indexOf('Retainer') < 0) {
+        await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+        throw new AppError('Only Mortal Characters may have a Regnant', 400);
+      }
+
+      newCharTotalXP = calculateRetainerXP({
+        retainerLevel: char_retainer_level,
+        regnantXP: charRegnant.experience_total,
+      });
+
+      const difXP = newCharTotalXP - char_xp_total;
+      newCharXP += difXP;
+    }
+
     const filename = await this.storageProvider.saveFile(
       sheetFilename,
       'sheet',
@@ -77,12 +111,15 @@ class CreateCharacterSheetService {
     const char = await this.charactersRepository.create({
       user_id: !is_npc ? player_id : undefined,
       name: char_name,
-      experience: char_xp,
+      experience: newCharXP,
+      experience_total: newCharTotalXP,
       clan: char_clan,
       title: char_title,
       coterie: char_coterie,
       file: filename,
       npc: is_npc,
+      regnant: char_regnant,
+      retainer_level: char_retainer_level,
     });
 
     return char;

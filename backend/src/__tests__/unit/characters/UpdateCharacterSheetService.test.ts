@@ -40,6 +40,7 @@ describe('UpdateCharacterSheet', () => {
       user_id: user.id,
       name: 'Dracula',
       experience: 666,
+      experience_total: 667,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
       title: 'Priest',
@@ -54,6 +55,7 @@ describe('UpdateCharacterSheet', () => {
       char_id: char.id,
       char_name: 'Nosferatu',
       char_xp: 1,
+      char_xp_total: 2,
       char_clan: 'Nosferatu',
       char_title: 'Prince',
       char_coterie: '',
@@ -61,6 +63,7 @@ describe('UpdateCharacterSheet', () => {
       sheetFilename: 'nosferatu.pdf',
       update: 'Updated',
       is_npc: false,
+      char_retainer_level: 0,
     });
 
     expect(charUpdated).toMatchObject({
@@ -68,10 +71,12 @@ describe('UpdateCharacterSheet', () => {
       user_id: user.id,
       name: 'Nosferatu',
       experience: 1,
+      experience_total: 2,
       clan: 'Nosferatu',
       title: 'Prince',
       coterie: '',
       file: 'nosferatu.pdf',
+      retainer_level: 0,
     });
 
     expect(deleteFile).toHaveBeenCalledWith('dracula.pdf', 'sheet');
@@ -88,6 +93,7 @@ describe('UpdateCharacterSheet', () => {
     const char = await fakeCharactersRepository.create({
       name: 'Dracula',
       experience: 666,
+      experience_total: 667,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
       title: 'Priest',
@@ -102,6 +108,7 @@ describe('UpdateCharacterSheet', () => {
       char_id: char.id,
       char_name: 'Nosferatu',
       char_xp: 1,
+      char_xp_total: 2,
       char_clan: 'Nosferatu',
       char_title: 'Prince',
       char_coterie: '',
@@ -116,11 +123,13 @@ describe('UpdateCharacterSheet', () => {
       user_id: null,
       name: 'Nosferatu',
       experience: 1,
+      experience_total: 2,
       clan: 'Nosferatu',
       title: 'Prince',
       coterie: '',
       file: 'nosferatu.pdf',
       npc: true,
+      retainer_level: 0,
     });
 
     expect(deleteFile).toHaveBeenCalledWith('dracula.pdf', 'sheet');
@@ -138,11 +147,13 @@ describe('UpdateCharacterSheet', () => {
       user_id: user.id,
       name: 'Dracula',
       experience: 666,
+      experience_total: 667,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
       title: 'Priest',
       coterie: 'Gangue do Parquinho',
       npc: false,
+      retainer_level: 0,
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
@@ -152,6 +163,7 @@ describe('UpdateCharacterSheet', () => {
       char_id: char.id,
       char_name: 'Nosferatu',
       char_xp: 1,
+      char_xp_total: 2,
       char_clan: 'Nosferatu',
       char_title: 'Prince',
       char_coterie: '',
@@ -159,6 +171,7 @@ describe('UpdateCharacterSheet', () => {
       sheetFilename: 'nosferatu.pdf',
       update: 'Updated',
       is_npc: true,
+      char_retainer_level: 0,
     });
 
     expect(charUpdated).toMatchObject({
@@ -166,14 +179,447 @@ describe('UpdateCharacterSheet', () => {
       user_id: null,
       name: 'Nosferatu',
       experience: 1,
+      experience_total: 2,
       clan: 'Nosferatu',
       title: 'Prince',
       coterie: '',
       file: 'nosferatu.pdf',
       npc: true,
+      retainer_level: 0,
     });
 
     expect(deleteFile).toHaveBeenCalledWith('dracula.pdf', 'sheet');
+  });
+
+  it('Should be able to update an retainer', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      experience_total: 667,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
+      npc: false,
+    });
+
+    const charRetainer = await fakeCharactersRepository.create({
+      // user_id: user.id,
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      file: 'valdomiro.pdf',
+      clan: 'Mortal',
+      title: '',
+      coterie: '',
+      npc: true,
+      regnant: char.id,
+      retainer_level: 0,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    const charUpdated = await updateCharacterSheet.execute({
+      user_id: user.id,
+      char_id: charRetainer.id,
+      char_name: 'Valdomirão',
+      char_xp: 1,
+      char_xp_total: 2,
+      char_clan: 'Ghoul: Tzimisce',
+      char_title: '',
+      char_coterie: '',
+      char_situation: 'active',
+      sheetFilename: 'valdomirao.pdf',
+      update: 'Updated',
+      is_npc: true,
+      char_regnant: char.id,
+      char_retainer_level: 4,
+    });
+
+    expect(charUpdated).toMatchObject({
+      user_id: null,
+      id: charRetainer.id,
+      name: 'Valdomirão',
+      experience: 99,
+      experience_total: 100,
+      clan: 'Ghoul: Tzimisce',
+      title: '',
+      coterie: '',
+      file: 'valdomirao.pdf',
+      regnant: char.id,
+      retainer_level: 4,
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('valdomiro.pdf', 'sheet');
+  });
+
+  it('Should be able to update an existant mortal character sheet to retainer', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      experience_total: 667,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
+      npc: false,
+    });
+
+    const charRetainer = await fakeCharactersRepository.create({
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      file: 'valdomiro.pdf',
+      clan: 'Mortal',
+      title: '',
+      coterie: '',
+      npc: true,
+      retainer_level: 0,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    const charUpdated = await updateCharacterSheet.execute({
+      user_id: user.id,
+      char_id: charRetainer.id,
+      char_name: 'Valdomirão',
+      char_xp: 1,
+      char_xp_total: 2,
+      char_clan: 'Ghoul: Tzimisce',
+      char_title: '',
+      char_coterie: '',
+      char_situation: 'active',
+      sheetFilename: 'valdomirao.pdf',
+      update: 'Updated',
+      is_npc: true,
+      char_regnant: char.id,
+      char_retainer_level: 4,
+    });
+
+    expect(charUpdated).toMatchObject({
+      user_id: null,
+      id: charRetainer.id,
+      name: 'Valdomirão',
+      experience: 99,
+      experience_total: 100,
+      clan: 'Ghoul: Tzimisce',
+      title: '',
+      coterie: '',
+      file: 'valdomirao.pdf',
+      regnant: char.id,
+      retainer_level: 4,
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('valdomiro.pdf', 'sheet');
+  });
+
+  it('Should be able to update an retainer character sheet to another regnant', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      experience_total: 667,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
+      npc: false,
+    });
+
+    const newRegnant = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Nosferatu',
+      experience: 10,
+      experience_total: 20,
+      file: 'nosferatu.pdf',
+      clan: 'Nosferatu',
+      title: 'Prince',
+      coterie: '',
+      npc: false,
+    });
+
+    const charRetainer = await fakeCharactersRepository.create({
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      file: 'valdomiro.pdf',
+      clan: 'Mortal Retainer',
+      title: '',
+      coterie: '',
+      npc: true,
+      regnant: char.id,
+      retainer_level: 2,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    const charUpdated = await updateCharacterSheet.execute({
+      user_id: user.id,
+      char_id: charRetainer.id,
+      char_name: 'Valdomirão',
+      char_xp: 1,
+      char_xp_total: 2,
+      char_clan: 'Mortal Retainer',
+      char_title: '',
+      char_coterie: '',
+      char_situation: 'active',
+      sheetFilename: 'valdomirao.pdf',
+      update: 'Updated',
+      is_npc: true,
+      char_regnant: newRegnant.id,
+      char_retainer_level: 3,
+    });
+
+    expect(charUpdated).toMatchObject({
+      user_id: null,
+      id: charRetainer.id,
+      name: 'Valdomirão',
+      experience: 1,
+      experience_total: 2,
+      clan: 'Mortal Retainer',
+      title: '',
+      coterie: '',
+      file: 'valdomirao.pdf',
+      regnant: newRegnant.id,
+      retainer_level: 3,
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('valdomiro.pdf', 'sheet');
+  });
+
+  it('Should be able to update an retainer without change his regent', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      experience_total: 667,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
+      npc: false,
+    });
+
+    const charRetainer = await fakeCharactersRepository.create({
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      file: 'valdomiro.pdf',
+      clan: 'Mortal Retainer',
+      title: '',
+      coterie: '',
+      npc: true,
+      regnant: char.id,
+      retainer_level: 2,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    const charUpdated = await updateCharacterSheet.execute({
+      user_id: user.id,
+      char_id: charRetainer.id,
+      char_name: 'Valdomirão',
+      char_xp: 66,
+      char_xp_total: 67,
+      char_clan: 'Mortal Retainer',
+      char_title: '',
+      char_coterie: '',
+      char_situation: 'active',
+      sheetFilename: 'valdomirao.pdf',
+      update: 'Updated',
+      is_npc: true,
+      char_retainer_level: 3,
+    });
+
+    expect(charUpdated).toMatchObject({
+      user_id: null,
+      id: charRetainer.id,
+      name: 'Valdomirão',
+      experience: 66,
+      experience_total: 67,
+      clan: 'Mortal Retainer',
+      title: '',
+      coterie: '',
+      file: 'valdomirao.pdf',
+      regnant: char.id,
+      retainer_level: 3,
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('valdomiro.pdf', 'sheet');
+  });
+
+  it('Should not allow an retainer character sheet be his own regnant', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const charRetainer = await fakeCharactersRepository.create({
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      file: 'valdomiro.pdf',
+      clan: 'Mortal Retainer',
+      title: '',
+      coterie: '',
+      npc: true,
+      retainer_level: 0,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    await expect(
+      updateCharacterSheet.execute({
+        user_id: user.id,
+        char_id: charRetainer.id,
+        char_name: 'Valdomirão',
+        char_xp: 1,
+        char_xp_total: 2,
+        char_clan: 'Mortal Retainer',
+        char_title: '',
+        char_coterie: '',
+        char_situation: 'active',
+        sheetFilename: 'valdomirao.pdf',
+        update: 'Updated',
+        is_npc: true,
+        char_regnant: charRetainer.id,
+        char_retainer_level: 1,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    expect(deleteFile).toHaveBeenCalledWith('valdomirao.pdf', 'sheet');
+  });
+
+  it('Should not allow a non mortal character to have a regnant', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      experience_total: 667,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
+      npc: false,
+    });
+
+    const charRegnant = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Nosferatu',
+      experience: 10,
+      experience_total: 20,
+      file: 'nosferatu.pdf',
+      clan: 'Nosferatu',
+      title: 'Prince',
+      coterie: '',
+      npc: false,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    await expect(
+      updateCharacterSheet.execute({
+        user_id: user.id,
+        char_id: char.id,
+        char_name: 'Dracula',
+        char_xp: 666,
+        char_xp_total: 667,
+        char_clan: 'Tzimisce',
+        char_title: 'Priest',
+        char_coterie: 'Gangue do Parquinho',
+        char_situation: 'active',
+        sheetFilename: 'dracula2.pdf',
+        update: 'Updated',
+        is_npc: true,
+        char_regnant: charRegnant.id,
+        char_retainer_level: 1,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    expect(deleteFile).toHaveBeenCalledWith('dracula2.pdf', 'sheet');
+  });
+
+  it('Should not allow an invalid regnant to be set to retainer character sheet', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const charRetainer = await fakeCharactersRepository.create({
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      file: 'valdomiro.pdf',
+      clan: 'Mortal Retainer',
+      title: '',
+      coterie: '',
+      npc: true,
+      retainer_level: 0,
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    await expect(
+      updateCharacterSheet.execute({
+        user_id: user.id,
+        char_id: charRetainer.id,
+        char_name: 'Valdomirão',
+        char_xp: 1,
+        char_xp_total: 2,
+        char_clan: 'Mortal Retainer',
+        char_title: '',
+        char_coterie: '',
+        char_situation: 'active',
+        sheetFilename: 'valdomirao.pdf',
+        update: 'Updated',
+        is_npc: true,
+        char_regnant: 'I do not exist!',
+        char_retainer_level: 1,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+
+    expect(deleteFile).toHaveBeenCalledWith('valdomirao.pdf', 'sheet');
   });
 
   it('Should not allow invalid users to update character sheets', async () => {
@@ -185,6 +631,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'Does not matter',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_xp_total: 1000,
         char_clan: 'Nosferatu',
         char_title: 'Prince',
         char_coterie: '',
@@ -192,6 +639,7 @@ describe('UpdateCharacterSheet', () => {
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
         is_npc: false,
+        char_retainer_level: 0,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -214,6 +662,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'Does not matter',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_xp_total: 1000,
         char_clan: 'Nosferatu',
         char_title: 'Prince',
         char_coterie: '',
@@ -221,6 +670,7 @@ describe('UpdateCharacterSheet', () => {
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
         is_npc: false,
+        char_retainer_level: 0,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
 
@@ -243,6 +693,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'Does not matter',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_xp_total: 1000,
         char_clan: 'Nosferatu',
         char_title: 'Prince',
         char_coterie: '',
@@ -250,6 +701,7 @@ describe('UpdateCharacterSheet', () => {
         sheetFilename: 'nosferatu.jpg',
         update: 'Updated',
         is_npc: false,
+        char_retainer_level: 0,
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -272,6 +724,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: 'I do not exist',
         char_name: 'Nosferatu',
         char_xp: 999,
+        char_xp_total: 1000,
         char_clan: 'Nosferatu',
         char_title: 'Prince',
         char_coterie: '',
@@ -279,6 +732,7 @@ describe('UpdateCharacterSheet', () => {
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
         is_npc: false,
+        char_retainer_level: 0,
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -323,6 +777,7 @@ describe('UpdateCharacterSheet', () => {
       char_id: char.id,
       char_name: 'Nosferatu',
       char_xp: 999,
+      char_xp_total: 1000,
       char_clan: 'Nosferatu',
       char_title: 'Prince',
       char_coterie: '',
@@ -330,6 +785,7 @@ describe('UpdateCharacterSheet', () => {
       sheetFilename: 'nosferatu.pdf',
       update: 'Updated',
       is_npc: false,
+      char_retainer_level: 0,
     });
 
     expect(charUpdated).toMatchObject({
@@ -337,7 +793,9 @@ describe('UpdateCharacterSheet', () => {
       user_id: user.id,
       name: 'Nosferatu',
       experience: 999,
+      experience_total: 1000,
       file: 'nosferatu.pdf',
+      retainer_level: 0,
     });
 
     expect(deleteFile).not.toHaveBeenCalled();
@@ -355,9 +813,11 @@ describe('UpdateCharacterSheet', () => {
       user_id: 'I do not exist',
       name: 'Dracula',
       experience: 666,
+      experience_total: 667,
       file: 'dracula.pdf',
       clan: 'Tzimisce',
       npc: false,
+      retainer_level: 0,
     });
 
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
@@ -368,6 +828,7 @@ describe('UpdateCharacterSheet', () => {
         char_id: char.id,
         char_name: 'Nosferatu',
         char_xp: 1,
+        char_xp_total: 2,
         char_clan: 'Nosferatu',
         char_title: 'Prince',
         char_coterie: '',
@@ -375,6 +836,7 @@ describe('UpdateCharacterSheet', () => {
         sheetFilename: 'nosferatu.pdf',
         update: 'Updated',
         is_npc: false,
+        char_retainer_level: 0,
       }),
     ).rejects.toBeInstanceOf(AppError);
 

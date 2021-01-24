@@ -28,13 +28,18 @@ class PDFParseProvider implements IPDFParserProvider {
 
     // let playerName: string;
     let experience: number;
+    let experienceTotal: number;
     let index = 0;
     let isTitled = true;
-    let isParsed = false;
     let clan: string;
     let isMortal = false;
     let title: string;
     let coterie: string;
+    let retainerLevel = 0;
+
+    let isParsedXP = false;
+    let isParsedXPTotal = false;
+    let isParsedRetainerLevel = true;
 
     rl.on('line', line => {
       index += 1;
@@ -46,6 +51,8 @@ class PDFParseProvider implements IPDFParserProvider {
 
       if (index === 4 && line.indexOf('Mortal') >= 0) {
         isMortal = true;
+        isParsedRetainerLevel = false;
+        coterie = '';
       } else if (index === 4 && isTitled) {
         char.name = line.substring(0, line.length - 1);
       }
@@ -60,7 +67,25 @@ class PDFParseProvider implements IPDFParserProvider {
         // eslint-disable-next-line no-restricted-globals
         if (!isNaN(experience)) {
           char.experience = experience;
-          isParsed = true;
+          isParsedXP = true;
+        }
+      }
+
+      if (line.indexOf('Total Experience Earned: ') >= 0 && !experienceTotal) {
+        const startXPTotal =
+          line.indexOf('Total Experience Earned: ') +
+          'Total Experience Earned: '.length;
+        const endXPTotal = line.indexOf('Last Modified: ') - 1;
+
+        experienceTotal = parseInt(
+          line.substring(startXPTotal, endXPTotal),
+          10,
+        );
+
+        // eslint-disable-next-line no-restricted-globals
+        if (!isNaN(experienceTotal)) {
+          char.experience_total = experienceTotal;
+          isParsedXPTotal = true;
         }
       }
 
@@ -105,24 +130,31 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
-      if (!coterie && isMortal) {
-        if (line.indexOf('Regnant/Guardian: ') >= 0) {
-          const startReg =
-            line.indexOf('Regnant/Guardian: ') + 'Regnant/Guardian: '.length;
-          const endReg = line.length - 1;
+      if (retainerLevel === 0 && isMortal) {
+        if (line.indexOf('Retainer Level ') >= 0) {
+          const startRet =
+            line.indexOf('Retainer Level ') + 'Retainer Level '.length;
+          const endRet = line.length - 1;
 
-          coterie = line.substring(startReg, endReg);
+          retainerLevel = parseInt(line.substring(startRet, endRet), 10);
 
-          if (coterie !== '') {
-            if (clan) {
-              if (clan.indexOf('Ghoul') >= 0) {
-                char.coterie = `${coterie}' ghoul`;
-              } else if (clan.indexOf('Retainer') >= 0) {
-                char.coterie = `${coterie}' retainer`;
-              }
-            }
-          } else if (clan) {
-            char.coterie = clan;
+          // eslint-disable-next-line no-restricted-globals
+          if (!isNaN(retainerLevel)) {
+            char.retainer_level = retainerLevel;
+            isParsedRetainerLevel = true;
+          }
+        } else if (line.indexOf('Powerful Ghoul Level ') >= 0) {
+          const startRet =
+            line.indexOf('Powerful Ghoul Level ') +
+            'Powerful Ghoul Level '.length;
+          const endRet = line.length - 1;
+
+          retainerLevel = parseInt(line.substring(startRet, endRet), 10);
+
+          // eslint-disable-next-line no-restricted-globals
+          if (!isNaN(retainerLevel)) {
+            char.retainer_level = retainerLevel * 10;
+            isParsedRetainerLevel = true;
           }
         }
       }
@@ -138,7 +170,7 @@ class PDFParseProvider implements IPDFParserProvider {
       }
     }
 
-    if (!isParsed) {
+    if (!isParsedXP || !isParsedXPTotal || !isParsedRetainerLevel) {
       return undefined;
     }
 

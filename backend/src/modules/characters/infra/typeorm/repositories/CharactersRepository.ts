@@ -14,29 +14,40 @@ class CharactersRepository implements ICharactersRepository {
     name,
     user_id,
     experience = 0,
+    experience_total = 0,
     clan,
     title = '',
     coterie = '',
     situation = 'active',
     npc = false,
+    regnant = undefined,
+    retainer_level = 0,
     file,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = this.ormRepository.create({
       name,
       user_id,
       experience,
+      experience_total,
       clan,
       title,
       coterie,
       situation,
       npc,
+      regnant,
+      retainer_level,
       file,
     });
 
     await this.ormRepository.save(char);
 
     // Return what is saved with user relationship attached.
-    let savedChar = await this.findById(char.id);
+    // let savedChar = await this.findById(char.id);
+    let savedChar = await this.ormRepository.findOne({
+      where: { id: char.id },
+      relations: ['user'],
+    });
+
     if (!savedChar) {
       savedChar = char;
     }
@@ -94,6 +105,21 @@ class CharactersRepository implements ICharactersRepository {
       default:
         where = undefined;
     }
+
+    const charList = await this.ormRepository.find({
+      where,
+      order: { name: 'ASC' },
+      relations: ['user'],
+    });
+
+    return charList;
+  }
+
+  public async listRetainers(
+    character_id: string,
+    situation = 'active',
+  ): Promise<Character[]> {
+    const where = { regnant: character_id, situation };
 
     const charList = await this.ormRepository.find({
       where,

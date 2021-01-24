@@ -11,12 +11,15 @@ class FakeCharactersRepository implements ICharactersRepository {
     name,
     user_id,
     experience = 0,
+    experience_total = 0,
     clan,
     title = '',
     coterie = '',
     situation = 'active',
-    file,
     npc = false,
+    regnant = undefined,
+    retainer_level = 0,
+    file,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = new Character();
 
@@ -25,12 +28,15 @@ class FakeCharactersRepository implements ICharactersRepository {
       name,
       user_id: user_id === undefined ? null : user_id,
       experience,
+      experience_total,
       clan,
       title,
       coterie,
       situation,
-      file,
       npc,
+      regnant: regnant === undefined ? null : regnant,
+      retainer_level,
+      file,
     });
 
     this.chars.push(char);
@@ -78,6 +84,17 @@ class FakeCharactersRepository implements ICharactersRepository {
       default:
         charList = this.chars;
     }
+
+    return charList;
+  }
+
+  public async listRetainers(
+    character_id: string,
+    situation = 'active',
+  ): Promise<Character[]> {
+    const charList: Character[] = this.chars.filter(
+      char => char.regnant === character_id && char.situation === situation,
+    );
 
     return charList;
   }

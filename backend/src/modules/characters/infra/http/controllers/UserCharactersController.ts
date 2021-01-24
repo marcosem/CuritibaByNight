@@ -10,7 +10,7 @@ import { classToClass } from 'class-transformer';
 
 export default class UserCharactersController {
   public async create(req: Request, res: Response): Promise<Response> {
-    const { player_id, is_npc } = req.body;
+    const { player_id, is_npc, regnant_id } = req.body;
     const fileName = req.file.filename;
     const { mimetype } = req.file;
 
@@ -34,19 +34,24 @@ export default class UserCharactersController {
       player_id,
       char_name: '',
       char_xp: 0,
+      char_xp_total: 0,
       char_clan: '',
       char_title: '',
       char_coterie: '',
       is_npc: isNPC,
+      char_regnant: regnant_id,
+      char_retainer_level: 0,
       sheetFilename: fileName,
     };
 
     if (parsedChar) {
       inputData.char_name = parsedChar.name;
       inputData.char_xp = parsedChar.experience;
+      inputData.char_xp_total = parsedChar.experience_total;
       inputData.char_clan = parsedChar.clan;
       inputData.char_title = parsedChar.title;
       inputData.char_coterie = parsedChar.coterie;
+      inputData.char_retainer_level = parsedChar.retainer_level;
     }
 
     const char = await createCharacterSheetService.execute(inputData);
@@ -90,7 +95,7 @@ export default class UserCharactersController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
-    const { character_id, situation, comments, is_npc } = req.body;
+    const { character_id, situation, comments, is_npc, regnant_id } = req.body;
     const fileName = req.file ? req.file.filename : '';
     const mimetype = req.file ? req.file.mimetype : '';
 
@@ -117,11 +122,14 @@ export default class UserCharactersController {
       char_id: character_id,
       char_name: oldChar.name,
       char_xp: oldChar.experience,
+      char_xp_total: oldChar.experience_total,
       char_clan: oldChar.clan,
       char_title: oldChar.title,
       char_coterie: oldChar.coterie,
       char_situation: situation || oldChar.situation,
       is_npc: oldChar.npc !== isNPC ? isNPC : oldChar.npc,
+      char_regnant: regnant_id || oldChar.regnant,
+      char_retainer_level: oldChar.retainer_level,
       sheetFilename: fileName,
       update: comments,
     };
@@ -129,9 +137,11 @@ export default class UserCharactersController {
     if (parsedChar) {
       inputData.char_name = parsedChar.name;
       inputData.char_xp = parsedChar.experience;
+      inputData.char_xp_total = parsedChar.experience_total;
       inputData.char_clan = parsedChar.clan;
       inputData.char_title = parsedChar.title;
       inputData.char_coterie = parsedChar.coterie;
+      inputData.char_retainer_level = parsedChar.retainer_level;
     }
 
     const updateCharacterSheetService = container.resolve(

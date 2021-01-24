@@ -5,6 +5,7 @@ import ICharactersRepository from '@modules/characters/repositories/ICharactersR
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import calculateRetainerXP from '@modules/characters/utils/calculateRetainerXP';
 import { resolve } from 'path';
 
 interface IRequestDTO {
@@ -12,11 +13,14 @@ interface IRequestDTO {
   char_id: string;
   char_name: string;
   char_xp: number;
+  char_xp_total: number;
   char_clan: string;
   char_title: string;
   char_coterie: string;
   char_situation: string;
   is_npc: boolean;
+  char_regnant?: string;
+  char_retainer_level?: number;
   sheetFilename: string;
   update: string;
 }
@@ -39,11 +43,14 @@ class UpdateCharacterSheetService {
     char_id,
     char_name,
     char_xp,
+    char_xp_total,
     char_clan,
     char_title,
     char_coterie,
     char_situation,
     is_npc,
+    char_regnant,
+    char_retainer_level = 0,
     sheetFilename,
     update,
   }: IRequestDTO): Promise<Character> {
@@ -81,10 +88,12 @@ class UpdateCharacterSheetService {
 
     char.name = char_name;
     char.experience = char_xp;
+    char.experience_total = char_xp_total;
     char.clan = char_clan;
     char.title = char_title;
     char.coterie = char_coterie;
     char.situation = char_situation;
+    char.retainer_level = char_retainer_level;
     char.file = filename;
 
     let player;
@@ -101,8 +110,46 @@ class UpdateCharacterSheetService {
         delete char.user;
       }
     }
-
     char.npc = is_npc;
+
+    let charRegnant: Character | undefined;
+
+    if (char_regnant) {
+      if (char_regnant === char_id) {
+        await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+        throw new AppError('A Character cannot be his own Regnant', 400);
+      }
+
+      charRegnant = await this.charactersRepository.findById(char_regnant);
+
+      if (!charRegnant) {
+        await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+        throw new AppError('Regnant Character not found', 400);
+      }
+
+      if (
+        char.clan.indexOf('Ghoul') >= 0 ||
+        char.clan.indexOf('Retainer') >= 0
+      ) {
+        char.regnant = char_regnant;
+      } else {
+        await this.storageProvider.deleteFile(sheetFilename, 'sheet');
+        throw new AppError('Only Mortal Characters may have a Regnant', 400);
+      }
+    } else if (char.regnant) {
+      charRegnant = await this.charactersRepository.findById(char.regnant);
+    }
+
+    if (charRegnant) {
+      const newTotalXP = calculateRetainerXP({
+        retainerLevel: char.retainer_level,
+        regnantXP: charRegnant.experience_total,
+      });
+
+      const difXP = newTotalXP - char.experience_total;
+      char.experience_total = newTotalXP;
+      char.experience += difXP;
+    }
 
     await this.charactersRepository.update(char);
 

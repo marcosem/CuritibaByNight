@@ -11,9 +11,11 @@ class FakePDFParserProvider implements IPDFParserProvider {
     char.file = filename;
     char.name = 'John Wick';
     char.experience = 1000;
+    char.experience_total = 1000;
     char.clan = 'Assamite';
     char.title = 'Assassin';
     char.coterie = 'Assasins creed';
+    char.retainer_level = 0;
 
     return char;
   }

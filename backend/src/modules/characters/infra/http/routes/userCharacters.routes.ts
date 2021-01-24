@@ -4,6 +4,7 @@ import uploadConfig from '@config/upload';
 import { celebrate, Segments, Joi } from 'celebrate';
 import UserCharactersController from '@modules/characters/infra/http/controllers/UserCharactersController';
 import CharacterAvatarController from '@modules/characters/infra/http/controllers/CharacterAvatarController';
+import CharacterRetainersController from '@modules/characters/infra/http/controllers/CharactersRetainersController';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
 
@@ -11,6 +12,7 @@ const userCharactersRouter = Router();
 
 const userCharactersController = new UserCharactersController();
 const characterAvatarController = new CharacterAvatarController();
+const characterRetainersController = new CharacterRetainersController();
 
 const sheetMulter = uploadConfig('sheet');
 const uploadSheet = multer(sheetMulter.multer);
@@ -29,7 +31,8 @@ userCharactersRouter.post(
   celebrate({
     [Segments.BODY]: {
       player_id: Joi.string().uuid().optional(),
-      is_npc: Joi.boolean().default(false),
+      is_npc: Joi.boolean().default(false).optional(),
+      regnant_id: Joi.string().uuid().optional(),
     },
   }),
 */
@@ -43,10 +46,12 @@ userCharactersRouter.patch(
 /*
   celebrate({
     [Segments.BODY]: {
-      character_id: Joi.string().uuid().required(),
-      situation: Joi.string().optional(),
-      comments: Joi.string().optional(),
-      is_npc: Joi.boolean().default(false),
+      body: Joi.object({
+        character_id: Joi.string().uuid().required(),
+        situation: Joi.string().optional(),
+        comments: Joi.string().optional(),
+        is_npc: Joi.boolean().default(false).optional(),
+      }).required(),
     },
   }),
 */
@@ -99,6 +104,32 @@ userCharactersRouter.post(
     },
   }),
   userCharactersController.index,
+);
+
+// Show user character retainers XP
+userCharactersRouter.patch(
+  '/updateretainers',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      character_id: Joi.string().uuid().required(),
+      situation: Joi.string(),
+    },
+  }),
+  characterRetainersController.update,
+);
+
+// Show user character retainers list
+userCharactersRouter.post(
+  '/retainerslist',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      character_id: Joi.string().uuid().required(),
+      situation: Joi.string(),
+    },
+  }),
+  characterRetainersController.index,
 );
 
 export default userCharactersRouter;
