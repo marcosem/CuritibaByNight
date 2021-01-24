@@ -51,7 +51,6 @@ class PDFParseProvider implements IPDFParserProvider {
 
       if (index === 4 && line.indexOf('Mortal') >= 0) {
         isMortal = true;
-        isParsedRetainerLevel = false;
         coterie = '';
       } else if (index === 4 && isTitled) {
         char.name = line.substring(0, line.length - 1);
@@ -141,7 +140,8 @@ class PDFParseProvider implements IPDFParserProvider {
           // eslint-disable-next-line no-restricted-globals
           if (!isNaN(retainerLevel)) {
             char.retainer_level = retainerLevel;
-            isParsedRetainerLevel = true;
+          } else {
+            isParsedRetainerLevel = false;
           }
         } else if (line.indexOf('Powerful Ghoul Level ') >= 0) {
           const startRet =
@@ -154,7 +154,8 @@ class PDFParseProvider implements IPDFParserProvider {
           // eslint-disable-next-line no-restricted-globals
           if (!isNaN(retainerLevel)) {
             char.retainer_level = retainerLevel * 10;
-            isParsedRetainerLevel = true;
+          } else {
+            isParsedRetainerLevel = false;
           }
         }
       }

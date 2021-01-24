@@ -52,19 +52,21 @@ class UpdateRetainerXPService {
     );
 
     retainersList.forEach(async retainer => {
-      const newRetainer = retainer;
+      if (retainer.npc) {
+        const newRetainer = retainer;
 
-      const newTotalXP = calculateRetainerXP({
-        retainerLevel: newRetainer.retainer_level,
-        regnantXP: char.experience_total,
-      });
+        const newTotalXP = calculateRetainerXP({
+          retainerLevel: newRetainer.retainer_level,
+          regnantXP: char.experience_total,
+        });
 
-      if (Math.round(newRetainer.experience_total) !== newTotalXP) {
-        const difXP = newTotalXP - Math.round(newRetainer.experience_total);
+        if (Math.round(newRetainer.experience_total) !== newTotalXP) {
+          const difXP = newTotalXP - Math.round(newRetainer.experience_total);
 
-        newRetainer.experience_total = newTotalXP;
-        newRetainer.experience = Math.round(newRetainer.experience) + difXP;
-        await this.charactersRepository.update(newRetainer);
+          newRetainer.experience_total = newTotalXP;
+          newRetainer.experience = Math.round(newRetainer.experience) + difXP;
+          await this.charactersRepository.update(newRetainer);
+        }
       }
     });
   }

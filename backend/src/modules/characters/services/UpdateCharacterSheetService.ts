@@ -140,7 +140,7 @@ class UpdateCharacterSheetService {
       charRegnant = await this.charactersRepository.findById(char.regnant);
     }
 
-    if (charRegnant) {
+    if (charRegnant && is_npc) {
       const newTotalXP = calculateRetainerXP({
         retainerLevel: char.retainer_level,
         regnantXP: charRegnant.experience_total,

@@ -94,13 +94,15 @@ class CreateCharacterSheetService {
         throw new AppError('Only Mortal Characters may have a Regnant', 400);
       }
 
-      newCharTotalXP = calculateRetainerXP({
-        retainerLevel: char_retainer_level,
-        regnantXP: charRegnant.experience_total,
-      });
+      if (is_npc) {
+        newCharTotalXP = calculateRetainerXP({
+          retainerLevel: char_retainer_level,
+          regnantXP: charRegnant.experience_total,
+        });
 
-      const difXP = newCharTotalXP - char_xp_total;
-      newCharXP += difXP;
+        const difXP = newCharTotalXP - char_xp_total;
+        newCharXP += difXP;
+      }
     }
 
     const filename = await this.storageProvider.saveFile(
