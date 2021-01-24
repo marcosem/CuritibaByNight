@@ -165,6 +165,30 @@ export const InputFileBox = styled.div`
   }
 `;
 
+export const SelectRegnant = styled.select`
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  width: 250px;
+  height: 22px;
+
+  border: 0;
+  border-radius: 4px;
+  padding: 0 8px;
+  margin-left: 10px;
+
+  color: #ccc;
+  background: #222;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  text-align-last: center;
+  -moz-text-align-last: center;
+`;
+
 export const ButtonBox = styled.div`
   margin: 50px auto 0 auto;
   max-width: 340px;

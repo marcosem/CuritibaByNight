@@ -16,6 +16,7 @@ import {
   CharCardContainer,
   CharacterFormContainer,
   InputFileBox,
+  SelectRegnant,
   ButtonBox,
 } from './styles';
 import Header from '../../components/Header';
@@ -61,6 +62,8 @@ const AddCharacter: React.FC = () => {
   const history = useHistory();
   const [isBusy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [regnantList, setRegnatList] = useState<ICharacter[]>([]);
+  const [selectedRegnant, setSelectedRegnant] = useState<ICharacter>();
 
   const loadPlayers = useCallback(async () => {
     setBusy(true);
@@ -94,6 +97,41 @@ const AddCharacter: React.FC = () => {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar jogadores',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+    setBusy(false);
+  }, [addToast, signOut]);
+
+  const loadRegnants = useCallback(async () => {
+    setBusy(true);
+
+    try {
+      await api.get('characters/list/all').then(response => {
+        const res = response.data;
+
+        const fullList: ICharacter[] = res;
+
+        setRegnatList(fullList);
+      });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar personagens como regentes',
             description: `Erro: '${message}'`,
           });
         }
@@ -137,8 +175,13 @@ const AddCharacter: React.FC = () => {
       }
 
       const formData = new FormData();
-      if (selectedPlayer !== undefined)
+      if (selectedPlayer !== undefined) {
         formData.append('player_id', selectedPlayer.id);
+      }
+
+      if (selectedRegnant) {
+        formData.append('regnant_id', selectedRegnant.id);
+      }
 
       if (filter === 'npc') formData.append('is_npc', 'true');
       formData.append('sheet', charSheet);
@@ -152,6 +195,17 @@ const AddCharacter: React.FC = () => {
           new Date(justSavedChar.updated_at),
           'dd/MM/yyyy',
         );
+
+        let filteredClan: string[];
+        if (justSavedChar.clan) {
+          filteredClan = justSavedChar.clan.split(' (');
+          filteredClan = filteredClan[0].split(':');
+        } else {
+          filteredClan = [''];
+        }
+
+        const clanIndex = 0;
+        justSavedChar.clan = filteredClan[clanIndex];
 
         setSavedChar(justSavedChar);
       });
@@ -171,7 +225,7 @@ const AddCharacter: React.FC = () => {
       });
     }
     setUploading(false);
-  }, [charSheet, filter, selectedPlayer, addToast]);
+  }, [filter, charSheet, selectedPlayer, selectedRegnant, addToast]);
 
   const handlePlayerChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -185,8 +239,26 @@ const AddCharacter: React.FC = () => {
       }
 
       setSelectedPlayer(selPlayer);
+      setSelectedRegnant(undefined);
     },
     [playerList],
+  );
+
+  const handleRegnantChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      let selRegnant: ICharacter | undefined;
+      if (selIndex > 0) {
+        const selChar = regnantList[selIndex - 1];
+        selRegnant = selChar;
+      } else {
+        selRegnant = undefined;
+      }
+
+      setSelectedRegnant(selRegnant);
+    },
+    [regnantList],
   );
 
   const handleGoBack = useCallback(() => {
@@ -195,7 +267,8 @@ const AddCharacter: React.FC = () => {
 
   useEffect(() => {
     if (filter !== 'npc') loadPlayers();
-  }, [filter, loadPlayers]);
+    loadRegnants();
+  }, [filter, loadPlayers, loadRegnants]);
 
   return (
     <Container>
@@ -285,6 +358,25 @@ const AddCharacter: React.FC = () => {
                       : 'Selecione a ficha do novo Personagem:'}
                   </h1>
                 </div>
+
+                <div>
+                  <strong>Regente / Guardião:</strong>
+                  <SelectRegnant
+                    name="regnant"
+                    id="regnant"
+                    value={selectedRegnant ? selectedRegnant.name : ''}
+                    onChange={handleRegnantChange}
+                  >
+                    <option value="">Selecione um Personagem</option>
+                    {regnantList.map(character => (
+                      <option key={character.id} value={character.name}>
+                        {character.name}
+                      </option>
+                    ))}
+                  </SelectRegnant>
+                  <span>(* Somente para lacaios)</span>
+                </div>
+
                 <InputFileBox>
                   <label htmlFor="sheet">
                     <FiUpload />
@@ -300,7 +392,6 @@ const AddCharacter: React.FC = () => {
                   <strong>Arquivo:</strong>
                   <span>{charSheet ? `"${charSheet.name}"` : 'Nenhum'}</span>
                 </InputFileBox>
-
                 <ButtonBox>
                   {savedChar.id === '' ? (
                     <Button

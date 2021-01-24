@@ -16,6 +16,7 @@ import {
   CharCardContainer,
   CharacterFormContainer,
   SelectSituation,
+  SelectRegnant,
   InputBox,
   InputFileBox,
   ButtonBox,
@@ -503,7 +504,7 @@ const CharacterUpdate: React.FC = () => {
                       selectedChar.clan.indexOf('Retainer') >= 0) && (
                       <div>
                         <strong>Regente / Guardião:</strong>
-                        <Select
+                        <SelectRegnant
                           name="regnant"
                           id="regnant"
                           value={selectedRegnant ? selectedRegnant.name : ''}
@@ -515,7 +516,7 @@ const CharacterUpdate: React.FC = () => {
                               {character.name}
                             </option>
                           ))}
-                        </Select>
+                        </SelectRegnant>
                       </div>
                     )}
 
