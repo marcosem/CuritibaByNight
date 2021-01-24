@@ -64,12 +64,7 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
-    <Route
-      path="/character"
-      component={CharacterDetails}
-      isPrivate
-      isStoryteller
-    />
+    <Route path="/character" component={CharacterDetails} isPrivate />
   </Switch>
 );
 

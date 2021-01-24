@@ -96,19 +96,15 @@ const CharacterUpdate: React.FC = () => {
     const characterType = filter === 'npc' ? 'NPCs' : 'personagens';
 
     try {
-      await api.get(`characters/list/${filter}`).then(response => {
-        const res = response.data;
-
-        const fullList: ICharacter[] = res;
-
-        setCharList(fullList);
-      });
-
       await api.get('characters/list/all').then(response => {
         const res = response.data;
-
         const fullList: ICharacter[] = res;
 
+        const filteredList = fullList.filter(ch =>
+          filter === 'npc' ? ch.npc : !ch.npc,
+        );
+
+        setCharList(filteredList);
         setRegnatList(fullList);
       });
     } catch (error) {
@@ -447,20 +443,25 @@ const CharacterUpdate: React.FC = () => {
                     <h1>{selectedChar.clan}</h1>
                   </div>
 
-                  {filter === 'npc' ? (
+                  {filter === 'npc' && !selectedChar.regnant ? (
                     <div>
                       <strong>NPC</strong>
                     </div>
                   ) : (
                     <>
                       <div>
-                        <strong>Experiêcia disponível:</strong>
+                        <strong>Experiêcia Disponível:</strong>
                         <span>{selectedChar.experience}</span>
+                        <strong>Experiêcia Total:</strong>
+                        <span>{selectedChar.experience_total}</span>
                       </div>
-                      <div>
-                        <strong>Jogador:</strong>
-                        <span>{selectedChar.user?.name}</span>
-                      </div>
+
+                      {filter !== 'npc' && (
+                        <div>
+                          <strong>Jogador:</strong>
+                          <span>{selectedChar.user?.name}</span>
+                        </div>
+                      )}
                     </>
                   )}
 

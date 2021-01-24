@@ -24,6 +24,7 @@ import Loading from '../Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
+import { useSelection } from '../../hooks/selection';
 import CharacterCard from '../CharacterCard';
 import ICharacter from '../CharacterList/ICharacter';
 import Button from '../Button';
@@ -46,12 +47,77 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   dashboard = false,
 }) => {
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
+  const [retainerList, setRetainerList] = useState<ICharacter[]>([]);
   const { addToast } = useToast();
   const history = useHistory();
   const { user, signOut } = useAuth();
+  const { setChar } = useSelection();
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
   // const isMobileVersion = true;
+
+  const loadRetainers = useCallback(async () => {
+    if (myChar === undefined) {
+      return;
+    }
+
+    if (
+      myChar.clan.indexOf('Ghoul') >= 0 ||
+      myChar.clan.indexOf('Retainer') >= 0
+    ) {
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      await api
+        .post('/character/retainerslist', { character_id: myChar.id })
+        .then(response => {
+          const res: ICharacter[] = response.data;
+
+          const retList = res.map(ch => {
+            const newChar = ch;
+
+            let filteredClan: string[];
+            if (newChar.clan) {
+              filteredClan = newChar.clan.split(' (');
+              filteredClan = filteredClan[0].split(':');
+            } else {
+              filteredClan = [''];
+            }
+
+            const clanIndex = 0;
+            newChar.clan = filteredClan[clanIndex];
+
+            return newChar;
+          });
+
+          setRetainerList(retList);
+        });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar lacaios do personagens',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+    setBusy(false);
+  }, [addToast, myChar, signOut]);
 
   const loadLocations = useCallback(async () => {
     if (myChar === undefined) {
@@ -136,6 +202,19 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     setBusy(false);
   }, [addToast, myChar, signOut]);
 
+  const handleRetainerSelection = useCallback(
+    async (e: MouseEvent<HTMLTableRowElement>) => {
+      const retainerId = e.currentTarget.id;
+      const retainerChar = retainerList.find(ch => ch.id === retainerId);
+
+      if (retainerChar) {
+        setChar(retainerChar);
+        history.push('/character');
+      }
+    },
+    [history, retainerList, setChar],
+  );
+
   const handleLocationJump = useCallback(
     async (e: MouseEvent<HTMLTableRowElement>) => {
       const locationId = e.currentTarget.id;
@@ -147,7 +226,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
   useEffect(() => {
     loadLocations();
-  }, [loadLocations, myChar]);
+    loadRetainers();
+  }, [loadLocations, loadRetainers, myChar]);
 
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -212,31 +292,91 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     </>
                   )}
 
-                  {myChar.npc ? (
+                  {myChar.npc && !myChar.regnant ? (
                     <div>
                       <strong>NPC</strong>
                     </div>
                   ) : (
                     <>
+                      {isMobileVersion ? (
+                        <>
+                          <div>
+                            <strong>Experiêcia Disponível:</strong>
+                            <span>{myChar.experience}</span>
+                          </div>
+                          <div>
+                            <strong>Experiêcia Total:</strong>
+                            <span>{myChar.experience_total}</span>
+                          </div>
+                        </>
+                      ) : (
+                        <div>
+                          <strong>Experiêcia Disponível:</strong>
+                          <span>{myChar.experience}</span>
+                          <strong>Experiêcia Total:</strong>
+                          <span>{myChar.experience_total}</span>
+                        </div>
+                      )}
+
+                      {!myChar.npc && (
+                        <div>
+                          <strong>Jogador:</strong>
+                          {dashboard ? (
+                            <span>{user.name}</span>
+                          ) : (
+                            <span>{myChar.user && myChar.user.name}</span>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {retainerList.length > 0 && (
+                    <>
                       <div>
-                        <strong>Experiêcia disponível:</strong>
-                        <span>{myChar.experience}</span>
+                        <strong>Meus Lacaios:</strong>
                       </div>
-                      <div>
-                        <strong>Jogador:</strong>
-                        {dashboard ? (
-                          <span>{user.name}</span>
-                        ) : (
-                          <span>{myChar.user && myChar.user.name}</span>
-                        )}
-                      </div>
+                      <TableWrapper isMobile={isMobileVersion}>
+                        <Table isMobile={isMobileVersion}>
+                          <thead>
+                            <tr>
+                              <th>Lacaio</th>
+                              <th>Tipo</th>
+                              <th>Pontos</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {retainerList.map(retainer => (
+                              <tr
+                                key={retainer.id}
+                                id={retainer.id}
+                                onClick={handleRetainerSelection}
+                              >
+                                <td>
+                                  <TableCell>{retainer.name}</TableCell>
+                                </td>
+                                <td>
+                                  <TableCell centered>
+                                    {retainer.clan}
+                                  </TableCell>
+                                </td>
+                                <td>
+                                  <TableCell centered>
+                                    {retainer.retainer_level}
+                                  </TableCell>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </Table>
+                      </TableWrapper>
                     </>
                   )}
 
                   {locationsList.length > 0 && (
                     <>
                       <div>
-                        <strong>Locais conhecidos pelo personagem:</strong>
+                        <strong>Locais Conhecidos por mim:</strong>
                       </div>
                       <TableWrapper isMobile={isMobileVersion}>
                         <Table isMobile={isMobileVersion}>
@@ -268,7 +408,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                   )}
 
                   {!dashboard && (
-                    <ButtonBox>
+                    <ButtonBox isMobile={isMobileVersion}>
                       <Button type="button" onClick={handleGoBack}>
                         Retornar
                       </Button>

@@ -5,6 +5,10 @@ interface IDashboardProps {
   isMobile: boolean;
 }
 
+interface ITableCellProps {
+  centered?: boolean;
+}
+
 export const Content = styled.main<IDashboardProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
@@ -66,16 +70,17 @@ export const CharCardContainer = styled.div<IDashboardProps>`
 `;
 
 export const CharacterContainer = styled.div<IDashboardProps>`
-  width: 100%;
   display: flex;
   flex-direction: column;
 
   ${props =>
     props.isMobile
       ? css`
+          width: 320px;
           margin: 10px;
         `
       : css`
+          width: 100%;
           margin: 20px;
         `}
 
@@ -92,6 +97,14 @@ export const CharacterContainer = styled.div<IDashboardProps>`
     strong {
       font-weight: 500;
       color: #333;
+
+      &:not(:first-child) {
+        ${props =>
+          !props.isMobile &&
+          css`
+            margin-left: auto;
+          `}
+      }
 
       &:last-child {
         padding-top: 24px;
@@ -263,7 +276,7 @@ export const Table = styled.table<IDashboardProps>`
 
   tbody {
     display: block;
-    max-height: 40vh;
+    max-height: 35vh;
     overflow-y: auto;
     border-radius: 0 0 10px 10px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
@@ -313,9 +326,16 @@ export const Table = styled.table<IDashboardProps>`
   }
 `;
 
-export const TableCell = styled.div`
+export const TableCell = styled.div<ITableCellProps>`
   display: flex;
-  align-items: left;
+  // align-items: left;
+  ${props =>
+    props.centered &&
+    css`
+      justify-content: center;
+    `}
+
+  // justify-content: center;
 
   img {
     width: 30px;
@@ -328,8 +348,16 @@ export const TableCell = styled.div`
   }
 `;
 
-export const ButtonBox = styled.div`
-  margin: auto auto 0 auto;
-  max-width: 340px;
+export const ButtonBox = styled.div<IDashboardProps>`
+  margin: auto;
   padding-top: 16px;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 320px;
+        `
+      : css`
+          max-width: 340px;
+        `}
 `;

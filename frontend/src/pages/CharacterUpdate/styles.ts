@@ -97,6 +97,10 @@ export const CharacterFormContainer = styled.div`
       font-size: 18px;
       font-weight: 500;
       color: #333;
+
+      &:not(:first-child) {
+        margin-left: auto;
+      }
     }
 
     span {
@@ -169,7 +173,7 @@ export const InputFileBox = styled.div`
 
   strong {
     font-size: 16px !important;
-    margin: 0 5px 0 10px;
+    margin: 0 5px 0 10px !important;
   }
 
   span {
