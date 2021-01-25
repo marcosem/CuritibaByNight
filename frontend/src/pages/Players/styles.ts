@@ -134,18 +134,18 @@ export const Table = styled.table`
     scroll-behavior: smooth;
 
     &::-webkit-scrollbar {
-      width: 10px;
+      width: 8px;
       background-color: #f5f5f5;
     }
 
     &::-webkit-scrollbar-track {
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
+      border-radius: 8px;
       background-color: #f5f5f5;
     }
 
     &::-webkit-scrollbar-thumb {
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
       background-color: #555;
     }
