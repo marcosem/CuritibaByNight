@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
+import Loading from '../Loading';
 
-import CharKindredCard from '../CharKindredCard';
-import CharRetainerCard from '../CharRetainerCard';
+// import CharKindredCard from '../CharKindredCard';
+// import CharRetainerCard from '../CharRetainerCard';
+const CharKindredCard = lazy(() => import('../CharKindredCard'));
+const CharRetainerCard = lazy(() => import('../CharRetainerCard'));
 
 interface ICharacterCardProps {
   charId: string;
@@ -36,37 +39,39 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
 }) => {
   return (
     <>
-      {clan.indexOf('Ghoul') >= 0 || clan.indexOf('Retainer') >= 0 ? (
-        <CharRetainerCard
-          charId={charId}
-          name={name}
-          experience={experience}
-          sheetFile={sheetFile}
-          title={title}
-          clan={clan}
-          avatar={avatar}
-          updatedAt={updatedAt}
-          npc={npc}
-          regnant={regnant}
-          situation={situation}
-          locked={locked}
-        />
-      ) : (
-        <CharKindredCard
-          charId={charId}
-          name={name}
-          experience={experience}
-          sheetFile={sheetFile}
-          clan={clan}
-          title={title}
-          coterie={coterie}
-          avatar={avatar}
-          updatedAt={updatedAt}
-          situation={situation}
-          npc={npc}
-          locked={locked}
-        />
-      )}
+      <Suspense fallback={<Loading />}>
+        {clan.indexOf('Ghoul') >= 0 || clan.indexOf('Retainer') >= 0 ? (
+          <CharRetainerCard
+            charId={charId}
+            name={name}
+            experience={experience}
+            sheetFile={sheetFile}
+            title={title}
+            clan={clan}
+            avatar={avatar}
+            updatedAt={updatedAt}
+            npc={npc}
+            regnant={regnant}
+            situation={situation}
+            locked={locked}
+          />
+        ) : (
+          <CharKindredCard
+            charId={charId}
+            name={name}
+            experience={experience}
+            sheetFile={sheetFile}
+            clan={clan}
+            title={title}
+            coterie={coterie}
+            avatar={avatar}
+            updatedAt={updatedAt}
+            situation={situation}
+            npc={npc}
+            locked={locked}
+          />
+        )}
+      </Suspense>
     </>
   );
 };

@@ -5,11 +5,11 @@ import { format } from 'date-fns';
 // import download from 'downloadjs';
 // import { confirmAlert } from 'react-confirm-alert';
 import { useHistory } from 'react-router-dom';
-import CharacterCard from '../CharacterCard';
 import { Scroll, Character } from './styles';
 import { useMobile } from '../../hooks/mobile';
 import { useSelection } from '../../hooks/selection';
 import ICharacter from './ICharacter';
+import CharacterCard from '../CharacterCard';
 
 interface ICharacterListProps {
   chars: ICharacter[];
