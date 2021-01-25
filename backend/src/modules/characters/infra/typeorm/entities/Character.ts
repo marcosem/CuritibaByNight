@@ -58,6 +58,10 @@ class Character {
   @Column()
   regnant: string;
 
+  @ManyToOne(() => Character )
+  @JoinColumn({ name: 'regnant' })
+  regnant_char?: Character;
+
   @Column()
   retainer_level: number;
 

@@ -45,7 +45,7 @@ class CharactersRepository implements ICharactersRepository {
     // let savedChar = await this.findById(char.id);
     let savedChar = await this.ormRepository.findOne({
       where: { id: char.id },
-      relations: ['user'],
+      relations: ['user', 'regnant_char'],
     });
 
     if (!savedChar) {
@@ -70,7 +70,7 @@ class CharactersRepository implements ICharactersRepository {
   public async findById(char_id: string): Promise<Character | undefined> {
     const charFound = await this.ormRepository.findOne({
       where: { id: char_id },
-      relations: ['user'],
+      relations: ['user', 'regnant_char'],
     });
 
     // if not found, return undefined
@@ -109,7 +109,7 @@ class CharactersRepository implements ICharactersRepository {
     const charList = await this.ormRepository.find({
       where,
       order: { name: 'ASC' },
-      relations: ['user'],
+      relations: ['user', 'regnant_char'],
     });
 
     return charList;
@@ -124,7 +124,7 @@ class CharactersRepository implements ICharactersRepository {
     const charList = await this.ormRepository.find({
       where,
       order: { name: 'ASC' },
-      relations: ['user'],
+      relations: ['user', 'regnant_char'],
     });
 
     return charList;
