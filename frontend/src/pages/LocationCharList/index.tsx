@@ -190,11 +190,19 @@ const LocationCharList: React.FC = () => {
           const res = response.data;
 
           const newArray = res.map((locChar: ILocationChar) => {
-            const newLocChar = {
-              location_id: locChar.location_id,
-              character_id: locChar.character_id,
-              characterId: locChar.characterId,
-            };
+            const newLocChar = locChar;
+
+            let filteredClan: string[];
+            if (newLocChar.characterId.clan) {
+              filteredClan = newLocChar.characterId.clan.split(' (');
+              filteredClan = filteredClan[0].split(':');
+            } else {
+              filteredClan = [''];
+            }
+
+            const clanIndex = 0;
+            newLocChar.characterId.clan = filteredClan[clanIndex];
+
             return newLocChar;
           });
 
