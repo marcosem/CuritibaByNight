@@ -433,7 +433,11 @@ const CharacterUpdate: React.FC = () => {
                       selectedChar.formatedDate ? selectedChar.formatedDate : ''
                     }
                     npc={selectedChar.npc}
-                    regnant={selectedChar.regnant ? selectedChar.regnant : ''}
+                    regnant={
+                      selectedChar.regnant_char
+                        ? selectedChar.regnant_char.name
+                        : ''
+                    }
                     locked={filter !== 'npc'}
                   />
                 </CharCardContainer>

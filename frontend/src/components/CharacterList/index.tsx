@@ -57,6 +57,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
         situation: char.situation,
         npc: char.npc,
         regnant: char.regnant,
+        regnant_char: char.regnant_char,
         retainer_level: char.retainer_level,
         formatedDate: format(new Date(char.updated_at), 'dd/MM/yyyy'),
         user: char.user,
@@ -146,7 +147,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
                       avatar={char.avatar_url}
                       updatedAt={char.formatedDate ? char.formatedDate : ''}
                       npc={char.npc}
-                      regnant={char.regnant}
+                      regnant={char.regnant_char ? char.regnant_char.name : ''}
                       locked={locked}
                     />
                   </td>

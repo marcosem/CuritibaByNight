@@ -3,7 +3,6 @@ import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
 import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import api from '../../services/api';
-import ICharacter from '../CharacterList/ICharacter';
 import cardRetainer from '../../assets/cards/card_retainer.png';
 
 import {
@@ -49,34 +48,10 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   locked = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
-  const [regnantName, setRegnantName] = useState<string>('');
   const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
   const [situationTitle, setSituationTitle] = useState<string>('');
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
-
-  const getRenantName = useCallback(async () => {
-    if (regnant === '' || regnant === null) {
-      setRegnantName('');
-      return;
-    }
-
-    try {
-      await api.get(`/character/${regnant}`).then(response => {
-        const res = response.data;
-        const char: ICharacter = res;
-
-        const regName = char.name;
-        setRegnantName(regName);
-      });
-    } catch (err) {
-      addToast({
-        type: 'error',
-        title: 'Erro ao carregar Regente',
-        description: 'Erro ao carregar regente do mortal.',
-      });
-    }
-  }, [addToast, regnant]);
 
   useEffect(() => {
     setCharImg(avatar || tempProfileImg);
@@ -137,9 +112,11 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
     [addToast, charId, name],
   );
 
+  /*
   useEffect(() => {
     getRenantName();
   }, [getRenantName]);
+  */
 
   return (
     <Container isMobile={isMobileVersion}>
@@ -161,7 +138,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
             <b>{title !== '' && `${title}: `}</b>
             {name}
           </a>
-          {regnantName !== '' && <span>{`${clan} de ${regnantName}`}</span>}
+          {regnant !== '' && <span>{`${clan} de ${regnant}`}</span>}
         </CharInfo>
 
         {situation !== 'active' && (

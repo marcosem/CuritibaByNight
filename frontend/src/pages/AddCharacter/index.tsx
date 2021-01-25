@@ -323,8 +323,10 @@ const AddCharacter: React.FC = () => {
                 avatar={savedChar.avatar_url}
                 updatedAt={savedChar.formatedDate ? savedChar.formatedDate : ''}
                 npc={savedChar.npc}
-                regnant={savedChar.regnant ? savedChar.regnant : ''}
-                locked
+                regnant={
+                  savedChar.regnant_char ? savedChar.regnant_char.name : ''
+                }
+                locked={savedChar.id === ''}
               />
             </CharCardContainer>
             <CharacterFormContainer>
@@ -333,20 +335,24 @@ const AddCharacter: React.FC = () => {
                 <h1>{savedChar.clan}</h1>
               </div>
 
-              {filter === 'npc' ? (
+              {filter === 'npc' && !savedChar.regnant ? (
                 <div>
                   <strong>NPC</strong>
                 </div>
               ) : (
                 <>
                   <div>
-                    <strong>Experiêcia disponível:</strong>
+                    <strong>Experiêcia Disponível:</strong>
                     <span>{savedChar.experience}</span>
+                    <strong>Experiêcia Total:</strong>
+                    <span>{savedChar.experience_total}</span>
                   </div>
-                  <div>
-                    <strong>Jogador:</strong>
-                    <span>{selectedPlayer?.name}</span>
-                  </div>
+                  {filter !== 'npc' && (
+                    <div>
+                      <strong>Jogador:</strong>
+                      <span>{selectedPlayer?.name}</span>
+                    </div>
+                  )}
                 </>
               )}
 

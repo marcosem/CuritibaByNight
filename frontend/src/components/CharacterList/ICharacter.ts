@@ -13,6 +13,10 @@ export default interface ICharacter {
   situation: string;
   npc: boolean;
   regnant?: string;
+  regnant_char?: {
+    id: string;
+    name: string;
+  };
   retainer_level: string;
   formatedDate?: string;
   user?: {
