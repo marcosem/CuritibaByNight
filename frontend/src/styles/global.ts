@@ -1,8 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 import bgImg from '../assets/bg.png';
-
-// background: linear-gradient(0deg, #080707 0%, #989797 100%);
 
 export default createGlobalStyle`
   * {

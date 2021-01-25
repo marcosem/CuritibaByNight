@@ -5,7 +5,8 @@ import { format } from 'date-fns';
 // import download from 'downloadjs';
 // import { confirmAlert } from 'react-confirm-alert';
 import { useHistory } from 'react-router-dom';
-import { Scroll, Character } from './styles';
+// import { Scroll, Character } from './styles';
+import { Character } from './styles';
 import { useMobile } from '../../hooks/mobile';
 import { useSelection } from '../../hooks/selection';
 import ICharacter from './ICharacter';
@@ -128,7 +129,8 @@ const CharacterList: React.FC<ICharacterListProps> = ({
   return charList[0][0] === undefined ? (
     <></>
   ) : (
-    <Scroll options={{ suppressScrollX: true }}>
+    <>
+      {/* <Scroll options={{ suppressScrollX: true }}> */}
       <Character isMobile={isMobileVersion}>
         <table>
           <tbody>
@@ -136,20 +138,24 @@ const CharacterList: React.FC<ICharacterListProps> = ({
               <tr key={`row:${row[0].id}`}>
                 {row.map(char => (
                   <td key={char.id} id={char.id} onClick={handleSelectChar}>
-                    <CharacterCard
-                      charId={char.id}
-                      name={char.name}
-                      experience={char.experience}
-                      sheetFile={char.character_url}
-                      clan={char.clan}
-                      title={char.title}
-                      coterie={char.coterie}
-                      avatar={char.avatar_url}
-                      updatedAt={char.formatedDate ? char.formatedDate : ''}
-                      npc={char.npc}
-                      regnant={char.regnant_char ? char.regnant_char.name : ''}
-                      locked={locked}
-                    />
+                    <div>
+                      <CharacterCard
+                        charId={char.id}
+                        name={char.name}
+                        experience={char.experience}
+                        sheetFile={char.character_url}
+                        clan={char.clan}
+                        title={char.title}
+                        coterie={char.coterie}
+                        avatar={char.avatar_url}
+                        updatedAt={char.formatedDate ? char.formatedDate : ''}
+                        npc={char.npc}
+                        regnant={
+                          char.regnant_char ? char.regnant_char.name : ''
+                        }
+                        locked={locked}
+                      />
+                    </div>
                   </td>
                 ))}
               </tr>
@@ -157,7 +163,8 @@ const CharacterList: React.FC<ICharacterListProps> = ({
           </tbody>
         </table>
       </Character>
-    </Scroll>
+      {/* </Scroll> */}
+    </>
   );
 };
 

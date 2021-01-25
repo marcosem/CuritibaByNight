@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import PerfectScrollBar from 'react-perfect-scrollbar';
 
 interface ICharacterProps {
   isMobile: boolean;
@@ -18,7 +17,50 @@ export const Character = styled.div<ICharacterProps>`
     max-width: 1012px;
     white-space: nowrap;
     border-collapse: separate;
-    border-spacing: 24px;
+
+    tbody {
+      display: block;
+      max-height: 70vh;
+      overflow-y: auto;
+
+      scrollbar-width: thin;
+      scrollbar-color: #555;
+      scrollbar-track-color: #f5f5f5;
+      scroll-behavior: smooth;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+        background-color: #f5f5f5;
+      }
+
+      &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        background-color: #f5f5f5;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: #555;
+      }
+    }
+
+    tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+
+      &:not(:last-child) {
+        padding-bottom: 24px;
+      }
+
+      td {
+        div {
+          margin: 0 auto;
+        }
+      }
+    }
   }
 
   ${props =>
@@ -31,10 +73,4 @@ export const Character = styled.div<ICharacterProps>`
         max-width: 340px;
       }
     `}
-`;
-
-export const Scroll = styled(PerfectScrollBar)`
-  max-height: 74vh;
-  padding: 0 20px;
-  margin-top: 3px;
 `;
