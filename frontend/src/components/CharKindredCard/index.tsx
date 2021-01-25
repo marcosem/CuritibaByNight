@@ -14,7 +14,7 @@ import {
   CharXPTitle,
   CharXP,
 } from './styles';
-import tempProfileImg from '../../assets/sign-up-background.png';
+import tempProfileImg from '../../assets/avatar_placehold.png';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 
