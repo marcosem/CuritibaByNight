@@ -305,6 +305,18 @@ const LocationCharList: React.FC = () => {
             res.character_id === selectedChar.id
           ) {
             let newLocationChars: ILocationChar[];
+            const newLocChar = res;
+
+            let filteredClan: string[];
+            if (newLocChar.characterId.clan) {
+              filteredClan = newLocChar.characterId.clan.split(' (');
+              filteredClan = filteredClan[0].split(':');
+            } else {
+              filteredClan = [''];
+            }
+
+            const clanIndex = 0;
+            newLocChar.characterId.clan = filteredClan[clanIndex];
 
             if (locationChars !== undefined) {
               newLocationChars = [...locationChars, res];
