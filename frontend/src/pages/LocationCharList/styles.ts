@@ -349,7 +349,7 @@ export const Table = styled.table`
     scroll-behavior: smooth;
 
     &::-webkit-scrollbar {
-      width: 12px;
+      width: 10px;
       background-color: #f5f5f5;
     }
 

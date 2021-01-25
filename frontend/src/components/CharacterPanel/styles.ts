@@ -287,7 +287,7 @@ export const Table = styled.table<IDashboardProps>`
     scroll-behavior: smooth;
 
     &::-webkit-scrollbar {
-      width: 12px;
+      width: 10px;
       background-color: #f5f5f5;
     }
 
@@ -328,14 +328,12 @@ export const Table = styled.table<IDashboardProps>`
 
 export const TableCell = styled.div<ITableCellProps>`
   display: flex;
-  // align-items: left;
+
   ${props =>
     props.centered &&
     css`
       justify-content: center;
     `}
-
-  // justify-content: center;
 
   img {
     width: 30px;
