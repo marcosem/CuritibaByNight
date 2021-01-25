@@ -33,6 +33,7 @@ import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useSelection } from '../../hooks/selection';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import LocationCard from '../../components/LocationCard';
 
@@ -87,6 +88,7 @@ const LocationCharList: React.FC = () => {
   const history = useHistory();
   const [isBusy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { setChar } = useSelection();
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
   const [locationChars, setLocationChars] = useState<ILocationChar[]>();
@@ -444,6 +446,19 @@ const LocationCharList: React.FC = () => {
     [addToast, locationChars, selectedLocation, signOut],
   );
 
+  const handleCharacterDetails = useCallback(
+    async (e: MouseEvent<HTMLTableDataCellElement>) => {
+      const charId = e.currentTarget.id;
+      const detailChar = charList.find(ch => ch.id === charId);
+
+      if (detailChar) {
+        setChar(detailChar);
+        history.push('/character');
+      }
+    },
+    [charList, history, setChar],
+  );
+
   useEffect(() => {
     loadCharacters();
     loadLocations();
@@ -598,12 +613,18 @@ const LocationCharList: React.FC = () => {
                             <tbody>
                               {locationChars.map(locChar => (
                                 <tr key={locChar.character_id}>
-                                  <td>
+                                  <td
+                                    id={locChar.character_id}
+                                    onClick={handleCharacterDetails}
+                                  >
                                     <TableCell>
                                       {locChar.characterId.name}
                                     </TableCell>
                                   </td>
-                                  <td>
+                                  <td
+                                    id={locChar.character_id}
+                                    onClick={handleCharacterDetails}
+                                  >
                                     <TableCell>
                                       {locChar.characterId.clan.indexOf(' (') >
                                       0
