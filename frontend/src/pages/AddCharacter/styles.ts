@@ -105,6 +105,10 @@ export const CharacterFormContainer = styled.div`
       font-size: 18px;
       font-weight: 500;
       color: #333;
+
+      &:not(:first-child) {
+        margin-left: auto;
+      }
     }
 
     span {
