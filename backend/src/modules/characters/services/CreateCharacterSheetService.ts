@@ -89,9 +89,16 @@ class CreateCharacterSheetService {
         throw new AppError('Regnant Character not found', 400);
       }
 
-      if (char_clan.indexOf('Ghoul') < 0 && char_clan.indexOf('Retainer') < 0) {
+      if (
+        char_clan.indexOf('Ghoul') < 0 &&
+        char_clan.indexOf('Retainer') < 0 &&
+        char_clan.indexOf('Wraith') < 0
+      ) {
         await this.storageProvider.deleteFile(sheetFilename, 'sheet');
-        throw new AppError('Only Mortal Characters may have a Regnant', 400);
+        throw new AppError(
+          'Only Non Vampire Characters may have a Regnant',
+          400,
+        );
       }
 
       if (is_npc) {

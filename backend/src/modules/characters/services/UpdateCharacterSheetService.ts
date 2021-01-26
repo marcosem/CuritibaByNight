@@ -129,12 +129,16 @@ class UpdateCharacterSheetService {
 
       if (
         char.clan.indexOf('Ghoul') >= 0 ||
-        char.clan.indexOf('Retainer') >= 0
+        char.clan.indexOf('Retainer') >= 0 ||
+        char.clan.indexOf('Wraith') >= 0
       ) {
         char.regnant = char_regnant;
       } else {
         await this.storageProvider.deleteFile(sheetFilename, 'sheet');
-        throw new AppError('Only Mortal Characters may have a Regnant', 400);
+        throw new AppError(
+          'Only Non Vampire Characters may have a Regnant',
+          400,
+        );
       }
     } else if (char.regnant) {
       charRegnant = await this.charactersRepository.findById(char.regnant);
