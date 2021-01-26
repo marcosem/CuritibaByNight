@@ -267,7 +267,9 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     regnant={
                       myChar.regnant_char ? myChar.regnant_char.name : ''
                     }
-                    locked={!user.storyteller && char.id !== myChar.id}
+                    locked={
+                      !(user.storyteller && myChar.npc) && char.id !== myChar.id
+                    }
                   />
                 </CharCardContainer>
                 <CharacterContainer isMobile={isMobileVersion}>
