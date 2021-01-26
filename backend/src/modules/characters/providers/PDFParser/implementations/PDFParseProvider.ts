@@ -228,6 +228,7 @@ class PDFParseProvider implements IPDFParserProvider {
             // eslint-disable-next-line no-restricted-globals
             if (!isNaN(retainerLevel)) {
               char.retainer_level = retainerLevel * 10;
+              char.clan = `Powerful ${char.clan}`;
             } else {
               isParsedRetainerLevel = false;
             }
