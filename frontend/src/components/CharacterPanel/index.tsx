@@ -87,16 +87,16 @@ const CharacterPanel: React.FC<IPanelProps> = ({
               filteredClan = [''];
             }
 
+            const clanIndex = 0;
+            newChar.clan = filteredClan[clanIndex];
+
             const retainerLevel = parseInt(newChar.retainer_level, 10);
             let newRetainerLevel: number;
-            const clanIndex = 0;
 
             if (retainerLevel >= 10) {
               newRetainerLevel = retainerLevel / 10;
-              newChar.clan = `Powerful ${filteredClan[clanIndex]}`;
             } else {
               newRetainerLevel = retainerLevel;
-              newChar.clan = filteredClan[clanIndex];
             }
 
             newChar.retainer_level = `${newRetainerLevel}`;
