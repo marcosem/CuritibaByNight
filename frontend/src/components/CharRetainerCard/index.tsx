@@ -4,6 +4,7 @@ import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import api from '../../services/api';
 import cardRetainer from '../../assets/cards/card_retainer.png';
+import cardAlly from '../../assets/cards/card_ally.png';
 
 import {
   Container,
@@ -47,6 +48,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   npc = false,
   locked = false,
 }) => {
+  const [cardImg, setCardImg] = useState<string>('');
   const [charImg, setCharImg] = useState<string>('');
   const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
   const [situationTitle, setSituationTitle] = useState<string>('');
@@ -79,6 +81,14 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
       }
     }
   }, [situation]);
+
+  useEffect(() => {
+    if (clan.indexOf('Wraith') >= 0) {
+      setCardImg(cardAlly);
+    } else {
+      setCardImg(cardRetainer);
+    }
+  }, [clan]);
 
   const handleAvatarChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -120,7 +130,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
 
   return (
     <Container isMobile={isMobileVersion}>
-      <CardSquare clanImg={cardRetainer}>
+      <CardSquare clanImg={cardImg}>
         <span>{updatedAt}</span>
         <label htmlFor={charId}>
           <ProfileImage locked={locked}>
@@ -135,10 +145,29 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
         </label>
         <CharInfo>
           <a href={sheetFile} target="_blank" rel="noopener noreferrer">
-            <b>{title !== '' && `${title}: `}</b>
-            {name}
+            {clan.indexOf('Wraith') >= 0 ? (
+              <>
+                <b>{`${clan}: `}</b>
+                {name}
+              </>
+            ) : (
+              <>
+                <b>{title !== '' && `${title}: `}</b>
+                {name}
+              </>
+            )}
           </a>
-          {regnant !== '' && <span>{`${clan} de ${regnant}`}</span>}
+          {clan.indexOf('Wraith') >= 0 ? (
+            <>{regnant !== '' && <span>{` de ${regnant}`}</span>}</>
+          ) : (
+            <>
+              {regnant !== '' ? (
+                <span>{`${clan} de ${regnant}`}</span>
+              ) : (
+                <span>{`${clan}`}</span>
+              )}
+            </>
+          )}
         </CharInfo>
 
         {situation !== 'active' && (
