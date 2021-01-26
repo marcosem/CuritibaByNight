@@ -132,6 +132,10 @@ class UpdateCharacterSheetService {
         char.clan.indexOf('Retainer') >= 0 ||
         char.clan.indexOf('Wraith') >= 0
       ) {
+        if (char.regnant !== char_regnant) {
+          delete char.regnant_char;
+        }
+
         char.regnant = char_regnant;
       } else {
         await this.storageProvider.deleteFile(sheetFilename, 'sheet');
@@ -155,7 +159,7 @@ class UpdateCharacterSheetService {
       char.experience += difXP;
     }
 
-    await this.charactersRepository.update(char);
+    const savedChar = await this.charactersRepository.update(char);
 
     if (player) {
       const charUpdateTemplate = resolve(
@@ -193,7 +197,7 @@ class UpdateCharacterSheetService {
       });
     }
 
-    return char;
+    return savedChar;
   }
 }
 
