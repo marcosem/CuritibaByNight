@@ -295,7 +295,7 @@ export const Table = styled.table`
       }
 
       &:first-child {
-        width: 70%;
+        width: 65%;
         border-radius: 10px 0 0 0;
       }
 
@@ -367,7 +367,7 @@ export const Table = styled.table`
 
     td {
       &:first-child {
-        width: 70%;
+        width: 65%;
       }
 
       &:last-child {
