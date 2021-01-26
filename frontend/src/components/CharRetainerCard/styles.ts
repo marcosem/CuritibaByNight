@@ -88,7 +88,7 @@ export const ProfileImage = styled.div<IImageProps>`
   width: 198px;
   height: 172px;
 
-  background: #888;
+  background: #333;
 
   input {
     display: none;

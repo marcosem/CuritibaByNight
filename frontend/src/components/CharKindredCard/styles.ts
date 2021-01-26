@@ -89,7 +89,7 @@ export const ProfileImage = styled.div<IImageProps>`
   height: 252px;
   border-radius: 50%;
 
-  background: #888;
+  background: #333;
 
   input {
     display: none;
