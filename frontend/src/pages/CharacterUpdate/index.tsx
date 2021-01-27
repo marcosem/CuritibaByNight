@@ -104,8 +104,10 @@ const CharacterUpdate: React.FC = () => {
           filter === 'npc' ? ch.npc : !ch.npc,
         );
 
+        const regList = fullList.filter(ch => !ch.regnant);
+
         setCharList(filteredList);
-        setRegnatList(fullList);
+        setRegnatList(regList);
       });
     } catch (error) {
       if (error.response) {

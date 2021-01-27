@@ -113,8 +113,9 @@ const AddCharacter: React.FC = () => {
         const res = response.data;
 
         const fullList: ICharacter[] = res;
+        const regList = fullList.filter(ch => !ch.regnant);
 
-        setRegnatList(fullList);
+        setRegnatList(regList);
       });
     } catch (error) {
       if (error.response) {

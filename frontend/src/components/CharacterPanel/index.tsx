@@ -63,7 +63,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
     if (
       myChar.clan.indexOf('Ghoul') >= 0 ||
-      myChar.clan.indexOf('Retainer') >= 0
+      myChar.clan.indexOf('Retainer') >= 0 ||
+      myChar.clan.indexOf('Wraith') >= 0
     ) {
       return;
     }
@@ -220,6 +221,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
       if (retainerChar) {
         setChar(retainerChar);
+        setRetainerList([]);
         history.push('/character');
       }
     },
