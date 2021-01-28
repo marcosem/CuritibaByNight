@@ -27,12 +27,6 @@ export const CheckboxContainer = styled.div`
   width: 16px !important;
 `;
 
-export const Icon = styled.svg`
-  fill: none;
-  stroke: white;
-  stroke-width: 2px;
-`;
-
 export const HiddenCheckbox = styled.input`
   border: 0;
   clip: rect(0 0 0 0);
@@ -65,7 +59,11 @@ export const StyledCheckbox = styled.div<ICheckBoxProps>`
     box-shadow: 0 0 0 3px #888;
   }
 
-  ${Icon} {
+  svg {
+    color: #fff;
+    width: 16px;
+    height: 16px;
+
     ${props =>
       props.checked
         ? css`

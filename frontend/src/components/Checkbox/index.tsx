@@ -1,10 +1,10 @@
 import React, { InputHTMLAttributes } from 'react';
+import { FiCheck } from 'react-icons/fi';
 import {
   Container,
   CheckboxContainer,
   HiddenCheckbox,
   StyledCheckbox,
-  Icon,
 } from './styles';
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -30,9 +30,7 @@ const Checkbox: React.FC<InputProps> = ({
         {...rest}
       />
       <StyledCheckbox checked={checked}>
-        <Icon viewBox="0 0 24 24">
-          <polyline points="20 6 9 17 4 12" />
-        </Icon>
+        <FiCheck />
       </StyledCheckbox>
     </CheckboxContainer>
 
