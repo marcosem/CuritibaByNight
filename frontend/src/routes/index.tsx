@@ -12,6 +12,7 @@ import Players from '../pages/Players';
 import Characters from '../pages/Characters';
 import Locals from '../pages/Locals';
 import CreatePlayer from '../pages/CreatePlayer';
+import UpdatePlayer from '../pages/UpdatePlayer';
 import CharacterUpdate from '../pages/CharacterUpdate';
 import AddCharacter from '../pages/AddCharacter';
 import AddLocation from '../pages/AddLocation';
@@ -33,6 +34,12 @@ const Routes: React.FC = () => (
     <Route path="/locals" component={Locals} isPrivate />
     <Route path="/players" component={Players} isPrivate isStoryteller />
     <Route path="/addplayer" component={CreatePlayer} isPrivate isStoryteller />
+    <Route
+      path="/updateplayer/:id"
+      component={UpdatePlayer}
+      isPrivate
+      isStoryteller
+    />
     <Route
       path="/characters/:filter"
       component={Characters}

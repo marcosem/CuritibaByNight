@@ -1,5 +1,9 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { shade } from 'polished';
+
+interface IAvatarCellProps {
+  isSt: boolean;
+}
 
 export const Container = styled.div`
   height: 100vh;
@@ -40,15 +44,6 @@ export const Table = styled.table`
 
     &:last-child {
       border-right: 0;
-    }
-
-    img {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: #888;
-
-      border: 2px solid #860209;
     }
 
     svg {
@@ -177,19 +172,25 @@ export const Table = styled.table`
   }
 `;
 
+export const AvatarCell = styled.img<IAvatarCellProps>`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #888;
+
+  ${props =>
+    props.isSt
+      ? css`
+          border: 2px solid #ffd700;
+        `
+      : css`
+          border: 2px solid #860209;
+        `}
+`;
+
 export const TableCell = styled.div`
   display: flex;
   align-items: left;
-
-  img {
-    width: 30px;
-    height: 30px;
-    padding: 0 16px;
-    border-radius: 50%;
-    background: #888;
-
-    border: 2px solid #860209;
-  }
 `;
 
 export const AddLink = styled.div`

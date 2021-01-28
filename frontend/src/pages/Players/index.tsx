@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
 import api from '../../services/api';
@@ -9,7 +9,14 @@ import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
-import { Container, TableWrapper, Table, TableCell, AddLink } from './styles';
+import {
+  Container,
+  TableWrapper,
+  Table,
+  AvatarCell,
+  TableCell,
+  AddLink,
+} from './styles';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
@@ -32,6 +39,7 @@ const Players: React.FC = () => {
   const { signOut } = useAuth();
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
+  const history = useHistory();
 
   const loadPlayers = useCallback(async () => {
     setBusy(true);
@@ -83,9 +91,14 @@ const Players: React.FC = () => {
     loadPlayers();
   }, [loadPlayers]);
 
-  const handleProfile = useCallback((profile: IPlayer) => {
-    console.log(profile);
-  }, []);
+  const handleProfile = useCallback(
+    (profile: IPlayer) => {
+      if (profile.id) {
+        history.push(`/updateplayer/${profile.id}`);
+      }
+    },
+    [history],
+  );
 
   return (
     <Container>
@@ -117,12 +130,13 @@ const Players: React.FC = () => {
                 {playerList.map(player => (
                   <tr key={player.id} onClick={() => handleProfile(player)}>
                     <td>
-                      <img
+                      <AvatarCell
                         src={
                           player.avatar_url || imgProfile
                           // `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
                         }
                         alt=""
+                        isSt={player.storyteller}
                       />
                     </td>
                     <td>
