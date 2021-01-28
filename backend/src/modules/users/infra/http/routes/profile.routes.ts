@@ -21,6 +21,7 @@ profileRouter.put(
       password: Joi.string(),
       password_confirmation: Joi.string().valid(Joi.ref('password')),
       storyteller: Joi.boolean().allow(null),
+      active: Joi.boolean().allow(null),
     },
   }),
   usersController.update,

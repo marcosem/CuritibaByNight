@@ -13,6 +13,7 @@ interface IRequestDTO {
   old_password?: string;
   password?: string;
   storyteller?: boolean;
+  active?: boolean;
 }
 
 @injectable()
@@ -33,6 +34,7 @@ class UpdateProfileService {
     old_password,
     password,
     storyteller,
+    active,
   }: IRequestDTO): Promise<User> {
     const user = await this.usersRepository.findById(user_id);
     const profileID = profile_id || user_id;
@@ -69,6 +71,7 @@ class UpdateProfileService {
     profile.name = name;
     profile.email = email;
     profile.phone = phone || profile.phone;
+    profile.active = active === undefined ? profile.active : active;
 
     if (
       !user.storyteller &&

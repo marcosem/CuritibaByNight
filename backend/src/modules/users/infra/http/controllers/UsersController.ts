@@ -31,7 +31,7 @@ export default class UsersController {
 
     const getUser = container.resolve(GetUserService);
 
-    const user = await getUser.execute(profileID);
+    const user = await getUser.execute({ user_id, profile_id: profileID });
 
     // delete user.password;
     // delete user.secret;
@@ -51,6 +51,7 @@ export default class UsersController {
       old_password,
       password,
       storyteller,
+      active,
     } = req.body;
 
     const updateProfile = container.resolve(UpdateProfileService);
@@ -64,6 +65,7 @@ export default class UsersController {
       old_password,
       password,
       storyteller,
+      active,
     });
 
     // delete user.password;
