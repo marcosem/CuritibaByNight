@@ -14,8 +14,6 @@ export default class UsersController {
     // remove passwords
     const usersListProtected = usersList.map(user => {
       const newUser = user;
-      // delete newUser.password;
-      // delete newUser.secret;
       newUser.secret = '';
       return classToClass(newUser);
     });
@@ -32,9 +30,6 @@ export default class UsersController {
     const getUser = container.resolve(GetUserService);
 
     const user = await getUser.execute({ user_id, profile_id: profileID });
-
-    // delete user.password;
-    // delete user.secret;
     user.secret = '';
 
     return res.json(classToClass(user));
@@ -68,8 +63,6 @@ export default class UsersController {
       active,
     });
 
-    // delete user.password;
-    // delete user.secret;
     user.secret = '';
 
     return res.json(classToClass(user));

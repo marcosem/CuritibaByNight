@@ -7,19 +7,23 @@ import React, {
   ChangeEvent,
 } from 'react';
 import { useParams } from 'react-router';
-import { FiUser, FiMail, FiArrowLeft } from 'react-icons/fi';
+import { FiUser, FiMail, FiArrowLeft, FiTrash2 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { useHistory } from 'react-router-dom';
+import { confirmAlert } from 'react-confirm-alert';
 import { useToast } from '../../hooks/toast';
 import { useAuth } from '../../hooks/auth';
+import ICharacter from '../../components/CharacterList/ICharacter';
+
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import { Container, Content, Avatar } from './styles';
+import { Container, Content, Avatar, RemoveButton } from './styles';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -52,7 +56,7 @@ const UpdatePlayer: React.FC = () => {
   const [active, setActive] = useState<boolean>(false);
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const history = useHistory();
   const [isLoading, setLoading] = useState(false);
 
@@ -156,6 +160,130 @@ const UpdatePlayer: React.FC = () => {
     [active, addToast, history, player, st],
   );
 
+  const handleRemove = useCallback(async () => {
+    if (player === undefined) {
+      return;
+    }
+
+    try {
+      const requestData = {
+        profile_id: player.id,
+      };
+
+      const reqData = { data: requestData };
+      await api.delete('/users/remove', reqData);
+
+      addToast({
+        type: 'success',
+        title: 'Jogador excluído',
+        description: 'Jogador excluído com sucesso!',
+      });
+
+      history.goBack();
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar exluir o jogador',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+  }, [addToast, history, player, signOut]);
+
+  const handleConfirmRemove = useCallback(async () => {
+    if (player === undefined) {
+      return;
+    }
+
+    if (player.id === user.id) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao tentar exluir o jogador',
+        description: 'Você não pode excluir seu próprio perfil!',
+      });
+
+      return;
+    }
+
+    try {
+      let charQty = 0;
+
+      await api
+        .post('character/list', {
+          player_id: player.id,
+        })
+        .then(response => {
+          const res = response.data;
+          const chars: ICharacter[] = res;
+          charQty = chars.length;
+          let charsNames = '';
+
+          chars.forEach((ch, index) => {
+            if (index === 0) {
+              charsNames = ch.name;
+            } else {
+              charsNames = `${charsNames}, ${ch.name}`;
+            }
+          });
+
+          if (charQty > 0) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar exluir o jogador',
+              description: `Este jogador possuí personagem(s): [${charsNames}], é preciso excluí-lo(s) primeiro.`,
+            });
+          }
+        });
+
+      if (charQty > 0) {
+        return;
+      }
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        }
+      }
+    }
+
+    confirmAlert({
+      title: 'Confirmar exclusão',
+      message: `Você está prestes a excluir o jogador [${player.name}], você confirma?`,
+      buttons: [
+        {
+          label: 'Sim',
+          onClick: () => handleRemove(),
+        },
+        {
+          label: 'Não',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onClick: () => {},
+        },
+      ],
+    });
+  }, [addToast, handleRemove, player, signOut, user.id]);
+
   const handleStorytellerChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setSt(e.target.checked);
@@ -256,6 +384,9 @@ const UpdatePlayer: React.FC = () => {
           >
             Atualizar Perfil
           </Button>
+          <RemoveButton type="button" onClick={handleConfirmRemove}>
+            <FiTrash2 />
+          </RemoveButton>
         </Form>
       </Content>
     </Container>
