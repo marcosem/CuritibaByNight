@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { shade } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
 interface IDashboardProps {
@@ -358,4 +359,33 @@ export const ButtonBox = styled.div<IDashboardProps>`
       : css`
           max-width: 340px;
         `}
+`;
+
+export const RemoveButton = styled.button`
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+
+  width: 64px;
+  height: 64px;
+  border: 0;
+
+  background: #860209;
+  border-radius: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: ${shade(0.2, '#860209')};
+  }
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #ccc;
+  }
 `;

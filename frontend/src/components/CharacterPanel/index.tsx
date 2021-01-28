@@ -7,6 +7,9 @@ import React, {
   HTMLAttributes,
 } from 'react';
 import { useHistory } from 'react-router-dom';
+import { FiTrash2 } from 'react-icons/fi';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
 
 import {
@@ -18,6 +21,7 @@ import {
   Table,
   TableCell,
   ButtonBox,
+  RemoveButton,
 } from './styles';
 
 import Loading from '../Loading';
@@ -213,6 +217,68 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     }
     setBusy(false);
   }, [addToast, myChar, signOut]);
+
+  const handleRemove = useCallback(async () => {
+    try {
+      const requestData = {
+        character_id: myChar.id,
+      };
+
+      const reqData = { data: requestData };
+
+      await api.delete('/character/remove', reqData);
+
+      addToast({
+        type: 'success',
+        title: 'Personagem excluído',
+        description: 'Personagem excluído com sucesso!',
+      });
+
+      history.goBack();
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar exluir o perssonagem',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+  }, [addToast, history, myChar.id, signOut]);
+
+  const handleConfirmRemove = useCallback(() => {
+    if (myChar === undefined) {
+      return;
+    }
+
+    confirmAlert({
+      title: 'Confirmar exclusão',
+      message: `Você está prestes a excluir o personagem [${myChar.name}], você confirma?`,
+      buttons: [
+        {
+          label: 'Sim',
+          onClick: () => handleRemove(),
+        },
+        {
+          label: 'Não',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onClick: () => {},
+        },
+      ],
+    });
+  }, [handleRemove, myChar]);
 
   const handleRetainerSelection = useCallback(
     async (e: MouseEvent<HTMLTableRowElement>) => {
@@ -430,6 +496,12 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                         Retornar
                       </Button>
                     </ButtonBox>
+                  )}
+
+                  {user.storyteller && !dashboard && (
+                    <RemoveButton type="button" onClick={handleConfirmRemove}>
+                      <FiTrash2 />
+                    </RemoveButton>
                   )}
                 </CharacterContainer>
               </>
