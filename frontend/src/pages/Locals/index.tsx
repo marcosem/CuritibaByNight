@@ -12,6 +12,7 @@ import {
   GiCampingTent,
   GiCastle,
   GiGreekTemple,
+  GiHaunting,
   GiFamilyHouse,
   GiBookshelf,
   GiGuardedTower,
@@ -362,6 +363,9 @@ const Locals: React.FC = () => {
           </span>
           <span>
             <GiGuardedTower />- Elysium
+          </span>
+          <span>
+            <GiHaunting />- Local Assombrado
           </span>
           <span>
             <GiFamilyHouse />- Mansão

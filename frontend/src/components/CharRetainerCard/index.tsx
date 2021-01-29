@@ -158,7 +158,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
             )}
           </a>
           {clan.indexOf('Wraith') >= 0 ? (
-            <>{regnant !== '' && <span>{` de ${regnant}`}</span>}</>
+            <>{regnant !== '' && <span>{`Ligado à ${regnant}`}</span>}</>
           ) : (
             <>
               {regnant !== '' ? (

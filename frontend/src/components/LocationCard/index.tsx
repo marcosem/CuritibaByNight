@@ -5,6 +5,7 @@ import {
   GiCampingTent,
   GiCastle,
   GiGreekTemple,
+  GiHaunting,
   GiFamilyHouse,
   GiBookshelf,
   GiGuardedTower,
@@ -91,6 +92,10 @@ const LocationCard: React.FC<ILocationCardProps> = ({
       case 'castle':
         setTypeIcon(GiCastle);
         setTypeTitle('Castelo');
+        break;
+      case 'haunt':
+        setTypeIcon(GiHaunting);
+        setTypeTitle('Local Assombrado');
         break;
       case 'holding':
         setTypeIcon(GiGreekTemple);

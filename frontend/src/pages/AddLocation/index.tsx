@@ -63,16 +63,20 @@ const typeList: ISelectableItem[] = [
     titleEn: 'castle',
   },
   {
-    title: 'Propriedade',
-    titleEn: 'holding',
+    title: 'Clube Noturno',
+    titleEn: 'nightclub',
+  },
+  {
+    title: 'Local Assombrado',
+    titleEn: 'haunt',
   },
   {
     title: 'Mansão',
     titleEn: 'mansion',
   },
   {
-    title: 'Clube Noturno',
-    titleEn: 'nightclub',
+    title: 'Propriedade',
+    titleEn: 'holding',
   },
   {
     title: 'Universidade',
