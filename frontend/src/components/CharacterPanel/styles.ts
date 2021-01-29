@@ -14,6 +14,30 @@ export const Content = styled.main<IDashboardProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
   display: flex;
+  overflow-y: auto;
+  max-height: 75vh;
+
+  scrollbar-width: thin;
+  scrollbar-color: #555;
+  scrollbar-track-color: #f5f5f5;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #555;
+  }
 
   ${props =>
     props.isMobile
@@ -162,6 +186,7 @@ export const TableWrapper = styled.div<IDashboardProps>`
   margin: 10px auto;
   min-width: 320px;
   border-radius: 11px;
+  padding-bottom: 16px;
 
   ${props =>
     props.isMobile
@@ -277,7 +302,7 @@ export const Table = styled.table<IDashboardProps>`
 
   tbody {
     display: block;
-    max-height: 35vh;
+    max-height: 36vh;
     overflow-y: auto;
     border-radius: 0 0 10px 10px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
