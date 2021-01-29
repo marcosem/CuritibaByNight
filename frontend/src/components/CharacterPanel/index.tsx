@@ -39,6 +39,7 @@ interface ILocation {
   description: string;
   elysium: string;
   property: string;
+  responsible: string;
 }
 
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -157,6 +158,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
               description: location.description,
               elysium: location.elysium,
               property: location.property,
+              responsible: location.responsible,
             };
 
             return newLocation;
@@ -476,12 +478,29 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                                 id={local.id}
                                 onClick={handleLocationJump}
                               >
-                                <td>
-                                  <TableCell>{local.name}</TableCell>
-                                </td>
-                                <td>
-                                  <TableCell>{local.description}</TableCell>
-                                </td>
+                                {local.responsible === myChar.id ? (
+                                  <>
+                                    <td>
+                                      <TableCell>
+                                        <b>{local.name}</b>
+                                      </TableCell>
+                                    </td>
+                                    <td>
+                                      <TableCell>
+                                        <b>{local.description}</b>
+                                      </TableCell>
+                                    </td>
+                                  </>
+                                ) : (
+                                  <>
+                                    <td>
+                                      <TableCell>{local.name}</TableCell>
+                                    </td>
+                                    <td>
+                                      <TableCell>{local.description}</TableCell>
+                                    </td>
+                                  </>
+                                )}
                               </tr>
                             ))}
                           </tbody>
