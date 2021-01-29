@@ -374,7 +374,7 @@ export const TableCell = styled.div<ITableCellProps>`
 
 export const ButtonBox = styled.div<IDashboardProps>`
   margin: auto;
-  padding-top: 16px;
+  padding: 16px 0;
 
   ${props =>
     props.isMobile
