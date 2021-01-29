@@ -236,6 +236,26 @@ class PDFParseProvider implements IPDFParserProvider {
             rl.close();
           }
         }
+      } else if (creature === 'wraith') {
+        if (retainerLevel === 0) {
+          if (line.indexOf('Spirit Slave Level ') >= 0) {
+            const startRet =
+              line.indexOf('Spirit Slave Level ') +
+              'Spirit Slave Level '.length;
+            const endRet = line.length - 1;
+
+            retainerLevel = parseInt(line.substring(startRet, endRet), 10);
+
+            // eslint-disable-next-line no-restricted-globals
+            if (!isNaN(retainerLevel)) {
+              char.retainer_level = retainerLevel;
+            } else {
+              isParsedRetainerLevel = false;
+            }
+
+            rl.close();
+          }
+        }
       }
     });
 
