@@ -78,7 +78,7 @@ export const LocationLegend = styled.div`
   flex-direction: column;
 
   width: 140px;
-  height: 193px;
+  height: 212px;
   background: #000;
   opacity: 0.5;
   border-radius: 4px;

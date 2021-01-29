@@ -51,6 +51,10 @@ const typeList: ISelectableItem[] = [
     titleEn: 'haven',
   },
   {
+    title: 'Acampamento',
+    titleEn: 'camp',
+  },
+  {
     title: 'Aeroporto',
     titleEn: 'airport',
   },

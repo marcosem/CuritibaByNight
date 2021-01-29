@@ -9,6 +9,7 @@ import Leaflet from 'leaflet';
 import { MdLocalAirport, MdStore, MdLocationOn } from 'react-icons/md';
 import {
   GiHouse,
+  GiCampingTent,
   GiCastle,
   GiGreekTemple,
   GiFamilyHouse,
@@ -349,6 +350,9 @@ const Locals: React.FC = () => {
           <strong>Legenda</strong>
           <span>
             <MdLocalAirport />- Aeroporto
+          </span>
+          <span>
+            <GiCampingTent /> - Acampamento
           </span>
           <span>
             <GiCastle />- Castelo

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { MdLocalAirport, MdStore, MdLocationOn } from 'react-icons/md';
 import {
   GiHouse,
+  GiCampingTent,
   GiCastle,
   GiGreekTemple,
   GiFamilyHouse,
@@ -82,6 +83,10 @@ const LocationCard: React.FC<ILocationCardProps> = ({
       case 'airport':
         setTypeIcon(MdLocalAirport);
         setTypeTitle('Aeroporto');
+        break;
+      case 'camp':
+        setTypeIcon(GiCampingTent);
+        setTypeTitle('Castelo');
         break;
       case 'castle':
         setTypeIcon(GiCastle);
