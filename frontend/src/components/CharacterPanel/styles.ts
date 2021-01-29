@@ -132,7 +132,7 @@ export const CharacterContainer = styled.div<IDashboardProps>`
       }
 
       &:last-child {
-        padding-top: 24px;
+        padding-top: 13px;
       }
     }
 
