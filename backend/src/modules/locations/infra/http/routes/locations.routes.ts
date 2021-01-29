@@ -32,6 +32,7 @@ locationsRouter.post(
       type: Joi.valid(
         'haven',
         'airport',
+        'camp',
         'castle',
         'holding',
         'mansion',
@@ -64,6 +65,7 @@ locationsRouter.patch(
       type: Joi.valid(
         'haven',
         'airport',
+        'camp',
         'castle',
         'holding',
         'mansion',
