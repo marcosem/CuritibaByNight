@@ -15,6 +15,7 @@ export const Content = styled.main<IDashboardProps>`
   background: url(${bgImg}) repeat;
   display: flex;
   overflow-y: auto;
+  min-height: 382px;
   max-height: 75vh;
 
   scrollbar-width: thin;
