@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { shade } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
@@ -9,6 +9,15 @@ interface IDashboardProps {
 interface ITableCellProps {
   centered?: boolean;
 }
+
+const appearFromOpacity = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
 export const Content = styled.main<IDashboardProps>`
   margin: 0 auto;
@@ -188,6 +197,8 @@ export const TableWrapper = styled.div<IDashboardProps>`
   min-width: 320px;
   border-radius: 11px;
   padding-bottom: 16px;
+
+  animation: ${appearFromOpacity} 0.6s;
 
   ${props =>
     props.isMobile
