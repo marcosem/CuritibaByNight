@@ -70,6 +70,31 @@ export const FunctionsContainer = styled.div`
   }
 `;
 
+export const CheckboxContainer = styled.div`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 200px;
+  height: 40px;
+  background: #000;
+  padding: 5px 10px;
+  border-radius: 4px;
+  opacity: 0.5;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center !important;
+
+  div {
+    display: flex !important;
+  }
+
+  span {
+    color: #fff !important;
+    font-weight: 400 !important;
+  }
+`;
+
 export const LocationLegend = styled.div`
   position: absolute;
   left: 20px;

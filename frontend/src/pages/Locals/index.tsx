@@ -3,7 +3,14 @@ import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiEdit, FiUserPlus } from 'react-icons/fi';
-import { Map, TileLayer, Marker, Tooltip } from 'react-leaflet';
+import {
+  Map,
+  TileLayer,
+  Marker,
+  Tooltip,
+  Polyline,
+  Popup,
+} from 'react-leaflet';
 import Leaflet from 'leaflet';
 
 import { MdLocalAirport, MdStore, MdLocationOn } from 'react-icons/md';
@@ -26,6 +33,7 @@ import {
   Select,
   LocationLegend,
   FunctionsContainer,
+  CheckboxContainer,
 } from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
@@ -33,12 +41,15 @@ import Loading from '../../components/Loading';
 import 'leaflet/dist/leaflet.css';
 import imgBuilding from '../../assets/building.jpg';
 import LocationCard from '../../components/LocationCard';
+import Checkbox from '../../components/Checkbox';
 
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 
 import mapMakerIcon from '../../assets/mapMakerIcon.svg';
+
+import { territories } from './territories.json';
 
 interface IRouteParams {
   local: string;
@@ -73,11 +84,21 @@ interface ICharacter {
   situation: string;
 }
 
+interface ITerritory {
+  name: string;
+  population: string;
+  sect: string;
+  coordinates: [number, number][];
+  color: string;
+}
+
 const Locals: React.FC = () => {
   const { local } = useParams<IRouteParams>();
   const [coordLatitude, setCoordLatitude] = useState<number>(-25.442152);
   const [coordLongitude, setCoordLongitude] = useState<number>(-49.2742434);
   const [zoom, setZoom] = useState<number>(9);
+  const [showBorders, setShowBorders] = useState<boolean>(false);
+  const [borders, setBorders] = useState<ITerritory[]>([]);
 
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
   const [charList, setCharList] = useState<ICharacter[]>([]);
@@ -226,6 +247,66 @@ const Locals: React.FC = () => {
   ]);
 
   useEffect(() => {
+    const newTerritories: ITerritory[] = territories.map(item => {
+      let color;
+
+      switch (item.sect) {
+        case 'Sabbat':
+          color = 'red';
+          break;
+        case 'Camarilla':
+          color = 'green';
+          break;
+        case 'Anarch':
+          color = 'yellow';
+          break;
+        case 'Anarch-Sabbat':
+          color = 'orange';
+          break;
+        case 'Wyrm':
+          color = 'purple';
+          break;
+        case 'Followers of Set':
+          color = 'blue';
+          break;
+        case 'Assamites':
+          color = 'cyan';
+          break;
+        case 'Garou':
+          color = 'grey';
+          break;
+        default:
+          color = 'black';
+      }
+
+      const newTerritory: ITerritory = {
+        name: item.name,
+        population: new Intl.NumberFormat('pt-BR').format(item.population),
+        sect: item.sect === '' ? 'Não definido' : item.sect,
+        coordinates: item.coordinates.map(coord => {
+          const Lat = coord[1];
+          const Long = coord[0];
+          const resLatLong: [number, number] = [Lat, Long];
+
+          return resLatLong;
+        }),
+        color,
+      };
+
+      return newTerritory;
+    });
+
+    setBorders(newTerritories);
+  }, []);
+
+  const handleShowBorderChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setShowBorders(e.target.checked);
+    },
+    [],
+  );
+
+  useEffect(() => {
     if (user.storyteller) {
       loadCharacters();
     }
@@ -272,7 +353,6 @@ const Locals: React.FC = () => {
           {charList.length > 0 ? (
             <>
               <strong>Ver o mapa como:</strong>
-
               <Select
                 name="character"
                 id="character"
@@ -308,6 +388,22 @@ const Locals: React.FC = () => {
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
           />
+
+          {user.storyteller && showBorders && borders.length > 0 && (
+            <>
+              {borders.map(border => (
+                <Polyline
+                  color={border.color}
+                  fillColor={border.color}
+                  fill
+                  positions={border.coordinates}
+                  opacity={0.5}
+                >
+                  <Popup>{`${border.name}, pop. ${border.population} hab., ${border.sect}`}</Popup>
+                </Polyline>
+              ))}
+            </>
+          )}
 
           {isBusy ? (
             <Loading />
@@ -383,6 +479,19 @@ const Locals: React.FC = () => {
             <MdLocationOn />- Outros
           </span>
         </LocationLegend>
+
+        {user.storyteller && (
+          <CheckboxContainer>
+            <Checkbox
+              name="showBorder"
+              id="showBorder"
+              checked={showBorders}
+              onChange={handleShowBorderChange}
+            >
+              Mostrar Territórios
+            </Checkbox>
+          </CheckboxContainer>
+        )}
 
         {user.storyteller && !isMobileVersion && (
           <FunctionsContainer>
