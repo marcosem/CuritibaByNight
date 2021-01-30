@@ -31,6 +31,7 @@ interface ICharacterCardProps {
   situation?: string;
   npc?: boolean;
   locked?: boolean;
+  readOnly?: boolean;
 }
 
 const CharKindredCard: React.FC<ICharacterCardProps> = ({
@@ -46,6 +47,7 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
   situation = 'active',
   npc = false,
   locked = false,
+  readOnly = false,
 }) => {
   const [charImg, setCharImg] = useState<string>('');
   const [clanImg, setClanImg] = useState<string>('');
@@ -132,10 +134,18 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
           </ProfileImage>
         </label>
         <CharInfo>
-          <a href={sheetFile} target="_blank" rel="noopener noreferrer">
-            <b>{title !== '' && `${title}: `}</b>
-            {name}
-          </a>
+          {readOnly ? (
+            <strong>
+              <b>{title !== '' && `${title}: `}</b>
+              {name}
+            </strong>
+          ) : (
+            <a href={sheetFile} target="_blank" rel="noopener noreferrer">
+              <b>{title !== '' && `${title}: `}</b>
+              {name}
+            </a>
+          )}
+
           <span>{coterie !== '' && `${coterie}`}</span>
         </CharInfo>
 
@@ -149,12 +159,20 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
           </CharXP>
         ) : (
           <>
-            <CharXPTitle>
-              <span>XP:</span>
-            </CharXPTitle>
-            <CharXP>
-              <span>{experience}</span>
-            </CharXP>
+            {readOnly ? (
+              <CharXP>
+                <GiFangedSkull />
+              </CharXP>
+            ) : (
+              <>
+                <CharXPTitle>
+                  <span>XP:</span>
+                </CharXPTitle>
+                <CharXP>
+                  <span>{experience}</span>
+                </CharXP>
+              </>
+            )}
           </>
         )}
       </CardSquare>

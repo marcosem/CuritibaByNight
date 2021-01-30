@@ -17,13 +17,13 @@ interface ICardProps {
 const appearFromLeft = keyframes`
   from {
     opacity: 0;
-    transform: translateX(-50px);
-    z-index: 10; transform: rotateZ(-10deg);
+    // transform: translateX(-50px);
+    // z-index: 10; transform: rotateZ(-10deg);
   }
   to {
     opacity: 1;
-    transform: translateX(1);
-    transform: rotateZ(0deg);
+    // transform: translateX(1);
+    // transform: rotateZ(0deg);
   }
 `;
 
@@ -196,6 +196,15 @@ export const CharInfo = styled.div`
     }
   }
 
+  strong {
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    color: #000;
+  }
+
   span {
     font-size: 13px;
     font-style: italic;
@@ -268,7 +277,6 @@ export const CharXP = styled.div`
   }
 `;
 
-// export const CharSituation = styled.div`
 export const CharSituation = styled(CardToolTip)`
   position: absolute;
   top: 300px;

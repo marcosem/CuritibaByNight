@@ -38,6 +38,7 @@ const Dashboard: React.FC = () => {
           let filteredClan: string[];
           if (char.clan) {
             filteredClan = char.clan.split(' (');
+            filteredClan = filteredClan[0].split(':');
           } else {
             filteredClan = [''];
           }

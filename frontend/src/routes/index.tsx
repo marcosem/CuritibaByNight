@@ -19,6 +19,7 @@ import AddLocation from '../pages/AddLocation';
 import LocationUpdate from '../pages/LocationUpdate';
 import LocationCharList from '../pages/LocationCharList';
 import CharacterDetails from '../pages/CharacterDetails';
+import Challenges from '../pages/Challenges';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -72,6 +73,7 @@ const Routes: React.FC = () => (
       isStoryteller
     />
     <Route path="/character" component={CharacterDetails} isPrivate />
+    <Route path="/challenges" component={Challenges} isPrivate />
   </Switch>
 );
 

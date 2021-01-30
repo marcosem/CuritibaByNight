@@ -20,6 +20,7 @@ interface ICharacterCardProps {
   npc?: boolean;
   regnant?: string;
   locked?: boolean;
+  readOnly?: boolean;
 }
 
 const CharacterCard: React.FC<ICharacterCardProps> = ({
@@ -36,6 +37,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   npc = false,
   regnant = '',
   locked = false,
+  readOnly = false,
 }) => {
   return (
     <>
@@ -56,6 +58,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
             regnant={regnant}
             situation={situation}
             locked={locked}
+            readOnly={readOnly}
           />
         ) : (
           <CharKindredCard
@@ -71,6 +74,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
             situation={situation}
             npc={npc}
             locked={locked}
+            readOnly={readOnly}
           />
         )}
       </Suspense>

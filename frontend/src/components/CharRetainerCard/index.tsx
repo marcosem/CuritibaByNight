@@ -32,6 +32,7 @@ interface ICharacterCardProps {
   situation?: string;
   npc?: boolean;
   locked?: boolean;
+  readOnly?: boolean;
 }
 
 const CharRetainerCard: React.FC<ICharacterCardProps> = ({
@@ -47,6 +48,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   situation = 'active',
   npc = false,
   locked = false,
+  readOnly = false,
 }) => {
   const [cardImg, setCardImg] = useState<string>('');
   const [charImg, setCharImg] = useState<string>('');
@@ -122,12 +124,6 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
     [addToast, charId, name],
   );
 
-  /*
-  useEffect(() => {
-    getRenantName();
-  }, [getRenantName]);
-  */
-
   return (
     <Container isMobile={isMobileVersion}>
       <CardSquare clanImg={cardImg}>
@@ -144,19 +140,36 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
           </ProfileImage>
         </label>
         <CharInfo>
-          <a href={sheetFile} target="_blank" rel="noopener noreferrer">
-            {clan.indexOf('Wraith') >= 0 ? (
-              <>
-                <b>{`${clan}: `}</b>
-                {name}
-              </>
-            ) : (
-              <>
-                <b>{title !== '' && `${title}: `}</b>
-                {name}
-              </>
-            )}
-          </a>
+          {readOnly ? (
+            <>
+              {clan.indexOf('Wraith') >= 0 ? (
+                <strong>
+                  <b>{`${clan}: `}</b>
+                  {name}
+                </strong>
+              ) : (
+                <strong>
+                  <b>{title !== '' && `${title}: `}</b>
+                  {name}
+                </strong>
+              )}
+            </>
+          ) : (
+            <a href={sheetFile} target="_blank" rel="noopener noreferrer">
+              {clan.indexOf('Wraith') >= 0 ? (
+                <>
+                  <b>{`${clan}: `}</b>
+                  {name}
+                </>
+              ) : (
+                <>
+                  <b>{title !== '' && `${title}: `}</b>
+                  {name}
+                </>
+              )}
+            </a>
+          )}
+
           {clan.indexOf('Wraith') >= 0 ? (
             <>{regnant !== '' && <span>{`Ligado à ${regnant}`}</span>}</>
           ) : (
@@ -180,12 +193,20 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
           </CharXP>
         ) : (
           <>
-            <CharXPTitle>
-              <span>XP:</span>
-            </CharXPTitle>
-            <CharXP>
-              <span>{experience}</span>
-            </CharXP>
+            {readOnly ? (
+              <CharXP>
+                <GiFangedSkull />
+              </CharXP>
+            ) : (
+              <>
+                <CharXPTitle>
+                  <span>XP:</span>
+                </CharXPTitle>
+                <CharXP>
+                  <span>{experience}</span>
+                </CharXP>
+              </>
+            )}
           </>
         )}
       </CardSquare>

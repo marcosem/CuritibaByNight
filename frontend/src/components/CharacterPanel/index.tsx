@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi';
+import { GiRollingDices } from 'react-icons/gi';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
@@ -21,6 +22,7 @@ import {
   Table,
   TableCell,
   ButtonBox,
+  PlayButton,
   RemoveButton,
 } from './styles';
 
@@ -305,6 +307,10 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     [history],
   );
 
+  const handleChallenges = useCallback(() => {
+    history.push('/challenges');
+  }, [history]);
+
   useEffect(() => {
     loadLocations();
     loadRetainers();
@@ -517,8 +523,22 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     </ButtonBox>
                   )}
 
+                  {dashboard && (
+                    <PlayButton
+                      type="button"
+                      onClick={handleChallenges}
+                      title="Rolar Jo-Ken-Po"
+                    >
+                      <GiRollingDices />
+                    </PlayButton>
+                  )}
+
                   {user.storyteller && !dashboard && (
-                    <RemoveButton type="button" onClick={handleConfirmRemove}>
+                    <RemoveButton
+                      type="button"
+                      onClick={handleConfirmRemove}
+                      title="Excluir Personagem"
+                    >
                       <FiTrash2 />
                     </RemoveButton>
                   )}
