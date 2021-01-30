@@ -261,19 +261,19 @@ const Locals: React.FC = () => {
           color = 'yellow';
           break;
         case 'Anarch-Sabbat':
-          color = 'orange';
+          color = 'orangered';
           break;
         case 'Wyrm':
-          color = 'purple';
+          color = 'indigo';
           break;
         case 'Followers of Set':
-          color = 'blue';
+          color = 'chocolate';
           break;
         case 'Assamites':
-          color = 'cyan';
+          color = 'steelblue';
           break;
         case 'Garou':
-          color = 'grey';
+          color = 'magenta';
           break;
         default:
           color = 'black';
