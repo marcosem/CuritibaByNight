@@ -204,6 +204,22 @@ const Challenges: React.FC = () => {
     [SelectCharByIndex, opponentList],
   );
 
+  const showOptions = useCallback(() => {
+    if (myChar === undefined) {
+      return false;
+    }
+
+    if (
+      (user.storyteller && myChar.npc) ||
+      myChar.id === char.id ||
+      !user.storyteller
+    ) {
+      return true;
+    }
+
+    return false;
+  }, [char.id, myChar, user.storyteller]);
+
   useEffect(() => {
     setOpponentChar({
       id: '',
@@ -325,38 +341,38 @@ const Challenges: React.FC = () => {
                 </div>
                 <ArenaContainer>
                   <JanKenPoContainer>
-                    { (user.storyteller && myChar.npc) || !user.storyteller || myChar.id === char.id && (
-                        <>
-                          <JanKenPoButton
-                            type="button"
-                            title="Pedra"
-                            onClick={() => HandleSelectPo('rock')}
-                          >
-                            <FaHandRock />
-                          </JanKenPoButton>
-                          <JanKenPoButton
-                            type="button"
-                            title="Papel"
-                            onClick={() => HandleSelectPo('paper')}
-                          >
-                            <FaHandPaper />
-                          </JanKenPoButton>
-                          <JanKenPoButton
-                            type="button"
-                            title="Tesoura"
-                            onClick={() => HandleSelectPo('scissors')}
-                          >
-                            <FaHandScissors />
-                          </JanKenPoButton>
-                          <JanKenPoButton
-                            type="button"
-                            title="Bomba"
-                            onClick={() => HandleSelectPo('bomb')}
-                          >
-                            <FaBomb />
-                          </JanKenPoButton>
-                        </>
-                      ))}
+                    {showOptions() && (
+                      <>
+                        <JanKenPoButton
+                          type="button"
+                          title="Pedra"
+                          onClick={() => HandleSelectPo('rock')}
+                        >
+                          <FaHandRock />
+                        </JanKenPoButton>
+                        <JanKenPoButton
+                          type="button"
+                          title="Papel"
+                          onClick={() => HandleSelectPo('paper')}
+                        >
+                          <FaHandPaper />
+                        </JanKenPoButton>
+                        <JanKenPoButton
+                          type="button"
+                          title="Tesoura"
+                          onClick={() => HandleSelectPo('scissors')}
+                        >
+                          <FaHandScissors />
+                        </JanKenPoButton>
+                        <JanKenPoButton
+                          type="button"
+                          title="Bomba"
+                          onClick={() => HandleSelectPo('bomb')}
+                        >
+                          <FaBomb />
+                        </JanKenPoButton>
+                      </>
+                    )}
                   </JanKenPoContainer>
                   <JanKenPoContainer>
                     {selectedPo !== '' && (
