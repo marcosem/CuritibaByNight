@@ -13,15 +13,17 @@ interface IButtonProps {
 
 const bounceButton = keyframes`
   from {
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
+
+
   }
 
   50% {
-    transform: translateY(-40px);
+    transform: scale(1.2) translateY(-40px);
   }
 
   to {
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 `;
 
