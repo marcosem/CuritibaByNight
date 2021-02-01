@@ -6,7 +6,10 @@ import {
   FaHandScissors,
   FaBomb,
   FaTimes,
+  FaHandshake,
+  FaUnlink,
 } from 'react-icons/fa';
+import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 
 import {
@@ -14,17 +17,21 @@ import {
   TitleBox,
   SelectCharacter,
   Content,
+  CardsContent,
   CharCardContainer,
   ChallangeArena,
   ArenaContainer,
   JanKenPoContainer,
   JanKenPoButton,
+  ButtonBox,
+  ConnectionButton,
 } from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import CharacterCard from '../../components/CharacterCard';
+import Button from '../../components/Button';
 import ICharacter from '../../components/CharacterList/ICharacter';
-import socket from '../../utils/socket';
+import getSocket from '../../utils/getSocket';
 
 import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
@@ -37,12 +44,30 @@ const Challenges: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [opponentList, setOpponentList] = useState<ICharacter[]>([]);
   const [selectedPo, setSelectedPo] = useState<string>('');
-  const [readyToPlay, setReadyToPlay] = useState<boolean>(false);
-  const [challengeMode, setChallengeMode] = useState<boolean>(true);
+  const [socket, setSocket] = useState<WebSocket>(getSocket());
+  // const [readyToPlay, setReadyToPlay] = useState<boolean>(false);
+  const [mode, setMode] = useState<string>('initial');
+  const [title, setTitle] = useState<string>('');
+  const [connected, setConnected] = useState<boolean>(false);
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
+  const history = useHistory();
 
   const initializeSocket = useCallback(() => {
+    const token = api.defaults.headers.Authorization.replace('Bearer ', '');
+
+    if (socket.readyState === socket.OPEN) {
+      socket.send(
+        JSON.stringify({
+          type: 'auth',
+          user_id: user.id,
+          token,
+        }),
+      );
+
+      setConnected(true);
+    }
+
     socket.addEventListener('open', () => {
       addToast({
         type: 'success',
@@ -54,9 +79,11 @@ const Challenges: React.FC = () => {
         JSON.stringify({
           type: 'auth',
           user_id: user.id,
-          st: user.storyteller,
+          token,
         }),
       );
+
+      setConnected(true);
     });
 
     socket.addEventListener('close', () => {
@@ -65,27 +92,86 @@ const Challenges: React.FC = () => {
         title: 'Desconectado ao Servidor',
         description: 'Você foi desconectador do Servidor do Jan-ken-po!',
       });
+
+      setConnected(false);
     });
 
     socket.addEventListener('message', msg => {
-      if (msg.data.indexOf('getReady') >= 0) {
+      try {
         const parsedMsg = JSON.parse(msg.data);
 
-        if (parsedMsg.getReady) {
-          console.log('Fui Selecionado!');
+        if (parsedMsg.error) {
+          addToast({
+            type: 'error',
+            title: 'Erro de Comunicação com servidor',
+            description: `Erro: ${parsedMsg.error}`,
+          });
+        } else if (parsedMsg.message === 'Selected') {
+          const opponent = parsedMsg.opponentChar;
+
+          if (opponent) {
+            setOpponentChar({
+              id: opponent.id,
+              name: opponent.name,
+              clan: opponent.clan,
+              title: opponent.title,
+              coterie: opponent.coterie,
+              avatar_url: opponent.avatar_url,
+              experience: '',
+              experience_total: '',
+              updated_at: opponent.updated_at,
+              character_url: '',
+              situation: 'active',
+              npc: opponent.npc,
+              retainer_level: opponent.retainer_level,
+              formatedDate: format(new Date(opponent.updated_at), 'dd/MM/yyyy'),
+            });
+          }
 
           addToast({
-            type: 'success',
-            title: 'Se Prepare!',
-            description:
-              'Um narrador selecionou seu personagem para um desafio!',
+            type: 'info',
+            title: 'Hora do Desafio',
+            description: `Oponente selecionado: [${opponent.name}]...`,
           });
+
+          setMode('battle');
+        } else if (parsedMsg.message === 'Restart') {
+          setOpponentChar({
+            id: '',
+            name: 'Desconhecido',
+            clan: 'Desconhecido',
+            title: '',
+            coterie: '',
+            avatar_url: '',
+            experience: '',
+            experience_total: '',
+            updated_at: new Date(),
+            character_url: '',
+            situation: 'active',
+            npc: false,
+            retainer_level: '0',
+            formatedDate: format(new Date(), 'dd/MM/yyyy'),
+          });
+
+          addToast({
+            type: 'info',
+            title: 'Desafio encerrado',
+            description: 'Desafio encerrado pelo narrador.',
+          });
+
+          setMode('initial');
         }
+      } catch (error) {
+        addToast({
+          type: 'error',
+          title: 'Mensagem Inválida',
+          description: 'O servidor enviou uma mensagem inválida!',
+        });
       }
 
-      console.log(`Message: [${msg.data}]`);
+      console.log(`Msg: [${msg.data}]`);
     });
-  }, [addToast, user.id, user.storyteller]);
+  }, [addToast, socket, user.id]);
 
   const loadCharacters = useCallback(async () => {
     try {
@@ -149,6 +235,7 @@ const Challenges: React.FC = () => {
         loadedChar.clan = filteredClan[clanIndex];
 
         setMyChar(loadedChar);
+
         socket.send(
           JSON.stringify({
             type: 'char',
@@ -172,7 +259,7 @@ const Challenges: React.FC = () => {
         }
       }
     }
-  }, [addToast, char, signOut]);
+  }, [addToast, char, signOut, socket]);
 
   const HandleSelectPo = useCallback(
     po => {
@@ -186,7 +273,7 @@ const Challenges: React.FC = () => {
   );
 
   const HandleSendPo = useCallback(() => {
-    setReadyToPlay(true);
+    setMode('ready');
   }, []);
 
   const SwitchJanKenPo = useCallback(po => {
@@ -238,8 +325,28 @@ const Challenges: React.FC = () => {
         charList,
       );
 
-      setMyChar(selectedCharacter);
+      if (selectedCharacter !== undefined) {
+        setMyChar(selectedCharacter);
+      } else {
+        setMyChar({
+          id: '',
+          name: 'Desconhecido',
+          clan: 'Desconhecido',
+          title: '',
+          coterie: '',
+          avatar_url: '',
+          experience: '',
+          experience_total: '',
+          updated_at: new Date(),
+          character_url: '',
+          situation: 'active',
+          npc: false,
+          retainer_level: '0',
+          formatedDate: format(new Date(), 'dd/MM/yyyy'),
+        });
+      }
 
+      /*
       socket.send(
         JSON.stringify({
           type: 'select',
@@ -247,6 +354,7 @@ const Challenges: React.FC = () => {
           char: selectedCharacter !== undefined ? selectedCharacter : '',
         }),
       );
+      */
     },
     [SelectCharByIndex, charList],
   );
@@ -260,8 +368,28 @@ const Challenges: React.FC = () => {
         opponentList,
       );
 
-      setOpponentChar(selectedCharacter);
+      if (selectedCharacter !== undefined) {
+        setOpponentChar(selectedCharacter);
+      } else {
+        setOpponentChar({
+          id: '',
+          name: 'Desconhecido',
+          clan: 'Desconhecido',
+          title: '',
+          coterie: '',
+          avatar_url: '',
+          experience: '',
+          experience_total: '',
+          updated_at: new Date(),
+          character_url: '',
+          situation: 'active',
+          npc: false,
+          retainer_level: '0',
+          formatedDate: format(new Date(), 'dd/MM/yyyy'),
+        });
+      }
 
+      /*
       socket.send(
         JSON.stringify({
           type: 'select',
@@ -269,6 +397,7 @@ const Challenges: React.FC = () => {
           char: selectedCharacter !== undefined ? selectedCharacter : '',
         }),
       );
+      */
     },
     [SelectCharByIndex, opponentList],
   );
@@ -289,9 +418,40 @@ const Challenges: React.FC = () => {
     return false;
   }, [char.id, myChar, user.storyteller]);
 
-  useEffect(() => {
-    initializeSocket();
+  const handleInitChallangeButton = useCallback(() => {
+    socket.send(
+      JSON.stringify({
+        type: 'select',
+        char1_id: myChar?.id,
+        char2_id: opponentChar?.id,
+      }),
+    );
 
+    setMode('battle');
+  }, [myChar, opponentChar, socket]);
+
+  const handleCancelChallangeButton = useCallback(() => {
+    socket.send(
+      JSON.stringify({
+        type: 'cancel',
+        char1_id: myChar?.id,
+        char2_id: opponentChar?.id,
+      }),
+    );
+
+    setMode('initial');
+  }, [myChar, opponentChar, socket]);
+
+  const handleConnection = useCallback(() => {
+    if (connected) {
+      socket.close();
+    } else {
+      setSocket(getSocket());
+      initializeSocket();
+    }
+  }, [connected, initializeSocket, socket]);
+
+  useEffect(() => {
     setOpponentChar({
       id: '',
       name: 'Desconhecido',
@@ -304,7 +464,7 @@ const Challenges: React.FC = () => {
       updated_at: new Date(),
       character_url: '',
       situation: 'active',
-      npc: true,
+      npc: false,
       retainer_level: '0',
       formatedDate: format(new Date(), 'dd/MM/yyyy'),
     });
@@ -330,7 +490,31 @@ const Challenges: React.FC = () => {
     } else {
       loadMyChar();
     }
+
+    initializeSocket();
   }, [char, initializeSocket, loadCharacters, loadMyChar, user.storyteller]);
+
+  useEffect(() => {
+    if (mode === 'battle') {
+      if (myChar?.id === char.id || (myChar?.npc && user.storyteller)) {
+        setTitle('Escolha seu Jan-Ken-Po');
+      } else {
+        setTitle('Aguardando os desafiantes...');
+      }
+    } else if (mode === 'ready') {
+      setTitle('Aguardando oponente...');
+    } else if (user.storyteller) {
+      if (mode === 'initial') {
+        if (myChar?.id !== '' && opponentChar?.id !== '') {
+          setTitle('Inicie o Desafio');
+        } else {
+          setTitle('Selecione os Oponentes');
+        }
+      }
+    } else if (mode === 'initial') {
+      setTitle('Aguardando Desafio...');
+    }
+  }, [char.id, mode, myChar, opponentChar, user.storyteller]);
 
   return (
     <Container>
@@ -340,7 +524,7 @@ const Challenges: React.FC = () => {
         <Header page="challenge" />
       )}
       <TitleBox>
-        {user.storyteller ? (
+        {user.storyteller && mode === 'initial' ? (
           <>
             <SelectCharacter
               name="character1"
@@ -388,124 +572,150 @@ const Challenges: React.FC = () => {
       </TitleBox>
       {myChar !== undefined && opponentChar !== undefined && (
         <Content isMobile={isMobileVersion}>
-          <CharCardContainer isMobile={isMobileVersion}>
-            <CharacterCard
-              charId={myChar.id}
-              name={myChar.name}
-              experience={myChar.experience}
-              sheetFile={myChar.character_url}
-              clan={myChar.clan}
-              title={myChar.title}
-              coterie={myChar.coterie}
-              avatar={myChar.avatar_url}
-              updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
-              npc={myChar.npc}
-              regnant={myChar.regnant_char ? myChar.regnant_char.name : ''}
-              locked
-            />
-          </CharCardContainer>
-          <ChallangeArena isMobile={isMobileVersion}>
-            {challengeMode ? (
-              <>
-                <div>
-                  <h1>Selecione seu Jan-Ken-Pô</h1>
-                </div>
-                <ArenaContainer>
-                  <JanKenPoContainer>
-                    {showOptions() && (
-                      <>
-                        <JanKenPoButton
-                          type="button"
-                          title="Pedra"
-                          onClick={() => HandleSelectPo('rock')}
-                        >
-                          <FaHandRock />
-                        </JanKenPoButton>
-                        <JanKenPoButton
-                          type="button"
-                          title="Papel"
-                          onClick={() => HandleSelectPo('paper')}
-                        >
-                          <FaHandPaper />
-                        </JanKenPoButton>
-                        <JanKenPoButton
-                          type="button"
-                          title="Tesoura"
-                          onClick={() => HandleSelectPo('scissors')}
-                        >
-                          <FaHandScissors />
-                        </JanKenPoButton>
-                        <JanKenPoButton
-                          type="button"
-                          title="Bomba"
-                          onClick={() => HandleSelectPo('bomb')}
-                        >
-                          <FaBomb />
-                        </JanKenPoButton>
-                      </>
-                    )}
-                  </JanKenPoContainer>
-                  <JanKenPoContainer>
-                    {selectedPo !== '' && (
-                      <JanKenPoButton
-                        type="button"
-                        title="Confirmar jogada!"
-                        onClick={HandleSendPo}
-                        disabled={readyToPlay}
-                        readyToPlay={readyToPlay}
-                        victory={0}
-                      >
-                        {SwitchJanKenPo(selectedPo)}
-                      </JanKenPoButton>
-                    )}
-                  </JanKenPoContainer>
-                  <JanKenPoContainer>
-                    {readyToPlay && <FaTimes />}
-                  </JanKenPoContainer>
-                  <JanKenPoContainer>
-                    {selectedPo !== '' && (
-                      <JanKenPoButton
-                        type="button"
-                        title="Confirmar jogada!"
-                        onClick={undefined}
-                        disabled
-                        readyToPlay={readyToPlay}
-                        victory={0}
-                      >
-                        {SwitchJanKenPo('rock')}
-                      </JanKenPoButton>
-                    )}
-                  </JanKenPoContainer>
-                  <JanKenPoContainer />
-                </ArenaContainer>
-              </>
-            ) : (
+          <CardsContent isMobile={isMobileVersion}>
+            <CharCardContainer isMobile={isMobileVersion}>
+              <CharacterCard
+                charId={myChar.id}
+                name={myChar.name}
+                experience={myChar.experience}
+                sheetFile={myChar.character_url}
+                clan={myChar.clan}
+                title={myChar.title}
+                coterie={myChar.coterie}
+                avatar={myChar.avatar_url}
+                updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
+                npc={myChar.npc}
+                regnant={myChar.regnant_char ? myChar.regnant_char.name : ''}
+                locked
+                readOnly={opponentChar.id === ''}
+              />
+            </CharCardContainer>
+            <ChallangeArena isMobile={isMobileVersion}>
               <div>
-                <h1>Aguardando Desafio...</h1>
+                <h1>{title}</h1>
               </div>
-            )}
-          </ChallangeArena>
-          <CharCardContainer isMobile={isMobileVersion}>
-            <CharacterCard
-              charId={opponentChar.id}
-              name={opponentChar.name}
-              experience={opponentChar.experience}
-              sheetFile={opponentChar.character_url}
-              clan={opponentChar.clan}
-              title={opponentChar.title}
-              coterie={opponentChar.coterie}
-              avatar={opponentChar.avatar_url}
-              updatedAt={
-                opponentChar.formatedDate ? opponentChar.formatedDate : ''
-              }
-              npc={opponentChar.npc}
-              regnant={
-                opponentChar.regnant_char ? opponentChar.regnant_char.name : ''
-              }
-              locked
-              readOnly={!user.storyteller}
-            />
-          </CharCardContainer>
+              <ArenaContainer>
+                <JanKenPoContainer>
+                  {showOptions() && (
+                    <>
+                      <JanKenPoButton
+                        type="button"
+                        title="Pedra"
+                        onClick={() => HandleSelectPo('rock')}
+                        disabled={mode !== 'battle'}
+                      >
+                        <FaHandRock />
+                      </JanKenPoButton>
+                      <JanKenPoButton
+                        type="button"
+                        title="Papel"
+                        onClick={() => HandleSelectPo('paper')}
+                        disabled={mode !== 'battle'}
+                      >
+                        <FaHandPaper />
+                      </JanKenPoButton>
+                      <JanKenPoButton
+                        type="button"
+                        title="Tesoura"
+                        onClick={() => HandleSelectPo('scissors')}
+                        disabled={mode !== 'battle'}
+                      >
+                        <FaHandScissors />
+                      </JanKenPoButton>
+                      <JanKenPoButton
+                        type="button"
+                        title="Bomba"
+                        onClick={() => HandleSelectPo('bomb')}
+                        disabled={mode !== 'battle'}
+                      >
+                        <FaBomb />
+                      </JanKenPoButton>
+                    </>
+                  )}
+                </JanKenPoContainer>
+                <JanKenPoContainer>
+                  {selectedPo !== '' && (
+                    <JanKenPoButton
+                      type="button"
+                      title="Confirmar jogada!"
+                      onClick={HandleSendPo}
+                      disabled={mode !== 'battle'}
+                      // readyToPlay={readyToPlay}
+                      victory={0}
+                    >
+                      {SwitchJanKenPo(selectedPo)}
+                    </JanKenPoButton>
+                  )}
+                </JanKenPoContainer>
+                <JanKenPoContainer>
+                  {mode === 'ready' && <FaTimes />}
+                </JanKenPoContainer>
+                <JanKenPoContainer>
+                  {selectedPo !== '' && (
+                    <JanKenPoButton
+                      type="button"
+                      title="Confirmar jogada!"
+                      onClick={undefined}
+                      disabled
+                      // readyToPlay={readyToPlay}
+                      victory={0}
+                    >
+                      {SwitchJanKenPo('rock')}
+                    </JanKenPoButton>
+                  )}
+                </JanKenPoContainer>
+                <JanKenPoContainer />
+              </ArenaContainer>
+            </ChallangeArena>
+            <CharCardContainer
+              isMobile={isMobileVersion}
+              animationMode={mode === 'battle' && showOptions() ? 'in' : ''}
+            >
+              <CharacterCard
+                charId={opponentChar.id}
+                name={opponentChar.name}
+                experience={opponentChar.experience}
+                sheetFile={opponentChar.character_url}
+                clan={opponentChar.clan}
+                title={opponentChar.title}
+                coterie={opponentChar.coterie}
+                avatar={opponentChar.avatar_url}
+                updatedAt={
+                  opponentChar.formatedDate ? opponentChar.formatedDate : ''
+                }
+                npc={opponentChar.npc}
+                regnant={
+                  opponentChar.regnant_char
+                    ? opponentChar.regnant_char.name
+                    : ''
+                }
+                locked
+                readOnly={!user.storyteller || opponentChar.id === ''}
+              />
+            </CharCardContainer>
+          </CardsContent>
+          {mode === 'initial' && myChar.id !== '' && opponentChar.id !== '' && (
+            <ButtonBox isMobile={isMobileVersion}>
+              <Button type="button" onClick={handleInitChallangeButton}>
+                Iniciar Desafio
+              </Button>
+            </ButtonBox>
+          )}
+          {mode === 'battle' && user.storyteller && (
+            <ButtonBox isMobile={isMobileVersion}>
+              <Button type="button" onClick={handleCancelChallangeButton}>
+                Cancelar Desafio
+              </Button>
+            </ButtonBox>
+          )}
+          <ConnectionButton
+            type="button"
+            connected={connected}
+            title={connected ? 'Desconectar' : 'Conectar'}
+            onClick={handleConnection}
+          >
+            {connected ? <FaHandshake /> : <FaUnlink />}
+          </ConnectionButton>
         </Content>
       )}
     </Container>

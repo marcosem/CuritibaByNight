@@ -6,16 +6,23 @@ interface IDashboardProps {
   isMobile: boolean;
 }
 
+interface ICardContainerProps {
+  isMobile: boolean;
+  animationMode?: string;
+}
+
 interface IButtonProps {
   readyToPlay?: boolean;
   victory?: number;
 }
 
+interface IConnectionButtonProps {
+  connected: boolean;
+}
+
 const bounceButton = keyframes`
   from {
     transform: scale(1) translateY(0);
-
-
   }
 
   50% {
@@ -27,6 +34,30 @@ const bounceButton = keyframes`
   }
 `;
 
+const characterIn = keyframes`
+  from {
+    transform: translateY(+200px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+const characterOut = keyframes`
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(+200px);
+    opacity: 0;
+  }
+`;
+
 export const Container = styled.div`
   height: 100vh;
 `;
@@ -34,6 +65,7 @@ export const Container = styled.div`
 export const TitleBox = styled.div`
   min-width: 340px;
   max-width: 1012px;
+  height: 38px;
   position: relative;
 
   display: flex;
@@ -59,6 +91,7 @@ export const Content = styled.main<IDashboardProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
   display: flex;
+  flex-direction: column;
   overflow-y: auto;
   min-height: 382px;
   max-height: 75vh;
@@ -89,20 +122,30 @@ export const Content = styled.main<IDashboardProps>`
     props.isMobile
       ? css`
           max-width: 340px;
-          flex-direction: column;
         `
       : css`
           min-width: 340px;
           max-width: 1012px;
-
-          flex-direction: row;
         `}
 
   border-radius: 4px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 `;
 
-export const CharCardContainer = styled.div<IDashboardProps>`
+export const CardsContent = styled.div<IDashboardProps>`
+  display: flex;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          flex-direction: column;
+        `
+      : css`
+          flex-direction: row;
+        `}
+`;
+
+export const CharCardContainer = styled.div<ICardContainerProps>`
   padding: 16px;
 
   ${props =>
@@ -113,6 +156,18 @@ export const CharCardContainer = styled.div<IDashboardProps>`
       div {
         margin: auto;
       }
+    `}
+
+  ${props =>
+    props.animationMode === 'in' &&
+    css`
+      animation: ${characterIn} 0.7s ease-in-out 1;
+    `}
+
+    ${props =>
+    props.animationMode === 'out' &&
+    css`
+      animation: ${characterOut} 0.7s ease-in-out 1;
     `}
 `;
 
@@ -249,4 +304,66 @@ export const SelectCharacter = styled.select`
   font-size: 14px;
   font-weight: 500;
   color: #888;
+`;
+
+export const ButtonBox = styled.div<IDashboardProps>`
+  margin: auto;
+  padding: 16px 0;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          width: 320px;
+        `
+      : css`
+          width: 340px;
+        `}
+`;
+
+export const ConnectionButton = styled.button<IConnectionButtonProps>`
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+
+  width: 64px;
+  height: 64px;
+  border: 0;
+
+  border-radius: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: background-color 0.2s;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #ccc;
+    transition: color 0.2s;
+  }
+
+  ${props =>
+    props.connected
+      ? css`
+          background: #025609;
+
+          &:hover {
+            background: ${lighten(0.2, '#025609')};
+          }
+        `
+      : css`
+          background: #860209;
+
+          &:hover {
+            background: ${lighten(0.2, '#860209')};
+          }
+        `}
+
+  &:hover {
+    svg {
+      color: ${lighten(0.2, '#ccc')};
+    }
+  }
 `;
