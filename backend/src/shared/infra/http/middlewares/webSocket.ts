@@ -15,6 +15,14 @@ interface IMyConnection {
   st?: boolean;
 }
 
+interface IMatch {
+  char1Connection: IMyConnection;
+  char1JanKenPo?: string;
+  char2Connection: IMyConnection;
+  char2JanKenPo?: string;
+  stConnection: IMyConnection;
+}
+
 interface ITokenResult {
   user_id: string;
   st: boolean;
@@ -22,6 +30,8 @@ interface ITokenResult {
 }
 
 let sockets: IMyConnection[] = [];
+let matches: IMatch[] = [];
+
 app.ws('/ws', (ws, req) => {
   const id = req.headers['sec-websocket-key'];
   // const mySocket = sockets.find(myWs => myWs.id === id);
@@ -125,6 +135,12 @@ app.ws('/ws', (ws, req) => {
               break;
             }
 
+            matches.push({
+              char1Connection: getChar1Socket,
+              char2Connection: getChar2Socket,
+              stConnection: socket,
+            });
+
             getChar1Socket.ws.send(
               JSON.stringify({
                 message: 'Selected',
@@ -154,6 +170,13 @@ app.ws('/ws', (ws, req) => {
             const getChar1Socket = sockets.find(
               myWs => myWs.char_id === char1_id,
             );
+
+            matches = matches.filter(mtch => {
+              return (
+                mtch.char1Connection.char_id !== char1_id &&
+                mtch.char2Connection.char_id !== char2_id
+              );
+            });
 
             if (!getChar1Socket) {
               isError = true;
@@ -188,7 +211,170 @@ app.ws('/ws', (ws, req) => {
             );
           }
           break;
+        case 'play':
+          {
+            if (!socket) {
+              isError = true;
+              errorMsg = 'User not Authenticated';
+              closeMe = true;
+              break;
+            }
 
+            const myMatch = matches.find(
+              mtch => mtch.char1Connection.id === id || mtch.char2Connection.id,
+            );
+
+            if (myMatch) {
+              if (!parsedMsg.play) {
+                isError = true;
+                errorMsg = 'Missing Jan-Ken-Po option';
+                closeMe = false;
+                break;
+              }
+
+              if (myMatch.char1Connection.id === id) {
+                myMatch.char1JanKenPo = parsedMsg.play;
+                myMatch.char2Connection.ws.send(
+                  JSON.stringify({
+                    message: 'ready',
+                    character: 'opponent',
+                  }),
+                );
+
+                if (myMatch.stConnection.id !== myMatch.char1Connection.id) {
+                  myMatch.stConnection.ws.send(
+                    JSON.stringify({
+                      message: 'ready',
+                      character: '1',
+                    }),
+                  );
+                }
+              } else {
+                myMatch.char2JanKenPo = parsedMsg.play;
+                myMatch.char1Connection.ws.send(
+                  JSON.stringify({
+                    message: 'ready',
+                    character: 'opponent',
+                  }),
+                );
+                myMatch.stConnection.ws.send(
+                  JSON.stringify({
+                    message: 'ready',
+                    character: '2',
+                  }),
+                );
+              }
+
+              if (myMatch.char1JanKenPo && myMatch.char2JanKenPo) {
+                // Process tie first
+                if (myMatch.char1JanKenPo === myMatch.char2JanKenPo) {
+                  if (
+                    myMatch.stConnection.id !== myMatch.char1Connection.id &&
+                    myMatch.stConnection.id !== myMatch.char1Connection.id
+                  ) {
+                    myMatch.stConnection.ws.send(
+                      JSON.stringify({
+                        message: 'result',
+                        result: 'tie',
+                        char1: myMatch.char1JanKenPo,
+                        char2: myMatch.char2JanKenPo,
+                      }),
+                    );
+                  }
+
+                  myMatch.char1Connection.ws.send(
+                    JSON.stringify({
+                      message: 'result',
+                      result: 'tie',
+                      char1: myMatch.char1JanKenPo,
+                      char2: myMatch.char2JanKenPo,
+                    }),
+                  );
+                  myMatch.char2Connection.ws.send(
+                    JSON.stringify({
+                      message: 'result',
+                      result: 'tie',
+                      char1: myMatch.char2JanKenPo,
+                      char2: myMatch.char1JanKenPo,
+                    }),
+                  );
+                } else if (
+                  (myMatch.char1JanKenPo === 'rock' &&
+                    myMatch.char2JanKenPo === 'scissors') ||
+                  (myMatch.char1JanKenPo === 'scissors' &&
+                    (myMatch.char2JanKenPo === 'paper' ||
+                      myMatch.char2JanKenPo === 'bomb')) ||
+                  (myMatch.char1JanKenPo === 'bomb' &&
+                    (myMatch.char2JanKenPo === 'paper' ||
+                      myMatch.char2JanKenPo === 'rock'))
+                ) {
+                  if (
+                    myMatch.stConnection.id !== myMatch.char1Connection.id &&
+                    myMatch.stConnection.id !== myMatch.char1Connection.id
+                  ) {
+                    myMatch.stConnection.ws.send(
+                      JSON.stringify({
+                        message: 'result',
+                        result: '1',
+                        char1: myMatch.char1JanKenPo,
+                        char2: myMatch.char2JanKenPo,
+                      }),
+                    );
+                  }
+
+                  myMatch.char1Connection.ws.send(
+                    JSON.stringify({
+                      message: 'result',
+                      result: 'win',
+                      char1: myMatch.char1JanKenPo,
+                      char2: myMatch.char2JanKenPo,
+                    }),
+                  );
+                  myMatch.char2Connection.ws.send(
+                    JSON.stringify({
+                      message: 'result',
+                      result: 'lose',
+                      char1: myMatch.char2JanKenPo,
+                      char2: myMatch.char1JanKenPo,
+                    }),
+                  );
+                } else {
+                  if (
+                    myMatch.stConnection.id !== myMatch.char1Connection.id &&
+                    myMatch.stConnection.id !== myMatch.char1Connection.id
+                  ) {
+                    myMatch.stConnection.ws.send(
+                      JSON.stringify({
+                        message: 'result',
+                        result: '2',
+                        char1: myMatch.char1JanKenPo,
+                        char2: myMatch.char2JanKenPo,
+                      }),
+                    );
+                  }
+                  myMatch.char1Connection.ws.send(
+                    JSON.stringify({
+                      message: 'result',
+                      result: 'lose',
+                      char1: myMatch.char1JanKenPo,
+                      char2: myMatch.char2JanKenPo,
+                    }),
+                  );
+                  myMatch.char2Connection.ws.send(
+                    JSON.stringify({
+                      message: 'result',
+                      result: 'win',
+                      char1: myMatch.char2JanKenPo,
+                      char2: myMatch.char1JanKenPo,
+                    }),
+                  );
+                }
+
+                matches = matches.filter(mtch => mtch !== myMatch);
+              }
+            }
+          }
+          break;
         default:
       }
     }
