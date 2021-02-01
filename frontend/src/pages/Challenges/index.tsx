@@ -24,6 +24,7 @@ import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
 import CharacterCard from '../../components/CharacterCard';
 import ICharacter from '../../components/CharacterList/ICharacter';
+import socket from '../../utils/socket';
 
 import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
@@ -40,6 +41,51 @@ const Challenges: React.FC = () => {
   const [challengeMode, setChallengeMode] = useState<boolean>(true);
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
+
+  const initializeSocket = useCallback(() => {
+    socket.addEventListener('open', () => {
+      addToast({
+        type: 'success',
+        title: 'Conectado ao Servidor',
+        description: 'Você está conectado ao Servidor do Jan-ken-po!',
+      });
+
+      socket.send(
+        JSON.stringify({
+          type: 'auth',
+          user_id: user.id,
+          st: user.storyteller,
+        }),
+      );
+    });
+
+    socket.addEventListener('close', () => {
+      addToast({
+        type: 'error',
+        title: 'Desconectado ao Servidor',
+        description: 'Você foi desconectador do Servidor do Jan-ken-po!',
+      });
+    });
+
+    socket.addEventListener('message', msg => {
+      if (msg.data.indexOf('getReady') >= 0) {
+        const parsedMsg = JSON.parse(msg.data);
+
+        if (parsedMsg.getReady) {
+          console.log('Fui Selecionado!');
+
+          addToast({
+            type: 'success',
+            title: 'Se Prepare!',
+            description:
+              'Um narrador selecionou seu personagem para um desafio!',
+          });
+        }
+      }
+
+      console.log(`Message: [${msg.data}]`);
+    });
+  }, [addToast, user.id, user.storyteller]);
 
   const loadCharacters = useCallback(async () => {
     try {
@@ -103,6 +149,13 @@ const Challenges: React.FC = () => {
         loadedChar.clan = filteredClan[clanIndex];
 
         setMyChar(loadedChar);
+        socket.send(
+          JSON.stringify({
+            type: 'char',
+            char_id: loadedChar.id,
+            char: loadedChar,
+          }),
+        );
       });
     } catch (error) {
       if (error.response) {
@@ -186,6 +239,14 @@ const Challenges: React.FC = () => {
       );
 
       setMyChar(selectedCharacter);
+
+      socket.send(
+        JSON.stringify({
+          type: 'select',
+          char_id: selectedCharacter !== undefined ? selectedCharacter.id : '',
+          char: selectedCharacter !== undefined ? selectedCharacter : '',
+        }),
+      );
     },
     [SelectCharByIndex, charList],
   );
@@ -200,6 +261,14 @@ const Challenges: React.FC = () => {
       );
 
       setOpponentChar(selectedCharacter);
+
+      socket.send(
+        JSON.stringify({
+          type: 'select',
+          char_id: selectedCharacter !== undefined ? selectedCharacter.id : '',
+          char: selectedCharacter !== undefined ? selectedCharacter : '',
+        }),
+      );
     },
     [SelectCharByIndex, opponentList],
   );
@@ -221,6 +290,8 @@ const Challenges: React.FC = () => {
   }, [char.id, myChar, user.storyteller]);
 
   useEffect(() => {
+    initializeSocket();
+
     setOpponentChar({
       id: '',
       name: 'Desconhecido',
@@ -259,7 +330,7 @@ const Challenges: React.FC = () => {
     } else {
       loadMyChar();
     }
-  }, [char, loadCharacters, loadMyChar, user.storyteller]);
+  }, [char, initializeSocket, loadCharacters, loadMyChar, user.storyteller]);
 
   return (
     <Container>
