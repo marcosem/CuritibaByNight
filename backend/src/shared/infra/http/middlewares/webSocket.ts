@@ -61,7 +61,7 @@ app.ws('/ws', (ws, req) => {
         } else if (socket.st === false) {
           ws.close();
         } else {
-          const { char_id, char } = parsedMsg;
+          const { char_id } = parsedMsg;
           const getSelectedSocket = sockets.find(
             myWs => myWs.char_id === char_id,
           );
