@@ -5,6 +5,7 @@ import { IconType } from 'react-icons';
 import api from '../../services/api';
 import cardRetainer from '../../assets/cards/card_retainer.png';
 import cardAlly from '../../assets/cards/card_ally.png';
+import cardST from '../../assets/cards/card_location.png';
 
 import {
   Container,
@@ -87,6 +88,8 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   useEffect(() => {
     if (clan.indexOf('Wraith') >= 0) {
       setCardImg(cardAlly);
+    } else if (clan.indexOf('Curitiba By Night') >= 0) {
+      setCardImg(cardST);
     } else {
       setCardImg(cardRetainer);
     }

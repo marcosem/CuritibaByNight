@@ -9,7 +9,6 @@ import {
   FaHandshake,
   FaUnlink,
 } from 'react-icons/fa';
-import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 
 import {
@@ -44,14 +43,16 @@ const Challenges: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [opponentList, setOpponentList] = useState<ICharacter[]>([]);
   const [selectedPo, setSelectedPo] = useState<string>('');
+  const [selOpponentPo, setSelOpponentPo] = useState<string>('');
+  const [char1Result, setChar1Result] = useState<number>(-2);
+  const [char2Result, setChar2Result] = useState<number>(-2);
   const [socket, setSocket] = useState<WebSocket>(getSocket());
-  // const [readyToPlay, setReadyToPlay] = useState<boolean>(false);
   const [mode, setMode] = useState<string>('initial');
   const [title, setTitle] = useState<string>('');
   const [connected, setConnected] = useState<boolean>(false);
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
-  const history = useHistory();
+  const [play, setPlay] = useState<boolean>(false);
 
   const initializeSocket = useCallback(() => {
     const token = api.defaults.headers.Authorization.replace('Bearer ', '');
@@ -135,7 +136,13 @@ const Challenges: React.FC = () => {
           });
 
           setMode('battle');
-        } else if (parsedMsg.message === 'Restart') {
+        } else if (parsedMsg.message === 'Restart' && !user.storyteller) {
+          setSelectedPo('');
+          setSelOpponentPo('');
+          setChar1Result(-5);
+          setChar2Result(-5);
+          setPlay(false);
+
           setOpponentChar({
             id: '',
             name: 'Desconhecido',
@@ -160,6 +167,61 @@ const Challenges: React.FC = () => {
           });
 
           setMode('initial');
+        } else if (parsedMsg.message === 'ready') {
+          if (parsedMsg.character === '1') {
+            setSelectedPo('rock');
+            setChar1Result(0);
+          } else {
+            setSelOpponentPo('rock');
+            setChar2Result(0);
+          }
+        } else if (parsedMsg.message === 'result') {
+          const matchResult = parsedMsg.result;
+          const char1Res = parsedMsg.char1;
+          const char2Res = parsedMsg.char2;
+
+          setMode('resolving');
+          setSelectedPo('rock');
+          setPlay(true);
+
+          setTimeout(() => {
+            if (matchResult === '1' || matchResult === 'win') {
+              setChar1Result(1);
+              setChar2Result(-1);
+            } else if (matchResult === '2' || matchResult === 'lose') {
+              setChar1Result(-1);
+              setChar2Result(1);
+            }
+
+            if (matchResult.length > 1) {
+              setMode(matchResult);
+
+              if (matchResult === 'win') {
+                addToast({
+                  type: 'success',
+                  title: 'Disputa vencida!',
+                  description: 'Você ganhou a aposta!',
+                });
+              } else if (matchResult === 'lose') {
+                addToast({
+                  type: 'error',
+                  title: 'Disputa perdida!',
+                  description: 'Você perdeu a aposta!',
+                });
+              } else if (matchResult === 'tie') {
+                addToast({
+                  type: 'info',
+                  title: 'Disputa empatada!',
+                  description: 'A aposta foi empatada!',
+                });
+              }
+            } else {
+              setMode('resolved');
+            }
+
+            setSelectedPo(char1Res);
+            setSelOpponentPo(char2Res);
+          }, 2200);
         }
       } catch (error) {
         addToast({
@@ -168,10 +230,8 @@ const Challenges: React.FC = () => {
           description: 'O servidor enviou uma mensagem inválida!',
         });
       }
-
-      console.log(`Msg: [${msg.data}]`);
     });
-  }, [addToast, socket, user.id]);
+  }, [addToast, socket, user.id, user.storyteller]);
 
   const loadCharacters = useCallback(async () => {
     try {
@@ -179,7 +239,33 @@ const Challenges: React.FC = () => {
         const res = response.data;
         const fullList: ICharacter[] = res;
 
-        const filteredList = fullList.filter(ch => ch.situation === 'active');
+        let filteredList = fullList.filter(ch => ch.situation === 'active');
+        const stNames = user.name.split(' ');
+        const firsNameIndex = 0;
+        const stName = stNames[firsNameIndex];
+
+        const stStaticChar: ICharacter = {
+          id: 'Static',
+          name: stName,
+          clan: 'Curitiba By Night',
+          title: 'Narrador',
+          coterie: 'Curitiba By Night',
+          avatar_url: user.avatar_url,
+          experience: '',
+          experience_total: '',
+          updated_at: new Date(),
+          character_url: '',
+          situation: 'active',
+          npc: true,
+          retainer_level: '0',
+          user: {
+            id: user.id,
+            name: user.name,
+          },
+        };
+
+        filteredList = [stStaticChar, ...filteredList];
+
         const filteredPCs = filteredList.filter(ch => !ch.npc);
 
         setCharList(filteredList);
@@ -206,7 +292,7 @@ const Challenges: React.FC = () => {
         }
       }
     }
-  }, [addToast, signOut]);
+  }, [addToast, signOut, user.avatar_url, user.id, user.name]);
 
   const loadMyChar = useCallback(async () => {
     if (char === undefined) {
@@ -273,8 +359,12 @@ const Challenges: React.FC = () => {
   );
 
   const HandleSendPo = useCallback(() => {
+    setChar1Result(0);
+
+    socket.send(JSON.stringify({ type: 'play', play: selectedPo }));
+
     setMode('ready');
-  }, []);
+  }, [selectedPo, socket]);
 
   const SwitchJanKenPo = useCallback(po => {
     switch (po) {
@@ -326,6 +416,16 @@ const Challenges: React.FC = () => {
       );
 
       if (selectedCharacter !== undefined) {
+        if (selectedCharacter.npc || selectedCharacter.id === char.id) {
+          socket.send(
+            JSON.stringify({
+              type: 'char',
+              char_id: selectedCharacter.id,
+              char: selectedCharacter,
+            }),
+          );
+        }
+
         setMyChar(selectedCharacter);
       } else {
         setMyChar({
@@ -345,18 +445,8 @@ const Challenges: React.FC = () => {
           formatedDate: format(new Date(), 'dd/MM/yyyy'),
         });
       }
-
-      /*
-      socket.send(
-        JSON.stringify({
-          type: 'select',
-          char_id: selectedCharacter !== undefined ? selectedCharacter.id : '',
-          char: selectedCharacter !== undefined ? selectedCharacter : '',
-        }),
-      );
-      */
     },
-    [SelectCharByIndex, charList],
+    [SelectCharByIndex, char.id, charList, socket],
   );
 
   const handleCharacter2Change = useCallback(
@@ -388,16 +478,6 @@ const Challenges: React.FC = () => {
           formatedDate: format(new Date(), 'dd/MM/yyyy'),
         });
       }
-
-      /*
-      socket.send(
-        JSON.stringify({
-          type: 'select',
-          char_id: selectedCharacter !== undefined ? selectedCharacter.id : '',
-          char: selectedCharacter !== undefined ? selectedCharacter : '',
-        }),
-      );
-      */
     },
     [SelectCharByIndex, opponentList],
   );
@@ -439,6 +519,11 @@ const Challenges: React.FC = () => {
       }),
     );
 
+    setSelectedPo('');
+    setSelOpponentPo('');
+    setChar1Result(-5);
+    setChar2Result(-5);
+    setPlay(false);
     setMode('initial');
   }, [myChar, opponentChar, socket]);
 
@@ -503,6 +588,16 @@ const Challenges: React.FC = () => {
       }
     } else if (mode === 'ready') {
       setTitle('Aguardando oponente...');
+    } else if (mode === 'resolving') {
+      setTitle('Resolvendo a disputa...');
+    } else if (mode === 'win') {
+      setTitle('Você venceu!');
+    } else if (mode === 'lose') {
+      setTitle('Você perdeu!');
+    } else if (mode === 'tie') {
+      setTitle('Disputa emparada!');
+    } else if (mode === 'resolved') {
+      setTitle('Disputa Resulvida!');
     } else if (user.storyteller) {
       if (mode === 'initial') {
         if (myChar?.id !== '' && opponentChar?.id !== '') {
@@ -514,7 +609,7 @@ const Challenges: React.FC = () => {
     } else if (mode === 'initial') {
       setTitle('Aguardando Desafio...');
     }
-  }, [char.id, mode, myChar, opponentChar, user.storyteller]);
+  }, [addToast, char.id, mode, myChar, opponentChar, user.storyteller]);
 
   return (
     <Container>
@@ -584,10 +679,10 @@ const Challenges: React.FC = () => {
                 coterie={myChar.coterie}
                 avatar={myChar.avatar_url}
                 updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
-                npc={myChar.npc}
+                npc={myChar.npc && myChar.id !== 'Static'}
                 regnant={myChar.regnant_char ? myChar.regnant_char.name : ''}
                 locked
-                readOnly={opponentChar.id === ''}
+                readOnly={myChar.id === '' || myChar.id === 'Static'}
               />
             </CharCardContainer>
             <ChallangeArena isMobile={isMobileVersion}>
@@ -640,27 +735,27 @@ const Challenges: React.FC = () => {
                       title="Confirmar jogada!"
                       onClick={HandleSendPo}
                       disabled={mode !== 'battle'}
-                      // readyToPlay={readyToPlay}
-                      victory={0}
+                      readyToPlay={play}
+                      victory={char1Result}
                     >
                       {SwitchJanKenPo(selectedPo)}
                     </JanKenPoButton>
                   )}
                 </JanKenPoContainer>
                 <JanKenPoContainer>
-                  {mode === 'ready' && <FaTimes />}
+                  {selectedPo !== '' && selOpponentPo !== '' && <FaTimes />}
                 </JanKenPoContainer>
                 <JanKenPoContainer>
-                  {selectedPo !== '' && (
+                  {selOpponentPo !== '' && (
                     <JanKenPoButton
                       type="button"
                       title="Confirmar jogada!"
                       onClick={undefined}
                       disabled
-                      // readyToPlay={readyToPlay}
-                      victory={0}
+                      readyToPlay={play}
+                      victory={char2Result}
                     >
-                      {SwitchJanKenPo('rock')}
+                      {SwitchJanKenPo(selOpponentPo)}
                     </JanKenPoButton>
                   )}
                 </JanKenPoContainer>
@@ -705,6 +800,13 @@ const Challenges: React.FC = () => {
             <ButtonBox isMobile={isMobileVersion}>
               <Button type="button" onClick={handleCancelChallangeButton}>
                 Cancelar Desafio
+              </Button>
+            </ButtonBox>
+          )}
+          {mode !== 'initial' && mode !== 'battle' && user.storyteller && (
+            <ButtonBox isMobile={isMobileVersion}>
+              <Button type="button" onClick={handleCancelChallangeButton}>
+                Reiniciar Desafio
               </Button>
             </ButtonBox>
           )}

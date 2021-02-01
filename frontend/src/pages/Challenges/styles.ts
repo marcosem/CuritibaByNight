@@ -260,6 +260,12 @@ export const JanKenPoButton = styled.button<IButtonProps>`
   }
 
   ${props =>
+    props.victory === 0 &&
+    css`
+      background: #022603;
+    `}
+
+  ${props =>
     props.readyToPlay &&
     props.victory === 0 &&
     css`

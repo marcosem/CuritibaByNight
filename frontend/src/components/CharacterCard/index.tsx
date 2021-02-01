@@ -44,7 +44,8 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
       <Suspense fallback={<Loading />}>
         {clan.indexOf('Ghoul') >= 0 ||
         clan.indexOf('Retainer') >= 0 ||
-        clan.indexOf('Wraith') >= 0 ? (
+        clan.indexOf('Wraith') >= 0 ||
+        clan.indexOf('Curitiba By Night') >= 0 ? (
           <CharRetainerCard
             charId={charId}
             name={name}
