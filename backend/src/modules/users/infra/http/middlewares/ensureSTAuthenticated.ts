@@ -4,10 +4,7 @@ import AppError from '@shared/errors/AppError';
 import authConfig from '@config/auth';
 
 import { container } from 'tsyringe';
-import CreateSTUserService from '@modules/users/services/GetUserService';
-
-// import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
-// import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import GetUserService from '@modules/users/services/GetUserService';
 
 interface ITokenPayload {
   iat: number;
@@ -30,7 +27,7 @@ export default async function ensureSTAuthenticated(
   // Take out Bearer
   const [, token] = authHeader.split(' ');
   // const usersRepository = getCustomRepository(UsersRepository);
-  const getUsers = container.resolve(CreateSTUserService);
+  const getUsers = container.resolve(GetUserService);
 
   try {
     const decoded = verify(token, authConfig.jwt.secret);

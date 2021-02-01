@@ -1,5 +1,6 @@
 import express from 'express';
 import expressWs from 'express-ws';
+import validateToken from '@modules/users/infra/http/middlewares/validateToken';
 
 const { app } = expressWs(express());
 
@@ -14,6 +15,12 @@ interface IMyConnection {
   st?: boolean;
 }
 
+interface ITokenResult {
+  user_id: string;
+  st: boolean;
+  valid: boolean;
+}
+
 let sockets: IMyConnection[] = [];
 app.ws('/ws', (ws, req) => {
   const id = req.headers['sec-websocket-key'];
@@ -26,56 +33,170 @@ app.ws('/ws', (ws, req) => {
     user_id: '',
   };
 
-  ws.on('message', (msg: string) => {
+  ws.on('message', async (msg: string) => {
     const parsedMsg = JSON.parse(msg);
+    let isError = false;
+    let errorMsg = '';
+    let closeMe = false;
 
     if (!parsedMsg.type) {
-      ws.close();
+      isError = true;
+      errorMsg = 'Invalid Message Format';
     }
 
-    switch (parsedMsg.type) {
-      case 'auth':
-        if (socket) {
-          socket.st = parsedMsg.st;
-          socket.user_id = parsedMsg.user_id;
-        } else {
-          newSocket = {
-            ws: '',
-            id: '',
-            st: parsedMsg.st,
-            user_id: parsedMsg.user_id,
-          };
-        }
-        break;
-      case 'char':
-        if (!socket) {
-          ws.close();
-        } else {
-          socket.char = parsedMsg.char;
-          socket.char_id = parsedMsg.char_id;
-        }
-        break;
-      case 'select':
-        if (!socket) {
-          ws.close();
-        } else if (socket.st === false) {
-          ws.close();
-        } else {
-          const { char_id } = parsedMsg;
-          const getSelectedSocket = sockets.find(
-            myWs => myWs.char_id === char_id,
-          );
+    if (!isError) {
+      switch (parsedMsg.type) {
+        case 'auth':
+          {
+            if (!parsedMsg.token || !parsedMsg.user_id) {
+              isError = true;
+              errorMsg = 'Missing validation data';
+              closeMe = true;
+              break;
+            }
 
-          if (getSelectedSocket) {
-            getSelectedSocket.ws.send(JSON.stringify({ getReady: true }));
+            const validation: ITokenResult = await validateToken(
+              parsedMsg.token,
+            );
+
+            if (!validation.valid || validation.user_id !== parsedMsg.user_id) {
+              isError = true;
+              errorMsg = 'Invalid JWT token';
+              closeMe = true;
+              break;
+            }
+
+            if (socket) {
+              socket.st = validation.st;
+              socket.user_id = validation.user_id;
+            } else {
+              newSocket = {
+                ws: '',
+                id: '',
+                st: validation.st,
+                user_id: validation.user_id,
+              };
+            }
           }
-        }
+          break;
+        case 'char':
+          if (!socket) {
+            isError = true;
+            errorMsg = 'User not Authenticated';
+            closeMe = true;
+          } else {
+            socket.char = parsedMsg.char;
+            socket.char_id = parsedMsg.char_id;
+          }
+          break;
+        case 'select':
+          if (!socket) {
+            isError = true;
+            errorMsg = 'User not Authenticated';
+            closeMe = true;
+          } else if (socket.st === false) {
+            isError = true;
+            errorMsg =
+              'Only authenticates storyteller can select characters for challanges';
+          } else {
+            const { char1_id, char2_id } = parsedMsg;
 
-        break;
-      default:
+            const getChar1Socket = sockets.find(
+              myWs => myWs.char_id === char1_id,
+            );
+
+            if (!getChar1Socket) {
+              isError = true;
+              errorMsg =
+                'Character One is not connected, ask him to connect and try again';
+              closeMe = false;
+              break;
+            }
+
+            const getChar2Socket = sockets.find(
+              myWs => myWs.char_id === char2_id,
+            );
+
+            if (!getChar2Socket) {
+              isError = true;
+              errorMsg =
+                'Character Two is not connected, ask him to connect and try again';
+              closeMe = false;
+              break;
+            }
+
+            getChar1Socket.ws.send(
+              JSON.stringify({
+                message: 'Selected',
+                opponentChar: getChar2Socket.char,
+              }),
+            );
+
+            getChar2Socket.ws.send(
+              JSON.stringify({
+                message: 'Selected',
+                opponentChar: getChar1Socket.char,
+              }),
+            );
+          }
+          break;
+        case 'cancel':
+          if (!socket) {
+            isError = true;
+            errorMsg = 'User not Authenticated';
+            closeMe = true;
+          } else if (socket.st === false) {
+            isError = true;
+            errorMsg = 'Only authenticates storyteller can cancel a challange';
+          } else {
+            const { char1_id, char2_id } = parsedMsg;
+
+            const getChar1Socket = sockets.find(
+              myWs => myWs.char_id === char1_id,
+            );
+
+            if (!getChar1Socket) {
+              isError = true;
+              errorMsg =
+                'Character One is not connected, ask him to connect and try again';
+              closeMe = false;
+              break;
+            }
+
+            getChar1Socket.ws.send(
+              JSON.stringify({
+                message: 'Restart',
+              }),
+            );
+
+            const getChar2Socket = sockets.find(
+              myWs => myWs.char_id === char2_id,
+            );
+
+            if (!getChar2Socket) {
+              isError = true;
+              errorMsg =
+                'Character Two is not connected, ask him to connect and try again';
+              closeMe = false;
+              break;
+            }
+
+            getChar2Socket.ws.send(
+              JSON.stringify({
+                message: 'Restart',
+              }),
+            );
+          }
+          break;
+
+        default:
+      }
     }
 
-    ws.send(msg);
+    if (isError) {
+      ws.send(JSON.stringify({ error: errorMsg }));
+      if (closeMe) ws.close();
+    }
   });
 
   ws.on('close', () => {
@@ -91,7 +212,7 @@ app.ws('/ws', (ws, req) => {
     };
 
     sockets = [...sockets, socket];
-    ws.send(id);
+    ws.send(JSON.stringify({ id }));
   }
 });
 
