@@ -142,6 +142,7 @@ const Challenges: React.FC = () => {
           setChar1Result(-5);
           setChar2Result(-5);
           setPlay(false);
+          setMode('initial');
 
           setOpponentChar({
             id: '',
@@ -165,8 +166,6 @@ const Challenges: React.FC = () => {
             title: 'Desafio encerrado',
             description: 'Desafio encerrado pelo narrador.',
           });
-
-          setMode('initial');
         } else if (parsedMsg.message === 'ready') {
           if (parsedMsg.character === '1') {
             setSelectedPo('rock');
@@ -499,6 +498,16 @@ const Challenges: React.FC = () => {
   }, [char.id, myChar, user.storyteller]);
 
   const handleInitChallangeButton = useCallback(() => {
+    if (myChar?.id === opponentChar?.id) {
+      addToast({
+        type: 'error',
+        title: 'Disputa inválida',
+        description: 'Um personagem não pode disputar contra ele mesmo!',
+      });
+
+      return;
+    }
+
     socket.send(
       JSON.stringify({
         type: 'select',
@@ -508,7 +517,7 @@ const Challenges: React.FC = () => {
     );
 
     setMode('battle');
-  }, [myChar, opponentChar, socket]);
+  }, [addToast, myChar, opponentChar, socket]);
 
   const handleCancelChallangeButton = useCallback(() => {
     socket.send(
@@ -532,7 +541,33 @@ const Challenges: React.FC = () => {
       socket.close();
     } else {
       setSocket(getSocket());
-      initializeSocket();
+      setTimeout(() => {
+        initializeSocket();
+
+        setSelectedPo('');
+        setSelOpponentPo('');
+        setChar1Result(-5);
+        setChar2Result(-5);
+        setPlay(false);
+        setMode('initial');
+
+        setOpponentChar({
+          id: '',
+          name: 'Desconhecido',
+          clan: 'Desconhecido',
+          title: '',
+          coterie: '',
+          avatar_url: '',
+          experience: '',
+          experience_total: '',
+          updated_at: new Date(),
+          character_url: '',
+          situation: 'active',
+          npc: false,
+          retainer_level: '0',
+          formatedDate: format(new Date(), 'dd/MM/yyyy'),
+        });
+      }, 3000);
     }
   }, [connected, initializeSocket, socket]);
 

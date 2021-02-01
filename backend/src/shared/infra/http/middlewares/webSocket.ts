@@ -306,7 +306,9 @@ app.ws('/ws', (ws, req) => {
                       myMatch.char2JanKenPo === 'bomb')) ||
                   (myMatch.char1JanKenPo === 'bomb' &&
                     (myMatch.char2JanKenPo === 'paper' ||
-                      myMatch.char2JanKenPo === 'rock'))
+                      myMatch.char2JanKenPo === 'rock')) ||
+                  (myMatch.char1JanKenPo === 'paper' &&
+                    myMatch.char2JanKenPo === 'rock')
                 ) {
                   if (
                     myMatch.stConnection.id !== myMatch.char1Connection.id &&
