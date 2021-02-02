@@ -43,6 +43,7 @@ const Challenges: React.FC = () => {
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [opponentList, setOpponentList] = useState<ICharacter[]>([]);
   const [selectedPo, setSelectedPo] = useState<string>('');
+  const [myPo, setMyPo] = useState<string>('');
   const [selOpponentPo, setSelOpponentPo] = useState<string>('');
   const [char1Result, setChar1Result] = useState<number>(-2);
   const [char2Result, setChar2Result] = useState<number>(-2);
@@ -148,6 +149,7 @@ const Challenges: React.FC = () => {
             case 'restart':
               if (!user.storyteller) {
                 setSelectedPo('');
+                setMyPo('');
                 setSelOpponentPo('');
                 setChar1Result(-5);
                 setChar2Result(-5);
@@ -371,8 +373,10 @@ const Challenges: React.FC = () => {
     po => {
       if (po === selectedPo) {
         setSelectedPo('');
+        setMyPo('');
       } else {
         setSelectedPo(po);
+        setMyPo(po);
       }
     },
     [selectedPo],
@@ -550,6 +554,7 @@ const Challenges: React.FC = () => {
     );
 
     setSelectedPo('');
+    setMyPo('');
     setSelOpponentPo('');
     setChar1Result(-5);
     setChar2Result(-5);
@@ -566,6 +571,7 @@ const Challenges: React.FC = () => {
         initializeSocket();
 
         setSelectedPo('');
+        setMyPo('');
         setSelOpponentPo('');
         setChar1Result(-5);
         setChar2Result(-5);
@@ -753,6 +759,7 @@ const Challenges: React.FC = () => {
                         type="button"
                         title="Pedra"
                         onClick={() => HandleSelectPo('rock')}
+                        victory={myPo === 'rock' ? 1 : -5}
                         disabled={mode !== 'battle'}
                       >
                         <FaHandRock />
@@ -761,6 +768,7 @@ const Challenges: React.FC = () => {
                         type="button"
                         title="Papel"
                         onClick={() => HandleSelectPo('paper')}
+                        victory={myPo === 'paper' ? 1 : -5}
                         disabled={mode !== 'battle'}
                       >
                         <FaHandPaper />
@@ -769,6 +777,7 @@ const Challenges: React.FC = () => {
                         type="button"
                         title="Tesoura"
                         onClick={() => HandleSelectPo('scissors')}
+                        victory={myPo === 'scissors' ? 1 : -5}
                         disabled={mode !== 'battle'}
                       >
                         <FaHandScissors />
@@ -778,6 +787,7 @@ const Challenges: React.FC = () => {
                         title="Bomba"
                         onClick={() => HandleSelectPo('bomb')}
                         disabled={mode !== 'battle'}
+                        victory={myPo === 'bomb' ? 1 : -5}
                       >
                         <FaBomb />
                       </JanKenPoButton>
