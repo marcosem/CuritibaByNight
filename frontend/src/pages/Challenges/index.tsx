@@ -107,120 +107,141 @@ const Challenges: React.FC = () => {
             title: 'Erro de Comunicação com servidor',
             description: `Erro: ${parsedMsg.error}`,
           });
-        } else if (parsedMsg.message === 'Selected') {
-          const opponent = parsedMsg.opponentChar;
+        } else if (parsedMsg.message) {
+          switch (parsedMsg.message) {
+            case 'selected':
+              {
+                const opponent = parsedMsg.opponentChar;
 
-          if (opponent) {
-            setOpponentChar({
-              id: opponent.id,
-              name: opponent.name,
-              clan: opponent.clan,
-              title: opponent.title,
-              coterie: opponent.coterie,
-              avatar_url: opponent.avatar_url,
-              experience: '',
-              experience_total: '',
-              updated_at: opponent.updated_at,
-              character_url: '',
-              situation: 'active',
-              npc: opponent.npc,
-              retainer_level: opponent.retainer_level,
-              formatedDate: format(new Date(opponent.updated_at), 'dd/MM/yyyy'),
-            });
-          }
+                if (opponent) {
+                  setOpponentChar({
+                    id: opponent.id,
+                    name: opponent.name,
+                    clan: opponent.clan,
+                    title: opponent.title,
+                    coterie: opponent.coterie,
+                    avatar_url: opponent.avatar_url,
+                    experience: '',
+                    experience_total: '',
+                    updated_at: opponent.updated_at,
+                    character_url: '',
+                    situation: 'active',
+                    npc: opponent.npc,
+                    retainer_level: opponent.retainer_level,
+                    formatedDate: format(
+                      new Date(opponent.updated_at),
+                      'dd/MM/yyyy',
+                    ),
+                  });
+                }
 
-          addToast({
-            type: 'info',
-            title: 'Hora do Desafio',
-            description: `Oponente selecionado: [${opponent.name}]...`,
-          });
-
-          setMode('battle');
-        } else if (parsedMsg.message === 'Restart' && !user.storyteller) {
-          setSelectedPo('');
-          setSelOpponentPo('');
-          setChar1Result(-5);
-          setChar2Result(-5);
-          setPlay(false);
-          setMode('initial');
-
-          setOpponentChar({
-            id: '',
-            name: 'Desconhecido',
-            clan: 'Desconhecido',
-            title: '',
-            coterie: '',
-            avatar_url: '',
-            experience: '',
-            experience_total: '',
-            updated_at: new Date(),
-            character_url: '',
-            situation: 'active',
-            npc: false,
-            retainer_level: '0',
-            formatedDate: format(new Date(), 'dd/MM/yyyy'),
-          });
-
-          addToast({
-            type: 'info',
-            title: 'Desafio encerrado',
-            description: 'Desafio encerrado pelo narrador.',
-          });
-        } else if (parsedMsg.message === 'ready') {
-          if (parsedMsg.character === '1') {
-            setSelectedPo('rock');
-            setChar1Result(0);
-          } else {
-            setSelOpponentPo('rock');
-            setChar2Result(0);
-          }
-        } else if (parsedMsg.message === 'result') {
-          const matchResult = parsedMsg.result;
-          const char1Res = parsedMsg.char1;
-          const char2Res = parsedMsg.char2;
-
-          setMode('resolving');
-          setSelectedPo('rock');
-          setPlay(true);
-
-          setTimeout(() => {
-            if (matchResult === '1' || matchResult === 'win') {
-              setChar1Result(1);
-              setChar2Result(-1);
-            } else if (matchResult === '2' || matchResult === 'lose') {
-              setChar1Result(-1);
-              setChar2Result(1);
-            }
-
-            if (matchResult.length > 1) {
-              setMode(matchResult);
-
-              if (matchResult === 'win') {
-                addToast({
-                  type: 'success',
-                  title: 'Disputa vencida!',
-                  description: 'Você ganhou a aposta!',
-                });
-              } else if (matchResult === 'lose') {
-                addToast({
-                  type: 'error',
-                  title: 'Disputa perdida!',
-                  description: 'Você perdeu a aposta!',
-                });
-              } else if (matchResult === 'tie') {
                 addToast({
                   type: 'info',
-                  title: 'Disputa empatada!',
-                  description: 'A aposta foi empatada!',
+                  title: 'Hora do Desafio',
+                  description: `Oponente selecionado: [${opponent.name}]...`,
+                });
+
+                setMode('battle');
+              }
+              break;
+
+            case 'restart':
+              if (!user.storyteller) {
+                setSelectedPo('');
+                setSelOpponentPo('');
+                setChar1Result(-5);
+                setChar2Result(-5);
+                setPlay(false);
+                setMode('initial');
+
+                setOpponentChar({
+                  id: '',
+                  name: 'Desconhecido',
+                  clan: 'Desconhecido',
+                  title: '',
+                  coterie: '',
+                  avatar_url: '',
+                  experience: '',
+                  experience_total: '',
+                  updated_at: new Date(),
+                  character_url: '',
+                  situation: 'active',
+                  npc: false,
+                  retainer_level: '0',
+                  formatedDate: format(new Date(), 'dd/MM/yyyy'),
+                });
+
+                addToast({
+                  type: 'info',
+                  title: 'Desafio encerrado',
+                  description: 'Desafio encerrado pelo narrador.',
                 });
               }
-            } else {
-              setMode('resolved');
-            }
+              break;
 
-            setSelectedPo(char1Res);
-            setSelOpponentPo(char2Res);
-          }, 2200);
+            case 'ready':
+              if (parsedMsg.character === '1') {
+                setSelectedPo('rock');
+                setChar1Result(0);
+              } else {
+                setSelOpponentPo('rock');
+                setChar2Result(0);
+              }
+              break;
+
+            case 'result':
+              {
+                const matchResult = parsedMsg.result;
+                const char1Res = parsedMsg.char1;
+                const char2Res = parsedMsg.char2;
+
+                setMode('resolving');
+                setSelectedPo('rock');
+                setPlay(true);
+
+                setTimeout(() => {
+                  if (matchResult === '1' || matchResult === 'win') {
+                    setChar1Result(1);
+                    setChar2Result(-1);
+                  } else if (matchResult === '2' || matchResult === 'lose') {
+                    setChar1Result(-1);
+                    setChar2Result(1);
+                  }
+
+                  if (matchResult.length > 1) {
+                    setMode(matchResult);
+
+                    if (matchResult === 'win') {
+                      addToast({
+                        type: 'success',
+                        title: 'Disputa vencida!',
+                        description: 'Você ganhou a aposta!',
+                      });
+                    } else if (matchResult === 'lose') {
+                      addToast({
+                        type: 'error',
+                        title: 'Disputa perdida!',
+                        description: 'Você perdeu a aposta!',
+                      });
+                    } else if (matchResult === 'tie') {
+                      addToast({
+                        type: 'info',
+                        title: 'Disputa empatada!',
+                        description: 'A aposta foi empatada!',
+                      });
+                    }
+                  } else {
+                    setMode('resolved');
+                  }
+
+                  setSelectedPo(char1Res);
+                  setSelOpponentPo(char2Res);
+                }, 2200);
+              }
+              break;
+
+            default:
+          }
         }
       } catch (error) {
         addToast({

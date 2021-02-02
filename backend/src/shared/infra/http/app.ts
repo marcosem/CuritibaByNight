@@ -8,20 +8,19 @@ import '@shared/infra/typeorm';
 import '@shared/container';
 import AppError from '@shared/errors/AppError';
 import rateLimiter from '@shared/infra/http/middlewares/rateLimiter';
-import webSocket from '@shared/infra/http/middlewares/webSocket';
+import JanKenPoWebSocket from '@shared/infra/http/middlewares/JanKenPoWebSocket';
 
-// import expressWs from 'express-ws';
 import routes from './routes';
 
 const app = express();
 
-// const ws = expressWs(app);
+const websocket = new JanKenPoWebSocket();
+websocket.initializeServer(app);
 
 app.use(rateLimiter);
 app.use(cors());
 app.use(express.json());
 app.use(routes);
-app.use(webSocket);
 
 app.use(errors());
 app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
