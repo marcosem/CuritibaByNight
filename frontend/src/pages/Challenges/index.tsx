@@ -566,34 +566,34 @@ const Challenges: React.FC = () => {
     if (connected) {
       socket.close();
     } else {
+      setSelectedPo('');
+      setMyPo('');
+      setSelOpponentPo('');
+      setChar1Result(-5);
+      setChar2Result(-5);
+      setPlay(false);
+      setMode('initial');
+
+      setOpponentChar({
+        id: '',
+        name: 'Desconhecido',
+        clan: 'Desconhecido',
+        title: '',
+        coterie: '',
+        avatar_url: '',
+        experience: '',
+        experience_total: '',
+        updated_at: new Date(),
+        character_url: '',
+        situation: 'active',
+        npc: false,
+        retainer_level: '0',
+        formatedDate: format(new Date(), 'dd/MM/yyyy'),
+      });
+
       setSocket(getSocket());
       setTimeout(() => {
         initializeSocket();
-
-        setSelectedPo('');
-        setMyPo('');
-        setSelOpponentPo('');
-        setChar1Result(-5);
-        setChar2Result(-5);
-        setPlay(false);
-        setMode('initial');
-
-        setOpponentChar({
-          id: '',
-          name: 'Desconhecido',
-          clan: 'Desconhecido',
-          title: '',
-          coterie: '',
-          avatar_url: '',
-          experience: '',
-          experience_total: '',
-          updated_at: new Date(),
-          character_url: '',
-          situation: 'active',
-          npc: false,
-          retainer_level: '0',
-          formatedDate: format(new Date(), 'dd/MM/yyyy'),
-        });
       }, 3000);
     }
   }, [connected, initializeSocket, socket]);
