@@ -237,7 +237,8 @@ class JanKenPoWebSocket {
 
                 const myMatch = this.matches.find(
                   mtch =>
-                    mtch.char1Connection.id === id || mtch.char2Connection.id,
+                    mtch.char1Connection.id === id ||
+                    mtch.char2Connection.id === id,
                 );
 
                 if (myMatch) {
@@ -412,6 +413,10 @@ class JanKenPoWebSocket {
 
       ws.on('close', () => {
         this.sockets = this.sockets.filter(myWs => myWs.id !== id);
+        this.matches = this.matches.filter(
+          mtch =>
+            mtch.char1Connection.id !== id && mtch.char2Connection.id !== id,
+        );
       });
 
       if (!socket && id !== undefined) {
