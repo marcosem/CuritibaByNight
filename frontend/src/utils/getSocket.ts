@@ -1,4 +1,4 @@
-const socketUrl = process.env.REACT_APP_API_URL?.replace('https', 'ws')
+const socketUrl = process.env.REACT_APP_API_URL?.replace('https', 'wss')
   .replace('api', 'ws')
   .replace('http', 'ws');
 
