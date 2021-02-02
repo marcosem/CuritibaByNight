@@ -20,6 +20,10 @@ interface IConnectionButtonProps {
   connected: boolean;
 }
 
+interface IIconProps {
+  animateMe?: boolean;
+}
+
 const bounceButton = keyframes`
   from {
     transform: scale(1) translateY(0);
@@ -31,6 +35,20 @@ const bounceButton = keyframes`
 
   to {
     transform: scale(1) translateY(0);
+  }
+`;
+
+const XOpacity = keyframes`
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 `;
 
@@ -198,10 +216,9 @@ export const ArenaContainer = styled.div`
   height: 286px;
 `;
 
-export const JanKenPoContainer = styled.div`
+export const JanKenPoContainer = styled.div<IIconProps>`
   display: flex;
   flex-direction: column !important;
-  //background: #111;
   width: 64px !important;
   height: 100%;
 
@@ -218,6 +235,14 @@ export const JanKenPoContainer = styled.div`
     color: #860209;
     width: 32px;
     height: 32px;
+
+    // transition: opacity 0.2s;
+
+    ${props =>
+      props.animateMe &&
+      css`
+        animation: ${XOpacity} 0.7s ease-in-out 3;
+      `}
   }
 `;
 

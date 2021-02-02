@@ -653,13 +653,13 @@ const Challenges: React.FC = () => {
     } else if (mode === 'resolving') {
       setTitle('Resolvendo a disputa...');
     } else if (mode === 'win') {
-      setTitle('Você venceu!');
+      setTitle('Você Venceu!');
     } else if (mode === 'lose') {
-      setTitle('Você perdeu!');
+      setTitle('Você Perdeu!');
     } else if (mode === 'tie') {
-      setTitle('Disputa emparada!');
+      setTitle('Disputa Empatada!');
     } else if (mode === 'resolved') {
-      setTitle('Disputa Resulvida!');
+      setTitle('Disputa Resolvida!');
     } else if (user.storyteller) {
       if (mode === 'initial') {
         if (myChar?.id !== '' && opponentChar?.id !== '') {
@@ -808,7 +808,7 @@ const Challenges: React.FC = () => {
                     </JanKenPoButton>
                   )}
                 </JanKenPoContainer>
-                <JanKenPoContainer>
+                <JanKenPoContainer animateMe={play}>
                   {selectedPo !== '' && selOpponentPo !== '' && <FaTimes />}
                 </JanKenPoContainer>
                 <JanKenPoContainer>
