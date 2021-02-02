@@ -351,6 +351,35 @@ export const ButtonBox = styled.div<IDashboardProps>`
         `}
 `;
 
+export const ConnectionStatus = styled.div<IConnectionButtonProps>`
+  width: 32px;
+  height: 32px;
+  border: 0;
+  margin: 10px auto !important;
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #ccc;
+  }
+
+  ${props =>
+    props.connected
+      ? css`
+          background: #025609;
+        `
+      : css`
+          background: #860209;
+        `}
+`;
+
 export const ConnectionButton = styled.button<IConnectionButtonProps>`
   position: fixed;
   bottom: 40px;

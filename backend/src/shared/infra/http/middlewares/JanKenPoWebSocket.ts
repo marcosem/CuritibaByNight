@@ -11,6 +11,8 @@ interface IMyConnection {
   char?: string;
   opponent_char?: string;
   st?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  keepAlive?: any;
 }
 
 interface IMatch {
@@ -34,9 +36,39 @@ class JanKenPoWebSocket {
 
   private matches: IMatch[];
 
+  private keepAliveInterval: number;
+
   constructor() {
     this.sockets = [];
     this.matches = [];
+    this.keepAliveInterval = 20000;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private sendMsg(ws: any, msg: any): boolean {
+    try {
+      if (ws.readyState !== ws.OPEN) {
+        return false;
+      }
+
+      ws.send(JSON.stringify(msg));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private ping(socket: IMyConnection): any {
+    if (socket.keepAlive !== undefined) {
+      clearTimeout(socket.keepAlive);
+    }
+
+    const keepAlive = setTimeout(() => {
+      this.sendMsg(socket.ws, { message: 'ping' });
+    }, this.keepAliveInterval);
+
+    return keepAlive;
   }
 
   public initializeServer(serverApp: Express): expressWs.Application {
@@ -66,6 +98,10 @@ class JanKenPoWebSocket {
         }
 
         if (!isError) {
+          if (socket !== undefined) {
+            socket.keepAlive = this.ping(socket);
+          }
+
           switch (parsedMsg.type) {
             case 'auth':
               {
@@ -111,6 +147,17 @@ class JanKenPoWebSocket {
               } else {
                 socket.char = parsedMsg.char;
                 socket.char_id = parsedMsg.char_id;
+
+                const stSockets = this.sockets.filter(myWs => myWs.st);
+                if (stSockets.length >= 1) {
+                  stSockets.forEach(stWs => {
+                    this.sendMsg(stWs.ws, {
+                      message: 'connection',
+                      character: parsedMsg.char_id,
+                      connected: true,
+                    });
+                  });
+                }
               }
               break;
             case 'select':
@@ -155,19 +202,15 @@ class JanKenPoWebSocket {
                   stConnection: socket,
                 });
 
-                getChar1Socket.ws.send(
-                  JSON.stringify({
-                    message: 'selected',
-                    opponentChar: getChar2Socket.char,
-                  }),
-                );
+                this.sendMsg(getChar1Socket.ws, {
+                  message: 'selected',
+                  opponentChar: getChar2Socket.char,
+                });
 
-                getChar2Socket.ws.send(
-                  JSON.stringify({
-                    message: 'selected',
-                    opponentChar: getChar1Socket.char,
-                  }),
-                );
+                this.sendMsg(getChar2Socket.ws, {
+                  message: 'selected',
+                  opponentChar: getChar1Socket.char,
+                });
               }
               break;
             case 'cancel':
@@ -201,11 +244,7 @@ class JanKenPoWebSocket {
                   break;
                 }
 
-                getChar1Socket.ws.send(
-                  JSON.stringify({
-                    message: 'restart',
-                  }),
-                );
+                this.sendMsg(getChar1Socket.ws, { message: 'restart' });
 
                 const getChar2Socket = this.sockets.find(
                   myWs => myWs.char_id === char2_id,
@@ -219,11 +258,34 @@ class JanKenPoWebSocket {
                   break;
                 }
 
-                getChar2Socket.ws.send(
-                  JSON.stringify({
-                    message: 'restart',
-                  }),
+                this.sendMsg(getChar2Socket.ws, { message: 'restart' });
+              }
+              break;
+            case 'is_connected':
+              {
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                  break;
+                }
+
+                if (!parsedMsg.char_id) {
+                  isError = true;
+                  errorMsg = 'Missing Character id';
+                  closeMe = false;
+                  break;
+                }
+
+                const charId = this.sockets.find(
+                  sck => sck.char_id === parsedMsg.char_id,
                 );
+
+                this.sendMsg(socket.ws, {
+                  message: 'connection',
+                  character: parsedMsg.char_id,
+                  connected: !!charId,
+                });
               }
               break;
             case 'play':
@@ -251,37 +313,32 @@ class JanKenPoWebSocket {
 
                   if (myMatch.char1Connection.id === id) {
                     myMatch.char1JanKenPo = parsedMsg.play;
-                    myMatch.char2Connection.ws.send(
-                      JSON.stringify({
-                        message: 'ready',
-                        character: 'opponent',
-                      }),
-                    );
+
+                    this.sendMsg(myMatch.char2Connection.ws, {
+                      message: 'ready',
+                      character: 'opponent',
+                    });
 
                     if (
                       myMatch.stConnection.id !== myMatch.char1Connection.id
                     ) {
-                      myMatch.stConnection.ws.send(
-                        JSON.stringify({
-                          message: 'ready',
-                          character: '1',
-                        }),
-                      );
+                      this.sendMsg(myMatch.stConnection.ws, {
+                        message: 'ready',
+                        character: '1',
+                      });
                     }
                   } else {
                     myMatch.char2JanKenPo = parsedMsg.play;
-                    myMatch.char1Connection.ws.send(
-                      JSON.stringify({
-                        message: 'ready',
-                        character: 'opponent',
-                      }),
-                    );
-                    myMatch.stConnection.ws.send(
-                      JSON.stringify({
-                        message: 'ready',
-                        character: '2',
-                      }),
-                    );
+
+                    this.sendMsg(myMatch.char1Connection.ws, {
+                      message: 'ready',
+                      character: 'opponent',
+                    });
+
+                    this.sendMsg(myMatch.stConnection.ws, {
+                      message: 'ready',
+                      character: '2',
+                    });
                   }
 
                   if (myMatch.char1JanKenPo && myMatch.char2JanKenPo) {
@@ -292,32 +349,27 @@ class JanKenPoWebSocket {
                           myMatch.char1Connection.id &&
                         myMatch.stConnection.id !== myMatch.char1Connection.id
                       ) {
-                        myMatch.stConnection.ws.send(
-                          JSON.stringify({
-                            message: 'result',
-                            result: 'tie',
-                            char1: myMatch.char1JanKenPo,
-                            char2: myMatch.char2JanKenPo,
-                          }),
-                        );
-                      }
-
-                      myMatch.char1Connection.ws.send(
-                        JSON.stringify({
+                        this.sendMsg(myMatch.stConnection.ws, {
                           message: 'result',
                           result: 'tie',
                           char1: myMatch.char1JanKenPo,
                           char2: myMatch.char2JanKenPo,
-                        }),
-                      );
-                      myMatch.char2Connection.ws.send(
-                        JSON.stringify({
-                          message: 'result',
-                          result: 'tie',
-                          char1: myMatch.char2JanKenPo,
-                          char2: myMatch.char1JanKenPo,
-                        }),
-                      );
+                        });
+                      }
+
+                      this.sendMsg(myMatch.char1Connection.ws, {
+                        message: 'result',
+                        result: 'tie',
+                        char1: myMatch.char1JanKenPo,
+                        char2: myMatch.char2JanKenPo,
+                      });
+
+                      this.sendMsg(myMatch.char1Connection.ws, {
+                        message: 'result',
+                        result: 'tie',
+                        char1: myMatch.char2JanKenPo,
+                        char2: myMatch.char1JanKenPo,
+                      });
                     } else if (
                       (myMatch.char1JanKenPo === 'rock' &&
                         myMatch.char2JanKenPo === 'scissors') ||
@@ -335,63 +387,54 @@ class JanKenPoWebSocket {
                           myMatch.char1Connection.id &&
                         myMatch.stConnection.id !== myMatch.char1Connection.id
                       ) {
-                        myMatch.stConnection.ws.send(
-                          JSON.stringify({
-                            message: 'result',
-                            result: '1',
-                            char1: myMatch.char1JanKenPo,
-                            char2: myMatch.char2JanKenPo,
-                          }),
-                        );
-                      }
-
-                      myMatch.char1Connection.ws.send(
-                        JSON.stringify({
+                        this.sendMsg(myMatch.stConnection.ws, {
                           message: 'result',
-                          result: 'win',
+                          result: '1',
                           char1: myMatch.char1JanKenPo,
                           char2: myMatch.char2JanKenPo,
-                        }),
-                      );
-                      myMatch.char2Connection.ws.send(
-                        JSON.stringify({
-                          message: 'result',
-                          result: 'lose',
-                          char1: myMatch.char2JanKenPo,
-                          char2: myMatch.char1JanKenPo,
-                        }),
-                      );
+                        });
+                      }
+
+                      this.sendMsg(myMatch.char1Connection.ws, {
+                        message: 'result',
+                        result: 'win',
+                        char1: myMatch.char1JanKenPo,
+                        char2: myMatch.char2JanKenPo,
+                      });
+
+                      this.sendMsg(myMatch.char2Connection.ws, {
+                        message: 'result',
+                        result: 'lose',
+                        char1: myMatch.char2JanKenPo,
+                        char2: myMatch.char1JanKenPo,
+                      });
                     } else {
                       if (
                         myMatch.stConnection.id !==
                           myMatch.char1Connection.id &&
                         myMatch.stConnection.id !== myMatch.char1Connection.id
                       ) {
-                        myMatch.stConnection.ws.send(
-                          JSON.stringify({
-                            message: 'result',
-                            result: '2',
-                            char1: myMatch.char1JanKenPo,
-                            char2: myMatch.char2JanKenPo,
-                          }),
-                        );
-                      }
-                      myMatch.char1Connection.ws.send(
-                        JSON.stringify({
+                        this.sendMsg(myMatch.stConnection.ws, {
                           message: 'result',
-                          result: 'lose',
+                          result: '2',
                           char1: myMatch.char1JanKenPo,
                           char2: myMatch.char2JanKenPo,
-                        }),
-                      );
-                      myMatch.char2Connection.ws.send(
-                        JSON.stringify({
-                          message: 'result',
-                          result: 'win',
-                          char1: myMatch.char2JanKenPo,
-                          char2: myMatch.char1JanKenPo,
-                        }),
-                      );
+                        });
+                      }
+
+                      this.sendMsg(myMatch.char1Connection.ws, {
+                        message: 'result',
+                        result: 'lose',
+                        char1: myMatch.char1JanKenPo,
+                        char2: myMatch.char2JanKenPo,
+                      });
+
+                      this.sendMsg(myMatch.char2Connection.ws, {
+                        message: 'result',
+                        result: 'win',
+                        char1: myMatch.char2JanKenPo,
+                        char2: myMatch.char1JanKenPo,
+                      });
                     }
 
                     this.matches = this.matches.filter(
@@ -401,17 +444,41 @@ class JanKenPoWebSocket {
                 }
               }
               break;
+            case 'pong':
+              if (!socket) {
+                isError = true;
+                errorMsg = 'User not Authenticated';
+                closeMe = true;
+                break;
+              }
+              break;
+
             default:
           }
         }
 
         if (isError) {
-          ws.send(JSON.stringify({ error: errorMsg }));
+          this.sendMsg(ws, { error: errorMsg });
+
           if (closeMe) ws.close();
         }
       });
 
       ws.on('close', () => {
+        const stSockets = this.sockets.filter(myWs => myWs.st);
+
+        if (stSockets.length >= 1) {
+          stSockets.forEach(stWs => {
+            if (stWs.id !== id && stWs.char_id !== '') {
+              this.sendMsg(stWs.ws, {
+                message: 'connection',
+                character: stWs.char_id,
+                connected: false,
+              });
+            }
+          });
+        }
+
         this.sockets = this.sockets.filter(myWs => myWs.id !== id);
         this.matches = this.matches.filter(
           mtch =>
@@ -427,8 +494,9 @@ class JanKenPoWebSocket {
           user_id: newSocket.user_id,
         };
 
+        socket.keepAlive = this.ping(socket);
+
         this.sockets = [...this.sockets, socket];
-        ws.send(JSON.stringify({ id }));
       }
     });
 
