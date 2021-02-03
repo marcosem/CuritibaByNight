@@ -49,6 +49,7 @@ interface ISocketServerMessage {
   char1?: string;
   char2?: string;
   character?: string;
+  connected?: boolean;
 }
 
 class JanKenPoWebSocket {
@@ -133,27 +134,10 @@ class JanKenPoWebSocket {
 
                     this.sockets = [...this.sockets, socket];
                     this.sendMsg(ws, { message: 'id', id: socket.id });
-
-                    console.log(socket.id);
-                    console.log(this.sockets.length);
                   }
-
-                  /*
-
-                  if (socket) {
-                    socket.st = validation.st;
-                    socket.user_id = validation.user_id;
-                  } else {
-                    newSocket = {
-                      ws: '',
-                      id: '',
-                      st: validation.st,
-                      user_id: validation.user_id,
-                    };
-                  }
-                  */
                 }
                 break;
+
               case 'char':
                 if (!socket) {
                   isError = true;
@@ -162,8 +146,20 @@ class JanKenPoWebSocket {
                 } else {
                   socket.char = parsedMsg.char;
                   socket.char_id = parsedMsg.char_id;
+
+                  const stSockets = this.sockets.filter(myWs => myWs.st);
+                  if (stSockets.length >= 1) {
+                    stSockets.forEach(stWs => {
+                      this.sendMsg(stWs.ws, {
+                        message: 'connection',
+                        character: parsedMsg.char_id,
+                        connected: true,
+                      });
+                    });
+                  }
                 }
                 break;
+
               case 'select':
                 if (!socket) {
                   isError = true;
@@ -217,6 +213,7 @@ class JanKenPoWebSocket {
                   });
                 }
                 break;
+
               case 'cancel':
                 if (!socket) {
                   isError = true;
@@ -269,6 +266,35 @@ class JanKenPoWebSocket {
                   });
                 }
                 break;
+
+              case 'is_connected':
+                {
+                  if (!socket) {
+                    isError = true;
+                    errorMsg = 'User not Authenticated';
+                    closeMe = true;
+                    break;
+                  }
+
+                  if (!parsedMsg.char_id) {
+                    isError = true;
+                    errorMsg = 'Missing Character id';
+                    closeMe = false;
+                    break;
+                  }
+
+                  const charId = this.sockets.find(
+                    sck => sck.char_id === parsedMsg.char_id,
+                  );
+
+                  this.sendMsg(socket.ws, {
+                    message: 'connection',
+                    character: parsedMsg.char_id,
+                    connected: !!charId,
+                  });
+                }
+                break;
+
               case 'play':
                 {
                   if (!socket) {
@@ -424,6 +450,7 @@ class JanKenPoWebSocket {
                   }
                 }
                 break;
+
               case 'ping':
                 this.sendMsg(ws, { message: 'pong' });
                 break;
