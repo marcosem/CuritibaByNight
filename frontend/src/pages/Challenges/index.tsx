@@ -15,6 +15,8 @@ import {
   FaTimes,
   FaHandshake,
   FaUnlink,
+  FaSmile,
+  FaDizzy,
 } from 'react-icons/fa';
 import api from '../../services/api';
 
@@ -25,6 +27,7 @@ import {
   Content,
   CardsContent,
   CharCardContainer,
+  ConnectionStatus,
   ChallangeArena,
   ArenaContainer,
   JanKenPoContainer,
@@ -65,6 +68,7 @@ const Challenges: React.FC = () => {
   const [selOpponentPo, setSelOpponentPo] = useState<string>('');
   const [char1Result, setChar1Result] = useState<number>(-2);
   const [char2Result, setChar2Result] = useState<number>(-2);
+  const [connList, setConnList] = useState<string[]>([]);
   const [socket, setSocket] = useState<WebSocket>(getSocket());
   const [mode, setMode] = useState<string>('initial');
   const [title, setTitle] = useState<string>('');
@@ -72,7 +76,10 @@ const Challenges: React.FC = () => {
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
   const [play, setPlay] = useState<boolean>(false);
-  const [changingConState, setChanConState] = useState<boolean>(false);
+  const [changingConState, setChanConState] = useState<boolean>(true);
+  const [connStatus1, setConnStatus1] = useState<boolean>(false);
+  const [connStatus2, setConnStatus2] = useState<boolean>(false);
+
   const token = useRef<string>(
     api.defaults.headers.Authorization.replace('Bearer ', ''),
   );
@@ -80,8 +87,6 @@ const Challenges: React.FC = () => {
 
   const sendSocketMessage = useCallback(
     (msg: ISocketMessage) => {
-      console.log(msg);
-
       if (socket.readyState === socket.OPEN) {
         socket.send(JSON.stringify(msg));
       }
@@ -99,6 +104,16 @@ const Challenges: React.FC = () => {
     }, 20000);
   }, [sendSocketMessage]);
 
+  useEffect(() => {
+    if (myChar?.npc || myChar?.id === char.id) {
+      setConnStatus1(connected);
+    } else {
+      setConnStatus1(connList.findIndex(ch => ch === myChar?.id) >= 0);
+    }
+
+    setConnStatus2(connList.findIndex(ch => ch === opponentChar?.id) >= 0);
+  }, [char.id, connList, connected, myChar, opponentChar]);
+
   const initializeSocket = useCallback(() => {
     // const token = api.defaults.headers.Authorization.replace('Bearer ', '');
     if (socket.readyState === socket.OPEN) {
@@ -109,7 +124,9 @@ const Challenges: React.FC = () => {
       });
 
       setConnected(true);
-    } else if (socket.readyState !== socket.CONNECTING) {
+    }
+
+    if (socket.readyState !== socket.CONNECTING) {
       return;
     }
 
@@ -144,8 +161,6 @@ const Challenges: React.FC = () => {
     socket.addEventListener('message', msg => {
       try {
         const parsedMsg = JSON.parse(msg.data);
-
-        console.log(parsedMsg);
 
         if (parsedMsg.error) {
           addToast({
@@ -226,6 +241,27 @@ const Challenges: React.FC = () => {
               }
               break;
 
+            case 'connection':
+              if (parsedMsg.character) {
+                if (parsedMsg.connected) {
+                  if (
+                    connList.find(charId => charId === parsedMsg.character) ===
+                    undefined
+                  ) {
+                    const newList = connList;
+                    newList.push(parsedMsg.character);
+                    setConnList(newList);
+                  }
+                } else {
+                  const tmpConnList = connList.filter(
+                    charId => charId !== parsedMsg.character,
+                  );
+                  setConnList(tmpConnList);
+                }
+              }
+
+              break;
+
             case 'ready':
               if (parsedMsg.character === '1') {
                 setSelectedPo('rock');
@@ -300,6 +336,7 @@ const Challenges: React.FC = () => {
     });
   }, [
     addToast,
+    connList,
     sendSocketMessage,
     socket,
     startPing,
@@ -502,6 +539,11 @@ const Challenges: React.FC = () => {
             char_id: selectedCharacter.id,
             char: selectedCharacter,
           });
+        } else {
+          sendSocketMessage({
+            type: 'is_connected',
+            char_id: selectedCharacter.id,
+          });
         }
 
         setMyChar(selectedCharacter);
@@ -538,6 +580,11 @@ const Challenges: React.FC = () => {
 
       if (selectedCharacter !== undefined) {
         setOpponentChar(selectedCharacter);
+
+        sendSocketMessage({
+          type: 'is_connected',
+          char_id: selectedCharacter.id,
+        });
       } else {
         setOpponentChar({
           id: '',
@@ -557,7 +604,7 @@ const Challenges: React.FC = () => {
         });
       }
     },
-    [SelectCharByIndex, opponentList],
+    [SelectCharByIndex, opponentList, sendSocketMessage],
   );
 
   const showOptions = useCallback(() => {
@@ -791,6 +838,15 @@ const Challenges: React.FC = () => {
                 locked
                 readOnly={myChar.id === '' || myChar.id === 'Static'}
               />
+
+              {user.storyteller && (
+                <ConnectionStatus
+                  connected={connStatus1}
+                  title={connStatus1 ? 'Online' : 'Offline'}
+                >
+                  {connStatus1 ? <FaSmile /> : <FaDizzy />}
+                </ConnectionStatus>
+              )}
             </CharCardContainer>
             <ChallangeArena isMobile={isMobileVersion}>
               <div>
@@ -898,6 +954,14 @@ const Challenges: React.FC = () => {
                 locked
                 readOnly={!user.storyteller || opponentChar.id === ''}
               />
+              {user.storyteller && (
+                <ConnectionStatus
+                  connected={connStatus2}
+                  title={connStatus2 ? 'Online' : 'Offline'}
+                >
+                  {connStatus2 ? <FaSmile /> : <FaDizzy />}
+                </ConnectionStatus>
+              )}
             </CharCardContainer>
           </CardsContent>
           {mode === 'initial' && myChar.id !== '' && opponentChar.id !== '' && (
