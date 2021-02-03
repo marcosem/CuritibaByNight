@@ -169,6 +169,7 @@ export const CharCardContainer = styled.div<ICardContainerProps>`
   ${props =>
     props.isMobile &&
     css`
+      //transform: scale(0.5);
       padding-bottom: 5px;
 
       div {
@@ -224,6 +225,9 @@ export const JanKenPoContainer = styled.div<IIconProps>`
 
   &:first-child {
     margin-right: auto;
+    button {
+      margin-left: 5px;
+    }
   }
 
   &:last-child {
@@ -396,6 +400,10 @@ export const ConnectionButton = styled.button<IConnectionButtonProps>`
   align-items: center;
 
   transition: background-color 0.2s;
+
+  :disabled {
+    cursor: not-allowed;
+  }
 
   svg {
     width: 32px;

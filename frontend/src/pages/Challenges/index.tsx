@@ -1,4 +1,11 @@
-import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+/* eslint-disable camelcase */
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  ChangeEvent,
+  useRef,
+} from 'react';
 import { format } from 'date-fns';
 import {
   FaHandRock,
@@ -8,8 +15,6 @@ import {
   FaTimes,
   FaHandshake,
   FaUnlink,
-  FaSmile,
-  FaDizzy,
 } from 'react-icons/fa';
 import api from '../../services/api';
 
@@ -25,7 +30,6 @@ import {
   JanKenPoContainer,
   JanKenPoButton,
   ButtonBox,
-  ConnectionStatus,
   ConnectionButton,
 } from './styles';
 import Header from '../../components/Header';
@@ -39,6 +43,17 @@ import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
 
+interface ISocketMessage {
+  type: string;
+  user_id?: string;
+  token?: string;
+  char_id?: string;
+  char?: ICharacter;
+  play?: string;
+  char1_id?: string;
+  char2_id?: string;
+}
+
 const Challenges: React.FC = () => {
   const { user, signOut, char } = useAuth();
   const [myChar, setMyChar] = useState<ICharacter>();
@@ -50,7 +65,6 @@ const Challenges: React.FC = () => {
   const [selOpponentPo, setSelOpponentPo] = useState<string>('');
   const [char1Result, setChar1Result] = useState<number>(-2);
   const [char2Result, setChar2Result] = useState<number>(-2);
-  const [connList, setConnList] = useState<string[]>([]);
   const [socket, setSocket] = useState<WebSocket>(getSocket());
   const [mode, setMode] = useState<string>('initial');
   const [title, setTitle] = useState<string>('');
@@ -58,21 +72,45 @@ const Challenges: React.FC = () => {
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
   const [play, setPlay] = useState<boolean>(false);
-  const [keepAlive, setKeepAlive] = useState<number>();
+  const [changingConState, setChanConState] = useState<boolean>(false);
+  const token = useRef<string>(
+    api.defaults.headers.Authorization.replace('Bearer ', ''),
+  );
+  const serverPing = useRef<number>(0);
+
+  const sendSocketMessage = useCallback(
+    (msg: ISocketMessage) => {
+      console.log(msg);
+
+      if (socket.readyState === socket.OPEN) {
+        socket.send(JSON.stringify(msg));
+      }
+    },
+    [socket],
+  );
+
+  const startPing = useCallback(() => {
+    if (serverPing.current !== 0) return;
+
+    serverPing.current = setTimeout(() => {
+      sendSocketMessage({ type: 'ping' });
+      serverPing.current = 0;
+      startPing();
+    }, 20000);
+  }, [sendSocketMessage]);
 
   const initializeSocket = useCallback(() => {
-    const token = api.defaults.headers.Authorization.replace('Bearer ', '');
-
+    // const token = api.defaults.headers.Authorization.replace('Bearer ', '');
     if (socket.readyState === socket.OPEN) {
-      socket.send(
-        JSON.stringify({
-          type: 'auth',
-          user_id: user.id,
-          token,
-        }),
-      );
+      sendSocketMessage({
+        type: 'auth',
+        user_id: user.id,
+        token: token.current,
+      });
 
       setConnected(true);
+    } else if (socket.readyState !== socket.CONNECTING) {
+      return;
     }
 
     socket.addEventListener('open', () => {
@@ -82,13 +120,13 @@ const Challenges: React.FC = () => {
         description: 'Você está conectado ao Servidor do Jan-ken-po!',
       });
 
-      socket.send(
-        JSON.stringify({
-          type: 'auth',
-          user_id: user.id,
-          token,
-        }),
-      );
+      sendSocketMessage({
+        type: 'auth',
+        user_id: user.id,
+        token: token.current,
+      });
+
+      startPing();
 
       setConnected(true);
     });
@@ -106,6 +144,8 @@ const Challenges: React.FC = () => {
     socket.addEventListener('message', msg => {
       try {
         const parsedMsg = JSON.parse(msg.data);
+
+        console.log(parsedMsg);
 
         if (parsedMsg.error) {
           addToast({
@@ -186,25 +226,6 @@ const Challenges: React.FC = () => {
               }
               break;
 
-            case 'connection':
-              if (parsedMsg.character) {
-                if (parsedMsg.connected) {
-                  if (
-                    connList.find(charId => charId === parsedMsg.character) ===
-                    undefined
-                  ) {
-                    setConnList([connList, parsedMsg.character]);
-                  }
-                } else {
-                  const tmpConnList = connList.filter(
-                    charId => charId !== parsedMsg.character,
-                  );
-                  setConnList(tmpConnList);
-                }
-              }
-
-              break;
-
             case 'ready':
               if (parsedMsg.character === '1') {
                 setSelectedPo('rock');
@@ -266,21 +287,6 @@ const Challenges: React.FC = () => {
               }
               break;
 
-            case 'ping':
-              if (keepAlive === undefined) {
-                setKeepAlive(
-                  setTimeout(() => {
-                    socket.send(
-                      JSON.stringify({
-                        type: 'pong',
-                      }),
-                    );
-                    setKeepAlive(undefined);
-                  }, 5000),
-                );
-              }
-              break;
-
             default:
           }
         }
@@ -292,14 +298,18 @@ const Challenges: React.FC = () => {
         });
       }
     });
-  }, [addToast, connList, keepAlive, socket, user.id, user.storyteller]);
+  }, [
+    addToast,
+    sendSocketMessage,
+    socket,
+    startPing,
+    user.id,
+    user.storyteller,
+  ]);
 
-  const verifyConection = useCallback(
-    charId => {
-      return connList.find(ch => ch === charId) !== undefined;
-    },
-    [connList],
-  );
+  useEffect(() => {
+    setChanConState(false);
+  }, [connected]);
 
   const loadCharacters = useCallback(async () => {
     try {
@@ -390,13 +400,11 @@ const Challenges: React.FC = () => {
 
         setMyChar(loadedChar);
 
-        socket.send(
-          JSON.stringify({
-            type: 'char',
-            char_id: loadedChar.id,
-            char: loadedChar,
-          }),
-        );
+        sendSocketMessage({
+          type: 'char',
+          char_id: loadedChar.id,
+          char: loadedChar,
+        });
       });
     } catch (error) {
       if (error.response) {
@@ -413,7 +421,7 @@ const Challenges: React.FC = () => {
         }
       }
     }
-  }, [addToast, char, signOut, socket]);
+  }, [addToast, char, sendSocketMessage, signOut]);
 
   const HandleSelectPo = useCallback(
     po => {
@@ -431,10 +439,12 @@ const Challenges: React.FC = () => {
   const HandleSendPo = useCallback(() => {
     setChar1Result(0);
 
-    socket.send(JSON.stringify({ type: 'play', play: selectedPo }));
+    if (selectedPo !== undefined) {
+      sendSocketMessage({ type: 'play', play: selectedPo });
+    }
 
     setMode('ready');
-  }, [selectedPo, socket]);
+  }, [selectedPo, sendSocketMessage]);
 
   const SwitchJanKenPo = useCallback(po => {
     switch (po) {
@@ -487,20 +497,11 @@ const Challenges: React.FC = () => {
 
       if (selectedCharacter !== undefined) {
         if (selectedCharacter.npc || selectedCharacter.id === char.id) {
-          socket.send(
-            JSON.stringify({
-              type: 'char',
-              char_id: selectedCharacter.id,
-              char: selectedCharacter,
-            }),
-          );
-        } else {
-          socket.send(
-            JSON.stringify({
-              type: 'is_connected',
-              char_id: selectedCharacter.id,
-            }),
-          );
+          sendSocketMessage({
+            type: 'char',
+            char_id: selectedCharacter.id,
+            char: selectedCharacter,
+          });
         }
 
         setMyChar(selectedCharacter);
@@ -523,7 +524,7 @@ const Challenges: React.FC = () => {
         });
       }
     },
-    [SelectCharByIndex, char.id, charList, socket],
+    [SelectCharByIndex, char.id, charList, sendSocketMessage],
   );
 
   const handleCharacter2Change = useCallback(
@@ -586,25 +587,21 @@ const Challenges: React.FC = () => {
       return;
     }
 
-    socket.send(
-      JSON.stringify({
-        type: 'select',
-        char1_id: myChar?.id,
-        char2_id: opponentChar?.id,
-      }),
-    );
+    sendSocketMessage({
+      type: 'select',
+      char1_id: myChar?.id,
+      char2_id: opponentChar?.id,
+    });
 
     setMode('battle');
-  }, [addToast, myChar, opponentChar, socket]);
+  }, [addToast, myChar, opponentChar, sendSocketMessage]);
 
   const handleCancelChallangeButton = useCallback(() => {
-    socket.send(
-      JSON.stringify({
-        type: 'cancel',
-        char1_id: myChar?.id,
-        char2_id: opponentChar?.id,
-      }),
-    );
+    sendSocketMessage({
+      type: 'cancel',
+      char1_id: myChar?.id,
+      char2_id: opponentChar?.id,
+    });
 
     setSelectedPo('');
     setMyPo('');
@@ -613,10 +610,11 @@ const Challenges: React.FC = () => {
     setChar2Result(-5);
     setPlay(false);
     setMode('initial');
-  }, [myChar, opponentChar, socket]);
+  }, [myChar, opponentChar, sendSocketMessage]);
 
   const handleConnection = useCallback(() => {
     if (connected) {
+      setChanConState(true);
       socket.close();
     } else {
       setSelectedPo('');
@@ -627,29 +625,33 @@ const Challenges: React.FC = () => {
       setPlay(false);
       setMode('initial');
 
-      setOpponentChar({
-        id: '',
-        name: 'Desconhecido',
-        clan: 'Desconhecido',
-        title: '',
-        coterie: '',
-        avatar_url: '',
-        experience: '',
-        experience_total: '',
-        updated_at: new Date(),
-        character_url: '',
-        situation: 'active',
-        npc: false,
-        retainer_level: '0',
-        formatedDate: format(new Date(), 'dd/MM/yyyy'),
-      });
+      if (!user.storyteller) {
+        setOpponentChar({
+          id: '',
+          name: 'Desconhecido',
+          clan: 'Desconhecido',
+          title: '',
+          coterie: '',
+          avatar_url: '',
+          experience: '',
+          experience_total: '',
+          updated_at: new Date(),
+          character_url: '',
+          situation: 'active',
+          npc: false,
+          retainer_level: '0',
+          formatedDate: format(new Date(), 'dd/MM/yyyy'),
+        });
+      }
 
+      setChanConState(true);
       setSocket(getSocket());
-      setTimeout(() => {
-        initializeSocket();
-      }, 3000);
     }
-  }, [connected, initializeSocket, socket]);
+  }, [connected, socket, user.storyteller]);
+
+  useEffect(() => {
+    initializeSocket();
+  }, [initializeSocket]);
 
   useEffect(() => {
     setOpponentChar({
@@ -690,11 +692,7 @@ const Challenges: React.FC = () => {
     } else {
       loadMyChar();
     }
-  }, [char, loadCharacters, loadMyChar, user.storyteller]);
-
-  useEffect(() => {
-    initializeSocket();
-  }, [initializeSocket]);
+  }, [loadCharacters, loadMyChar, user.storyteller]);
 
   useEffect(() => {
     if (mode === 'battle') {
@@ -742,9 +740,6 @@ const Challenges: React.FC = () => {
               name="character1"
               id="character1"
               value={myChar && myChar.id !== '' ? myChar.name : undefined}
-              defaultValue={
-                myChar && myChar.id !== '' ? myChar.name : undefined
-              }
               onChange={handleCharacter1Change}
             >
               <option value="">Selecione um Personagem:</option>
@@ -759,11 +754,6 @@ const Challenges: React.FC = () => {
               name="character2"
               id="character2"
               value={
-                opponentChar && opponentChar.id !== ''
-                  ? opponentChar.name
-                  : undefined
-              }
-              defaultValue={
                 opponentChar && opponentChar.id !== ''
                   ? opponentChar.name
                   : undefined
@@ -801,14 +791,6 @@ const Challenges: React.FC = () => {
                 locked
                 readOnly={myChar.id === '' || myChar.id === 'Static'}
               />
-              {user.storyteller && (
-                <ConnectionStatus
-                  connected={verifyConection(myChar.id)}
-                  title={verifyConection(myChar.id) ? 'Online' : 'Offline'}
-                >
-                  {verifyConection(myChar.id) ? <FaSmile /> : <FaDizzy />}{' '}
-                </ConnectionStatus>
-              )}
             </CharCardContainer>
             <ChallangeArena isMobile={isMobileVersion}>
               <div>
@@ -916,16 +898,6 @@ const Challenges: React.FC = () => {
                 locked
                 readOnly={!user.storyteller || opponentChar.id === ''}
               />
-              {user.storyteller && (
-                <ConnectionStatus
-                  connected={verifyConection(opponentChar.id)}
-                  title={
-                    verifyConection(opponentChar.id) ? 'Online' : 'Offline'
-                  }
-                >
-                  {verifyConection(opponentChar.id) ? <FaSmile /> : <FaDizzy />}{' '}
-                </ConnectionStatus>
-              )}
             </CharCardContainer>
           </CardsContent>
           {mode === 'initial' && myChar.id !== '' && opponentChar.id !== '' && (
@@ -954,6 +926,7 @@ const Challenges: React.FC = () => {
             connected={connected}
             title={connected ? 'Desconectar' : 'Conectar'}
             onClick={handleConnection}
+            disabled={changingConState}
           >
             {connected ? <FaHandshake /> : <FaUnlink />}
           </ConnectionButton>
