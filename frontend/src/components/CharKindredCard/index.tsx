@@ -122,12 +122,16 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
     <Container isMobile={isMobileVersion}>
       <CardSquare clanImg={clanImg}>
         <span>{updatedAt}</span>
-        <label htmlFor={charId}>
+        <label htmlFor={charId === '' ? 'Empty' : charId}>
           <ProfileImage locked={locked}>
             <img src={charImg} alt="" />
 
             {!locked && (
-              <input type="file" id={charId} onChange={handleAvatarChange} />
+              <input
+                type="file"
+                id={charId === '' ? 'Empty' : charId}
+                onChange={handleAvatarChange}
+              />
             )}
             <FiCamera />
             <span>Trocar Foto</span>
