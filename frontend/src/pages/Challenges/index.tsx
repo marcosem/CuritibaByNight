@@ -117,10 +117,7 @@ const Challenges: React.FC = () => {
 
   const popupCharacterConnectionStatus = useCallback(
     (charId: string, isConnected: boolean) => {
-      console.log(charId);
       const charStatus = charListRef.current.find(ch => ch.id === charId);
-
-      console.log(charListRef.current.length);
 
       if (charStatus) {
         addToast({
@@ -263,8 +260,6 @@ const Challenges: React.FC = () => {
               break;
 
             case 'connection':
-              console.log(`${parsedMsg.character} - ${parsedMsg.connected}`);
-
               if (parsedMsg.character) {
                 popupCharacterConnectionStatus(
                   parsedMsg.character,
