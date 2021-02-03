@@ -69,7 +69,7 @@ const Challenges: React.FC = () => {
   const [selOpponentPo, setSelOpponentPo] = useState<string>('');
   const [char1Result, setChar1Result] = useState<number>(-2);
   const [char2Result, setChar2Result] = useState<number>(-2);
-  const [connList, setConnList] = useState<string[]>([]);
+  const connList = useRef<string[]>([]);
   const [socket, setSocket] = useState<WebSocket>(getSocket());
   const [mode, setMode] = useState<string>('initial');
   const [title, setTitle] = useState<string>('');
@@ -80,6 +80,8 @@ const Challenges: React.FC = () => {
   const [changingConState, setChanConState] = useState<boolean>(true);
   const [connStatus1, setConnStatus1] = useState<boolean>(false);
   const [connStatus2, setConnStatus2] = useState<boolean>(false);
+  const char1Id = useRef<string>('');
+  const char2Id = useRef<string>('');
 
   const token = useRef<string>(
     api.defaults.headers.Authorization.replace('Bearer ', ''),
@@ -109,11 +111,13 @@ const Challenges: React.FC = () => {
     if (myChar?.npc || myChar?.id === char.id) {
       setConnStatus1(connected);
     } else {
-      setConnStatus1(connList.findIndex(ch => ch === myChar?.id) >= 0);
+      setConnStatus1(connList.current.findIndex(ch => ch === myChar?.id) >= 0);
     }
 
-    setConnStatus2(connList.findIndex(ch => ch === opponentChar?.id) >= 0);
-  }, [char.id, connList, connected, myChar, opponentChar]);
+    setConnStatus2(
+      connList.current.findIndex(ch => ch === opponentChar?.id) >= 0,
+    );
+  }, [char.id, connected, myChar, opponentChar]);
 
   const popupCharacterConnectionStatus = useCallback(
     (charId: string, isConnected: boolean) => {
@@ -127,6 +131,12 @@ const Challenges: React.FC = () => {
             isConnected ? 'OnLine' : 'OffLine'
           }`,
         });
+
+        if (charStatus.id === char1Id.current) {
+          setConnStatus1(isConnected);
+        } else if (charStatus.id === char2Id.current) {
+          setConnStatus2(isConnected);
+        }
       }
     },
     [addToast],
@@ -212,6 +222,8 @@ const Challenges: React.FC = () => {
                       'dd/MM/yyyy',
                     ),
                   });
+
+                  char2Id.current = opponent.id;
                 }
 
                 addToast({
@@ -251,6 +263,8 @@ const Challenges: React.FC = () => {
                   formatedDate: format(new Date(), 'dd/MM/yyyy'),
                 });
 
+                char2Id.current = '';
+
                 addToast({
                   type: 'info',
                   title: 'Desafio encerrado',
@@ -268,18 +282,19 @@ const Challenges: React.FC = () => {
 
                 if (parsedMsg.connected) {
                   if (
-                    connList.find(charId => charId === parsedMsg.character) ===
-                    undefined
+                    connList.current.find(
+                      charId => charId === parsedMsg.character,
+                    ) === undefined
                   ) {
-                    const newList = connList;
+                    const newList = connList.current;
                     newList.push(parsedMsg.character);
-                    setConnList(newList);
+                    connList.current = newList;
                   }
                 } else {
-                  const tmpConnList = connList.filter(
+                  const tmpConnList = connList.current.filter(
                     charId => charId !== parsedMsg.character,
                   );
-                  setConnList(tmpConnList);
+                  connList.current = tmpConnList;
                 }
               }
 
@@ -359,7 +374,6 @@ const Challenges: React.FC = () => {
     });
   }, [
     addToast,
-    connList,
     popupCharacterConnectionStatus,
     sendSocketMessage,
     socket,
@@ -461,6 +475,7 @@ const Challenges: React.FC = () => {
         loadedChar.clan = filteredClan[clanIndex];
 
         setMyChar(loadedChar);
+        char1Id.current = loadedChar.id;
 
         sendSocketMessage({
           type: 'char',
@@ -572,6 +587,7 @@ const Challenges: React.FC = () => {
         }
 
         setMyChar(selectedCharacter);
+        char1Id.current = selectedCharacter.id;
       } else {
         setMyChar({
           id: '',
@@ -589,6 +605,7 @@ const Challenges: React.FC = () => {
           retainer_level: '0',
           formatedDate: format(new Date(), 'dd/MM/yyyy'),
         });
+        char1Id.current = '';
       }
     },
     [SelectCharByIndex, char.id, charList, sendSocketMessage],
@@ -605,6 +622,8 @@ const Challenges: React.FC = () => {
 
       if (selectedCharacter !== undefined) {
         setOpponentChar(selectedCharacter);
+
+        char2Id.current = selectedCharacter.id;
 
         sendSocketMessage({
           type: 'is_connected',
@@ -627,6 +646,8 @@ const Challenges: React.FC = () => {
           retainer_level: '0',
           formatedDate: format(new Date(), 'dd/MM/yyyy'),
         });
+
+        char2Id.current = '';
       }
     },
     [SelectCharByIndex, opponentList, sendSocketMessage],
@@ -714,6 +735,8 @@ const Challenges: React.FC = () => {
           retainer_level: '0',
           formatedDate: format(new Date(), 'dd/MM/yyyy'),
         });
+
+        char2Id.current = '';
       }
 
       setChanConState(true);
@@ -743,6 +766,8 @@ const Challenges: React.FC = () => {
       formatedDate: format(new Date(), 'dd/MM/yyyy'),
     });
 
+    char2Id.current = '';
+
     if (user.storyteller) {
       setMyChar({
         id: '',
@@ -760,6 +785,8 @@ const Challenges: React.FC = () => {
         retainer_level: '0',
         formatedDate: format(new Date(), 'dd/MM/yyyy'),
       });
+      char1Id.current = '';
+
       loadCharacters();
     } else {
       loadMyChar();
