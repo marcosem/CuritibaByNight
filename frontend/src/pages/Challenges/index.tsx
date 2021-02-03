@@ -838,45 +838,94 @@ const Challenges: React.FC = () => {
       ) : (
         <Header page="challenge" />
       )}
-      <TitleBox>
-        {user.storyteller && mode === 'initial' ? (
-          <>
-            <SelectCharacter
-              name="character1"
-              id="character1"
-              value={myChar && myChar.id !== '' ? myChar.name : undefined}
-              onChange={handleCharacter1Change}
-            >
-              <option value="">Selecione um Personagem:</option>
-              {charList.map(character => (
-                <option key={`1${character.id}`} value={character.name}>
-                  {character.name}
-                </option>
-              ))}
-            </SelectCharacter>
+      {isMobileVersion ? (
+        <>
+          <TitleBox>
             <strong>Modo de Desafio</strong>
-            <SelectCharacter
-              name="character2"
-              id="character2"
-              value={
-                opponentChar && opponentChar.id !== ''
-                  ? opponentChar.name
-                  : undefined
-              }
-              onChange={handleCharacter2Change}
-            >
-              <option value="">Selecione um Personagem:</option>
-              {opponentList.map(character => (
-                <option key={`2${character.id}`} value={character.name}>
-                  {character.name}
-                </option>
-              ))}
-            </SelectCharacter>
-          </>
-        ) : (
-          <strong>Modo de Desafio</strong>
-        )}
-      </TitleBox>
+          </TitleBox>
+
+          {user.storyteller && mode === 'initial' && (
+            <>
+              <TitleBox>
+                <SelectCharacter
+                  name="character1"
+                  id="character1"
+                  value={myChar && myChar.id !== '' ? myChar.name : undefined}
+                  onChange={handleCharacter1Change}
+                >
+                  <option value="">Selecione um Personagem:</option>
+                  {charList.map(character => (
+                    <option key={`1${character.id}`} value={character.name}>
+                      {character.name}
+                    </option>
+                  ))}
+                </SelectCharacter>
+              </TitleBox>
+
+              <TitleBox>
+                <SelectCharacter
+                  name="character2"
+                  id="character2"
+                  value={
+                    opponentChar && opponentChar.id !== ''
+                      ? opponentChar.name
+                      : undefined
+                  }
+                  onChange={handleCharacter2Change}
+                >
+                  <option value="">Selecione um Personagem:</option>
+                  {opponentList.map(character => (
+                    <option key={`2${character.id}`} value={character.name}>
+                      {character.name}
+                    </option>
+                  ))}
+                </SelectCharacter>
+              </TitleBox>
+            </>
+          )}
+        </>
+      ) : (
+        <TitleBox>
+          {user.storyteller && mode === 'initial' ? (
+            <>
+              <SelectCharacter
+                name="character1"
+                id="character1"
+                value={myChar && myChar.id !== '' ? myChar.name : undefined}
+                onChange={handleCharacter1Change}
+              >
+                <option value="">Selecione um Personagem:</option>
+                {charList.map(character => (
+                  <option key={`1${character.id}`} value={character.name}>
+                    {character.name}
+                  </option>
+                ))}
+              </SelectCharacter>
+              <strong>Modo de Desafio</strong>
+              <SelectCharacter
+                name="character2"
+                id="character2"
+                value={
+                  opponentChar && opponentChar.id !== ''
+                    ? opponentChar.name
+                    : undefined
+                }
+                onChange={handleCharacter2Change}
+              >
+                <option value="">Selecione um Personagem:</option>
+                {opponentList.map(character => (
+                  <option key={`2${character.id}`} value={character.name}>
+                    {character.name}
+                  </option>
+                ))}
+              </SelectCharacter>
+            </>
+          ) : (
+            <strong>Modo de Desafio</strong>
+          )}
+        </TitleBox>
+      )}
+
       {myChar !== undefined && opponentChar !== undefined && (
         <Content isMobile={isMobileVersion}>
           <CardsContent isMobile={isMobileVersion}>
