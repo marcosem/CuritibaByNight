@@ -62,6 +62,7 @@ const Challenges: React.FC = () => {
   const [myChar, setMyChar] = useState<ICharacter>();
   const [opponentChar, setOpponentChar] = useState<ICharacter>();
   const [charList, setCharList] = useState<ICharacter[]>([]);
+  const charListRef = useRef<ICharacter[]>([]);
   const [opponentList, setOpponentList] = useState<ICharacter[]>([]);
   const [selectedPo, setSelectedPo] = useState<string>('');
   const [myPo, setMyPo] = useState<string>('');
@@ -113,6 +114,26 @@ const Challenges: React.FC = () => {
 
     setConnStatus2(connList.findIndex(ch => ch === opponentChar?.id) >= 0);
   }, [char.id, connList, connected, myChar, opponentChar]);
+
+  const popupCharacterConnectionStatus = useCallback(
+    (charId: string, isConnected: boolean) => {
+      console.log(charId);
+      const charStatus = charListRef.current.find(ch => ch.id === charId);
+
+      console.log(charListRef.current.length);
+
+      if (charStatus) {
+        addToast({
+          type: isConnected ? 'success' : 'error',
+          title: `Personagem ${isConnected ? 'Conectado' : 'Desconectado'}`,
+          description: `O personagem: [${charStatus.name}] está ${
+            isConnected ? 'OnLine' : 'OffLine'
+          }`,
+        });
+      }
+    },
+    [addToast],
+  );
 
   const initializeSocket = useCallback(() => {
     // const token = api.defaults.headers.Authorization.replace('Bearer ', '');
@@ -242,7 +263,14 @@ const Challenges: React.FC = () => {
               break;
 
             case 'connection':
+              console.log(`${parsedMsg.character} - ${parsedMsg.connected}`);
+
               if (parsedMsg.character) {
+                popupCharacterConnectionStatus(
+                  parsedMsg.character,
+                  parsedMsg.connected,
+                );
+
                 if (parsedMsg.connected) {
                   if (
                     connList.find(charId => charId === parsedMsg.character) ===
@@ -337,6 +365,7 @@ const Challenges: React.FC = () => {
   }, [
     addToast,
     connList,
+    popupCharacterConnectionStatus,
     sendSocketMessage,
     socket,
     startPing,
@@ -385,6 +414,7 @@ const Challenges: React.FC = () => {
 
         setCharList(filteredList);
         setOpponentList(filteredPCs);
+        charListRef.current = filteredList;
       });
     } catch (error) {
       if (error.response) {
@@ -772,6 +802,12 @@ const Challenges: React.FC = () => {
       setTitle('Aguardando Desafio...');
     }
   }, [addToast, char.id, mode, myChar, opponentChar, user.storyteller]);
+
+  useEffect(() => {
+    return () => {
+      socket.close();
+    };
+  }, [socket]);
 
   return (
     <Container>
