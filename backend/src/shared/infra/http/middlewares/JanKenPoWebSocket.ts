@@ -470,11 +470,26 @@ class JanKenPoWebSocket {
       });
 
       ws.on('close', () => {
+        const charId = socket?.char_id;
+
         this.sockets = this.sockets.filter(myWs => myWs.id !== id);
         this.matches = this.matches.filter(
           mtch =>
             mtch.char1Connection.id !== id && mtch.char2Connection.id !== id,
         );
+
+        if (charId !== undefined) {
+          const stSockets = this.sockets.filter(myWs => myWs.st);
+          if (stSockets.length >= 1) {
+            stSockets.forEach(stWs => {
+              this.sendMsg(stWs.ws, {
+                message: 'connection',
+                character: charId,
+                connected: false,
+              });
+            });
+          }
+        }
       });
     });
 
