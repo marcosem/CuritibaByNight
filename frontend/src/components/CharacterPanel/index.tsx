@@ -324,7 +324,9 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     <>
       <TitleBox>
         {myChar ? (
-          <strong>Clique no nome do personagem para visualizar a ficha:</strong>
+          <strong>
+            {dashboard ? 'Painel do Jogador' : 'Painel do Personagem'}
+          </strong>
         ) : (
           <strong>
             Você não tem nenhum personagem ativo cadastrado, caso tenha um

@@ -144,7 +144,12 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
               {name}
             </strong>
           ) : (
-            <a href={sheetFile} target="_blank" rel="noopener noreferrer">
+            <a
+              href={sheetFile}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Baixar Ficha"
+            >
               <b>{title !== '' && `${title}: `}</b>
               {name}
             </a>

@@ -162,7 +162,12 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
               )}
             </>
           ) : (
-            <a href={sheetFile} target="_blank" rel="noopener noreferrer">
+            <a
+              href={sheetFile}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Baixar Ficha"
+            >
               {clan.indexOf('Wraith') >= 0 ? (
                 <>
                   <b>{`${clan}: `}</b>

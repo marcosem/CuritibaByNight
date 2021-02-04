@@ -69,6 +69,7 @@ export const Content = styled.main<IDashboardProps>`
 export const TitleBox = styled.div`
   min-width: 340px;
   max-width: 1012px;
+  height: 38px;
   position: relative;
 
   display: flex;
@@ -86,7 +87,7 @@ export const TitleBox = styled.div`
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
     font-size: 14px;
     font-weight: 500;
-    margin: auto 0;
+    margin: auto;
   }
 `;
 

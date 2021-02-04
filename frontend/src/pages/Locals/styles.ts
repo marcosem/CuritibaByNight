@@ -141,6 +141,7 @@ export const LocationLegend = styled.div`
 export const TitleBox = styled.div`
   min-width: 340px;
   max-width: 1012px;
+  height: 38px;
   position: relative;
 
   display: flex;

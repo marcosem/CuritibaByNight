@@ -20,7 +20,7 @@ export const Character = styled.div<ICharacterProps>`
 
     tbody {
       display: block;
-      max-height: 70vh;
+      max-height: 74vh;
       overflow-y: auto;
 
       scrollbar-width: thin;
