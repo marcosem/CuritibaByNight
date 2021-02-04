@@ -344,6 +344,14 @@ export const SelectCharacter = styled.select`
 export const ButtonBox = styled.div<IDashboardProps>`
   margin: auto;
   padding: 16px 0;
+  display: flex;
+  flex-direction: row;
+
+  button {
+    &:last-child {
+      margin-left: 10px;
+    }
+  }
 
   ${props =>
     props.isMobile

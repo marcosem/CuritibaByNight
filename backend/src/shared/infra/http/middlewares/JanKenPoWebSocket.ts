@@ -267,6 +267,65 @@ class JanKenPoWebSocket {
                 }
                 break;
 
+              case 'retest':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else if (socket.st === false) {
+                  isError = true;
+                  errorMsg =
+                    'Only authenticates storyteller can cancel a challange';
+                } else {
+                  const { char1_id, char2_id } = parsedMsg;
+
+                  const getChar1Socket = this.sockets.find(
+                    myWs => myWs.char_id === char1_id,
+                  );
+
+                  this.matches = this.matches.filter(mtch => {
+                    return (
+                      mtch.char1Connection.char_id !== char1_id &&
+                      mtch.char2Connection.char_id !== char2_id
+                    );
+                  });
+
+                  if (!getChar1Socket) {
+                    isError = true;
+                    errorMsg =
+                      'Character One is not connected, ask him to connect and try again';
+                    closeMe = false;
+                    break;
+                  }
+
+                  this.sendMsg(getChar1Socket.ws, {
+                    message: 'retest',
+                  });
+
+                  const getChar2Socket = this.sockets.find(
+                    myWs => myWs.char_id === char2_id,
+                  );
+
+                  if (!getChar2Socket) {
+                    isError = true;
+                    errorMsg =
+                      'Character Two is not connected, ask him to connect and try again';
+                    closeMe = false;
+                    break;
+                  }
+
+                  this.matches.push({
+                    char1Connection: getChar1Socket,
+                    char2Connection: getChar2Socket,
+                    stConnection: socket,
+                  });
+
+                  this.sendMsg(getChar2Socket.ws, {
+                    message: 'retest',
+                  });
+                }
+                break;
+
               case 'is_connected':
                 {
                   if (!socket) {

@@ -82,6 +82,7 @@ const Challenges: React.FC = () => {
   const [connStatus2, setConnStatus2] = useState<boolean>(false);
   const char1Id = useRef<string>('');
   const char2Id = useRef<string>('');
+  const [retestMode, setRetestMode] = useState<boolean>(false);
 
   const token = useRef<string>(
     api.defaults.headers.Authorization.replace('Bearer ', ''),
@@ -127,8 +128,8 @@ const Challenges: React.FC = () => {
         addToast({
           type: isConnected ? 'success' : 'error',
           title: `Personagem ${isConnected ? 'Conectado' : 'Desconectado'}`,
-          description: `O personagem: [${charStatus.name}] está ${
-            isConnected ? 'OnLine' : 'OffLine'
+          description: `[${charStatus.name}] está ${
+            isConnected ? 'Online' : 'Offline'
           }`,
         });
 
@@ -244,6 +245,7 @@ const Challenges: React.FC = () => {
                 setChar1Result(-5);
                 setChar2Result(-5);
                 setPlay(false);
+                setRetestMode(false);
                 setMode('initial');
 
                 setOpponentChar({
@@ -271,6 +273,25 @@ const Challenges: React.FC = () => {
                   description: 'Desafio encerrado pelo narrador.',
                 });
               }
+              break;
+
+            case 'retest':
+              setSelectedPo('');
+              setMyPo('');
+              setSelOpponentPo('');
+              setChar1Result(-5);
+              setChar2Result(-5);
+              setPlay(false);
+              setRetestMode(true);
+
+              addToast({
+                type: 'info',
+                title: 'Reteste Requisitado',
+                description:
+                  'Novo teste requisitado pelo narrador ou seu oponente.',
+              });
+
+              setMode('battle');
               break;
 
             case 'connection':
@@ -680,6 +701,28 @@ const Challenges: React.FC = () => {
       return;
     }
 
+    if (connStatus2 === false) {
+      addToast({
+        type: 'error',
+        title: 'Personagem Desconectado',
+        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
+      });
+
+      return;
+    }
+
+    if (connStatus1 === false) {
+      addToast({
+        type: 'error',
+        title: 'Personagem Desconectado',
+        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
+      });
+
+      return;
+    }
+
+    setRetestMode(false);
+
     sendSocketMessage({
       type: 'select',
       char1_id: myChar?.id,
@@ -687,7 +730,59 @@ const Challenges: React.FC = () => {
     });
 
     setMode('battle');
-  }, [addToast, myChar, opponentChar, sendSocketMessage]);
+  }, [
+    addToast,
+    connStatus1,
+    connStatus2,
+    myChar,
+    opponentChar,
+    sendSocketMessage,
+  ]);
+
+  const handleRetestButton = useCallback(() => {
+    if (connStatus2 === false) {
+      addToast({
+        type: 'error',
+        title: 'Personagem Desconectado',
+        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
+      });
+
+      return;
+    }
+
+    if (connStatus1 === false) {
+      addToast({
+        type: 'error',
+        title: 'Personagem Desconectado',
+        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
+      });
+
+      return;
+    }
+
+    sendSocketMessage({
+      type: 'retest',
+      char1_id: myChar?.id,
+      char2_id: opponentChar?.id,
+    });
+
+    setRetestMode(true);
+
+    setSelectedPo('');
+    setMyPo('');
+    setSelOpponentPo('');
+    setChar1Result(-5);
+    setChar2Result(-5);
+    setPlay(false);
+    setMode('battle');
+  }, [
+    addToast,
+    connStatus1,
+    connStatus2,
+    myChar,
+    opponentChar,
+    sendSocketMessage,
+  ]);
 
   const handleCancelChallangeButton = useCallback(() => {
     sendSocketMessage({
@@ -695,6 +790,8 @@ const Challenges: React.FC = () => {
       char1_id: myChar?.id,
       char2_id: opponentChar?.id,
     });
+
+    setRetestMode(false);
 
     setSelectedPo('');
     setMyPo('');
@@ -1041,7 +1138,9 @@ const Challenges: React.FC = () => {
             </ChallangeArena>
             <CharCardContainer
               isMobile={isMobileVersion}
-              animationMode={mode === 'battle' && showOptions() ? 'in' : ''}
+              animationMode={
+                mode === 'battle' && !retestMode && showOptions() ? 'in' : ''
+              }
             >
               <CharacterCard
                 charId={opponentChar.id}
@@ -1090,6 +1189,10 @@ const Challenges: React.FC = () => {
           )}
           {mode !== 'initial' && mode !== 'battle' && user.storyteller && (
             <ButtonBox isMobile={isMobileVersion}>
+              <Button type="button" onClick={handleRetestButton}>
+                Retestar
+              </Button>
+
               <Button type="button" onClick={handleCancelChallangeButton}>
                 Reiniciar Desafio
               </Button>
