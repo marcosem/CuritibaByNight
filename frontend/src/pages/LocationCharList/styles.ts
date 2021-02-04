@@ -226,6 +226,11 @@ export const TableWrapper = styled.div`
   min-width: 340px;
   max-width: 1012px;
   border-radius: 11px;
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 `;
 
 export const Table = styled.table`

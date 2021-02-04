@@ -13,6 +13,11 @@ export const Container = styled.header`
   height: 99px;
 
   z-index: 1000;
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 `;
 
 export const HeaderContent = styled.div`

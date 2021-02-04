@@ -64,6 +64,11 @@ export const Table = styled.table`
     border-radius: 10px 10px 0 0;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+
     th {
       color: #fff;
       background: #560209;

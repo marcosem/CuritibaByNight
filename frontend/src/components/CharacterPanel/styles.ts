@@ -199,6 +199,11 @@ export const TableWrapper = styled.div<IDashboardProps>`
   border-radius: 11px;
   padding-bottom: 16px;
 
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+
   animation: ${appearFromOpacity} 0.6s;
 
   ${props =>
@@ -468,6 +473,11 @@ export const CharacterSheet = styled.div`
   border: 0;
   display: flex;
   flex-direction: row;
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 
   div {
     display: flex;

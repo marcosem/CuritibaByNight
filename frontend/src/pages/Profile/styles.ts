@@ -6,6 +6,11 @@ export const Container = styled.div`
   align-items: stretch;
   flex-direction: column;
 
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+
   > header {
     height: 144px;
     background: #989797;

@@ -6,6 +6,11 @@ export const Container = styled.div`
   align-items: stretch;
   flex-direction: column;
 
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+
   > header {
     height: 144px;
     background: #989797;
@@ -78,7 +83,6 @@ export const Content = styled.div`
 
         span {
           color: #eee;
-          // text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
           font-size: 14px;
           font-weight: 500;
           margin: auto 0;
