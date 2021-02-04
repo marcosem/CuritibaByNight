@@ -460,3 +460,48 @@ export const RemoveButton = styled.button`
     color: #ccc;
   }
 `;
+
+export const CharacterSheet = styled.div`
+  padding: 10px 0 !important;
+  margin: 0 !important;
+  background: transparent;
+  border: 0;
+  display: flex;
+  flex-direction: row;
+
+  div {
+    display: flex;
+    margin-right: auto;
+
+    a {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+
+      span {
+        margin: 3px auto auto auto;
+        font-size: 10px;
+        color: #333;
+      }
+
+      svg {
+        width: 32px;
+        height: 32px;
+        margin: 0 16px;
+        color: #333;
+
+        transition: color 0.3s;
+      }
+
+      &:hover {
+        span {
+          color: ${lighten(0.3, '#333')};
+        }
+
+        svg {
+          color: ${lighten(0.3, '#333')};
+        }
+      }
+    }
+  }
+`;

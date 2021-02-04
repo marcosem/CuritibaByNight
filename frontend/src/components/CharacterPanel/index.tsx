@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi';
-import { GiRollingDices } from 'react-icons/gi';
+import { GiLoad, GiRollingDices } from 'react-icons/gi';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
@@ -18,6 +18,7 @@ import {
   Content,
   CharCardContainer,
   CharacterContainer,
+  CharacterSheet,
   TableWrapper,
   Table,
   TableCell,
@@ -360,6 +361,19 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       !(user.storyteller && myChar.npc) && char.id !== myChar.id
                     }
                   />
+                  <CharacterSheet>
+                    <div>
+                      <a
+                        href={myChar.character_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Baixar Ficha"
+                      >
+                        <GiLoad />
+                        <span>Baixar Ficha</span>
+                      </a>
+                    </div>
+                  </CharacterSheet>
                 </CharCardContainer>
                 <CharacterContainer isMobile={isMobileVersion}>
                   {isMobileVersion ? (
