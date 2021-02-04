@@ -827,6 +827,9 @@ const Challenges: React.FC = () => {
 
   useEffect(() => {
     return () => {
+      if (serverPing.current !== 0) {
+        clearTimeout(serverPing.current);
+      }
       socket.close();
     };
   }, [socket]);
