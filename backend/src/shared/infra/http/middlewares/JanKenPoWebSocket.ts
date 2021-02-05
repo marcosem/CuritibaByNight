@@ -550,6 +550,18 @@ class JanKenPoWebSocket {
           }
         }
       });
+
+      ws.on('error', err => {
+        // eslint-disable-next-line no-console
+        console.log('Caught flash policy server socket error: ');
+        // eslint-disable-next-line no-console
+        console.log(err.stack);
+      });
+
+      ws.on('unexpected-response', () => {
+        // eslint-disable-next-line no-console
+        console.log('Unexpected Response');
+      });
     });
 
     return this.app;
