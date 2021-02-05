@@ -162,12 +162,34 @@ export const MyPages = styled.div`
   }
 `;
 
+export const ToolTip = styled.span`
+  visibility: hidden;
+  width: 120px;
+  height: 30px;
+  top: 112%;
+  left: 50%;
+  margin-left: -60px;
+  font-size: 12px;
+  font-weight: 400;
+
+  background-color: #000;
+  color: #fff;
+  border-radius: 6px;
+  text-align: center;
+  padding: 8px 0;
+
+  opacity: 0;
+  position: absolute;
+  z-index: 1;
+
+  transition: opacity 0.5s;
+`;
+
 export const Navigation = styled.div`
   background: url(${navBgImg}) repeat-x;
   height: 39px;
-  padding: 10px 0 0 25px;
+  padding-bottom: 25px;
 
-  font-size: 12px;
   border-top: 1px #888 solid;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
@@ -179,30 +201,47 @@ export const Navigation = styled.div`
       flex-direction: row;
 
       td {
-        padding-right: 20px;
+        padding: 2px 5px;
+        width: 120px;
+        position: relative;
+        display: flex;
+        border-radius: 10px;
 
         a {
           color: #999;
           text-decoration: none;
+          width: 100%;
+          height: 100%;
           display: flex;
-          flex-direction: row;
+          align-items: center;
+          justify-content: center;
 
-          transition: color 0.3s;
+          transition: background-color 0.3s;
 
           svg {
+            margin-top: 3px;
+
             color: #999;
-            height: 16px;
-            width: 16px;
-            margin: auto 7px auto 0;
+            height: 24px;
+            width: 24px;
 
             transition: color 0.3s;
           }
 
           &:hover {
-            color: ${lighten(0.3, '#999')};
+            color: ${lighten(0.5, '#999')};
             svg {
-              color: ${lighten(0.3, '#999')};
+              color: ${lighten(0.5, '#999')};
             }
+          }
+        }
+
+        &:hover {
+          background-color: #333;
+
+          ${ToolTip} {
+            visibility: visible;
+            opacity: 0.8;
           }
         }
       }
@@ -212,14 +251,12 @@ export const Navigation = styled.div`
 
 export const NavSpan = styled.span`
   cursor: default;
-  color: #fff;
-  display: flex;
-  flex-direction: row;
+  margin: auto;
 
   svg {
+    margin-top: 3px;
     color: #fff;
-    height: 16px;
-    width: 16px;
-    margin: auto 7px auto 0;
+    height: 24px;
+    width: 24px;
   }
 `;

@@ -24,6 +24,7 @@ import {
   NavSpan,
   Profile,
   MyPages,
+  ToolTip,
 } from './styles';
 
 interface HeaderProps {
@@ -110,30 +111,28 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
           <tbody>
             <tr>
               <td>
+                <ToolTip>Home</ToolTip>
                 {page === 'dashboard' ? (
                   <NavSpan>
                     <FaHome />
-                    Home
                   </NavSpan>
                 ) : (
                   <Link to="/dashboard">
                     <FaHome />
-                    Home
                   </Link>
                 )}
               </td>
             </tr>
             <tr>
               <td>
+                <ToolTip>Locais Importantes</ToolTip>
                 {page === 'locals' ? (
                   <NavSpan>
                     <GiPositionMarker />
-                    Locais Importantes
                   </NavSpan>
                 ) : (
                   <Link to="/locals">
                     <GiPositionMarker />
-                    Locais Importantes
                   </Link>
                 )}
               </td>
@@ -143,45 +142,42 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
               <>
                 <tr>
                   <td>
+                    <ToolTip>Jogadores</ToolTip>
                     {page === 'players' ? (
                       <NavSpan>
                         <GiDarkSquad />
-                        Jogadores
                       </NavSpan>
                     ) : (
                       <Link to="/players">
                         <GiDarkSquad />
-                        Jogadores
                       </Link>
                     )}
                   </td>
                 </tr>
                 <tr>
                   <td>
+                    <ToolTip>Personagens</ToolTip>
                     {page === 'characters' ? (
                       <NavSpan>
                         <GiVampireDracula />
-                        Personagens
                       </NavSpan>
                     ) : (
                       <Link to="/characters/pc">
                         <GiVampireDracula />
-                        Personagens
                       </Link>
                     )}
                   </td>
                 </tr>
                 <tr>
                   <td>
+                    <ToolTip>NPCs</ToolTip>
                     {page === 'npcs' ? (
                       <NavSpan>
                         <GiMinions />
-                        NPCs
                       </NavSpan>
                     ) : (
                       <Link to="/characters/npc">
                         <GiMinions />
-                        NPCs
                       </Link>
                     )}
                   </td>

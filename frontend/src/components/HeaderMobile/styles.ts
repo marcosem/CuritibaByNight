@@ -36,6 +36,7 @@ export const HeaderContent = styled.div`
   button {
     margin-right: 35px;
     background: transparent;
+    width: 42px;
     border: 0;
 
     svg {
@@ -156,36 +157,69 @@ export const MyPages = styled.div`
   }
 `;
 
+export const ToolTip = styled.span`
+  visibility: hidden;
+  width: 80px;
+  height: 30px;
+  top: 112%;
+  left: 50%;
+  margin-left: -40px;
+  font-size: 12px;
+  font-weight: 400;
+
+  background-color: #000;
+  color: #fff;
+  border-radius: 6px;
+  text-align: center;
+  padding: 8px 0;
+
+  opacity: 0;
+  position: absolute;
+  z-index: 1;
+
+  transition: opacity 0.5s;
+`;
+
 export const Navigation = styled.div`
   background: url(${navBgImg}) repeat-x;
   height: 39px;
-  padding: 8px 0 0 25px;
+  padding-top: 3px;
+  padding-bottom: 25px;
 
-  font-size: 12px;
   border-top: 1px #888 solid;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
   table {
+    border: none;
     tbody {
+      border: none;
       display: flex;
       flex-direction: row;
 
       td {
-        padding-right: 10px;
+        padding: 2px 5px;
+        width: 60px;
+        height: 30px;
+        position: relative;
+        display: flex;
+        border-radius: 6px;
 
         a {
           color: #999;
           text-decoration: none;
+          width: 100%;
+          height: 100%;
           display: flex;
-          flex-direction: row;
+          align-items: center;
+          justify-content: center;
 
-          transition: color 0.3s;
+          transition: background-color 0.3s;
 
           svg {
+            margin-top: 3px;
             color: #999;
-            height: 16px;
-            width: 16px;
-            margin: auto 7px auto 0;
+            height: 20px;
+            width: 20px;
 
             transition: color 0.3s;
           }
@@ -197,6 +231,15 @@ export const Navigation = styled.div`
             }
           }
         }
+
+        &:hover {
+          background-color: #333;
+
+          ${ToolTip} {
+            visibility: visible;
+            opacity: 0.8;
+          }
+        }
       }
     }
   }
@@ -204,14 +247,12 @@ export const Navigation = styled.div`
 
 export const NavSpan = styled.span`
   cursor: default;
-  color: #fff;
-  display: flex;
-  flex-direction: row;
+  margin: auto;
 
   svg {
+    margin-top: 3px;
     color: #fff;
-    height: 16px;
-    width: 16px;
-    margin: auto 7px auto 0;
+    height: 20px;
+    width: 20px;
   }
 `;
