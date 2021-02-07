@@ -1,0 +1,214 @@
+{
+  "influences": [
+    {
+      "influence": "Alta Sociedade",
+      "key_ability": "Etiqueta",
+      "description": "Cultura e subcultura, fama, moda, celebridades, etc.",
+      "levels": [
+        "Obter ingressos difíceis de conseguir para shows; Saber o que está na moda; Ditar a tendência em uma sub cultura obscura; Ser o primeiro a conseguir aquele CD/DVD; Ouvir sobre as festas; Aprender quem é quem; Saber sobre concertos, shows ou peças antes de sua divulgação;",
+        "Rastrear a maioria das celebridades e indivíduos notáveis; Ser uma voz local no campo do entretenimento; Ser convidado para a festa certa; Sentar na primeira fila; Ser convidado à participar de pré-estreias em cinemas, etc;",
+        "Esmagar carreiras promissoras; Conseguir entrada ao camarote de qualquer coisa; Ter pessoas ricas pedindo à você por conselhos de tendências; Ser bem conhecido em uma sub cultura ou cena social; Associar-se a pessoas de nível mais alto que o seu;",
+        "Alcançar temporariamente o status de celebridade menor (Fama 1); Não pegar fila em lugar algum; Ter tratamento VIP em todo lugar; Estar sempre cercado por pessoas bonitas; Saber quem está fazendo o que e com quem; Definir tendências menores;",
+        "Fazer uma breve aparição num programa de entrevistas que não esteja prestes a ser cancelado; Arruinar uma nova boate, galeria, festival ou outra luxuosa reunião; Ter uma festa anual com a presença de todo mundo lá; Encontrar com celebridades visitantes no quarto de hotel onde eles estão hospedados;",
+        "Fornecer status de celebridade menor aos outros (+1 nível de Fama); Receber celebridades em casa; Ser a pessoa número um da lista dos mais desejados (melhores partidos);"
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Burocracia",
+      "key_ability": "Burocracia",
+      "description": "Agências Governamentais e escritórios, incluindo serviços públicos. Criando e cortando a fita vermelha.",
+      "levels": [
+        "Alterar/Rastrear contas de serviços públicos, expedir processos menores que tomem tempo, tirar vantagem de processos burocráticos menores, obter registros das atividades de uma pessoa;",
+        "Falsificar Certidão de Nascimento/Carteira de Motorista; Fechar temporariamente uma rua/estrada pequena ou parque, enviar fiscais para uma localização, provocar atrasos em algum processo; Cortar os serviços públicos de uma única residência pequena;",
+        "Falsificar RG, certidão de óbito, certidão de casamento, passaporte, visto de permanência; Fechar uma escola pública por um dia; Fechar uma pequena empresa por causa de uma violação; Ligar/desligar algum serviço público em um quarteirão;",
+        "Falsificar escrituras de terrenos; Iniciar uma escuta telefônica; Iniciar uma Investigação de mobilize todo um departamento; Obter serviços públicos não rastreáveis (inclusive telefônicos); Paralisar ou iniciar uma investigação sobre uma inauguração;",
+        "Começar, parar ou alterar um programa ou política municipal; Fechar uma grande empresa por causa de uma violação; Refazer novas divisões de zonas; Destruir os registros de uma pessoa em nível municipal; Parar uma investigação Federal;",
+        "Conseguir uma auditoria secreta de uma pessoa ou empresa; Destruir todos os registros de uma única pessoa; Demitir ou transferir um departamento inteiro; Adquirir uma imunidade técnica para alguma coisa; Impedir que alguns serviços de emergência como os Bombeiros voluntários respondam à desastres maiores."
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Finanças",
+      "key_ability": "Finanças",
+      "description": "Bancos, mercado de ações, seguradoras, casas de câmbio, SERASA, CEPROC, etc.",
+      "levels": [
+        "Receber um empréstimo (R$ 100.000,00 – pagando R$ 120.000,00); Possuir uma dúzia de contas por toda cidade; Verificar o crédito de alguém; Identificar se uma conta é falsa; Descobrir sobre grandes transações e eventos financeiros; Descobrir tendências econômicas gerais; Descobrir as motivações reais para muitas ações financeiras alheias;",
+        "Receber um empréstimo (R$ 500.000,00 – pagando R$ 600.000,00); Rastrear uma conta bancária não protegida; Identificar propriedades paralelas de uma pessoa; Conseguir uma dica da bolsa de valores;",
+        "Receber um empréstimo (R$ 2.000.000,00 – pagando R$ 2.400.000,00); Criar uma conta bancária segura; Acessar as fitas das câmeras de segurança de uma instituição financeira; Conseguir a cópia da assinatura de alguém;",
+        "Receber um empréstimo (R$ 10.000.000,00 – pagando R$ 12.000.000,00); Adiar depósitos; Alterar algumas classificações de crédito; Interferir com uma transação específica da bolsa de valores; Causar uma auditoria ou investigação por parte da Receita Federal (Imposto de Renda, etc); Arruinar um pequeno negócio;",
+        "Receber um empréstimo (R$ 50.000.000,00 – pagando R$ 60.000.000,00); Controlar um aspecto das transações bancárias de uma cidade; Parar uma investigação ou auditoria da Receita Federal; Arruinar um grande negócio;",
+        "Receber um empréstimo (R$ 100.000.000,00 – pagando R$ 120.000.000,00); Manipular os bancos locais; Paralisar empréstimos; Bloquear contas; Bloquear todos os créditos, contas, investimentos de um único indivíduo (destruir 1 ponto de recursos);"
+      ],
+      "notes": "Todos os empréstimos são amortizados sobre o prazo de um ano para serem pagos, a diferença entre o montante emprestado e o montante a ser pago pode ser dividido por 12, e multiplicado pelo número de meses caso você pague este valor antes do vencimento de um ano."
+    },
+    {
+      "influence": "Igreja",
+      "key_ability": "Teologia",
+      "description": "Todas as fés.",
+      "levels": [
+        "Identificar a maior parte dos membros seculares de uma religião o local; Estudar registros gerais da igreja (batismos, casamentos, enterros, etc.); Usar a igreja como local de encontro; Participar de uma reunião do AA, NA, etc.; Passar-se por um membro do clero; Conseguir o número de telefone de algum padre, pastor, rabino, etc.;",
+        "Identificar membros do alto clero; Rastrear membros regulares da igreja; Suspender membros profanos; Conseguir café/bíblias/salgadinhos para 100 pessoas em um período curto de tempo; Encontrar-se com um padre, rabino, pastor, ou seja lá o quem você quer;",
+        "Abrir ou fechar uma única igreja/templo/mesquita; Acessar informações e arquivos privados de uma igreja; Encontrar-se com um Bispo; Ter uma casa benzida/santificada; Encontrar um caçador medíocre associado à igreja;",
+        "Desacreditar ou suspender membros do alto clero; Encontrar um exorcista associado à igreja; Manipular um grupo de fanáticos; Iniciar uma investigação contra uma heresia/bruxaria; Manipular ramos regionais da igreja;",
+        "Organizar grandes protestos/boicotes; Ter acesso aos conhecimentos antigos da igreja; Identificar alguém com Fé Verdadeira ou um grupo de caçadores ligados a igreja sem ter encontrado eles;",
+        "Pegar emprestado ou acessar relíquias da igreja ou itens sagrados; Fornecer à um caçador ligado a igreja ordens ou informações falsas; Ter um cemitério dessantificado; Viver em segurança como um padre Cainita; Encontrar alguém com Fé Verdadeira (não que isso seja bom);"
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Indústria",
+      "key_ability": "Ofícios",
+      "description": "O negócio de fazer coisas, sindicatos, etc. Muito forte em municípios fortemente industrializados.",
+      "levels": [
+        "Descobrir projetos e movimentos industriais; Filiar-se a um sindicato; Emprestar ferramentas portáteis; Descobrir uma transação; Conseguir um emprego noturno; Arrumar o carro de forma barata;",
+        "Realizar projetos menores; Arranjar pequenos acidentes e sabotagens; Conseguir um especialista para fazer um trabalho pra você; Ser conhecido como um bom membro de um único sindicato;",
+        "Conseguir um capanga do sindicato para quebrar alguma coisa; Organizar pequenas greves; Apropriar-se de maquinário por um curto período de tempo; Conseguir algumas balas de prata, veículos blindados, ferramentas para tortura;",
+        "Conseguir uns dois capangas do sindicato para incendiar alguma coisa; Fechar ou revitalizar uma pequena fábrica; Se apoderar de uma pequena fábrica por duas semanas; Ter alguém expulso de qualquer sindicato; Iniciar uma inspeção federal em alguma indústria;",
+        "Conseguir meia dúzia de capangas mascarados do sindicato para sequestrar / aterrorizar alguém; Manipular uma grande indústria local; Organizar grandes greves; Manufaturar uma centena de qualquer coisa; Parar uma inspeção federal em alguma indústria;",
+        "Conseguir uma dúzia de capangas do sindicato com equipamento diesel para demolir uma construção; Paralisar a produção de um único recurso no Domínio; Construir um refúgio grotescamente customizado; Atrair uma grande indústria para a região; Despejar uma grande quantidade de lixo tóxico (e não ser pego por isso);"
+      ],
+      "notes": "Todos os capangas de sindicato são mortais com 6 Físicos, 3 Sociais, 4 Mentais, 2 de Força de Vontade, uma Habilidade Ofícios, e 2 em Briga."
+    },
+    {
+      "influence": "Legal",
+      "key_ability": "Direito",
+      "description": "Juízes, advogados, empresas de advocacias, salas de audiência, etc.",
+      "levels": [
+        "Conseguir representação gratuitas para casos pequenos; Conseguir um advogado que atende o telefone; Processar pessoas que atrapalhem você; Conhecer alguém possua algum status legal;",
+        "Evitar o pagamento de fiança por alguma acusação; Ter acusações menores retiradas; Conseguir que um processo ocorra em sigilo quando você está sendo processado; Conseguir um advogado para construir um relatório completo sobre alguém; Criar uma cena para atrasar investigações;",
+        "Conseguir uma boa representação na maioria dos casos; Manipular procedimentos legais (pequenos testamento, contratos, datas de julgamentos, etc); Iniciar uma investigação estadual; Conseguir um advogado com assistentes para afogar alguém com sínteses legais; Conseguir uma boa representação na maioria dos casos;",
+        "Emitir Intimações; Interromper casos na corte; Ter a maioria das acusações legais retiradas; Cancelar ou conseguir liberdade condicional; Iniciar uma investigação Federal de algum tipo; Parar uma investigação Estadual;",
+        "Arquivar uma investigação Federal, com exceção das mais sérias; Mover procedimento de deportação contra alguém; Conseguir que uma ordem judicial seja revogada; Esconder a propriedade de qualquer coisa; Encontrar uma fraqueza legal para ser explorada;",
+        "Arquivar qualquer investigação; Arranjar um caso na corte para decidir o que você desejar; Conseguir que um advogado, procurador, promotor, seja expulso da ordem dos advogados; Conseguir que algum juiz seja investigado; Ameaçar seriamente qualquer um que use uma torga; Forçar um veredito de culpado para um caso qualquer;"
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Mídia",
+      "key_ability": "Performance",
+      "description": "Jornal, televisão, rádio, que seja localizado no Domínio.",
+      "levels": [
+        "Descobrir furos antes de sua divulgação; Submeter pequenos artigos (dentro do razoável); Conhecer alguns repórteres para conversar; Estar na rádio da faculdade; Conseguir que um editor de uma publicação underground publique uma carta para você;",
+        "Reprimir (mas não suprimir) pequenos artigos ou reportagens; Ter acesso a informações de jornalismo investigativo; Conseguir um fotógrafo; Ter um repórter no seu bolso; Conseguir uma pesquisa feita em um determinado assunto; Rastrear relatórios sobre você;",
+        "Iniciar investigações de notícias e reportagens; Acessar recursos da produção (câmeras, mesas de edições, lentes, iluminação, etc); Iniciar uma matéria investigativa maior; Conseguir que uma notícia de TV seja transmitida ao vivo via satélite; Fazer um filme independente; Fundamentar histórias e projetos;",
+        "Divulgar matérias falsas (apenas locais); Influenciar a seleção de matérias; Fazer um editor destruir uma matéria; Fazer com que um seriado/novela/minissérie de TV faça uma episódio local; Conseguir que personalidades do rádio sejam despedidas; Destruir um zine underground;",
+        "Divulgar matérias falsas em nível estadual; Conseguir que alguém do jornal seja despedido; Suprimir completamente pequenos artigos locais ou reportagens; Afetar a linha de história de um programa de TV; Alterar o formato de uma estação de rádio; Possuir uma estação de TV local não filiada;",
+        "Divulgar matérias falsas em nível nacional; Conseguir que uma personalidade da TV seja despedida; Controlar um jornal local ou uma estação de TV afiliada; Criar um programa de TV; Cancelar a cobertura local de um evento esportivo; Divulgar matérias de primeira página com o destaque que quiser;"
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Ocultismo",
+      "key_ability": "Ocultismo",
+      "description": "Grupos e seitas secretas, bibliotecas, especialistas e lojas especializadas no paranormal.",
+      "levels": [
+        "Contatar e frequentar grupos comuns de ocultismo e suas práticas; Se filiar a uma seita; Saber sobre as novas tendências ou perigos de alguns grupos de ocultismo; Conseguir velas, ossos, cristais, etc. de boa qualidade; Conhecer algumas figuras mais visíveis do ocultismo;",
+        "Acessar recursos para a maioria dos rituais e ritos; Pesquisar o primeiro nível em uma habilidade especializada: Conhecimento em algum assunto sobrenatural, tais como: Kindred, Tanatologia, Lupino, Mago, etc. Conhecer e contatar algumas das figuras mais obscuras do ocultismo;",
+        "Acessar tomos e escritos obscuros; Ter acesso a componentes materiais vitais ou raros; Pesquisar um ritual Básico de sua seita; Pesquisar Conhecimentos mais profundamente; Manipular um culto; Encontrar um Mestre do Conhecimento em algum ramo para responder alguma questão; Saber a proximidade geral de certas entidades sobrenaturais e (possivelmente) contatá-las;",
+        "Saber onde encontrar uma entidade sobrenatural específica; Pesquisar um Ritual Intermediário de sua seita; Desenterrar uma Trilha comum Taumatúrgica / Necromântica;",
+        "Acessar itens mágicos menores; Pesquisar um ritual Avançado de sua seita; Desenterrar Trilhas Taumatúrgicas / Necromânticas incomuns; Encontrar-se com um demônio / mago / espectro;",
+        "Pesquisar e desenterrar novos ou desconhecidos rituais ou ritos de tomos e pergaminhos; Pesquisar Conhecimentos raros; Fazer com que os praticantes do ocultismo local façam algum ritual sobre todo o Domínio; Adquirir itens mágicos menores; Encontrar um grupo de ocultistas locais, fazendo deles seus aliados (+1 de Aliados);"
+      ],
+      "notes": "Uma nota sobre Rituais: Os Rituais só podem ser pesquisados por uma personagem que já possua um nível apropriado (Básico, Intermediário, Avançado) em uma Trilha."
+    },
+    {
+      "influence": "Polícia",
+      "key_ability": "Investigação",
+      "description": "Força policial, prisões, cadeias, delegacias.",
+      "levels": [
+        "Ouvir informações e rumores policiais; Evitar multas de trânsito; Aprender procedimentos policiais; Encontrar pessoas encarceradas; Perguntar para um patrulheiro o que ele notou em sua ronda;",
+        "Verificar placas de veículos; Evitar pequenas violações (réu primário); Conseguir que um policial fique de olho no teu refúgio; Conseguir \"informações internas\"; Conseguir informações sobre as investigações atuais; Conseguir ficha criminal de alguém; Fazer com que um policial vá verificar a casa de alguém;",
+        "Fazer a polícia importunar, deter, chantagear ou molestar alguém; Localizar segredos de departamento; Obter cópias de um relatório de investigação; Iniciar uma investigação local ou estadual; Chamar um helicóptero para efetuar uma busca;",
+        "Acessar armas confiscadas ou contrabando; Retirar algumas acusações sérias; Iniciar uma investigação Federal; Prender alguém por algum delito grave; Chamar a força especial da polícia; Fazer de uma estação de polícia seu refúgio;",
+        "Instruir grandes investigações; Fazer a polícia vigiar alguém por bastante tempo; Conseguir a demissão de oficiais; Parar uma investigação Federal; Prender alguém por uma série de delitos graves;  Instigar investigações departamentais;",
+        "Paralisar um departamento inteiro por um tempo; Arquivar qualquer investigação; Colocar ou retirar alguém na lista dos Dez Mais Procurados da Polícia Federal; Criar uma força tarefa policial secreta; Controlar localmente um departamento inteiro (homicídios, narcóticos, etc);"
+      ],
+      "notes": "Todos os policiais são mortais com 7 Físicos, 4 Sociais, 5 Mentais, 3 de Força de Vontade, 2 em Briga, 2 em Esquiva e 3 em Armas de Fogo."
+    },
+    {
+      "influence": "Política",
+      "key_ability": "Política",
+      "description": "Vereadores, prefeitos, senadores, deputados, etc.",
+      "levels": [
+        "Identificar as plataformas reais de políticos e partidos; Encontrar os maiores doadores para campanhas; Conseguir materiais de campanha (panfletos, adesivos, bottons, etc); Realizar pequenas concessões e acordos; Estar por dentro dos assuntos;",
+        "Encontrar políticos de baixo escalão; Conseguir informações internas sobre processos, leis e afins; Conseguir informação demográfica; Obter uma indicação com seus representantes;",
+        "Influenciar ou alterar projetos políticos (parques locais, renovações, pequenas construções); Manipular o comitê local; Jantar com um prefeito ou vereador; Conseguir um passaporte rápido ou permissão; Identificar a agenda de qualquer pessoa eleita ou de cargo indicado;",
+        "Promulgar leis secundárias; Lançar carreiras de políticos menores; Ser o maior político de um bairro; Fazer uma festa local de campanha; Ser ou ter um vereador na cidade; Iniciar um inquérito federal;",
+        "Colocar seu candidato em um cargo pequeno (ex. Vereador, Secretário); Promulgar leis mais abrangentes; Controlar ou bloquear a votação da câmara de vereadores da cidade; Ser o maior obstáculo na campanha de um candidato no Domínio.",
+        "Impedir a passagem dos maiores projetos de leis; Suspender uma lei maior temporariamente; Usar departamentos ou sub comitês estaduais; Escrever uma nova lei estadual; Colocar seu candidato em um cargo maior (ex. Prefeito, Deputado Estadual);"
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Ruas",
+      "key_ability": "Manha",
+      "description": "Desabrigados, mendigos, gangues de ruas, crime desorganizado, torcida organizada.",
+      "levels": [
+        "Saber o que é dito nas ruas; Identificar a maioria das gangues e conhecer seus territórios e hábitos; Conhecer os abrigos para desabrigados; Ler as pichações e grafites e entendê-las; Conseguir ingressos na geral junto com a torcida organizada; Conseguir bandeiras e/ou materiais de movimentos, ou das torcidas organizadas.",
+        "Viver praticamente sem receio nas partes baixas da cidade; Acessar pequenos contrabandos; Identificar qualquer substância ilícita; Superar os obstáculos de sobrevivência em qualquer bairro; Manter um contato ou dois na maioria dos aspectos da vida nas ruas; Entrar nos estádios gratuitamente, ou com descontos em jogos importantes.",
+        "Conseguir informações sobre outras áreas de Influência; Arranjar alguns serviços de pessoas que vivem nas ruas, gangues ou torcidas organizadas; Conseguir pistolas ou armas brancas incomuns; Encontrar uma construção habitada por desabrigados; Espalhar um boato nas ruas; Conseguir carona em ônibus da torcida organizada em viagens de jogos;",
+        "Mobilizar grupos de desabrigados; Conhecer quase todos os aspectos das operações das gangues; Ter acesso a uma escopeta, um Rifle ou uma submetralhadora; Conseguir que uma gangue proteja alguém; Plantar droga em alguém com um batedor de carteiras; Conhecer quase todos os aspectos das operações das gangues ou torcidas;",
+        "Identificar informantes regulares da polícia; Iniciar uma pequena guerra entre duas gangues; Usar os desabrigados como mensageiros/rede de informações/infiltrados; Fazer uma gangue importunar alguém; Ordenar um ataque da torcida organizada contra a torcida de outro time; Controlar uma gangue de médio porte; Providenciar protestos impressionantes do povo das ruas;",
+        "Provocar uma grande guerra entre as gangues; Organizar arrastões de desabrigados; Colocar um negócio como alvo para saques; Identificar alguém como sendo inimigo dos pobres; Boicotar um abrigo para desabrigados; Identificar alguém para ser atormentado ao entrar no centro da cidade;um abrigo para desabrigados; Identificar alguém para ser atormentado ao entrar no centro da cidade;"
+      ],
+      "notes": "Todos os membros de gangue ou torcida organizada mortais possuem os seguintes atributos 6 Físicos, 4 Sociais, 3 Mentais, 2 de Força de Vontade, 2 em Briga e 1 em Esportes."
+    },
+    {
+      "influence": "Saúde",
+      "key_ability": "Medicina",
+      "description": "Hospitais, Banco de Sangue, Médicos, nada de arma biológica.",
+      "levels": [
+        "Adquirir 2 pontos de sangue; Falsificar registros de vacinação e similares; Ter acesso a acessórios hospitalares (luvas de látex, seringas, agulhas, jalecos, etc); Ser o primeiro a ser atendido na Emergência; Conseguir que uma cadeira de rodas automática seja entregue em casa; Utilizar as funções públicas de centros de saúde à vontade;",
+        "Adquirir 5 pontos de sangue; Conseguir registros médicos menores; Conseguir uma cópia do relatório de uma investigação criminal; Conseguir que uma ambulância faça uma corrida sem estar em uma chamada de emergência; Conseguir um médico em casa; Acessar alguns relatórios de pesquisa médica; Garantir a realização de uma análise laboratorial; Instigar pequenas quarentenas;",
+        "Adquirir 10 pontos de sangue; Corromper resultados de testes ou inspeções; Alterar registros médicos; Fazer com que um ferimento por tiro seja tratado discretamente;",
+        "Adquirir 20 pontos de sangue; Adquirir um cadáver; Destruir / Reescrever completamente registros médicos; Agendar uma cirurgia para um paciente sem a autorização dele; Fazer Iniciar uma investigação do Controle de Doenças; Fazer uma pequena pesquisa médica ser realizada em uma cobaia; Instituir quarentenas em grande escala; Fechar empresas devido a \"violação do código de saúde\";",
+        "Adquirir 50 pontos de sangue; Realizar projetos de pesquisa especiais; Parar uma investigação do Controle de Doenças; Fechar uma ou duas clínicas de um único médico; Conseguir a liberação ou internação de pacientes;",
+        "Adquirir 100 pontos de sangue; Fechar um hospital; Conseguir um grande número de amostras de sangue; Ter uma autópsia secreta de uma criatura sobrenatural realizada; Impedir que ambulâncias respondam a um grande desastre;"
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Submundo",
+      "key_ability": "Intimidação",
+      "description": "Crime organizado, prostituição, armas, jogo ilegal, fraude, extorsão, furto de automóveis, Máfia.",
+      "levels": [
+        "Localizar pequenos contrabandos (facas, drogas leves, pequenas apostas, ingressos de cambistas); Encontrar um jogatina ilegal (jogo do bicho, pôquer); Conhecer uma prostituta que não é uma policial disfarçada; Fazer o carro de alguém ser roubado e desmontado; Saber o que fazer com um cartão de crédito roubado;",
+        "Contratar um capanga para dar uma lição em alguém; Obter pistolas, drogas pesadas, carros roubados, alguns cartões de créditos roubados; Enviar para alguém uma prostituta grátis; Conhecer um malandro; Receptar bens roubados;",
+        "Contratar 2 capangas para dar uma lição em alguém; Obter um Rifle, escopeta ou submetralhadora; Saber onde tem uma casa de prostituição de luxo ou um cassino ilegal; Providenciar uma pequena \"eliminação\"; Encontrar com alguém da \"Família\";",
+        "Contratar 4 capangas para invadir um local para você; Fazer conexões com o crime do colarinho branco; Controlar uma organização criminosa simples por 2 semanas; Ter um local livre do crime organizado;",
+        "Contratar 8 capangas para fazer alguém desaparecer; Providenciar assassinatos de pessoas não ligada à Máfia dentro do território das gangues; Providenciar assassinatos no mundo do crime; Contratar um demolidor ou incendiário; Providenciar que o carro de alguém seja preparado para explodir; Suprir as necessidades de drogas de um local;",
+        "Contratar um bando de capangas para atacar 4 lugares ao mesmo tempo; Conseguir conexões extensivas com o crime organizado; Ser o Dom local; Chamar um assassino profissional de reputação internacional para eliminar alguém pra você; Localizar armamento exótico (bombas, Rifle sniper, etc);"
+      ],
+      "notes": "Todos os capangas são mortais com 6 Físicos, 3 Sociais, 4 Mentais, 2 de Força de Vontade, 2 em Briga e 2 em Armas de Fogo."
+    },
+    {
+      "influence": "Transporte",
+      "key_ability": "Condução",
+      "description": "Por terra, mar, ou Carro, táxis, ônibus, rodovias, trens, navios ou aeroportos.",
+      "levels": [
+        "Saber o que vai pra onde quando e porquê; Conhecer um taxista/motorista de ônibus/empregado do aeroporto/chofer; Viajar localmente com rapidez e gratuitamente; Conseguir passagens de última hora; Reconhecer carregamentos que são incomuns e não agendados;",
+        "Rastrear um alvo descuidado se ele utilizar transportes públicos; Conseguir passagens segura (ou ao menos escondida) contra ameaças mundanas (roubo, terrorismo, luz do sol, etc); Conseguir informações específica sobre uma empresa de transportes; Conseguir uma limousine disponível (ou pelo menos um carro de luxo);",
+        "Atrapalhar seriamente a capacidade de um indivíduo de viajar; Evitar a maioria dos perigos sobrenaturais ao viajar (como Lupinos); Viajar de maneira não rastreável; Contrabandear um único pacote a cada duas semanas; Conseguir uma limousine a prova de luz (ou pelo menos um carro de luxo à prova de luz);",
+        "Desativar um meio de transporte por um dia (linhas de ônibus, navios, aviões, trens, etc); Ter uma comitiva de carros para perseguição disponível; Conseguir um caminhoneiro / piloto / navegador / marinheiro; Contrabandear um contêiner a cada duas semanas;",
+        "Alterar a rota dos maiores meios de locomoção por duas semanas; Contrabandear impunemente; Ter um helicóptero pronto pra você usar; Colocar a descrição de alguém repassada para todos os taxistas, fazendo com que seja impossível pegar um táxi;",
+        "Estender seu controle para a região vizinha (uma região por vez); Ter um jatinho pronto pra você em cada aeroporto; Fechar permanentemente um aeroporto/estação de trem/porto/rodoviária, etc; Barrar alguém de entrar ou sair da cidade utilizando meios de transportes públicos; Atrair para a cidade um grande meio de transporte (ex. Aeroporto);"
+      ],
+      "notes": ""
+    },
+    {
+      "influence": "Universidade",
+      "key_ability": "Acadêmicos",
+      "description": "Ensino médio, pesquisa, administração da faculdade, etc.",
+      "levels": [
+        "Ter acesso a recursos universitários menores; Conseguir registros escolares até o segundo grau; Conseguir RG e CPF de estudantes; Identificar especialistas em vários campos; Conhecer os planos e a política de escolas locais;",
+        "Conhecer um contato ou dois com conhecimentos ou Habilidades úteis; Ter acesso restrito às instalações; Falsificar registros escolares do segundo grau; Identificar os dormitórios de qualquer tipo de estudantes; Obter registros universitários;",
+        "Conseguir favores do corpo docente; Cancelar uma aula; Alterar notas; Desacreditar um estudante; Acessar teses, projetos de pesquisa, etc; Ter um especialista realizando uma pesquisa de longo prazo para você; Acesso 24 horas à biblioteca;",
+        "Organizar protestos e manifestações estudantis; Desacreditar membros do corpo docente; Ter uma equipe de graduandos realizando seu projeto estranho; Enviar os guardas do campus universitário; Acessar teses de doutorado e de projetos de pesquisas estranhos; Conseguir um doutor; Ter acesso à reitoria;",
+        "Falsificar um diploma pré-universitário ou de nível técnico; Ter acesso irrestrito às instalações; Fazer com que uma Fraternidade seja banida do campus; Alterar as políticas do campus; Acessar livros raros; Paralisar as aulas por um dia; Despedir alguém do corpo docente;",
+        "Conseguir projetos maiores realizados; Alterar todo o currículo de uma instituição; Alterar as instalações; Despedir o reitor/diretor; Eliminar programas; Ter novas instalações construídas; Criar um curso a sua escolha; Falsificar um diploma universitário."
+      ],
+      "notes": "Permite você ganhar conhecimento público e ter acesso a diversos campos de estudo. Você pode encontrar um professor para todas áreas, incluindo as habilidades Ofícios/Performance, Conhecimentos e entre outras."
+    }
+  ]
+}

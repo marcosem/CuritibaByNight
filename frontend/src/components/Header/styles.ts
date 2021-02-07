@@ -251,7 +251,10 @@ export const Navigation = styled.div`
 
 export const NavSpan = styled.span`
   cursor: default;
-  margin: auto;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-bottom: 2px #fff solid;
 
   svg {
     margin-top: 3px;

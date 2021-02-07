@@ -543,7 +543,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     <PlayButton
                       type="button"
                       onClick={handleChallenges}
-                      title="Rolar Jo-Ken-Po"
+                      title="Rolar Jan-Ken-Po"
                     >
                       <GiRollingDices />
                     </PlayButton>

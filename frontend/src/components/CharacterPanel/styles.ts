@@ -2,7 +2,7 @@ import styled, { keyframes, css } from 'styled-components';
 import { shade, lighten } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
-interface IDashboardProps {
+interface ICharPanelProps {
   isMobile: boolean;
 }
 
@@ -19,7 +19,7 @@ const appearFromOpacity = keyframes`
   }
 `;
 
-export const Content = styled.main<IDashboardProps>`
+export const Content = styled.main<ICharPanelProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
   display: flex;
@@ -91,7 +91,7 @@ export const TitleBox = styled.div`
   }
 `;
 
-export const CharCardContainer = styled.div<IDashboardProps>`
+export const CharCardContainer = styled.div<ICharPanelProps>`
   padding: 16px;
 
   ${props =>
@@ -105,7 +105,7 @@ export const CharCardContainer = styled.div<IDashboardProps>`
     `}
 `;
 
-export const CharacterContainer = styled.div<IDashboardProps>`
+export const CharacterContainer = styled.div<ICharPanelProps>`
   display: flex;
   flex-direction: column;
 
@@ -193,7 +193,7 @@ export const CharacterContainer = styled.div<IDashboardProps>`
   }
 `;
 
-export const TableWrapper = styled.div<IDashboardProps>`
+export const TableWrapper = styled.div<ICharPanelProps>`
   margin: 10px auto;
   min-width: 320px;
   border-radius: 11px;
@@ -216,7 +216,7 @@ export const TableWrapper = styled.div<IDashboardProps>`
         `}
 `;
 
-export const Table = styled.table<IDashboardProps>`
+export const Table = styled.table<ICharPanelProps>`
   border-radius: 10px;
   font-weight: normal;
   border: none;
@@ -390,7 +390,7 @@ export const TableCell = styled.div<ITableCellProps>`
   }
 `;
 
-export const ButtonBox = styled.div<IDashboardProps>`
+export const ButtonBox = styled.div<ICharPanelProps>`
   margin: auto;
   padding: 16px 0;
 

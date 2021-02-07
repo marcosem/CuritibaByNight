@@ -13,6 +13,7 @@ import {
   GiVampireDracula,
   GiMinions,
   GiPositionMarker,
+  GiStoneTower,
 } from 'react-icons/gi';
 import { useAuth } from '../../hooks/auth';
 import imgLogoHeader from '../../assets/logo_header.svg';
@@ -133,6 +134,20 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
                 ) : (
                   <Link to="/locals">
                     <GiPositionMarker />
+                  </Link>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <ToolTip>Influências</ToolTip>
+                {page === 'influences' ? (
+                  <NavSpan>
+                    <GiStoneTower />
+                  </NavSpan>
+                ) : (
+                  <Link to="/influences">
+                    <GiStoneTower />
                   </Link>
                 )}
               </td>
