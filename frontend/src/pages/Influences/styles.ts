@@ -99,19 +99,16 @@ export const Table = styled.table`
   border: none;
   border-collapse: collapse;
   width: 100%;
-
   min-width: 320px;
-  white-space: nowrap;
-  background-color: transparent;
-  opacity: 0.9;
+  max-width: 700px;
 
   font-size: 12px;
-  max-width: 1012px;
+  background-color: transparent;
+  opacity: 0.9;
 
   margin: 0 0 0 auto;
 
   td {
-    text-align: center;
     padding: 8px;
     color: #000;
 
@@ -246,7 +243,13 @@ export const Table = styled.table`
 export const TableCell = styled.div`
   display: flex;
   justify-content: left;
+
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  color: #000;
 `;
+
 export const TableLevelsWrapper = styled.div`
   margin: 0 auto;
   min-width: 320px;
@@ -289,9 +292,7 @@ export const TableLevels = styled.table`
   min-width: 320px;
   background-color: transparent;
   opacity: 0.9;
-
   font-size: 12px;
-  max-width: 1012px;
 
   td {
     padding: 8px;
