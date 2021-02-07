@@ -14,6 +14,7 @@ import {
   GiMinions,
   GiPositionMarker,
   GiStoneTower,
+  GiStabbedNote,
 } from 'react-icons/gi';
 import { useAuth } from '../../hooks/auth';
 import imgLogoHeader from '../../assets/logo_header.svg';
@@ -152,6 +153,20 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
                 ) : (
                   <Link to="/influences">
                     <GiStoneTower />
+                  </Link>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <ToolTip>Regras</ToolTip>
+                {page === 'rules' ? (
+                  <NavSpan>
+                    <GiStabbedNote />
+                  </NavSpan>
+                ) : (
+                  <Link to="/rules">
+                    <GiStabbedNote />
                   </Link>
                 )}
               </td>

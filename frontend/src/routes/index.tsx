@@ -21,6 +21,7 @@ import LocationCharList from '../pages/LocationCharList';
 import CharacterDetails from '../pages/CharacterDetails';
 import Challenges from '../pages/Challenges';
 import Influences from '../pages/Influences';
+import Rules from '../pages/Rules';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -35,6 +36,7 @@ const Routes: React.FC = () => (
     <Route path="/locals/:local" component={Locals} isPrivate />
     <Route path="/locals" component={Locals} isPrivate />
     <Route path="/influences" component={Influences} isPrivate />
+    <Route path="/rules" component={Rules} isPrivate />
     <Route path="/players" component={Players} isPrivate isStoryteller />
     <Route path="/addplayer" component={CreatePlayer} isPrivate isStoryteller />
     <Route
