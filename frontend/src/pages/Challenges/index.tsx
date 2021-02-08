@@ -413,7 +413,9 @@ const Challenges: React.FC = () => {
         const res = response.data;
         const fullList: ICharacter[] = res;
 
-        let filteredList = fullList.filter(ch => ch.situation === 'active');
+        let filteredList = fullList.filter(
+          ch => ch.situation === 'active' || ch.situation === 'torpor',
+        );
         const stNames = user.name.split(' ');
         const firsNameIndex = 0;
         const stName = stNames[firsNameIndex];
@@ -440,7 +442,9 @@ const Challenges: React.FC = () => {
 
         filteredList = [stStaticChar, ...filteredList];
 
-        const filteredPCs = filteredList.filter(ch => !ch.npc);
+        const filteredPCs = filteredList.filter(
+          ch => !ch.npc && ch.situation === 'active',
+        );
 
         setCharList(filteredList);
         setOpponentList(filteredPCs);
@@ -1042,6 +1046,7 @@ const Challenges: React.FC = () => {
                 updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
                 npc={myChar.npc && myChar.id !== 'Static'}
                 regnant={myChar.regnant_char ? myChar.regnant_char.name : ''}
+                situation={myChar.situation}
                 locked
                 readOnly={myChar.id === '' || myChar.id === 'Static'}
               />
@@ -1160,6 +1165,7 @@ const Challenges: React.FC = () => {
                     ? opponentChar.regnant_char.name
                     : ''
                 }
+                situation={opponentChar.situation}
                 locked
                 readOnly={!user.storyteller || opponentChar.id === ''}
               />
