@@ -82,6 +82,7 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
           break;
         default:
           setSituationIcon(null);
+          setSituationTitle('');
       }
     }
   }, [situation]);

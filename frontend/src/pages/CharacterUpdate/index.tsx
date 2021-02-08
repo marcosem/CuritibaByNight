@@ -440,6 +440,7 @@ const CharacterUpdate: React.FC = () => {
                         ? selectedChar.regnant_char.name
                         : ''
                     }
+                    situation={selectedChar.situation}
                     locked={filter !== 'npc'}
                   />
                 </CharCardContainer>

@@ -145,7 +145,12 @@ const Characters: React.FC = () => {
           </TitleBox>
 
           <Content isMobile={isMobileVersion}>
-            <CharacterList chars={charList} locked filterClan={selectedClan} />
+            <CharacterList
+              chars={charList}
+              locked
+              filterClan={selectedClan}
+              filterSituation={filter === 'npc' ? 'include torpor' : 'active'}
+            />
           </Content>
 
           {!isMobileVersion && (

@@ -79,8 +79,8 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
           setSituationTitle('Inativo');
           break;
         default:
-          setSituationIcon(GiFangedSkull);
-          setSituationTitle('Destruído');
+          setSituationIcon(null);
+          setSituationTitle('');
       }
     }
   }, [situation]);

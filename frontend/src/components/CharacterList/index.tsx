@@ -76,6 +76,10 @@ const CharacterList: React.FC<ICharacterListProps> = ({
 
     if (filterSituation !== '') {
       tempArray = tempArray.filter((char: ICharacter) => {
+        if (filterSituation === 'include torpor') {
+          return char.situation === 'active' || char.situation === 'torpor';
+        }
+
         return filterSituation !== '' && char.situation === filterSituation;
       });
     }
@@ -153,6 +157,7 @@ const CharacterList: React.FC<ICharacterListProps> = ({
                         regnant={
                           char.regnant_char ? char.regnant_char.name : ''
                         }
+                        situation={char.situation}
                         locked={locked}
                       />
                     </div>

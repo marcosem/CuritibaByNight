@@ -357,6 +357,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     regnant={
                       myChar.regnant_char ? myChar.regnant_char.name : ''
                     }
+                    situation={myChar.situation}
                     locked={
                       !(user.storyteller && myChar.npc) && char.id !== myChar.id
                     }
