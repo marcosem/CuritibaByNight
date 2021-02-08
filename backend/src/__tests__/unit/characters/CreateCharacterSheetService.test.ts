@@ -172,8 +172,8 @@ describe('CreateCharacterSheet', () => {
     expect(charRetainer).toMatchObject({
       user_id: null,
       name: 'Valdomiro Troca Tiro',
-      experience: 67,
-      experience_total: 67,
+      experience: 100,
+      experience_total: 100,
       clan: 'Ghoul: Tzimisce',
       title: '',
       coterie: '',

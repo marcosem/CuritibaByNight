@@ -33,6 +33,7 @@ describe('UpdateProfile', () => {
       name: 'New User Name',
       email: 'new@user.com',
       phone: '21-54321-4321',
+      active: false,
       storyteller: false,
     });
 
