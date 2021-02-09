@@ -11,7 +11,7 @@ import police from '../../assets/influences/police.jpg';
 import politics from '../../assets/influences/politics.jpg';
 import streets from '../../assets/influences/streets.jpg';
 import transportation from '../../assets/influences/transportation.jpg';
-import underground from '../../assets/influences/underground.jpg';
+import underworld from '../../assets/influences/underworld.jpg';
 import univercity from '../../assets/influences/university.jpg';
 
 export default function getInfluenceImg(influence: string): string {
@@ -67,7 +67,7 @@ export default function getInfluenceImg(influence: string): string {
       break;
 
     case 'Submundo':
-      infImg = underground;
+      infImg = underworld;
       break;
 
     case 'Transporte':
