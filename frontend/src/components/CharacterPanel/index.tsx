@@ -62,6 +62,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   const { setChar } = useSelection();
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
+  const [lastChar, setLastChar] = useState<ICharacter>();
   // const isMobileVersion = true;
 
   const loadRetainers = useCallback(async () => {
@@ -291,12 +292,16 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       const retainerChar = retainerList.find(ch => ch.id === retainerId);
 
       if (retainerChar) {
+        if (!dashboard) {
+          setLastChar(myChar);
+        }
+
         setChar(retainerChar);
         setRetainerList([]);
         history.push('/character');
       }
     },
-    [history, retainerList, setChar],
+    [dashboard, history, myChar, retainerList, setChar],
   );
 
   const handleLocationJump = useCallback(
@@ -318,8 +323,14 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   }, [loadLocations, loadRetainers, myChar]);
 
   const handleGoBack = useCallback(() => {
+    if (lastChar !== undefined) {
+      setChar(lastChar);
+      setLastChar(undefined);
+      setRetainerList([]);
+    }
+
     history.goBack();
-  }, [history]);
+  }, [history, lastChar, setChar]);
 
   return (
     <>
