@@ -198,7 +198,7 @@ export const Navigation = styled.div`
 
       td {
         padding: 2px 5px;
-        width: 60px;
+        width: 50px;
         height: 30px;
         position: relative;
         display: flex;

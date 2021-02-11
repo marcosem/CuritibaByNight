@@ -114,6 +114,17 @@ export const CharacterContainer = styled.div<ICharPanelProps>`
       ? css`
           width: 320px;
           margin: 10px;
+
+          div {
+            h1 {
+              height: 22px;
+            }
+
+            strong,
+            span {
+              height: 17px;
+            }
+          }
         `
       : css`
           width: 100%;
@@ -124,7 +135,7 @@ export const CharacterContainer = styled.div<ICharPanelProps>`
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-bottom: 5px;
+    padding-bottom: 5px;
 
     h1 {
       color: #333;
