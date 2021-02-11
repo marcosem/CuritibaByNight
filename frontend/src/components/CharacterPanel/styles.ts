@@ -117,11 +117,13 @@ export const CharacterContainer = styled.div<ICharPanelProps>`
 
           div {
             h1 {
+              display: inline-block;
               height: 22px;
             }
 
             strong,
             span {
+              display: inline-block;
               height: 17px;
             }
           }
