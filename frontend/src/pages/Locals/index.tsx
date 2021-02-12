@@ -276,7 +276,7 @@ const Locals: React.FC = () => {
           color = 'magenta';
           break;
         case 'Inquisition':
-          color = 'khaki';
+          color = 'white';
           break;
         default:
           color = 'black';
