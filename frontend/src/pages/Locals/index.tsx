@@ -275,6 +275,9 @@ const Locals: React.FC = () => {
         case 'Garou':
           color = 'magenta';
           break;
+        case 'Inquisition':
+          color = 'khaki';
+          break;
         default:
           color = 'black';
       }

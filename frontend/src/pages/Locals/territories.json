@@ -2104,7 +2104,7 @@
     {
       "name": "Guapirama",
       "population": 3802,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.140602, -23.489692],
         [-50.145051, -23.487482],
@@ -3757,7 +3757,7 @@
     {
       "name": "Telêmaco Borba",
       "population": 78974,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.69292, -24.036635],
         [-50.689995, -24.041817],
@@ -4686,7 +4686,7 @@
     {
       "name": "Jundiaí do Sul",
       "population": 3272,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.298118, -23.588334],
         [-50.299073, -23.386511],
@@ -4811,7 +4811,7 @@
     {
       "name": "Japira",
       "population": 4992,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.120303, -23.855868],
         [-50.122081, -23.855677],
@@ -4934,7 +4934,7 @@
     {
       "name": "Ortigueira",
       "population": 22141,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-51.098008, -24.325832],
         [-51.096182, -24.321826],
@@ -5610,7 +5610,7 @@
     {
       "name": "Carlópolis",
       "population": 14202,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-49.598283, -23.398594],
         [-49.598252, -23.399429],
@@ -6556,7 +6556,7 @@
     {
       "name": "São Sebastião da Amoreira",
       "population": 8836,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.637724, -23.418855],
         [-50.636347, -23.426594],
@@ -6681,7 +6681,7 @@
     {
       "name": "Siqueira Campos",
       "population": 20734,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-49.652368, -23.54671],
         [-49.651127, -23.560259],
@@ -8502,7 +8502,7 @@
     {
       "name": "São José da Boa Vista",
       "population": 6257,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-49.759402, -24.084097],
         [-49.755254, -24.065589],
@@ -9410,7 +9410,7 @@
     {
       "name": "Imbaú",
       "population": 12944,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.88484, -24.411575],
         [-50.877508, -24.408275],
@@ -11706,7 +11706,7 @@
     {
       "name": "Santo Antônio do Paraíso",
       "population": 1942,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.580897, -23.711987],
         [-50.592864, -23.703463],
@@ -11882,7 +11882,7 @@
     {
       "name": "Conselheiro Mairinck",
       "population": 3833,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.190939, -23.570197],
         [-50.188631, -23.567115],
@@ -13096,7 +13096,7 @@
     {
       "name": "Wenceslau Braz",
       "population": 19414,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-49.793027, -24.003828],
         [-49.812592, -23.980016],
@@ -13974,7 +13974,7 @@
     {
       "name": "Jaboti",
       "population": 5245,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.168659, -23.67858],
         [-50.165533, -23.678785],
@@ -15097,7 +15097,7 @@
     {
       "name": "Pinhalão",
       "population": 6326,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.161704, -23.942086],
         [-50.162177, -23.938721],
@@ -16122,7 +16122,7 @@
     {
       "name": "Salto do Itararé",
       "population": 4935,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-49.61891, -23.594343],
         [-49.619744, -23.60025],
@@ -17577,7 +17577,7 @@
     {
       "name": "Santo Antônio da Platina",
       "population": 45993,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.004301, -23.445191],
         [-50.017691, -23.441814],
@@ -17897,7 +17897,7 @@
     {
       "name": "Congonhinhas",
       "population": 8818,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.558553, -23.748056],
         [-50.555656, -23.74582],
@@ -18137,7 +18137,7 @@
     {
       "name": "Ventania",
       "population": 11568,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.185052, -24.290598],
         [-50.186363, -24.294221],
@@ -19359,7 +19359,7 @@
     {
       "name": "Ribeirão do Pinhal",
       "population": 13111,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.387552, -23.59792],
         [-50.388873, -23.595792],
@@ -21711,7 +21711,7 @@
     {
       "name": "Santana do Itararé",
       "population": 4935,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-49.587814, -23.840256],
         [-49.586507, -23.841003],
@@ -22991,7 +22991,7 @@
     {
       "name": "Curiúva",
       "population": 15101,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.69292, -24.036635],
         [-50.693608, -24.026251],
@@ -23345,7 +23345,7 @@
     {
       "name": "Santa Cecília do Pavão",
       "population": 3310,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.68708, -23.564219],
         [-50.687236, -23.564246],
@@ -23656,7 +23656,7 @@
     {
       "name": "Figueira",
       "population": 7800,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.449792, -23.756108],
         [-50.441031, -23.753545],
@@ -23842,7 +23842,7 @@
     {
       "name": "Arapotí",
       "population": 28115,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-49.793027, -24.003828],
         [-49.761881, -24.054721],
@@ -25990,7 +25990,7 @@
     {
       "name": "Joaquim Távora",
       "population": 11892,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.004052, -23.533682],
         [-49.997356, -23.527639],
@@ -26288,7 +26288,7 @@
     {
       "name": "Ibaiti",
       "population": 31364,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.387552, -23.59792],
         [-50.298118, -23.588334],
@@ -26809,7 +26809,7 @@
     {
       "name": "Sapopema",
       "population": 6774,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.804922, -23.87641],
         [-50.800478, -23.875776],
@@ -27617,7 +27617,7 @@
     {
       "name": "Ribeirão Claro",
       "population": 10668,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-49.718678, -23.148227],
         [-49.716493, -23.148393],
@@ -27909,7 +27909,7 @@
     {
       "name": "Nova Santa Bárbara",
       "population": 4249,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.847912, -23.598848],
         [-50.846311, -23.595273],
@@ -28563,7 +28563,7 @@
     {
       "name": "Quatiguá",
       "population": 7434,
-      "sect": "",
+      "sect": "Camarilla",
       "coordinates": [
         [-50.004052, -23.533682],
         [-49.985672, -23.532579],
@@ -28686,7 +28686,7 @@
     {
       "name": "São Jerônimo da Serra",
       "population": 11234,
-      "sect": "",
+      "sect": "Sabbat",
       "coordinates": [
         [-50.899063, -23.795561],
         [-50.89734, -23.794045],
