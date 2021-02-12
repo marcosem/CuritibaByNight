@@ -8,6 +8,7 @@ interface ICharPanelProps {
 
 interface ITableCellProps {
   centered?: boolean;
+  isMobile?: boolean;
 }
 
 const appearFromOpacity = keyframes`
@@ -231,28 +232,27 @@ export const TableWrapper = styled.div<ICharPanelProps>`
 
 export const Table = styled.table<ICharPanelProps>`
   border-radius: 10px;
-  font-weight: normal;
+  // font-weight: normal;
   border: none;
   border-collapse: collapse;
   width: 100%;
   min-width: 320px;
-  white-space: nowrap;
+  // white-space: nowrap;
   background-color: transparent;
   opacity: 0.9;
 
   ${props =>
     props.isMobile
       ? css`
-          font-size: 10px;
+          //font-size: 10px;
           max-width: 320px;
         `
       : css`
-          font-size: 12px;
+          //font-size: 12px;
           max-width: 1012px;
         `}
 
   td {
-    text-align: center;
     padding: 8px;
     color: #000;
 
@@ -284,6 +284,7 @@ export const Table = styled.table<ICharPanelProps>`
       color: #fff;
       background: #560209;
       font-weight: 450;
+      font-size: 12px;
 
       &:nth-child(odd) {
         color: #fff;
@@ -385,12 +386,56 @@ export const Table = styled.table<ICharPanelProps>`
 
 export const TableCell = styled.div<ITableCellProps>`
   display: flex;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  color: #000;
+  padding: 0 !important;
 
   ${props =>
-    props.centered &&
-    css`
-      justify-content: center;
-    `}
+    props.centered
+      ? css`
+          // justify-content: center;
+          strong,
+          span {
+            text-align: center;
+          }
+        `
+      : css`
+          strong,
+          span {
+            text-align: left;
+          }
+        `}
+
+  ${props =>
+    props.isMobile
+      ? css`
+          strong,
+          span {
+            font-size: 10px !important;
+          }
+        `
+      : css`
+          strong,
+          span {
+            font-size: 12px !important;
+          }
+        `}
+
+  strong {
+    padding: 0 !important;
+    width: 100% !important;
+    margin: auto !important;
+    font-weight: bold !important;
+    // text-align: center;
+  }
+
+  span {
+    padding: 0 !important;
+    width: 100% !important;
+    margin: auto !important;
+  }
 
   img {
     width: 30px;

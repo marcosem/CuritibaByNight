@@ -472,16 +472,24 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                                 onClick={handleRetainerSelection}
                               >
                                 <td>
-                                  <TableCell>{retainer.name}</TableCell>
-                                </td>
-                                <td>
-                                  <TableCell centered>
-                                    {retainer.clan}
+                                  <TableCell isMobile={isMobileVersion}>
+                                    <span>{retainer.name}</span>
                                   </TableCell>
                                 </td>
                                 <td>
-                                  <TableCell centered>
-                                    {retainer.retainer_level}
+                                  <TableCell
+                                    centered
+                                    isMobile={isMobileVersion}
+                                  >
+                                    <span>{retainer.clan}</span>
+                                  </TableCell>
+                                </td>
+                                <td>
+                                  <TableCell
+                                    centered
+                                    isMobile={isMobileVersion}
+                                  >
+                                    <span>{retainer.retainer_level}</span>
                                   </TableCell>
                                 </td>
                               </tr>
@@ -515,23 +523,27 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                                 {local.responsible === myChar.id ? (
                                   <>
                                     <td>
-                                      <TableCell>
-                                        <b>{local.name}</b>
+                                      <TableCell isMobile={isMobileVersion}>
+                                        <strong>{local.name}</strong>
                                       </TableCell>
                                     </td>
                                     <td>
-                                      <TableCell>
-                                        <b>{local.description}</b>
+                                      <TableCell isMobile={isMobileVersion}>
+                                        <strong>{local.description}</strong>
                                       </TableCell>
                                     </td>
                                   </>
                                 ) : (
                                   <>
                                     <td>
-                                      <TableCell>{local.name}</TableCell>
+                                      <TableCell isMobile={isMobileVersion}>
+                                        <span>{local.name}</span>
+                                      </TableCell>
                                     </td>
                                     <td>
-                                      <TableCell>{local.description}</TableCell>
+                                      <TableCell>
+                                        <span>{local.description}</span>
+                                      </TableCell>
                                     </td>
                                   </>
                                 )}
