@@ -541,7 +541,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                                       </TableCell>
                                     </td>
                                     <td>
-                                      <TableCell>
+                                      <TableCell isMobile={isMobileVersion}>
                                         <span>{local.description}</span>
                                       </TableCell>
                                     </td>
