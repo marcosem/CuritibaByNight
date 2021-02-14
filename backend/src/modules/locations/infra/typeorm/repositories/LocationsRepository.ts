@@ -64,13 +64,13 @@ class LocationsRepository implements ILocationsRepository {
   }
 
   public async findById(location_id: string): Promise<Location | undefined> {
-    const charFound = await this.ormRepository.findOne({
+    const locationFound = await this.ormRepository.findOne({
       where: { id: location_id },
       relations: ['responsible_char'],
     });
 
     // if not found, return undefined
-    return charFound;
+    return locationFound;
   }
 
   public async findByCharacterId(
