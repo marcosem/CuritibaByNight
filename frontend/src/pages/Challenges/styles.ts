@@ -2,18 +2,19 @@ import styled, { css, keyframes } from 'styled-components';
 import { lighten } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
-interface IDashboardProps {
-  isMobile: boolean;
-}
-
 interface ICardContainerProps {
-  isMobile: boolean;
   animationMode?: string;
+  position?: string;
 }
 
 interface IButtonProps {
   readyToPlay?: boolean;
   victory?: number;
+  isMobile?: boolean;
+}
+
+interface IContentsProps {
+  isMobile: boolean;
 }
 
 interface IConnectionButtonProps {
@@ -22,6 +23,7 @@ interface IConnectionButtonProps {
 
 interface IIconProps {
   animateMe?: boolean;
+  vertical?: boolean;
 }
 
 const bounceButton = keyframes`
@@ -105,7 +107,7 @@ export const TitleBox = styled.div`
   }
 `;
 
-export const Content = styled.main<IDashboardProps>`
+export const Content = styled.main<IContentsProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
   display: flex;
@@ -113,6 +115,17 @@ export const Content = styled.main<IDashboardProps>`
   overflow-y: auto;
   min-height: 382px;
   max-height: 75vh;
+  max-width: 1012px;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 340px;
+        `
+      : css`
+          min-width: 340px;
+          max-width: 1012px;
+        `}
 
   scrollbar-width: thin;
   scrollbar-color: #555;
@@ -136,46 +149,18 @@ export const Content = styled.main<IDashboardProps>`
     background-color: #555;
   }
 
-  ${props =>
-    props.isMobile
-      ? css`
-          max-width: 340px;
-        `
-      : css`
-          min-width: 340px;
-          max-width: 1012px;
-        `}
-
   border-radius: 4px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 `;
 
-export const CardsContent = styled.div<IDashboardProps>`
+export const CardsContent = styled.div`
   display: flex;
-
-  ${props =>
-    props.isMobile
-      ? css`
-          flex-direction: column;
-        `
-      : css`
-          flex-direction: row;
-        `}
+  flex-direction: row;
 `;
 
 export const CharCardContainer = styled.div<ICardContainerProps>`
   padding: 16px;
-
-  ${props =>
-    props.isMobile &&
-    css`
-      //transform: scale(0.5);
-      padding-bottom: 5px;
-
-      div {
-        margin: auto;
-      }
-    `}
+  margin: auto;
 
   ${props =>
     props.animationMode === 'in' &&
@@ -183,14 +168,14 @@ export const CharCardContainer = styled.div<ICardContainerProps>`
       animation: ${characterIn} 0.7s ease-in-out 1;
     `}
 
-    ${props =>
+  ${props =>
     props.animationMode === 'out' &&
     css`
       animation: ${characterOut} 0.7s ease-in-out 1;
     `}
 `;
 
-export const ChallangeArena = styled.div<IDashboardProps>`
+export const ChallangeArena = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -240,8 +225,6 @@ export const JanKenPoContainer = styled.div<IIconProps>`
     width: 32px;
     height: 32px;
 
-    // transition: opacity 0.2s;
-
     ${props =>
       props.animateMe &&
       css`
@@ -251,13 +234,9 @@ export const JanKenPoContainer = styled.div<IIconProps>`
 `;
 
 export const JanKenPoButton = styled.button<IButtonProps>`
-  width: 64px;
-  height: 64px;
   border: 0;
   margin: auto;
-
   background: #333;
-  border-radius: 20px;
 
   display: flex;
   justify-content: center;
@@ -267,12 +246,33 @@ export const JanKenPoButton = styled.button<IButtonProps>`
   transition: scale 0.2s;
 
   svg {
-    width: 32px;
-    height: 32px;
     color: #ccc;
     transition: color 0.2s;
     transition: scale 0.2s;
   }
+
+  ${props =>
+    props.isMobile
+      ? css`
+          width: 42px;
+          height: 42px;
+          border-radius: 15px;
+
+          svg {
+            width: 24px;
+            height: 24px;
+          }
+        `
+      : css`
+          width: 64px;
+          height: 64px;
+          border-radius: 20px;
+
+          svg {
+            width: 32px;
+            height: 32px;
+          }
+        `}
 
   &:hover {
     :not(:disabled) {
@@ -341,7 +341,7 @@ export const SelectCharacter = styled.select`
   color: #888;
 `;
 
-export const ButtonBox = styled.div<IDashboardProps>`
+export const ButtonBox = styled.div<IContentsProps>`
   margin: auto;
   padding: 16px 0;
   display: flex;
@@ -441,5 +441,116 @@ export const ConnectionButton = styled.button<IConnectionButtonProps>`
     svg {
       color: ${lighten(0.2, '#ccc')};
     }
+  }
+`;
+
+export const SelectorContainerMobile = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 33px;
+`;
+
+export const CardContainerMobile = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 8px;
+  width: 100%;
+  height: 317px;
+`;
+
+export const CharCardContainerMobile = styled.div<ICardContainerProps>`
+  width: 264px;
+  height: 430px;
+  margin: 0;
+  transform: scale(0.7);
+
+  ${props =>
+    props.position === 'left' &&
+    css`
+      transform-origin: top left;
+    `}
+
+  ${props =>
+    props.position === 'right' &&
+    css`
+      transform-origin: top right;
+    `}
+
+  ${props =>
+    props.animationMode === 'in' &&
+    css`
+      animation: ${characterIn} 0.7s ease-in-out 1;
+    `}
+
+  ${props =>
+    props.animationMode === 'out' &&
+    css`
+      animation: ${characterOut} 0.7s ease-in-out 1;
+    `}
+`;
+
+export const TitleContainerMobile = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 5px 0;
+  width: 100%;
+
+  h1 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 auto;
+    color: #333;
+  }
+`;
+
+export const ChallangeArenaMobile = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 8px 0;
+`;
+
+export const JanKenPoContainerMobile = styled.div<IIconProps>`
+  display: flex;
+  flex-direction: column !important;
+  width: 42px !important;
+  min-height: 42px;
+  height: 100%;
+  max-height: 183px;
+  margin: auto;
+
+  ${props =>
+    props.vertical &&
+    css`
+      margin: 32px 64px 32px 0;
+    `}
+
+  &:first-child {
+    margin-right: 0;
+    button {
+      margin-right: 0;
+    }
+  }
+
+  &:last-child {
+    margin-left: 0;
+    button {
+      margin-left: 0;
+    }
+  }
+
+  > svg {
+    margin: auto;
+    color: #860209;
+    width: 32px;
+    height: 32px;
+
+    ${props =>
+      props.animateMe &&
+      css`
+        animation: ${XOpacity} 0.7s ease-in-out 3;
+      `}
   }
 `;

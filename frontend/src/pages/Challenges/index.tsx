@@ -34,6 +34,12 @@ import {
   JanKenPoButton,
   ButtonBox,
   ConnectionButton,
+  TitleContainerMobile,
+  SelectorContainerMobile,
+  CardContainerMobile,
+  CharCardContainerMobile,
+  ChallangeArenaMobile,
+  JanKenPoContainerMobile,
 } from './styles';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
@@ -948,9 +954,12 @@ const Challenges: React.FC = () => {
             <strong>Modo de Desafio</strong>
           </TitleBox>
 
-          {user.storyteller && mode === 'initial' && (
-            <>
-              <TitleBox>
+          <Content isMobile={isMobileVersion}>
+            <TitleContainerMobile>
+              <h1>{title}</h1>
+            </TitleContainerMobile>
+            {user.storyteller && mode === 'initial' && (
+              <SelectorContainerMobile>
                 <SelectCharacter
                   name="character1"
                   id="character1"
@@ -964,9 +973,129 @@ const Challenges: React.FC = () => {
                     </option>
                   ))}
                 </SelectCharacter>
-              </TitleBox>
+              </SelectorContainerMobile>
+            )}
 
-              <TitleBox>
+            {myChar !== undefined && opponentChar !== undefined && (
+              <CardContainerMobile>
+                <CharCardContainerMobile position="left">
+                  <CharacterCard
+                    charId={myChar.id}
+                    name={myChar.name}
+                    experience={myChar.experience}
+                    sheetFile={myChar.character_url}
+                    clan={myChar.clan}
+                    title={myChar.title}
+                    coterie={myChar.coterie}
+                    avatar={myChar.avatar_url}
+                    updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
+                    npc={myChar.npc && myChar.id !== 'Static'}
+                    regnant={
+                      myChar.regnant_char ? myChar.regnant_char.name : ''
+                    }
+                    situation={myChar.situation}
+                    locked
+                    readOnly={myChar.id === '' || myChar.id === 'Static'}
+                  />
+
+                  {user.storyteller && (
+                    <ConnectionStatus
+                      connected={connStatus1}
+                      title={connStatus1 ? 'Online' : 'Offline'}
+                    >
+                      {connStatus1 ? <FaSmile /> : <FaDizzy />}
+                    </ConnectionStatus>
+                  )}
+                </CharCardContainerMobile>
+                <JanKenPoContainerMobile vertical>
+                  {showOptions() && (
+                    <>
+                      <JanKenPoButton
+                        isMobile={isMobileVersion}
+                        type="button"
+                        title="Pedra"
+                        onClick={() => HandleSelectPo('rock')}
+                        victory={myPo === 'rock' ? 1 : -5}
+                        disabled={mode !== 'battle'}
+                      >
+                        <FaHandRock />
+                      </JanKenPoButton>
+                      <JanKenPoButton
+                        isMobile={isMobileVersion}
+                        type="button"
+                        title="Papel"
+                        onClick={() => HandleSelectPo('paper')}
+                        victory={myPo === 'paper' ? 1 : -5}
+                        disabled={mode !== 'battle'}
+                      >
+                        <FaHandPaper />
+                      </JanKenPoButton>
+                      <JanKenPoButton
+                        isMobile={isMobileVersion}
+                        type="button"
+                        title="Tesoura"
+                        onClick={() => HandleSelectPo('scissors')}
+                        victory={myPo === 'scissors' ? 1 : -5}
+                        disabled={mode !== 'battle'}
+                      >
+                        <FaHandScissors />
+                      </JanKenPoButton>
+                      <JanKenPoButton
+                        isMobile={isMobileVersion}
+                        type="button"
+                        title="Bomba"
+                        onClick={() => HandleSelectPo('bomb')}
+                        disabled={mode !== 'battle'}
+                        victory={myPo === 'bomb' ? 1 : -5}
+                      >
+                        <FaBomb />
+                      </JanKenPoButton>
+                    </>
+                  )}
+                </JanKenPoContainerMobile>
+              </CardContainerMobile>
+            )}
+
+            <ChallangeArenaMobile>
+              <JanKenPoContainerMobile />
+              <JanKenPoContainerMobile>
+                {selectedPo !== '' && (
+                  <JanKenPoButton
+                    isMobile={isMobileVersion}
+                    type="button"
+                    title="Confirmar jogada!"
+                    onClick={HandleSendPo}
+                    disabled={mode !== 'battle'}
+                    readyToPlay={play}
+                    victory={char1Result}
+                  >
+                    {SwitchJanKenPo(selectedPo)}
+                  </JanKenPoButton>
+                )}
+              </JanKenPoContainerMobile>
+              <JanKenPoContainerMobile animateMe={play}>
+                {selectedPo !== '' && selOpponentPo !== '' && <FaTimes />}
+              </JanKenPoContainerMobile>
+              <JanKenPoContainerMobile>
+                {selOpponentPo !== '' && (
+                  <JanKenPoButton
+                    isMobile={isMobileVersion}
+                    type="button"
+                    title="Confirmar jogada!"
+                    onClick={undefined}
+                    disabled
+                    readyToPlay={play}
+                    victory={char2Result}
+                  >
+                    {SwitchJanKenPo(selOpponentPo)}
+                  </JanKenPoButton>
+                )}
+              </JanKenPoContainerMobile>
+              <JanKenPoContainerMobile />
+            </ChallangeArenaMobile>
+
+            {user.storyteller && mode === 'initial' && (
+              <SelectorContainerMobile>
                 <SelectCharacter
                   name="character2"
                   id="character2"
@@ -984,236 +1113,321 @@ const Challenges: React.FC = () => {
                     </option>
                   ))}
                 </SelectCharacter>
-              </TitleBox>
-            </>
-          )}
+              </SelectorContainerMobile>
+            )}
+
+            {myChar !== undefined && opponentChar !== undefined && (
+              <CardContainerMobile>
+                <CharCardContainerMobile position="right">
+                  <CharacterCard
+                    charId={opponentChar.id}
+                    name={opponentChar.name}
+                    experience={opponentChar.experience}
+                    sheetFile={opponentChar.character_url}
+                    clan={opponentChar.clan}
+                    title={opponentChar.title}
+                    coterie={opponentChar.coterie}
+                    avatar={opponentChar.avatar_url}
+                    updatedAt={
+                      opponentChar.formatedDate ? opponentChar.formatedDate : ''
+                    }
+                    npc={opponentChar.npc}
+                    regnant={
+                      opponentChar.regnant_char
+                        ? opponentChar.regnant_char.name
+                        : ''
+                    }
+                    situation={opponentChar.situation}
+                    locked
+                    readOnly={!user.storyteller || opponentChar.id === ''}
+                  />
+                  {user.storyteller && (
+                    <ConnectionStatus
+                      connected={connStatus2}
+                      title={connStatus2 ? 'Online' : 'Offline'}
+                    >
+                      {connStatus2 ? <FaSmile /> : <FaDizzy />}
+                    </ConnectionStatus>
+                  )}
+                </CharCardContainerMobile>
+              </CardContainerMobile>
+            )}
+            {mode === 'initial' &&
+              myChar?.id !== '' &&
+              opponentChar?.id !== '' && (
+                <ButtonBox isMobile={isMobileVersion}>
+                  <Button type="button" onClick={handleInitChallangeButton}>
+                    Iniciar Desafio
+                  </Button>
+                </ButtonBox>
+              )}
+            {mode === 'battle' && user.storyteller && (
+              <ButtonBox isMobile={isMobileVersion}>
+                <Button type="button" onClick={handleCancelChallangeButton}>
+                  Cancelar Desafio
+                </Button>
+              </ButtonBox>
+            )}
+            {mode !== 'initial' && mode !== 'battle' && user.storyteller && (
+              <ButtonBox isMobile={isMobileVersion}>
+                <Button type="button" onClick={handleRetestButton}>
+                  Retestar
+                </Button>
+
+                <Button type="button" onClick={handleCancelChallangeButton}>
+                  Reiniciar Desafio
+                </Button>
+              </ButtonBox>
+            )}
+            <ConnectionButton
+              type="button"
+              connected={connected}
+              title={connected ? 'Desconectar' : 'Conectar'}
+              onClick={handleConnection}
+              disabled={changingConState}
+            >
+              {connected ? <FaHandshake /> : <FaUnlink />}
+            </ConnectionButton>
+          </Content>
         </>
       ) : (
-        <TitleBox>
-          {user.storyteller && mode === 'initial' ? (
-            <>
-              <SelectCharacter
-                name="character1"
-                id="character1"
-                value={myChar && myChar.id !== '' ? myChar.name : undefined}
-                onChange={handleCharacter1Change}
-              >
-                <option value="">Selecione um Personagem:</option>
-                {charList.map(character => (
-                  <option key={`1${character.id}`} value={character.name}>
-                    {character.name}
-                  </option>
-                ))}
-              </SelectCharacter>
+        <>
+          <TitleBox>
+            {user.storyteller && mode === 'initial' ? (
+              <>
+                <SelectCharacter
+                  name="character1"
+                  id="character1"
+                  value={myChar && myChar.id !== '' ? myChar.name : undefined}
+                  onChange={handleCharacter1Change}
+                >
+                  <option value="">Selecione um Personagem:</option>
+                  {charList.map(character => (
+                    <option key={`1${character.id}`} value={character.name}>
+                      {character.name}
+                    </option>
+                  ))}
+                </SelectCharacter>
+                <strong>Modo de Desafio</strong>
+                <SelectCharacter
+                  name="character2"
+                  id="character2"
+                  value={
+                    opponentChar && opponentChar.id !== ''
+                      ? opponentChar.name
+                      : undefined
+                  }
+                  onChange={handleCharacter2Change}
+                >
+                  <option value="">Selecione um Personagem:</option>
+                  {opponentList.map(character => (
+                    <option key={`2${character.id}`} value={character.name}>
+                      {character.name}
+                    </option>
+                  ))}
+                </SelectCharacter>
+              </>
+            ) : (
               <strong>Modo de Desafio</strong>
-              <SelectCharacter
-                name="character2"
-                id="character2"
-                value={
-                  opponentChar && opponentChar.id !== ''
-                    ? opponentChar.name
-                    : undefined
-                }
-                onChange={handleCharacter2Change}
+            )}
+          </TitleBox>
+          {myChar !== undefined && opponentChar !== undefined && (
+            <Content isMobile={isMobileVersion}>
+              <CardsContent>
+                <CharCardContainer>
+                  <CharacterCard
+                    charId={myChar.id}
+                    name={myChar.name}
+                    experience={myChar.experience}
+                    sheetFile={myChar.character_url}
+                    clan={myChar.clan}
+                    title={myChar.title}
+                    coterie={myChar.coterie}
+                    avatar={myChar.avatar_url}
+                    updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
+                    npc={myChar.npc && myChar.id !== 'Static'}
+                    regnant={
+                      myChar.regnant_char ? myChar.regnant_char.name : ''
+                    }
+                    situation={myChar.situation}
+                    locked
+                    readOnly={myChar.id === '' || myChar.id === 'Static'}
+                  />
+
+                  {user.storyteller && (
+                    <ConnectionStatus
+                      connected={connStatus1}
+                      title={connStatus1 ? 'Online' : 'Offline'}
+                    >
+                      {connStatus1 ? <FaSmile /> : <FaDizzy />}
+                    </ConnectionStatus>
+                  )}
+                </CharCardContainer>
+                <ChallangeArena>
+                  <div>
+                    <h1>{title}</h1>
+                  </div>
+                  <ArenaContainer>
+                    <JanKenPoContainer>
+                      {showOptions() && (
+                        <>
+                          <JanKenPoButton
+                            isMobile={isMobileVersion}
+                            type="button"
+                            title="Pedra"
+                            onClick={() => HandleSelectPo('rock')}
+                            victory={myPo === 'rock' ? 1 : -5}
+                            disabled={mode !== 'battle'}
+                          >
+                            <FaHandRock />
+                          </JanKenPoButton>
+                          <JanKenPoButton
+                            isMobile={isMobileVersion}
+                            type="button"
+                            title="Papel"
+                            onClick={() => HandleSelectPo('paper')}
+                            victory={myPo === 'paper' ? 1 : -5}
+                            disabled={mode !== 'battle'}
+                          >
+                            <FaHandPaper />
+                          </JanKenPoButton>
+                          <JanKenPoButton
+                            isMobile={isMobileVersion}
+                            type="button"
+                            title="Tesoura"
+                            onClick={() => HandleSelectPo('scissors')}
+                            victory={myPo === 'scissors' ? 1 : -5}
+                            disabled={mode !== 'battle'}
+                          >
+                            <FaHandScissors />
+                          </JanKenPoButton>
+                          <JanKenPoButton
+                            isMobile={isMobileVersion}
+                            type="button"
+                            title="Bomba"
+                            onClick={() => HandleSelectPo('bomb')}
+                            disabled={mode !== 'battle'}
+                            victory={myPo === 'bomb' ? 1 : -5}
+                          >
+                            <FaBomb />
+                          </JanKenPoButton>
+                        </>
+                      )}
+                    </JanKenPoContainer>
+                    <JanKenPoContainer>
+                      {selectedPo !== '' && (
+                        <JanKenPoButton
+                          isMobile={isMobileVersion}
+                          type="button"
+                          title="Confirmar jogada!"
+                          onClick={HandleSendPo}
+                          disabled={mode !== 'battle'}
+                          readyToPlay={play}
+                          victory={char1Result}
+                        >
+                          {SwitchJanKenPo(selectedPo)}
+                        </JanKenPoButton>
+                      )}
+                    </JanKenPoContainer>
+                    <JanKenPoContainer animateMe={play}>
+                      {selectedPo !== '' && selOpponentPo !== '' && <FaTimes />}
+                    </JanKenPoContainer>
+                    <JanKenPoContainer>
+                      {selOpponentPo !== '' && (
+                        <JanKenPoButton
+                          isMobile={isMobileVersion}
+                          type="button"
+                          title="Confirmar jogada!"
+                          onClick={undefined}
+                          disabled
+                          readyToPlay={play}
+                          victory={char2Result}
+                        >
+                          {SwitchJanKenPo(selOpponentPo)}
+                        </JanKenPoButton>
+                      )}
+                    </JanKenPoContainer>
+                    <JanKenPoContainer />
+                  </ArenaContainer>
+                </ChallangeArena>
+                <CharCardContainer
+                  animationMode={
+                    mode === 'battle' && !retestMode && showOptions()
+                      ? 'in'
+                      : ''
+                  }
+                >
+                  <CharacterCard
+                    charId={opponentChar.id}
+                    name={opponentChar.name}
+                    experience={opponentChar.experience}
+                    sheetFile={opponentChar.character_url}
+                    clan={opponentChar.clan}
+                    title={opponentChar.title}
+                    coterie={opponentChar.coterie}
+                    avatar={opponentChar.avatar_url}
+                    updatedAt={
+                      opponentChar.formatedDate ? opponentChar.formatedDate : ''
+                    }
+                    npc={opponentChar.npc}
+                    regnant={
+                      opponentChar.regnant_char
+                        ? opponentChar.regnant_char.name
+                        : ''
+                    }
+                    situation={opponentChar.situation}
+                    locked
+                    readOnly={!user.storyteller || opponentChar.id === ''}
+                  />
+                  {user.storyteller && (
+                    <ConnectionStatus
+                      connected={connStatus2}
+                      title={connStatus2 ? 'Online' : 'Offline'}
+                    >
+                      {connStatus2 ? <FaSmile /> : <FaDizzy />}
+                    </ConnectionStatus>
+                  )}
+                </CharCardContainer>
+              </CardsContent>
+              {mode === 'initial' &&
+                myChar.id !== '' &&
+                opponentChar.id !== '' && (
+                  <ButtonBox isMobile={isMobileVersion}>
+                    <Button type="button" onClick={handleInitChallangeButton}>
+                      Iniciar Desafio
+                    </Button>
+                  </ButtonBox>
+                )}
+              {mode === 'battle' && user.storyteller && (
+                <ButtonBox isMobile={isMobileVersion}>
+                  <Button type="button" onClick={handleCancelChallangeButton}>
+                    Cancelar Desafio
+                  </Button>
+                </ButtonBox>
+              )}
+              {mode !== 'initial' && mode !== 'battle' && user.storyteller && (
+                <ButtonBox isMobile={isMobileVersion}>
+                  <Button type="button" onClick={handleRetestButton}>
+                    Retestar
+                  </Button>
+
+                  <Button type="button" onClick={handleCancelChallangeButton}>
+                    Reiniciar Desafio
+                  </Button>
+                </ButtonBox>
+              )}
+              <ConnectionButton
+                type="button"
+                connected={connected}
+                title={connected ? 'Desconectar' : 'Conectar'}
+                onClick={handleConnection}
+                disabled={changingConState}
               >
-                <option value="">Selecione um Personagem:</option>
-                {opponentList.map(character => (
-                  <option key={`2${character.id}`} value={character.name}>
-                    {character.name}
-                  </option>
-                ))}
-              </SelectCharacter>
-            </>
-          ) : (
-            <strong>Modo de Desafio</strong>
+                {connected ? <FaHandshake /> : <FaUnlink />}
+              </ConnectionButton>
+            </Content>
           )}
-        </TitleBox>
-      )}
-
-      {myChar !== undefined && opponentChar !== undefined && (
-        <Content isMobile={isMobileVersion}>
-          <CardsContent isMobile={isMobileVersion}>
-            <CharCardContainer isMobile={isMobileVersion}>
-              <CharacterCard
-                charId={myChar.id}
-                name={myChar.name}
-                experience={myChar.experience}
-                sheetFile={myChar.character_url}
-                clan={myChar.clan}
-                title={myChar.title}
-                coterie={myChar.coterie}
-                avatar={myChar.avatar_url}
-                updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
-                npc={myChar.npc && myChar.id !== 'Static'}
-                regnant={myChar.regnant_char ? myChar.regnant_char.name : ''}
-                situation={myChar.situation}
-                locked
-                readOnly={myChar.id === '' || myChar.id === 'Static'}
-              />
-
-              {user.storyteller && (
-                <ConnectionStatus
-                  connected={connStatus1}
-                  title={connStatus1 ? 'Online' : 'Offline'}
-                >
-                  {connStatus1 ? <FaSmile /> : <FaDizzy />}
-                </ConnectionStatus>
-              )}
-            </CharCardContainer>
-            <ChallangeArena isMobile={isMobileVersion}>
-              <div>
-                <h1>{title}</h1>
-              </div>
-              <ArenaContainer>
-                <JanKenPoContainer>
-                  {showOptions() && (
-                    <>
-                      <JanKenPoButton
-                        type="button"
-                        title="Pedra"
-                        onClick={() => HandleSelectPo('rock')}
-                        victory={myPo === 'rock' ? 1 : -5}
-                        disabled={mode !== 'battle'}
-                      >
-                        <FaHandRock />
-                      </JanKenPoButton>
-                      <JanKenPoButton
-                        type="button"
-                        title="Papel"
-                        onClick={() => HandleSelectPo('paper')}
-                        victory={myPo === 'paper' ? 1 : -5}
-                        disabled={mode !== 'battle'}
-                      >
-                        <FaHandPaper />
-                      </JanKenPoButton>
-                      <JanKenPoButton
-                        type="button"
-                        title="Tesoura"
-                        onClick={() => HandleSelectPo('scissors')}
-                        victory={myPo === 'scissors' ? 1 : -5}
-                        disabled={mode !== 'battle'}
-                      >
-                        <FaHandScissors />
-                      </JanKenPoButton>
-                      <JanKenPoButton
-                        type="button"
-                        title="Bomba"
-                        onClick={() => HandleSelectPo('bomb')}
-                        disabled={mode !== 'battle'}
-                        victory={myPo === 'bomb' ? 1 : -5}
-                      >
-                        <FaBomb />
-                      </JanKenPoButton>
-                    </>
-                  )}
-                </JanKenPoContainer>
-                <JanKenPoContainer>
-                  {selectedPo !== '' && (
-                    <JanKenPoButton
-                      type="button"
-                      title="Confirmar jogada!"
-                      onClick={HandleSendPo}
-                      disabled={mode !== 'battle'}
-                      readyToPlay={play}
-                      victory={char1Result}
-                    >
-                      {SwitchJanKenPo(selectedPo)}
-                    </JanKenPoButton>
-                  )}
-                </JanKenPoContainer>
-                <JanKenPoContainer animateMe={play}>
-                  {selectedPo !== '' && selOpponentPo !== '' && <FaTimes />}
-                </JanKenPoContainer>
-                <JanKenPoContainer>
-                  {selOpponentPo !== '' && (
-                    <JanKenPoButton
-                      type="button"
-                      title="Confirmar jogada!"
-                      onClick={undefined}
-                      disabled
-                      readyToPlay={play}
-                      victory={char2Result}
-                    >
-                      {SwitchJanKenPo(selOpponentPo)}
-                    </JanKenPoButton>
-                  )}
-                </JanKenPoContainer>
-                <JanKenPoContainer />
-              </ArenaContainer>
-            </ChallangeArena>
-            <CharCardContainer
-              isMobile={isMobileVersion}
-              animationMode={
-                mode === 'battle' && !retestMode && showOptions() ? 'in' : ''
-              }
-            >
-              <CharacterCard
-                charId={opponentChar.id}
-                name={opponentChar.name}
-                experience={opponentChar.experience}
-                sheetFile={opponentChar.character_url}
-                clan={opponentChar.clan}
-                title={opponentChar.title}
-                coterie={opponentChar.coterie}
-                avatar={opponentChar.avatar_url}
-                updatedAt={
-                  opponentChar.formatedDate ? opponentChar.formatedDate : ''
-                }
-                npc={opponentChar.npc}
-                regnant={
-                  opponentChar.regnant_char
-                    ? opponentChar.regnant_char.name
-                    : ''
-                }
-                situation={opponentChar.situation}
-                locked
-                readOnly={!user.storyteller || opponentChar.id === ''}
-              />
-              {user.storyteller && (
-                <ConnectionStatus
-                  connected={connStatus2}
-                  title={connStatus2 ? 'Online' : 'Offline'}
-                >
-                  {connStatus2 ? <FaSmile /> : <FaDizzy />}
-                </ConnectionStatus>
-              )}
-            </CharCardContainer>
-          </CardsContent>
-          {mode === 'initial' && myChar.id !== '' && opponentChar.id !== '' && (
-            <ButtonBox isMobile={isMobileVersion}>
-              <Button type="button" onClick={handleInitChallangeButton}>
-                Iniciar Desafio
-              </Button>
-            </ButtonBox>
-          )}
-          {mode === 'battle' && user.storyteller && (
-            <ButtonBox isMobile={isMobileVersion}>
-              <Button type="button" onClick={handleCancelChallangeButton}>
-                Cancelar Desafio
-              </Button>
-            </ButtonBox>
-          )}
-          {mode !== 'initial' && mode !== 'battle' && user.storyteller && (
-            <ButtonBox isMobile={isMobileVersion}>
-              <Button type="button" onClick={handleRetestButton}>
-                Retestar
-              </Button>
-
-              <Button type="button" onClick={handleCancelChallangeButton}>
-                Reiniciar Desafio
-              </Button>
-            </ButtonBox>
-          )}
-          <ConnectionButton
-            type="button"
-            connected={connected}
-            title={connected ? 'Desconectar' : 'Conectar'}
-            onClick={handleConnection}
-            disabled={changingConState}
-          >
-            {connected ? <FaHandshake /> : <FaUnlink />}
-          </ConnectionButton>
-        </Content>
+        </>
       )}
     </Container>
   );
