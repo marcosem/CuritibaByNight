@@ -1,7 +1,7 @@
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import User from '@modules/users/infra/typeorm/entities/User';
 import ICreateUserDTO from '@modules/users/dtos/ICreateUserDTO';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 class FakeUsersRepository implements IUsersRepository {
   private users: User[] = [];
@@ -37,7 +37,7 @@ class FakeUsersRepository implements IUsersRepository {
     const user = new User();
 
     Object.assign(user, {
-      id: uuid(),
+      id: v4(),
       name,
       email,
       phone,

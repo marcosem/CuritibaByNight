@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import CompleteInitialUser from '@modules/users/services/CompleteInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
@@ -56,7 +56,7 @@ describe('CompleteInitialUser', () => {
         email: 'other@email.com',
         phone: '21-54321-4321',
         password: '123456',
-        secret: uuid(),
+        secret: v4(),
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });

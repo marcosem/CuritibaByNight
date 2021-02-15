@@ -2,7 +2,7 @@ import Character from '@modules/characters/infra/typeorm/entities/Character';
 import ICreateCharacterDTO from '@modules/characters/dtos/ICreateCharacterDTO';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 class FakeCharactersRepository implements ICharactersRepository {
   private chars: Character[] = [];
@@ -24,7 +24,7 @@ class FakeCharactersRepository implements ICharactersRepository {
     const char = new Character();
 
     Object.assign(char, {
-      id: uuid(),
+      id: v4(),
       name,
       user_id: user_id === undefined ? null : user_id,
       experience,

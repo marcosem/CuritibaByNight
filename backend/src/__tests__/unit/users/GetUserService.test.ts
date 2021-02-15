@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import GetUserService from '@modules/users/services/GetUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import AppError from '@shared/errors/AppError';
@@ -27,7 +27,7 @@ describe('GetUser', () => {
   });
 
   it('Should return error when not found an user', async () => {
-    await expect(getUser.execute({ user_id: uuid() })).rejects.toBeInstanceOf(
+    await expect(getUser.execute({ user_id: v4() })).rejects.toBeInstanceOf(
       AppError,
     );
   });

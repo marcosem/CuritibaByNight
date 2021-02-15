@@ -1,5 +1,5 @@
 import { injectable, inject } from 'tsyringe';
-import { isUuid } from 'uuidv4';
+import { validate } from 'uuid';
 
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
@@ -30,7 +30,7 @@ class CreateInitialUserService {
     password,
     secret,
   }: IRequestDTO): Promise<User> {
-    if (!isUuid(secret)) {
+    if (!validate(secret)) {
       throw new AppError('Invalid Token', 401);
     }
 

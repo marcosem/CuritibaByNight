@@ -2,7 +2,7 @@ import Territory from '@modules/locations/infra/typeorm/entities/Territory';
 import ICreateTerritoryDTO from '@modules/locations/dtos/ICreateTerritoryDTO';
 import ITerritoryRepository from '@modules/locations/repositories/ITerritoryRepository';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 class FakeTerritoryRepository implements ITerritoryRepository {
   private territories: Territory[] = [];
@@ -15,7 +15,7 @@ class FakeTerritoryRepository implements ITerritoryRepository {
     const territory = new Territory();
 
     Object.assign(territory, {
-      id: uuid(),
+      id: v4(),
       name,
       population,
       sect,

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { isUuid } from 'uuidv4';
+import { validate } from 'uuid';
 import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
@@ -27,9 +27,9 @@ describe('CreateInitialUser', () => {
     });
 
     expect(user).toHaveProperty('id');
-    expect(isUuid(user.id)).toBeTruthy();
+    expect(validate(user.id)).toBeTruthy();
     expect(user).toHaveProperty('secret');
-    expect(isUuid(user.secret)).toBeTruthy();
+    expect(validate(user.secret)).toBeTruthy();
   });
 
   it('Should not allow create Initial User with an already existant email', async () => {

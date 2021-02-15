@@ -35,7 +35,7 @@
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",
     "typeorm": "^0.2.25",
-    "uuidv4": "^6.1.1"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
@@ -57,6 +57,7 @@
     "@types/pdf-parse": "^1.1.0",
     "@types/redis": "^2.8.27",
     "@types/supertest": "^2.0.9",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^3.2.0",
     "@typescript-eslint/parser": "^3.2.0",
     "babel-plugin-module-resolver": "^4.0.0",

@@ -1,7 +1,7 @@
 import LocationCharacter from '@modules/locations/infra/typeorm/entities/LocationCharacter';
 import ILocationsCharactersRepository from '@modules/locations/repositories/ILocationsCharactersRepository';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 class FakeLocationsCharactersRepository
   implements ILocationsCharactersRepository {
@@ -14,7 +14,7 @@ class FakeLocationsCharactersRepository
     const locationCharacter = new LocationCharacter();
 
     Object.assign(locationCharacter, {
-      id: uuid(),
+      id: v4(),
       character_id: char_id,
       location_id,
     });

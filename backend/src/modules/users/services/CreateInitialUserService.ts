@@ -1,5 +1,5 @@
 import { injectable, inject } from 'tsyringe';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
@@ -33,7 +33,7 @@ class CreateInitialUserService {
       email,
       phone,
       storyteller: false,
-      secret: uuid(),
+      secret: v4(),
     });
 
     const invitationTemplate = resolve(

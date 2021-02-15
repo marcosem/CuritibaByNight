@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-import { isUuid } from 'uuidv4';
+import { validate } from 'uuid';
+
 import CreateSTUserService from '@modules/users/services/CreateSTUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
@@ -29,7 +30,7 @@ describe('CreateSTUser', () => {
     });
 
     expect(user).toHaveProperty('id');
-    expect(isUuid(user.id)).toBeTruthy();
+    expect(validate(user.id)).toBeTruthy();
   });
 
   it('Should not allow create Storyteller User without the correct secret', async () => {

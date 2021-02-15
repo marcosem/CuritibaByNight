@@ -2,7 +2,7 @@ import Location from '@modules/locations/infra/typeorm/entities/Location';
 import ICreateLocationDTO from '@modules/locations/dtos/ICreateLocationDTO';
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 class FakeLocationsRepository implements ILocationsRepository {
   private locations: Location[] = [];
@@ -24,7 +24,7 @@ class FakeLocationsRepository implements ILocationsRepository {
     const location = new Location();
 
     Object.assign(location, {
-      id: uuid(),
+      id: v4(),
       name,
       description,
       address,

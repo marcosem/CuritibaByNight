@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import GetInitialUser from '@modules/users/services/GetInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
@@ -39,7 +39,7 @@ describe('GetInitialUser', () => {
 
   it('Should return error for not existant secret', async () => {
     await expect(
-      getInitialUser.execute({ secret: uuid() }),
+      getInitialUser.execute({ secret: v4() }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
