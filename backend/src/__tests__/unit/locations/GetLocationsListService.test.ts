@@ -94,13 +94,13 @@ describe('GetLocationsList', () => {
     });
   });
 
-  it('Should not allow invalid users to geta list of locations', async () => {
+  it('Should not allow invalid users to get a list of locations', async () => {
     await expect(
       getLocationsList.execute({ user_id: 'I am invalid' }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
-  it('Should not allow non storyteller user to load a locations with character not defined', async () => {
+  it('Should not allow non storyteller user to load locations with character not defined', async () => {
     const notStUser = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
