@@ -22,12 +22,12 @@ class GetTerritoriesListService {
 
     if (!user) {
       throw new AppError(
-        'Only authenticated Storytellers can add territories',
+        'Only authenticated Storytellers can get the list of territories',
         401,
       );
     } else if (!user.storyteller) {
       throw new AppError(
-        'Only authenticated Storytellers can add territories',
+        'Only authenticated Storytellers can get the list of territories',
         401,
       );
     }
