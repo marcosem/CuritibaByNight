@@ -7,7 +7,7 @@ let fakeTerritoriesRepository: FakeTerritoriesRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let addTerritory: AddTerritoryService;
 
-describe('CreateLocation', () => {
+describe('AddTerritory', () => {
   beforeEach(() => {
     fakeTerritoriesRepository = new FakeTerritoriesRepository();
     fakeUsersRepository = new FakeUsersRepository();
