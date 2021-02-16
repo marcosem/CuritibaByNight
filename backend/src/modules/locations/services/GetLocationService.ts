@@ -55,8 +55,6 @@ class GetLocationService {
         throw new AppError('Character not found', 400);
       }
 
-      // TODO - Get List of Locations aware
-
       if (location.responsible !== char_id && location.clan !== char.clan) {
         throw new AppError(
           'This character does not have permission to load this location',
