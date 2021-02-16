@@ -194,7 +194,7 @@ const LocationUpdate: React.FC = () => {
       if (error.response) {
         const { message } = error.response.data;
 
-        if (message.indexOf('token') > 0 && error.response.status === 401) {
+        if (message?.indexOf('token') > 0 && error.response.status === 401) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -247,7 +247,7 @@ const LocationUpdate: React.FC = () => {
       if (error.response) {
         const { message } = error.response.data;
 
-        if (message.indexOf('token') > 0 && error.response.status === 401) {
+        if (message?.indexOf('token') > 0 && error.response.status === 401) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
