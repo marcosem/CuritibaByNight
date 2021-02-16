@@ -1,9 +1,9 @@
 import { getRepository, Repository } from 'typeorm';
 import Territory from '@modules/locations/infra/typeorm/entities/Territory';
 import ICreateTerritoryDTO from '@modules/locations/dtos/ICreateTerritoryDTO';
-import ITerritoryRepository from '@modules/locations/repositories/ITerritoryRepository';
+import ITerritoriesRepository from '@modules/locations/repositories/ITerritoriesRepository';
 
-class TerritoryRepository implements ITerritoryRepository {
+class TerritoriesRepository implements ITerritoriesRepository {
   private ormRepository: Repository<Territory>;
 
   constructor() {
@@ -82,4 +82,4 @@ class TerritoryRepository implements ITerritoryRepository {
   }
 }
 
-export default TerritoryRepository;
+export default TerritoriesRepository;

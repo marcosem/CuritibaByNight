@@ -1,10 +1,10 @@
 import Territory from '@modules/locations/infra/typeorm/entities/Territory';
 import ICreateTerritoryDTO from '@modules/locations/dtos/ICreateTerritoryDTO';
-import ITerritoryRepository from '@modules/locations/repositories/ITerritoryRepository';
+import ITerritoriesRepository from '@modules/locations/repositories/ITerritoriesRepository';
 
 import { v4 } from 'uuid';
 
-class FakeTerritoryRepository implements ITerritoryRepository {
+class FakeTerritoriesRepository implements ITerritoriesRepository {
   private territories: Territory[] = [];
 
   public async create({
@@ -65,4 +65,4 @@ class FakeTerritoryRepository implements ITerritoryRepository {
   }
 }
 
-export default FakeTerritoryRepository;
+export default FakeTerritoriesRepository;
