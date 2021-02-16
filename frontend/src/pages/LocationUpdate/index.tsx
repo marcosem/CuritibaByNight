@@ -194,15 +194,7 @@ const LocationUpdate: React.FC = () => {
       if (error.response) {
         const { message } = error.response.data;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
-          addToast({
-            type: 'error',
-            title: 'Sessão Expirada',
-            description: 'Sessão de usuário expirada, faça o login novamente!',
-          });
-
-          signOut();
-        } else {
+        if (error.response.status !== 401) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar personagens',
@@ -212,7 +204,7 @@ const LocationUpdate: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, signOut]);
+  }, [addToast]);
 
   const loadLocations = useCallback(async () => {
     setBusy(true);
