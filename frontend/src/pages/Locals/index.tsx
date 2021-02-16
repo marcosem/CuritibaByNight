@@ -92,6 +92,12 @@ interface ITerritory {
   color: string;
 }
 
+interface ITerritoryRes {
+  name: string;
+  population: number;
+  sect?: string;
+}
+
 const Locals: React.FC = () => {
   const { local } = useParams<IRouteParams>();
   const [coordLatitude, setCoordLatitude] = useState<number>(-25.442152);
@@ -99,7 +105,6 @@ const Locals: React.FC = () => {
   const [zoom, setZoom] = useState<number>(9);
   const [showBorders, setShowBorders] = useState<boolean>(false);
   const [borders, setBorders] = useState<ITerritory[]>([]);
-
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>({
@@ -246,61 +251,99 @@ const Locals: React.FC = () => {
     user.storyteller,
   ]);
 
-  useEffect(() => {
-    const newTerritories: ITerritory[] = territories.map(item => {
-      let color;
+  const loadTerritories = useCallback(async () => {
+    setBusy(true);
 
-      switch (item.sect) {
-        case 'Sabbat':
-          color = 'red';
-          break;
-        case 'Camarilla':
-          color = 'green';
-          break;
-        case 'Anarch':
-          color = 'yellow';
-          break;
-        case 'Anarch-Sabbat':
-          color = 'orangered';
-          break;
-        case 'Wyrm':
-          color = 'indigo';
-          break;
-        case 'Followers of Set':
-          color = 'chocolate';
-          break;
-        case 'Assamites':
-          color = 'steelblue';
-          break;
-        case 'Garou':
-          color = 'magenta';
-          break;
-        case 'Inquisition':
-          color = 'white';
-          break;
-        default:
-          color = 'black';
+    try {
+      await api.get('territories/list').then(response => {
+        const res: ITerritoryRes[] = response.data;
+
+        const territoriesList: ITerritory[] = res.map(
+          (territory: ITerritoryRes) => {
+            const territoryCoords = territories.find(
+              terr => terr.name === territory.name,
+            );
+
+            let color;
+            switch (territory.sect) {
+              case 'Sabbat':
+                color = 'red';
+                break;
+              case 'Camarilla':
+                color = 'green';
+                break;
+              case 'Anarch':
+                color = 'yellow';
+                break;
+              case 'Anarch-Sabbat':
+                color = 'orangered';
+                break;
+              case 'Wyrm':
+                color = 'indigo';
+                break;
+              case 'Followers of Set':
+                color = 'chocolate';
+                break;
+              case 'Assamites':
+                color = 'steelblue';
+                break;
+              case 'Garou':
+                color = 'magenta';
+                break;
+              case 'Inquisition':
+                color = 'white';
+                break;
+              default:
+                color = 'black';
+            }
+
+            const parsedTerritory: ITerritory = {
+              name: territory.name,
+              population: new Intl.NumberFormat('pt-BR').format(
+                territory.population,
+              ),
+              sect: territory.sect ? territory.sect : 'Não definido',
+              coordinates: territoryCoords
+                ? territoryCoords.coordinates.map(coord => {
+                    const Lat = coord[1];
+                    const Long = coord[0];
+                    const resLatLong: [number, number] = [Lat, Long];
+
+                    return resLatLong;
+                  })
+                : [],
+              color,
+            };
+
+            return parsedTerritory;
+          },
+        );
+        setBorders(territoriesList);
+      });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar os territórios',
+            description: `Erro: '${message}'`,
+          });
+        }
       }
+    }
 
-      const newTerritory: ITerritory = {
-        name: item.name,
-        population: new Intl.NumberFormat('pt-BR').format(item.population),
-        sect: item.sect === '' ? 'Não definido' : item.sect,
-        coordinates: item.coordinates.map(coord => {
-          const Lat = coord[1];
-          const Long = coord[0];
-          const resLatLong: [number, number] = [Lat, Long];
-
-          return resLatLong;
-        }),
-        color,
-      };
-
-      return newTerritory;
-    });
-
-    setBorders(newTerritories);
-  }, []);
+    setBusy(false);
+  }, [addToast, signOut]);
 
   const handleShowBorderChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -312,10 +355,11 @@ const Locals: React.FC = () => {
   useEffect(() => {
     if (user.storyteller) {
       loadCharacters();
+      loadTerritories();
     }
 
     loadLocations();
-  }, [loadLocations, loadCharacters, user.storyteller]);
+  }, [loadLocations, loadCharacters, user.storyteller, loadTerritories]);
 
   const handleCharacterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
