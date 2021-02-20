@@ -87,7 +87,7 @@ const LocationCard: React.FC<ILocationCardProps> = ({
         break;
       case 'camp':
         setTypeIcon(GiCampingTent);
-        setTypeTitle('Castelo');
+        setTypeTitle('Acampamento');
         break;
       case 'castle':
         setTypeIcon(GiCastle);
