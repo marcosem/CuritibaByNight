@@ -427,7 +427,7 @@ const Challenges: React.FC = () => {
         const stName = stNames[firsNameIndex];
 
         const stStaticChar: ICharacter = {
-          id: 'Static',
+          id: `Storyteller-${user.id}`,
           name: stName,
           clan: 'Curitiba By Night',
           title: 'Narrador',
@@ -616,6 +616,8 @@ const Challenges: React.FC = () => {
             char_id: selectedCharacter.id,
           });
         }
+
+        console.log(selectedCharacter);
 
         setMyChar(selectedCharacter);
         char1Id.current = selectedCharacter.id;
@@ -989,13 +991,15 @@ const Challenges: React.FC = () => {
                     coterie={myChar.coterie}
                     avatar={myChar.avatar_url}
                     updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
-                    npc={myChar.npc && myChar.id !== 'Static'}
+                    npc={myChar.npc && myChar.id.indexOf('Storyteller') === -1}
                     regnant={
                       myChar.regnant_char ? myChar.regnant_char.name : ''
                     }
                     situation={myChar.situation}
                     locked
-                    readOnly={myChar.id === '' || myChar.id === 'Static'}
+                    readOnly={
+                      myChar.id === '' || myChar.id.indexOf('Storyteller') >= 0
+                    }
                   />
 
                   {user.storyteller && (
@@ -1245,13 +1249,15 @@ const Challenges: React.FC = () => {
                     coterie={myChar.coterie}
                     avatar={myChar.avatar_url}
                     updatedAt={myChar.formatedDate ? myChar.formatedDate : ''}
-                    npc={myChar.npc && myChar.id !== 'Static'}
+                    npc={myChar.npc && myChar.id.indexOf('Storyteller') === -1}
                     regnant={
                       myChar.regnant_char ? myChar.regnant_char.name : ''
                     }
                     situation={myChar.situation}
                     locked
-                    readOnly={myChar.id === '' || myChar.id === 'Static'}
+                    readOnly={
+                      myChar.id === '' || myChar.id.indexOf('Storyteller') >= 0
+                    }
                   />
 
                   {user.storyteller && (
