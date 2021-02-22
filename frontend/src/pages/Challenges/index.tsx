@@ -617,8 +617,6 @@ const Challenges: React.FC = () => {
           });
         }
 
-        console.log(selectedCharacter);
-
         setMyChar(selectedCharacter);
         char1Id.current = selectedCharacter.id;
       } else {
