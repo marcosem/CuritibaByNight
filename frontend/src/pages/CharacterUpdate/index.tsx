@@ -509,7 +509,8 @@ const CharacterUpdate: React.FC = () => {
                     </div>
 
                     {(selectedChar.clan.indexOf('Ghoul') >= 0 ||
-                      selectedChar.clan.indexOf('Retainer') >= 0) && (
+                      selectedChar.clan.indexOf('Retainer') >= 0 ||
+                      selectedChar.clan.indexOf('Wraith') >= 0) && (
                       <div>
                         <strong>Regente / Guardião:</strong>
                         <SelectRegnant
