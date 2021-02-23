@@ -85,6 +85,7 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.removeItem('@CuritibaByNight:character');
 
     setData({} as AuthState);
+    setCharacter({} as ICharacter);
   }, []);
 
   const updateUser = useCallback(
