@@ -41,7 +41,13 @@ class Character {
   avatar: string;
 
   @Column()
+  creature_type: string;
+
+  @Column()
   clan: string;
+
+  @Column()
+  sect: string;
 
   @Column()
   title: string;
@@ -58,7 +64,7 @@ class Character {
   @Column()
   regnant: string;
 
-  @ManyToOne(() => Character )
+  @ManyToOne(() => Character)
   @JoinColumn({ name: 'regnant' })
   regnant_char?: Character;
 
