@@ -5,6 +5,8 @@ export default interface ICreateCharacterDTO {
   experience?: number;
   experience_total?: number;
   clan?: string;
+  creature_type?: string;
+  sect?: string;
   title?: string;
   coterie?: string;
   situation?: string;

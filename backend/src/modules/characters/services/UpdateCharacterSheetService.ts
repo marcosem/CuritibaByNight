@@ -15,6 +15,8 @@ interface IRequestDTO {
   char_xp: number;
   char_xp_total: number;
   char_clan: string;
+  char_creature_type: string;
+  char_sect: string;
   char_title: string;
   char_coterie: string;
   char_situation: string;
@@ -45,6 +47,8 @@ class UpdateCharacterSheetService {
     char_xp,
     char_xp_total,
     char_clan,
+    char_creature_type,
+    char_sect,
     char_title,
     char_coterie,
     char_situation,
@@ -90,6 +94,8 @@ class UpdateCharacterSheetService {
     char.experience = char_xp;
     char.experience_total = char_xp_total;
     char.clan = char_clan;
+    char.creature_type = char_creature_type;
+    char.sect = char_sect;
     char.title = char_title;
     char.coterie = char_coterie;
     char.situation = char_situation;
@@ -127,11 +133,7 @@ class UpdateCharacterSheetService {
         throw new AppError('Regnant Character not found', 400);
       }
 
-      if (
-        char.clan.indexOf('Ghoul') >= 0 ||
-        char.clan.indexOf('Retainer') >= 0 ||
-        char.clan.indexOf('Wraith') >= 0
-      ) {
+      if (char.creature_type === 'Mortal' || char.creature_type === 'Wraith') {
         if (char.regnant !== char_regnant) {
           delete char.regnant_char;
         }
@@ -140,7 +142,7 @@ class UpdateCharacterSheetService {
       } else {
         await this.storageProvider.deleteFile(sheetFilename, 'sheet');
         throw new AppError(
-          'Only Non Vampire Characters may have a Regnant',
+          'Only Mortal and Wraith Characters may have a Regnant',
           400,
         );
       }

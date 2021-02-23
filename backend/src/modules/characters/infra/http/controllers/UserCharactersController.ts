@@ -36,6 +36,8 @@ export default class UserCharactersController {
       char_xp: 0,
       char_xp_total: 0,
       char_clan: '',
+      char_creature_type: '',
+      char_sect: '',
       char_title: '',
       char_coterie: '',
       is_npc: isNPC,
@@ -49,6 +51,8 @@ export default class UserCharactersController {
       inputData.char_xp = parsedChar.experience;
       inputData.char_xp_total = parsedChar.experience_total;
       inputData.char_clan = parsedChar.clan;
+      inputData.char_creature_type = parsedChar.creature_type;
+      inputData.char_sect = parsedChar.sect;
       inputData.char_title = parsedChar.title;
       inputData.char_coterie = parsedChar.coterie;
       inputData.char_retainer_level = parsedChar.retainer_level;
@@ -124,6 +128,8 @@ export default class UserCharactersController {
       char_xp: oldChar.experience,
       char_xp_total: oldChar.experience_total,
       char_clan: oldChar.clan,
+      char_creature_type: oldChar.creature_type,
+      char_sect: oldChar.sect,
       char_title: oldChar.title,
       char_coterie: oldChar.coterie,
       char_situation: situation || oldChar.situation,
@@ -139,6 +145,8 @@ export default class UserCharactersController {
       inputData.char_xp = parsedChar.experience;
       inputData.char_xp_total = parsedChar.experience_total;
       inputData.char_clan = parsedChar.clan;
+      inputData.char_creature_type = parsedChar.creature_type;
+      inputData.char_sect = parsedChar.sect;
       inputData.char_title = parsedChar.title;
       inputData.char_coterie = parsedChar.coterie;
       inputData.char_retainer_level = parsedChar.retainer_level;
