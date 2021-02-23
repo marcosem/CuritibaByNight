@@ -15,6 +15,8 @@ class FakePDFParserProvider implements IPDFParserProvider {
     char.clan = 'Assamite';
     char.title = 'Assassin';
     char.coterie = 'Assasins creed';
+    char.creature_type = 'Vampire';
+    char.sect = 'Independent';
     char.retainer_level = 0;
 
     return char;
