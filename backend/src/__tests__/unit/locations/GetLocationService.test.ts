@@ -266,6 +266,75 @@ describe('GetLocation', () => {
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
+  it('Should not allow get creature type location other than the character one', async () => {
+    const noStUser = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: noStUser.id,
+      name: 'Dracula',
+      experience: 666,
+      clan: 'Tzimisce',
+      creature_type: 'Vampire',
+      file: 'dracula.pdf',
+      npc: false,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      creature_type: 'Wraith',
+    });
+
+    await expect(
+      getLocation.execute({
+        user_id: noStUser.id,
+        char_id: char.id,
+        location_id: location.id,
+      }),
+    ).rejects.toMatchObject({ statusCode: 401 });
+  });
+
+  it('Should not allow get sect location other than the character one', async () => {
+    const noStUser = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: noStUser.id,
+      name: 'Dracula',
+      experience: 666,
+      clan: 'Tzimisce',
+      creature_type: 'Vampire',
+      sect: 'Sabbat',
+      file: 'dracula.pdf',
+      npc: false,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      sect: 'Camarilla',
+    });
+
+    await expect(
+      getLocation.execute({
+        user_id: noStUser.id,
+        char_id: char.id,
+        location_id: location.id,
+      }),
+    ).rejects.toMatchObject({ statusCode: 401 });
+  });
+
   it('Should not allow not existant character to get a location', async () => {
     const noStUser = await fakeUsersRepository.create({
       name: 'A User',

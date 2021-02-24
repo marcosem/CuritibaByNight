@@ -112,7 +112,7 @@ describe('GetLocationsList', () => {
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
-  it('Should allow get public and elysiums locations', async () => {
+  it('Should allow get public locations', async () => {
     const noStUser = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -133,7 +133,7 @@ describe('GetLocationsList', () => {
       char_id: char.id,
     });
 
-    expect(locationsList).toHaveLength(2);
+    expect(locationsList).toHaveLength(1);
     expect(locationsList[0]).toMatchObject({
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
@@ -141,56 +141,6 @@ describe('GetLocationsList', () => {
       longitude: -49.2713069,
       property: 'public',
       clan: 'Ventrue',
-    });
-
-    expect(locationsList[1]).toMatchObject({
-      name: 'Paço da Liberdade',
-      description: 'Elysium Tremere',
-      latitude: -25.4166496,
-      longitude: -49.2713069,
-      elysium: true,
-      clan: 'Tremere',
-    });
-  });
-
-  it('Should allow get public and elysiums locations', async () => {
-    const noStUser = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: noStUser.id,
-      name: 'Dracula',
-      experience: 666,
-      clan: 'Tzimisce',
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
-    const locationsList = await getLocationsList.execute({
-      user_id: noStUser.id,
-      char_id: char.id,
-    });
-
-    expect(locationsList).toHaveLength(2);
-    expect(locationsList[0]).toMatchObject({
-      name: 'Prefeitura de Curitiba',
-      description: 'Prefeitura Municipal de Curitiba',
-      latitude: -25.4166496,
-      longitude: -49.2713069,
-      property: 'public',
-      clan: 'Ventrue',
-    });
-
-    expect(locationsList[1]).toMatchObject({
-      name: 'Paço da Liberdade',
-      description: 'Elysium Tremere',
-      latitude: -25.4166496,
-      longitude: -49.2713069,
-      elysium: true,
-      clan: 'Tremere',
     });
   });
 
@@ -228,7 +178,7 @@ describe('GetLocationsList', () => {
       char_id: char.id,
     });
 
-    expect(locationsList[2]).toMatchObject({
+    expect(locationsList[1]).toMatchObject({
       name: 'Secret Chamber',
       description: 'Hidden',
       latitude: -25.4166496,

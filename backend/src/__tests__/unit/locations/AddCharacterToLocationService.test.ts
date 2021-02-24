@@ -285,40 +285,6 @@ describe('AddCharacterToLocation', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should not allow to add a character to a elysium', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: true,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      clan: 'Tzimisce',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
-    const location = await fakeLocationsRepository.create({
-      name: 'Prefeitura de Curitiba',
-      description: 'Prefeitura Municipal de Curitiba',
-      latitude: -25.4166496,
-      longitude: -49.2713069,
-      elysium: true,
-    });
-
-    await expect(
-      addCharacterToLocation.execute({
-        user_id: user.id,
-        char_id: char.id,
-        location_id: location.id,
-      }),
-    ).rejects.toBeInstanceOf(AppError);
-  });
-
   it('Should not allow to add a character to location of his own clan', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
@@ -342,6 +308,77 @@ describe('AddCharacterToLocation', () => {
       latitude: -25.4166496,
       longitude: -49.2713069,
       clan: 'Tzimisce',
+    });
+
+    await expect(
+      addCharacterToLocation.execute({
+        user_id: user.id,
+        char_id: char.id,
+        location_id: location.id,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should not allow to add a character to location of his own creature type', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      clan: 'Tzimisce',
+      creature_type: 'Vampire',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: false,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      creature_type: 'Vampire',
+    });
+
+    await expect(
+      addCharacterToLocation.execute({
+        user_id: user.id,
+        char_id: char.id,
+        location_id: location.id,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('Should not allow to add a character to location of his own sect', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      clan: 'Tzimisce',
+      creature_type: 'Vampire',
+      sect: 'Sabbat',
+      experience: 666,
+      file: 'dracula.pdf',
+      npc: false,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      sect: 'Sabbat',
     });
 
     await expect(

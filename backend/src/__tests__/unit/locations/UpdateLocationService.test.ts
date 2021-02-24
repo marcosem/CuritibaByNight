@@ -50,6 +50,8 @@ describe('UpdateLocation', () => {
       level: 5,
       mystical_level: 2,
       property: 'clan',
+      creature_type: 'Vampire',
+      sect: 'Camarilla',
       clan: 'Ventrue',
     };
 
@@ -67,6 +69,8 @@ describe('UpdateLocation', () => {
       mystical_level: newLocation.mystical_level,
       property: newLocation.property,
       clan: newLocation.clan,
+      creature_type: newLocation.creature_type,
+      sect: newLocation.sect,
     });
 
     expect(updatedLocation).toMatchObject(newLocation);
