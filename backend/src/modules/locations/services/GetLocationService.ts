@@ -44,7 +44,8 @@ class GetLocationService {
       throw new AppError('Location not found', 400);
     }
 
-    if (location.property === 'public' || location.elysium === true) {
+    // if (location.property === 'public' || location.elysium === true) {
+    if (location.property === 'public') {
       return location;
     }
 
@@ -55,7 +56,13 @@ class GetLocationService {
         throw new AppError('Character not found', 400);
       }
 
-      if (location.responsible !== char_id && location.clan !== char.clan) {
+      if (
+        location.responsible !== char_id &&
+        location.clan !== char.clan &&
+        (location.creature_type === undefined ||
+          location.creature_type !== char.creature_type) &&
+        (location.sect === undefined || location.sect !== char.sect)
+      ) {
         throw new AppError(
           'This character does not have permission to load this location',
           401,

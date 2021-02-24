@@ -19,6 +19,8 @@ class FakeLocationsRepository implements ILocationsRepository {
     mystical_level = 0,
     property = 'private',
     clan,
+    creature_type,
+    sect,
     responsible,
   }: ICreateLocationDTO): Promise<Location> {
     const location = new Location();
@@ -36,6 +38,8 @@ class FakeLocationsRepository implements ILocationsRepository {
       mystical_level,
       property,
       clan,
+      creature_type,
+      sect,
       responsible,
     });
 
@@ -63,13 +67,17 @@ class FakeLocationsRepository implements ILocationsRepository {
   public async findByCharacterId(
     char_id: string,
     char_clan: string,
+    char_creature_type: string,
+    char_sect: string,
   ): Promise<Location[]> {
     const locationList = this.locations.filter(
       location =>
         location.responsible === char_id ||
         location.property === 'public' ||
-        location.elysium === true ||
-        location.clan === char_clan,
+        (location.creature_type !== undefined &&
+          location.creature_type === char_creature_type) ||
+        (location.sect !== undefined && location.sect === char_sect) ||
+        (location.clan !== undefined && location.clan === char_clan),
     );
 
     return locationList;

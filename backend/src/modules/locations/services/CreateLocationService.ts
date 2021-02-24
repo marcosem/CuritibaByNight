@@ -21,6 +21,8 @@ interface IRequestDTO {
   mystical_level?: number;
   property?: string;
   clan?: string;
+  creature_type?: string;
+  sect?: string;
   char_id?: string;
 }
 
@@ -50,6 +52,8 @@ class CreateLocationService {
     mystical_level,
     property,
     clan,
+    creature_type,
+    sect,
     char_id,
   }: IRequestDTO): Promise<Location> {
     const user = await this.usersRepository.findById(user_id);
@@ -94,6 +98,8 @@ class CreateLocationService {
       mystical_level,
       property,
       clan,
+      creature_type,
+      sect,
       responsible: char_id,
     });
 

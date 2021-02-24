@@ -22,6 +22,8 @@ export default class LocationsController {
       mystical_level,
       property,
       clan,
+      creature_type,
+      sect,
       char_id,
     } = req.body;
 
@@ -40,6 +42,8 @@ export default class LocationsController {
       mystical_level,
       property,
       clan,
+      creature_type,
+      sect,
       char_id,
     };
 
@@ -94,6 +98,8 @@ export default class LocationsController {
       mystical_level,
       property,
       clan,
+      creature_type,
+      sect,
       char_id,
     } = req.body;
 
@@ -121,6 +127,8 @@ export default class LocationsController {
           : oldLocation.mystical_level,
       property: property || oldLocation.property,
       clan: clan || oldLocation.clan,
+      creature_type: creature_type || oldLocation.creature_type,
+      sect: sect || oldLocation.sect,
       char_id: char_id || oldLocation.responsible,
     };
 

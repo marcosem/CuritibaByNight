@@ -10,5 +10,7 @@ export default interface ICreateCharacterDTO {
   mystical_level?: number;
   property?: string;
   clan?: string;
+  creature_type?: string;
+  sect?: string;
   responsible?: string;
 }

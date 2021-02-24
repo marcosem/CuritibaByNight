@@ -50,6 +50,8 @@ class GetLocationsListService {
       locationList = await this.locationsRepository.findByCharacterId(
         char_id,
         char.clan,
+        char.creature_type,
+        char.sect,
       );
 
       const awareList = await this.locationsCharactersRepository.listLocationsByCharacter(

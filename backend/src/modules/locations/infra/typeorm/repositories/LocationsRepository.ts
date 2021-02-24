@@ -22,6 +22,8 @@ class LocationsRepository implements ILocationsRepository {
     mystical_level = 0,
     property = 'private',
     clan,
+    creature_type,
+    sect,
     responsible,
   }: ICreateLocationDTO): Promise<Location> {
     const location = this.ormRepository.create({
@@ -36,6 +38,8 @@ class LocationsRepository implements ILocationsRepository {
       mystical_level,
       property,
       clan,
+      creature_type,
+      sect,
       responsible,
     });
 
@@ -76,12 +80,18 @@ class LocationsRepository implements ILocationsRepository {
   public async findByCharacterId(
     char_id: string,
     char_clan: string,
+    char_creature_type: string,
+    char_sect: string,
   ): Promise<Location[]> {
     const where = [
       { responsible: char_id },
       { property: 'public' },
-      { elysium: true },
-      { clan: char_clan },
+      {
+        creature_type: char_creature_type || 'not defined',
+      },
+      { sect: char_sect || 'not defined' },
+      // { elysium: true },
+      { clan: char_clan || 'not defined' },
     ];
 
     const locationList = await this.ormRepository.find({

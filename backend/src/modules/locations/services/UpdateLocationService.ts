@@ -19,6 +19,8 @@ interface IRequestDTO {
   mystical_level?: number;
   property?: string;
   clan?: string;
+  creature_type?: string;
+  sect?: string;
   char_id?: string;
 }
 
@@ -47,6 +49,8 @@ class UpdateLocationService {
     mystical_level,
     property,
     clan,
+    creature_type,
+    sect,
     char_id,
   }: IRequestDTO): Promise<Location> {
     const user = await this.usersRepository.findById(user_id);
@@ -91,6 +95,8 @@ class UpdateLocationService {
     if (mystical_level) location.mystical_level = mystical_level;
     if (property) location.property = property;
     if (clan) location.clan = clan;
+    if (creature_type) location.creature_type = creature_type;
+    if (sect) location.sect = sect;
 
     await this.locationsRepository.update(location);
 

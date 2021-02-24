@@ -49,7 +49,13 @@ class Location {
   property: string;
 
   @Column()
+  creature_type: string;
+
+  @Column()
   clan: string;
+
+  @Column()
+  sect: string;
 
   @Column()
   responsible: string;

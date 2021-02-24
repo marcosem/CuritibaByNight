@@ -68,9 +68,12 @@ class AddCharacterToLocationService {
     if (
       locChar ||
       location.responsible === char_id ||
-      location.elysium ||
+      // location.elysium ||
       location.property === 'public' ||
-      (location.clan !== undefined && location.clan === char.clan)
+      (location.clan !== undefined && location.clan === char.clan) ||
+      (location.creature_type !== undefined &&
+        location.creature_type === char.creature_type) ||
+      (location.sect !== undefined && location.sect === char.sect)
     ) {
       throw new AppError(
         'The character is already aware of this location',
