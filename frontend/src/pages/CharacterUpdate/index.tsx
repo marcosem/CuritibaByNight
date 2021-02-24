@@ -428,6 +428,8 @@ const CharacterUpdate: React.FC = () => {
                     experience={selectedChar.experience}
                     sheetFile={selectedChar.character_url}
                     clan={selectedChar.clan}
+                    creature_type={selectedChar.creature_type}
+                    sect={selectedChar.sect}
                     title={selectedChar.title}
                     coterie={selectedChar.coterie}
                     avatar={selectedChar.avatar_url}

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
 import { FiClock, FiCamera } from 'react-icons/fi';
@@ -28,6 +29,8 @@ interface ICharacterCardProps {
   sheetFile: string;
   title: string;
   clan: string;
+  creature_type: string;
+  sect?: string;
   regnant: string;
   updatedAt: string;
   situation?: string;
@@ -44,6 +47,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   sheetFile,
   title,
   clan,
+  creature_type,
   regnant,
   updatedAt,
   situation = 'active',
@@ -86,12 +90,12 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   }, [situation]);
 
   useEffect(() => {
-    if (clan.indexOf('Wraith') >= 0) {
-      setCardImg(cardAlly);
+    if (clan.indexOf('Ghoul') >= 0 || clan.indexOf('Mortal') >= 0) {
+      setCardImg(cardRetainer);
     } else if (clan.indexOf('Curitiba By Night') >= 0) {
       setCardImg(cardST);
     } else {
-      setCardImg(cardRetainer);
+      setCardImg(cardAlly);
     }
   }, [clan]);
 
@@ -168,9 +172,9 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
               rel="noopener noreferrer"
               title="Baixar Ficha"
             >
-              {clan.indexOf('Wraith') >= 0 ? (
+              {creature_type !== 'Mortal' ? (
                 <>
-                  <b>{`${clan}: `}</b>
+                  <b>{`${creature_type}: `}</b>
                   {name}
                 </>
               ) : (
@@ -182,14 +186,17 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
             </a>
           )}
 
-          {clan.indexOf('Wraith') >= 0 ? (
-            <>{regnant !== '' && <span>{`Ligado à ${regnant}`}</span>}</>
+          {creature_type !== 'Mortal' ? (
+            <>
+              {clan !== '' && <span>{clan}</span>}
+              {regnant !== '' && <span>{`Ligado à ${regnant}`}</span>}
+            </>
           ) : (
             <>
               {regnant !== '' ? (
                 <span>{`${clan} de ${regnant}`}</span>
               ) : (
-                <span>{`${clan}`}</span>
+                <>{clan && <span>{clan}</span>}</>
               )}
             </>
           )}

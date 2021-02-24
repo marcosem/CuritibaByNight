@@ -214,6 +214,8 @@ const Challenges: React.FC = () => {
                     id: opponent.id,
                     name: opponent.name,
                     clan: opponent.clan,
+                    creature_type: opponent.creture_type,
+                    sect: opponent.sect,
                     title: opponent.title,
                     coterie: opponent.coterie,
                     avatar_url: opponent.avatar_url,
@@ -258,6 +260,8 @@ const Challenges: React.FC = () => {
                   id: '',
                   name: 'Desconhecido',
                   clan: 'Desconhecido',
+                  creature_type: 'Vampire',
+                  sect: '',
                   title: '',
                   coterie: '',
                   avatar_url: '',
@@ -430,6 +434,8 @@ const Challenges: React.FC = () => {
           id: `Storyteller-${user.id}`,
           name: stName,
           clan: 'Curitiba By Night',
+          creature_type: '',
+          sect: '',
           title: 'Narrador',
           coterie: 'Curitiba By Night',
           avatar_url: user.avatar_url,
@@ -624,6 +630,8 @@ const Challenges: React.FC = () => {
           id: '',
           name: 'Desconhecido',
           clan: 'Desconhecido',
+          creature_type: 'Vampire',
+          sect: '',
           title: '',
           coterie: '',
           avatar_url: '',
@@ -665,6 +673,8 @@ const Challenges: React.FC = () => {
           id: '',
           name: 'Desconhecido',
           clan: 'Desconhecido',
+          creature_type: 'Vampire',
+          sect: '',
           title: '',
           coterie: '',
           avatar_url: '',
@@ -830,6 +840,8 @@ const Challenges: React.FC = () => {
           id: '',
           name: 'Desconhecido',
           clan: 'Desconhecido',
+          creature_type: 'Vampire',
+          sect: '',
           title: '',
           coterie: '',
           avatar_url: '',
@@ -860,6 +872,8 @@ const Challenges: React.FC = () => {
       id: '',
       name: 'Desconhecido',
       clan: 'Desconhecido',
+      creature_type: 'Vampire',
+      sect: '',
       title: '',
       coterie: '',
       avatar_url: '',
@@ -880,6 +894,8 @@ const Challenges: React.FC = () => {
         id: '',
         name: 'Desconhecido',
         clan: 'Desconhecido',
+        creature_type: 'Vampire',
+        sect: '',
         title: '',
         coterie: '',
         avatar_url: '',
@@ -985,6 +1001,8 @@ const Challenges: React.FC = () => {
                     experience={myChar.experience}
                     sheetFile={myChar.character_url}
                     clan={myChar.clan}
+                    creature_type={myChar.creature_type}
+                    sect={myChar.sect}
                     title={myChar.title}
                     coterie={myChar.coterie}
                     avatar={myChar.avatar_url}
@@ -1127,6 +1145,8 @@ const Challenges: React.FC = () => {
                     experience={opponentChar.experience}
                     sheetFile={opponentChar.character_url}
                     clan={opponentChar.clan}
+                    creature_type={opponentChar.creature_type}
+                    sect={opponentChar.sect}
                     title={opponentChar.title}
                     coterie={opponentChar.coterie}
                     avatar={opponentChar.avatar_url}
@@ -1243,6 +1263,8 @@ const Challenges: React.FC = () => {
                     experience={myChar.experience}
                     sheetFile={myChar.character_url}
                     clan={myChar.clan}
+                    creature_type={myChar.creature_type}
+                    sect={myChar.sect}
                     title={myChar.title}
                     coterie={myChar.coterie}
                     avatar={myChar.avatar_url}
@@ -1367,6 +1389,8 @@ const Challenges: React.FC = () => {
                     experience={opponentChar.experience}
                     sheetFile={opponentChar.character_url}
                     clan={opponentChar.clan}
+                    creature_type={opponentChar.creature_type}
+                    sect={opponentChar.sect}
                     title={opponentChar.title}
                     coterie={opponentChar.coterie}
                     avatar={opponentChar.avatar_url}

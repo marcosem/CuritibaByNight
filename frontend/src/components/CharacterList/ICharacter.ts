@@ -3,6 +3,8 @@ export default interface ICharacter {
   id: string;
   name: string;
   clan: string;
+  creature_type: string;
+  sect: string;
   title: string;
   coterie: string;
   avatar_url: string;

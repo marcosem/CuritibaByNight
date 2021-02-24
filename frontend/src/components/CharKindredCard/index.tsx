@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
 import { FiClock, FiCamera } from 'react-icons/fi';
@@ -25,6 +26,8 @@ interface ICharacterCardProps {
   avatar: string;
   sheetFile: string;
   clan: string;
+  creature_type?: string;
+  sect?: string;
   title: string;
   coterie: string;
   updatedAt: string;

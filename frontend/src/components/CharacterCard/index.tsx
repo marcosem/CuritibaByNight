@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { lazy, Suspense } from 'react';
 import Loading from '../Loading';
 
@@ -13,6 +14,8 @@ interface ICharacterCardProps {
   avatar: string;
   sheetFile: string;
   clan: string;
+  creature_type: string;
+  sect: string;
   title: string;
   coterie: string;
   updatedAt: string;
@@ -30,6 +33,8 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   avatar,
   sheetFile,
   clan,
+  creature_type,
+  sect,
   title,
   coterie,
   updatedAt,
@@ -42,9 +47,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
   return (
     <>
       <Suspense fallback={<Loading />}>
-        {clan.indexOf('Ghoul') >= 0 ||
-        clan.indexOf('Retainer') >= 0 ||
-        clan.indexOf('Wraith') >= 0 ||
+        {creature_type !== 'Vampire' ||
         clan.indexOf('Curitiba By Night') >= 0 ? (
           <CharRetainerCard
             charId={charId}
@@ -53,6 +56,8 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
             sheetFile={sheetFile}
             title={title}
             clan={clan}
+            creature_type={creature_type}
+            sect={sect}
             avatar={avatar}
             updatedAt={updatedAt}
             npc={npc}
@@ -68,6 +73,8 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
             experience={experience}
             sheetFile={sheetFile}
             clan={clan}
+            creature_type={creature_type}
+            sect={sect}
             title={title}
             coterie={coterie}
             avatar={avatar}
