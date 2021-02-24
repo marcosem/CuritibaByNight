@@ -557,8 +557,8 @@ const LocationCharList: React.FC = () => {
                     <b>
                       <br />
                       <br />
-                      Este local é de conhecimento de todos por ser Elysium ou
-                      Localização Pública.
+                      Este local é de conhecimento de todos por Localização
+                      Pública.
                     </b>
                   </strong>
                 </div>
