@@ -142,6 +142,9 @@ const LocationCharList: React.FC = () => {
             type: location.type,
             property: location.property,
             clan: location.clan !== null ? location.clan : '',
+            creature_type:
+              location.creature_type !== null ? location.creature_type : '',
+            sect: location.sect !== null ? location.sect : '',
             level: location.level,
             mystical_level: location.mystical_level,
             picture_url: location.picture_url || undefined,
@@ -543,6 +546,20 @@ const LocationCharList: React.FC = () => {
                 </div>
               )}
 
+              {selectedLocation.creature_type && (
+                <div>
+                  <strong>Todos os:</strong>
+                  <span>{selectedLocation.creature_type}</span>
+                </div>
+              )}
+
+              {selectedLocation.sect && (
+                <div>
+                  <strong>Todos os membros:</strong>
+                  <span>{selectedLocation.sect}</span>
+                </div>
+              )}
+
               {selectedLocation.clan && (
                 <div>
                   <strong>Todos os membros do Clã:</strong>
@@ -617,15 +634,39 @@ const LocationCharList: React.FC = () => {
                                     onClick={handleCharacterDetails}
                                   >
                                     <TableCell>
-                                      {locChar.characterId.clan.indexOf(' (') >
-                                      0
-                                        ? locChar.characterId.clan.substring(
-                                            0,
-                                            locChar.characterId.clan.indexOf(
-                                              ' (',
-                                            ),
-                                          )
-                                        : locChar.characterId.clan}
+                                      {locChar.characterId.creature_type !==
+                                        'Vampire' &&
+                                      locChar.characterId.creature_type !==
+                                        'Mortal' ? (
+                                        // eslint-disable-next-line react/jsx-indent
+                                        <>
+                                          {locChar.characterId.clan ? (
+                                            <>
+                                              {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
+                                            </>
+                                          ) : (
+                                            <>
+                                              {
+                                                locChar.characterId
+                                                  .creature_type
+                                              }
+                                            </>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <>
+                                          {locChar.characterId.clan.indexOf(
+                                            ' (',
+                                          ) > 0
+                                            ? locChar.characterId.clan.substring(
+                                                0,
+                                                locChar.characterId.clan.indexOf(
+                                                  ' (',
+                                                ),
+                                              )
+                                            : locChar.characterId.clan}
+                                        </>
+                                      )}
                                     </TableCell>
                                   </td>
                                   <td>
