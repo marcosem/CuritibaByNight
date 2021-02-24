@@ -134,7 +134,7 @@ export default class UserCharactersController {
       char_coterie: oldChar.coterie,
       char_situation: situation || oldChar.situation,
       is_npc: oldChar.npc !== isNPC ? isNPC : oldChar.npc,
-      char_regnant: regnant_id || oldChar.regnant,
+      char_regnant: regnant_id !== undefined ? regnant_id : oldChar.regnant,
       char_retainer_level: oldChar.retainer_level,
       sheetFilename: fileName,
       update: comments,

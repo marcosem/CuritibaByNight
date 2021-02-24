@@ -50,7 +50,7 @@ locationsRouter.post(
         'creature',
         'sect',
       ).optional(),
-      clan: Joi.string().optional(),
+      clan: Joi.string().allow(null).optional(),
       creature_type: Joi.valid(
         'Changeling',
         'Demon',
@@ -63,9 +63,11 @@ locationsRouter.post(
         'Werewolf',
         'Wraith',
         'Other',
-      ).optional(),
-      sect: Joi.string().optional(),
-      char_id: Joi.string().uuid().optional(),
+      )
+        .allow(null)
+        .optional(),
+      sect: Joi.string().allow(null).optional(),
+      char_id: Joi.string().uuid().allow(null).optional(),
     },
   }),
   locationsController.create,
@@ -104,7 +106,7 @@ locationsRouter.patch(
         'creature',
         'sect',
       ).optional(),
-      clan: Joi.string().optional(),
+      clan: Joi.string().allow(null).optional(),
       creature_type: Joi.valid(
         'Changeling',
         'Demon',
@@ -117,9 +119,11 @@ locationsRouter.patch(
         'Werewolf',
         'Wraith',
         'Other',
-      ).optional(),
-      sect: Joi.string().optional(),
-      char_id: Joi.string().uuid().optional(),
+      )
+        .allow(null)
+        .optional(),
+      sect: Joi.string().allow(null).optional(),
+      char_id: Joi.string().uuid().allow(null).optional(),
     },
   }),
   locationsController.update,

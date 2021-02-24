@@ -347,18 +347,15 @@ const LocationUpdate: React.FC = () => {
             selectedLocation.property !== ''
               ? selectedLocation.property
               : undefined,
-          clan:
-            selectedLocation.clan !== '' ? selectedLocation.clan : undefined,
+          clan: selectedLocation.clan !== '' ? selectedLocation.clan : null,
           creature_type:
             selectedLocation.creature_type !== ''
               ? selectedLocation.creature_type
-              : undefined,
-          sect:
-            selectedLocation.sect !== '' ? selectedLocation.sect : undefined,
-
+              : null,
+          sect: selectedLocation.sect !== '' ? selectedLocation.sect : null,
           level: selectedLocation.level,
           mystical_level: selectedLocation.mystical_level,
-          char_id: selectedChar ? selectedChar.id : undefined,
+          char_id: selectedChar ? selectedChar.id : null,
         };
 
         setSaving(true);

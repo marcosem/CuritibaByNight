@@ -126,10 +126,11 @@ export default class LocationsController {
           ? mystical_level
           : oldLocation.mystical_level,
       property: property || oldLocation.property,
-      clan: clan || oldLocation.clan,
-      creature_type: creature_type || oldLocation.creature_type,
-      sect: sect || oldLocation.sect,
-      char_id: char_id || oldLocation.responsible,
+      clan: clan !== undefined ? clan : oldLocation.clan,
+      creature_type:
+        creature_type !== undefined ? creature_type : oldLocation.creature_type,
+      sect: sect !== undefined ? sect : oldLocation.sect,
+      char_id: char_id !== undefined ? char_id : oldLocation.responsible,
     };
 
     const updateLocationService = container.resolve(UpdateLocationService);
