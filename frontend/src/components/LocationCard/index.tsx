@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { MdLocalAirport, MdStore, MdLocationOn } from 'react-icons/md';
 import {
@@ -41,6 +42,8 @@ interface ILocationCardProps {
   responsibleId: string;
   responsibleName: string;
   clan: string;
+  creature_type: string;
+  sect: string;
   level: number;
   mysticalLevel: number;
   pictureUrl: string;
@@ -58,6 +61,8 @@ const LocationCard: React.FC<ILocationCardProps> = ({
   responsibleId,
   responsibleName,
   clan,
+  creature_type,
+  sect,
   level,
   mysticalLevel,
   pictureUrl,
@@ -148,11 +153,31 @@ const LocationCard: React.FC<ILocationCardProps> = ({
         }
         break;
       }
+      case 'creature': {
+        if (responsibleName) {
+          setPropertyTitle(
+            `Propriedade dos ${creature_type}s sob os cuidados de ${responsibleName}`,
+          );
+        } else {
+          setPropertyTitle(`Propriedade dos ${creature_type}s`);
+        }
+        break;
+      }
+      case 'sect': {
+        if (responsibleName) {
+          setPropertyTitle(
+            `Propriedade ${sect} sob os cuidados de ${responsibleName}`,
+          );
+        } else {
+          setPropertyTitle(`Propriedade ${sect}`);
+        }
+        break;
+      }
       default: {
         setPropertyTitle('');
       }
     }
-  }, [clan, property, responsibleName]);
+  }, [clan, creature_type, property, responsibleName, sect]);
 
   const handleImageChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {

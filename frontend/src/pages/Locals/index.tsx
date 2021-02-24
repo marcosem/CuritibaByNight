@@ -72,6 +72,8 @@ interface ILocation {
   responsible: string;
   responsible_char: IResponsible;
   clan: string;
+  creature_type: string;
+  sect: string;
   level: number;
   mystical_level: number;
   picture_url: string;
@@ -183,6 +185,8 @@ const Locals: React.FC = () => {
               type: location.type,
               property: location.property,
               clan: location.clan,
+              creature_type: location.creature_type,
+              sect: location.sect,
               level: location.level,
               mystical_level: location.mystical_level,
               picture_url: location.picture_url || imgBuilding,
@@ -462,6 +466,8 @@ const Locals: React.FC = () => {
                           : ''
                       }
                       clan={location.clan}
+                      creature_type={location.creature_type}
+                      sect={location.sect}
                       level={location.level}
                       mysticalLevel={location.mystical_level}
                       pictureUrl={location.picture_url}

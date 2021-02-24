@@ -50,6 +50,8 @@ interface ILocation {
   responsible: string;
   responsible_char?: ICharacter;
   clan: string;
+  creature_type: string;
+  sect: string;
   level: number;
   mystical_level: number;
   picture_url?: string;
@@ -77,6 +79,8 @@ const LocationCharList: React.FC = () => {
     responsible: '',
     responsible_char: undefined,
     clan: '',
+    creature_type: '',
+    sect: '',
     level: 1,
     mystical_level: 0,
     picture_url: undefined,
@@ -259,6 +263,8 @@ const LocationCharList: React.FC = () => {
           responsible: '',
           responsible_char: undefined,
           clan: '',
+          creature_type: '',
+          sect: '',
           level: 1,
           mystical_level: 0,
           picture_url: undefined,
@@ -509,6 +515,8 @@ const LocationCharList: React.FC = () => {
                     : ''
                 }
                 clan={selectedLocation.clan}
+                creature_type={selectedLocation.creature_type}
+                sect={selectedLocation.sect}
                 level={selectedLocation.level}
                 mysticalLevel={selectedLocation.mystical_level}
                 pictureUrl={

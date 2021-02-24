@@ -97,6 +97,28 @@ const propertyList: ISelectableItem[] = [
     title: 'do Clã',
     titleEn: 'clan',
   },
+  {
+    title: 'de Criatura',
+    titleEn: 'creature',
+  },
+  {
+    title: 'do Secto',
+    titleEn: 'sect',
+  },
+];
+
+const creatureTypeList = [
+  'Changeling',
+  'Demon',
+  'Fera',
+  'Kuei-Jin',
+  'Mage',
+  'Mortal',
+  'Mummy',
+  'Vampire',
+  'Werewolf',
+  'Wraith',
+  'Other',
 ];
 
 const levelList = [0, 1, 2, 3, 4, 5, 6];
@@ -120,6 +142,8 @@ interface ILocationCardProps {
   responsibleId: string;
   responsibleName: string;
   clan: string;
+  creature_type: string;
+  sect: string;
   level: number;
   mysticalLevel: number;
 }
@@ -136,6 +160,9 @@ const AddLocation: React.FC = () => {
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
   const [clanList, setClanList] = useState<string[]>([]);
   const [selectedClan, setSelectedClan] = useState<string>('');
+  const [sectList, setSectList] = useState<string[]>([]);
+  const [selectedSect, setSelectedSect] = useState<string>('');
+  const [selectedCreature, setSelectedCreature] = useState<string>('');
   const [locationData, setLocationData] = useState<ILocationCardProps>({
     locationId: '',
     name: '',
@@ -147,6 +174,8 @@ const AddLocation: React.FC = () => {
     responsibleId: '',
     responsibleName: '',
     clan: '',
+    creature_type: '',
+    sect: '',
     level: 1,
     mysticalLevel: 0,
   });
@@ -179,7 +208,20 @@ const AddLocation: React.FC = () => {
             return !pos || clan !== ary[pos - 1];
           });
 
+        const fullSectList = res.map((char: ICharacter) => {
+          const { sect } = char;
+
+          return sect;
+        });
+
+        const filteredSect = fullSectList
+          .sort()
+          .filter((sect: string, pos: number, ary: string[]) => {
+            return sect !== null && (!pos || sect !== ary[pos - 1]);
+          });
+
         setClanList(filteredClanList);
+        setSectList(filteredSect);
         setCharList(res);
       });
     } catch (error) {
@@ -247,6 +289,11 @@ const AddLocation: React.FC = () => {
           property:
             locationData.property !== '' ? locationData.property : undefined,
           clan: locationData.clan !== '' ? locationData.clan : undefined,
+          creature_type:
+            locationData.creature_type !== ''
+              ? locationData.creature_type
+              : undefined,
+          sect: locationData.sect !== '' ? locationData.sect : undefined,
           level: locationData.level,
           mystical_level: locationData.mysticalLevel,
           char_id: selectedChar ? selectedChar.id : undefined,
@@ -269,6 +316,8 @@ const AddLocation: React.FC = () => {
             ? response.data.responsible_char.name
             : '',
           clan: response.data.clan,
+          creature_type: response.data.creature_type,
+          sect: response.data.sect,
           level: response.data.level,
           mysticalLevel: response.data.mystical_level,
         });
@@ -426,6 +475,58 @@ const AddLocation: React.FC = () => {
     [clanList, locationData],
   );
 
+  const handleLocCreatureChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      let selCreature: string;
+      if (selIndex > 0) {
+        const curSelCreature = creatureTypeList[selIndex - 1];
+        selCreature = curSelCreature;
+      } else {
+        selCreature = '';
+      }
+
+      setSelectedCreature(selCreature);
+
+      const tempLocationData = {
+        creature_type: selCreature,
+      };
+
+      const newLocData = locationData;
+      Object.assign(newLocData, tempLocationData);
+
+      setLocationData(newLocData);
+    },
+    [locationData],
+  );
+
+  const handleLocSectChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      let selSect: string;
+      if (selIndex > 0) {
+        const curSelSect = sectList[selIndex - 1];
+        selSect = curSelSect;
+      } else {
+        selSect = '';
+      }
+
+      setSelectedSect(selSect);
+
+      const tempLocationData = {
+        sect: selSect,
+      };
+
+      const newLocData = locationData;
+      Object.assign(newLocData, tempLocationData);
+
+      setLocationData(newLocData);
+    },
+    [locationData, sectList],
+  );
+
   const handleLocLevelChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const selIndex = event.target.selectedIndex;
@@ -508,6 +609,8 @@ const AddLocation: React.FC = () => {
                 responsibleId={locationData.responsibleId}
                 responsibleName={locationData.responsibleName}
                 clan={locationData.clan}
+                creature_type={locationData.creature_type}
+                sect={locationData.sect}
                 level={locationData.level}
                 mysticalLevel={locationData.mysticalLevel}
                 pictureUrl=""
@@ -623,6 +726,43 @@ const AddLocation: React.FC = () => {
                       {propertyList.map(property => (
                         <option key={property.titleEn} value={property.titleEn}>
                           {property.title}
+                        </option>
+                      ))}
+                    </Select>
+                  </SelectContainer>
+                </InputBox>
+
+                <InputBox>
+                  <SelectContainer>
+                    <strong>De conhecimento dos:</strong>
+                    <Select
+                      name="creature"
+                      id="creature"
+                      value={selectedCreature || ''}
+                      // defaultValue=""
+                      onChange={handleLocCreatureChange}
+                    >
+                      <option value="">Criatura:</option>
+                      {creatureTypeList.map(creat => (
+                        <option key={creat} value={creat}>
+                          {creat}
+                        </option>
+                      ))}
+                    </Select>
+                  </SelectContainer>
+                  <SelectContainer>
+                    <strong>Do Secto:</strong>
+                    <Select
+                      name="sect"
+                      id="sect"
+                      value={selectedSect || ''}
+                      // defaultValue=""
+                      onChange={handleLocSectChange}
+                    >
+                      <option value="">Secto:</option>
+                      {sectList.map(sect => (
+                        <option key={sect} value={sect}>
+                          {sect}
                         </option>
                       ))}
                     </Select>
