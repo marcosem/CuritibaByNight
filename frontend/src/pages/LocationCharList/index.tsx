@@ -550,8 +550,7 @@ const LocationCharList: React.FC = () => {
                 </div>
               )}
 
-              {selectedLocation.elysium ||
-              selectedLocation.property === 'public' ? (
+              {selectedLocation.property === 'public' ? (
                 <div>
                   <strong>
                     <b>
