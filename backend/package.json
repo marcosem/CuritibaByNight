@@ -33,6 +33,7 @@
     "rate-limiter-flexible": "^2.1.10",
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
+    "rolld20": "^1.0.4",
     "tsyringe": "^4.3.0",
     "typeorm": "^0.2.25",
     "uuid": "^8.3.2"

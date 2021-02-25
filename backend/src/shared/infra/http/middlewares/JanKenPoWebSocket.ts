@@ -1,6 +1,7 @@
 import { Express } from 'express';
 import expressWs from 'express-ws';
 import validateToken from '@modules/users/infra/http/middlewares/validateToken';
+import { compareJanKenPo } from 'rolld20';
 
 interface IMyConnection {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -408,7 +409,13 @@ class JanKenPoWebSocket {
 
                     if (myMatch.char1JanKenPo && myMatch.char2JanKenPo) {
                       // Process tie first
-                      if (myMatch.char1JanKenPo === myMatch.char2JanKenPo) {
+                      // if (myMatch.char1JanKenPo === myMatch.char2JanKenPo) {
+                      if (
+                        compareJanKenPo(
+                          myMatch.char1JanKenPo,
+                          myMatch.char2JanKenPo,
+                        ) === 0
+                      ) {
                         if (
                           myMatch.stConnection.id !==
                             myMatch.char1Connection.id &&
@@ -436,16 +443,10 @@ class JanKenPoWebSocket {
                           char2: myMatch.char1JanKenPo,
                         });
                       } else if (
-                        (myMatch.char1JanKenPo === 'rock' &&
-                          myMatch.char2JanKenPo === 'scissors') ||
-                        (myMatch.char1JanKenPo === 'scissors' &&
-                          (myMatch.char2JanKenPo === 'paper' ||
-                            myMatch.char2JanKenPo === 'bomb')) ||
-                        (myMatch.char1JanKenPo === 'bomb' &&
-                          (myMatch.char2JanKenPo === 'paper' ||
-                            myMatch.char2JanKenPo === 'rock')) ||
-                        (myMatch.char1JanKenPo === 'paper' &&
-                          myMatch.char2JanKenPo === 'rock')
+                        compareJanKenPo(
+                          myMatch.char1JanKenPo,
+                          myMatch.char2JanKenPo,
+                        ) === -1
                       ) {
                         if (
                           myMatch.stConnection.id !==
