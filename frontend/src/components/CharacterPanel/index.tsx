@@ -70,11 +70,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       return;
     }
 
-    if (
-      myChar.clan.indexOf('Ghoul') >= 0 ||
-      myChar.clan.indexOf('Retainer') >= 0 ||
-      myChar.clan.indexOf('Wraith') >= 0
-    ) {
+    if (myChar.creature_type !== 'Vampire') {
       return;
     }
 
@@ -475,7 +471,17 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                                     centered
                                     isMobile={isMobileVersion}
                                   >
-                                    <span>{retainer.clan}</span>
+                                    {retainer.creature_type === 'Mortal' ? (
+                                      <span>{retainer.clan}</span>
+                                    ) : (
+                                      <>
+                                        {retainer.clan ? (
+                                          <span>{`${retainer.creature_type}: ${retainer.clan}`}</span>
+                                        ) : (
+                                          <span>{retainer.creature_type}</span>
+                                        )}
+                                      </>
+                                    )}
                                   </TableCell>
                                 </td>
                                 <td>
