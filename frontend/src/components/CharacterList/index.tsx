@@ -1,11 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useEffect, useCallback, MouseEvent } from 'react';
 import { format } from 'date-fns';
-// import { toPng } from 'html-to-image';
-// import download from 'downloadjs';
-// import { confirmAlert } from 'react-confirm-alert';
 import { useHistory } from 'react-router-dom';
-// import { Scroll, Character } from './styles';
 import { Character } from './styles';
 import { useMobile } from '../../hooks/mobile';
 import { useSelection } from '../../hooks/selection';
@@ -71,9 +67,34 @@ const CharacterList: React.FC<ICharacterListProps> = ({
     tempArray = newArray;
 
     if (filterClan !== '') {
-      tempArray = tempArray.filter((char: ICharacter) => {
-        return char.clan === filterClan;
-      });
+      if (
+        filterClan === 'Werewolf' ||
+        filterClan === 'Wraith' ||
+        filterClan === 'Mage' ||
+        filterClan === 'Mortal'
+      ) {
+        tempArray = tempArray.filter((char: ICharacter) => {
+          if (filterClan === 'Mortal') {
+            if (char.clan === '') {
+              return true;
+            }
+            return false;
+          }
+
+          return char.creature_type === filterClan;
+        });
+      } else {
+        tempArray = tempArray.filter((char: ICharacter) => {
+          if (filterClan === 'Ghoul') {
+            if (char.clan.indexOf('Ghoul') >= 0) {
+              return true;
+            }
+            return false;
+          }
+
+          return char.clan === filterClan;
+        });
+      }
     }
 
     if (filterSituation !== '') {

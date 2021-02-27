@@ -45,6 +45,18 @@ const Characters: React.FC = () => {
 
         // Get list of clan
         const clanList = res.map((char: ICharacter) => {
+          if (
+            (char.creature_type !== 'Vampire' &&
+              char.creature_type !== 'Mortal') ||
+            (char.creature_type === 'Mortal' && char.clan === '')
+          ) {
+            return char.creature_type;
+          }
+
+          if (char.clan.indexOf('Ghoul') >= 0) {
+            return 'Ghoul';
+          }
+
           const clanFilter1 = char.clan.split(':');
           const clanFilter2 = clanFilter1[0].split(' (');
 
