@@ -57,7 +57,7 @@ const ModalDialogBox: React.FC<IModalDialogBoxProps> = ({
     setOpenDlg(false);
     setTimeout(() => {
       closeModal();
-    }, 200);
+    }, 150);
   }, [closeModal]);
 
   const handleButtonOne = useCallback(
