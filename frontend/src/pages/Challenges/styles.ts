@@ -243,12 +243,12 @@ export const JanKenPoButton = styled.button<IButtonProps>`
   align-items: center;
 
   transition: background-color 0.2s;
-  transition: scale 0.2s;
+  transition: transform 0.2s;
 
   svg {
     color: #ccc;
     transition: color 0.2s;
-    transition: scale 0.2s;
+    transition: transform 0.2s;
   }
 
   ${props =>
