@@ -4,7 +4,6 @@ import { useParams } from 'react-router';
 import { FiUpload } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { format } from 'date-fns';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 

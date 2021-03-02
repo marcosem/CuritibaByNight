@@ -9,7 +9,6 @@ import React, {
 import { useHistory } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi';
 import { GiLoad, GiRollingDices } from 'react-icons/gi';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
 
 import {

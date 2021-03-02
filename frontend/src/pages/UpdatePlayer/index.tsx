@@ -18,7 +18,6 @@ import { useAuth } from '../../hooks/auth';
 import { useModalBox } from '../../hooks/modalBox';
 import ICharacter from '../../components/CharacterList/ICharacter';
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
