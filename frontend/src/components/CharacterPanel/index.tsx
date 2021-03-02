@@ -9,7 +9,6 @@ import React, {
 import { useHistory } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi';
 import { GiLoad, GiRollingDices } from 'react-icons/gi';
-import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
 
@@ -32,6 +31,7 @@ import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useSelection } from '../../hooks/selection';
+import { useModalBox } from '../../hooks/modalBox';
 import CharacterCard from '../CharacterCard';
 import ICharacter from '../CharacterList/ICharacter';
 import Button from '../Button';
@@ -63,7 +63,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
   const [lastChar, setLastChar] = useState<ICharacter>();
-  // const isMobileVersion = true;
+  const { showModal } = useModalBox();
 
   const loadRetainers = useCallback(async () => {
     if (myChar === undefined) {
@@ -257,22 +257,17 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       return;
     }
 
-    confirmAlert({
+    showModal({
+      type: 'warning',
       title: 'Confirmar exclusão',
-      message: `Você está prestes a excluir o personagem [${myChar.name}], você confirma?`,
-      buttons: [
-        {
-          label: 'Sim',
-          onClick: () => handleRemove(),
-        },
-        {
-          label: 'Não',
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onClick: () => {},
-        },
-      ],
+      description: `Você está prestes a excluir o personagem [${myChar.name}], você confirma?`,
+      btn1Title: 'Sim',
+      btn1Function: () => handleRemove(),
+      btn2Title: 'Não',
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      btn2Function: () => {},
     });
-  }, [handleRemove, myChar]);
+  }, [handleRemove, myChar, showModal]);
 
   const handleRetainerSelection = useCallback(
     async (e: MouseEvent<HTMLTableRowElement>) => {

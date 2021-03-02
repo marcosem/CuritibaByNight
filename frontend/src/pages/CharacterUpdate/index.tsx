@@ -4,7 +4,6 @@ import { useParams } from 'react-router';
 import { FiMessageSquare, FiUpload } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { format } from 'date-fns';
-import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import api from '../../services/api';
 
@@ -29,6 +28,7 @@ import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useModalBox } from '../../hooks/modalBox';
 import CharacterCard from '../../components/CharacterCard';
 import ICharacter from '../../components/CharacterList/ICharacter';
 
@@ -89,6 +89,7 @@ const CharacterUpdate: React.FC = () => {
   const { signOut } = useAuth();
   const [isBusy, setBusy] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const { showModal } = useModalBox();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true && !uploading);
@@ -266,30 +267,27 @@ const CharacterUpdate: React.FC = () => {
       }
 
       const charName = selectedChar ? selectedChar.name : '';
-      const charSheetName = charSheet ? charSheet.name : '';
+      const charSheetName = charSheet
+        ? charSheet.name.replace(/[`]/gi, '"')
+        : '';
       const characterType = filter === 'npc' ? 'NPC' : 'Personagem';
 
       if (charSheetName.indexOf(charName) === -1) {
-        confirmAlert({
+        showModal({
+          type: 'warning',
           title: 'Confirmar atualização',
-          message: `O nome do ${characterType} [${charName}] não combina com o nome do arquivo [${charSheetName}], confirma a atualização?`,
-          buttons: [
-            {
-              label: 'Sim',
-              onClick: () => handleSubmit({ comments }),
-            },
-            {
-              label: 'Não',
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onClick: () => {},
-            },
-          ],
+          description: `O nome do ${characterType} [${charName}] não combina com o nome do arquivo [${charSheetName}], confirma a atualização?`,
+          btn1Title: 'Sim',
+          btn1Function: () => handleSubmit({ comments }),
+          btn2Title: 'Não',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          btn2Function: () => {},
         });
       } else {
         handleSubmit({ comments });
       }
     },
-    [addToast, charSheet, filter, handleSubmit, selectedChar],
+    [addToast, charSheet, filter, handleSubmit, selectedChar, showModal],
   );
 
   const handleCharacterChange = useCallback(

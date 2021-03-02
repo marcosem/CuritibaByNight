@@ -13,9 +13,9 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import { confirmAlert } from 'react-confirm-alert';
 import { useToast } from '../../hooks/toast';
 import { useAuth } from '../../hooks/auth';
+import { useModalBox } from '../../hooks/modalBox';
 import ICharacter from '../../components/CharacterList/ICharacter';
 
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -59,6 +59,7 @@ const UpdatePlayer: React.FC = () => {
   const { signOut, user } = useAuth();
   const history = useHistory();
   const [isLoading, setLoading] = useState(false);
+  const { showModal } = useModalBox();
 
   const loadPlayer = useCallback(async () => {
     setLoading(true);
@@ -267,22 +268,17 @@ const UpdatePlayer: React.FC = () => {
       }
     }
 
-    confirmAlert({
+    showModal({
+      type: 'warning',
       title: 'Confirmar exclusão',
-      message: `Você está prestes a excluir o jogador [${player.name}], você confirma?`,
-      buttons: [
-        {
-          label: 'Sim',
-          onClick: () => handleRemove(),
-        },
-        {
-          label: 'Não',
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onClick: () => {},
-        },
-      ],
+      description: `Você está prestes a excluir o jogador [${player.name}], você confirma?`,
+      btn1Title: 'Sim',
+      btn1Function: () => handleRemove(),
+      btn2Title: 'Não',
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      btn2Function: () => {},
     });
-  }, [addToast, handleRemove, player, signOut, user.id]);
+  }, [addToast, handleRemove, player, showModal, signOut, user.id]);
 
   const handleStorytellerChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
