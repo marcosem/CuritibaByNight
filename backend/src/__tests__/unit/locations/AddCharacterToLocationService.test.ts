@@ -45,6 +45,7 @@ describe('AddCharacterToLocation', () => {
       user_id: user.id,
       name: 'Dracula',
       clan: 'Tzimisce',
+      creature_type: 'Vampire',
       experience: 666,
       file: 'dracula.pdf',
       npc: false,
@@ -55,6 +56,7 @@ describe('AddCharacterToLocation', () => {
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
       longitude: -49.2713069,
+      creature_type: 'Mortal',
     });
 
     const locChar = await addCharacterToLocation.execute({
@@ -87,6 +89,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      creature_type: 'Vampire',
       npc: true,
     });
 
@@ -95,6 +98,7 @@ describe('AddCharacterToLocation', () => {
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
       longitude: -49.2713069,
+      creature_type: 'Mortal',
     });
 
     const locChar = await addCharacterToLocation.execute({
@@ -190,8 +194,10 @@ describe('AddCharacterToLocation', () => {
     const char = await fakeCharactersRepository.create({
       user_id: user.id,
       name: 'Dracula',
+      clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      creature_type: 'Vampire',
       npc: false,
     });
 
@@ -200,6 +206,7 @@ describe('AddCharacterToLocation', () => {
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
       longitude: -49.2713069,
+      creature_type: 'Mortal',
     });
 
     await addCharacterToLocation.execute({
@@ -406,6 +413,7 @@ describe('AddCharacterToLocation', () => {
       clan: 'Tzimisce',
       experience: 666,
       file: 'dracula.pdf',
+      creature_type: 'Vampire',
       npc: false,
     });
 
@@ -414,6 +422,7 @@ describe('AddCharacterToLocation', () => {
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
       longitude: -49.2713069,
+      creature_type: 'Mortal',
     });
 
     jest
