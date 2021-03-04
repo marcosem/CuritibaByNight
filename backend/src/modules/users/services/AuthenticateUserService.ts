@@ -14,6 +14,7 @@ interface IRequestDTO {
 interface IResponse {
   user: User;
   token: string;
+  refresh_token: string;
 }
 
 @injectable()
@@ -43,12 +44,17 @@ class AuthenticateUserService {
       throw new AppError('Incorrect login validation', 401);
     }
 
-    const { secret, expiresIn } = authConfig.jwt;
+    const { secret, expiresIn, refreshTokenExpiresIn } = authConfig.jwt;
 
     // Generate token
     const token = sign({}, secret, {
       subject: user.id,
       expiresIn,
+    });
+
+    const refreshToken = sign({}, secret, {
+      subject: user.id,
+      expiresIn: refreshTokenExpiresIn,
     });
 
     // Update lastLogin date
@@ -59,6 +65,7 @@ class AuthenticateUserService {
     return {
       user,
       token,
+      refresh_token: refreshToken,
     };
   }
 }

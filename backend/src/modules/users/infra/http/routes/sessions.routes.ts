@@ -16,4 +16,15 @@ sessionsRouter.post(
   sessionsController.create,
 );
 
+sessionsRouter.post(
+  '/refresh',
+  celebrate({
+    [Segments.BODY]: {
+      token: Joi.string().required(),
+      refresh_token: Joi.string().required(),
+    },
+  }),
+  sessionsController.update,
+);
+
 export default sessionsRouter;
