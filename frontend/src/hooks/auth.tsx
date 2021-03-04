@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable camelcase */
 
-import React, { createContext, useCallback, useState, useContext } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useState,
+  useContext,
+  useEffect,
+} from 'react';
+import Cookies from 'js-cookie';
 import api from '../services/api';
 
 interface IUser {
@@ -69,10 +76,14 @@ const AuthProvider: React.FC = ({ children }) => {
       password,
     });
 
-    const { token, user } = response.data;
+    const { token, user, refresh_token } = response.data;
 
     localStorage.setItem('@CuritibaByNight:token', token);
     localStorage.setItem('@CuritibaByNight:user', JSON.stringify(user));
+    Cookies.set('@CuritibaByNight:refreshToken', refresh_token, {
+      expires: 60,
+      secure: true,
+    });
 
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
@@ -83,6 +94,7 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.removeItem('@CuritibaByNight:token');
     localStorage.removeItem('@CuritibaByNight:user');
     localStorage.removeItem('@CuritibaByNight:character');
+    Cookies.remove('@CuritibaByNight:refreshToken', { secure: true });
 
     setData({} as AuthState);
     setCharacter({} as ICharacter);
@@ -105,6 +117,37 @@ const AuthProvider: React.FC = ({ children }) => {
 
     localStorage.setItem('@CuritibaByNight:character', JSON.stringify(char));
   }, []);
+
+  const refreshMyToken = useCallback(async () => {
+    const oldToken = localStorage.getItem('@CuritibaByNight:token');
+    const refreshToken = Cookies.get('@CuritibaByNight:refreshToken');
+
+    if (refreshToken) {
+      const response = await api.post('sessions/refresh', {
+        token: oldToken,
+        refresh_token: refreshToken,
+      });
+
+      const { token, refresh_token } = response.data;
+
+      localStorage.setItem('@CuritibaByNight:token', token);
+      Cookies.set('@CuritibaByNight:refreshToken', refresh_token, {
+        expires: 60,
+        secure: true,
+      });
+
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+
+      const newData = data;
+      newData.token = token;
+
+      setData(newData);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    refreshMyToken();
+  }, [refreshMyToken]);
 
   return (
     <AuthContext.Provider
