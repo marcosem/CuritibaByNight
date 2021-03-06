@@ -69,6 +69,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
     return {} as ICharacter;
   });
+  const [isTokenValidated, setIsTokenValidated] = useState<boolean>(false);
 
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post('sessions', {
@@ -143,6 +144,8 @@ const AuthProvider: React.FC = ({ children }) => {
 
       setData(newData);
     }
+
+    setIsTokenValidated(true);
   }, [data]);
 
   useEffect(() => {
@@ -160,7 +163,7 @@ const AuthProvider: React.FC = ({ children }) => {
         setChar,
       }}
     >
-      {children}
+      {isTokenValidated && children}
     </AuthContext.Provider>
   );
 };
