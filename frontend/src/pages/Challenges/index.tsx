@@ -214,7 +214,7 @@ const Challenges: React.FC = () => {
                     id: opponent.id,
                     name: opponent.name,
                     clan: opponent.clan,
-                    creature_type: opponent.creture_type,
+                    creature_type: opponent.creature_type,
                     sect: opponent.sect,
                     title: opponent.title,
                     coterie: opponent.coterie,
