@@ -64,8 +64,28 @@ const Influences: React.FC = () => {
     (textId: string) => {
       const spanText = document.getElementById(textId);
       const textArea = document.createElement('textarea');
-      textArea.value = spanText?.textContent ? spanText.textContent : '';
 
+      const firstIndex = textId.indexOf('-');
+      const lastIndex = textId.lastIndexOf('-');
+      let myText = '';
+
+      if (firstIndex >= 0 && lastIndex > firstIndex) {
+        const level = textId.substr(lastIndex + 1, 1);
+        const numLevel = Number(level) + 1;
+
+        const influence = textId.substr(
+          firstIndex + 1,
+          lastIndex - firstIndex - 1,
+        );
+
+        myText = spanText?.textContent
+          ? `${influence} x${numLevel}\r${spanText.textContent}\r`
+          : '';
+      } else {
+        myText = spanText?.textContent ? spanText.textContent : '';
+      }
+
+      textArea.value = myText;
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand('copy');
