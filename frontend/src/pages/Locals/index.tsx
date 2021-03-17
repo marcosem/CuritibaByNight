@@ -162,6 +162,7 @@ const Locals: React.FC = () => {
           const res = response.data;
           let foundMyLocal = false;
 
+          // https://leafletjs.com/reference-1.7.1.html#divicon-option
           const newArray = res.map((location: ILocation) => {
             const icon = Leaflet.icon({
               iconUrl: location.picture_url || imgBuilding,
