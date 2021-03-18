@@ -147,7 +147,12 @@ class UpdateCharacterSheetService {
         );
       }
     } else if (char.regnant) {
-      charRegnant = await this.charactersRepository.findById(char.regnant);
+      if (char_regnant === null) {
+        char.regnant = null;
+        delete char.regnant_char;
+      } else {
+        charRegnant = await this.charactersRepository.findById(char.regnant);
+      }
     }
 
     if (charRegnant && is_npc) {

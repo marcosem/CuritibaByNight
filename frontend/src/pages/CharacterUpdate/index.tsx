@@ -175,6 +175,8 @@ const CharacterUpdate: React.FC = () => {
 
         if (selectedRegnant) {
           formData.append('regnant_id', selectedRegnant.id);
+        } else if (selectedChar.regnant_char) {
+          formData.append('regnant_id', '');
         }
 
         formData.append('sheet', charSheet);
@@ -492,7 +494,6 @@ const CharacterUpdate: React.FC = () => {
                         value={
                           charSituation ? charSituation.titleEn : undefined
                         }
-                        defaultValue={charSituation?.titleEn}
                         onChange={handleSituationChange}
                       >
                         <option value="">Situação:</option>

@@ -121,6 +121,13 @@ export default class UserCharactersController {
       mimetype,
     });
 
+    let regnant;
+    if (regnant_id === '') {
+      regnant = null;
+    } else {
+      regnant = regnant_id !== undefined ? regnant_id : oldChar.regnant;
+    }
+
     const inputData = {
       user_id: req.user.id,
       char_id: character_id,
@@ -134,7 +141,7 @@ export default class UserCharactersController {
       char_coterie: oldChar.coterie,
       char_situation: situation || oldChar.situation,
       is_npc: oldChar.npc !== isNPC ? isNPC : oldChar.npc,
-      char_regnant: regnant_id !== undefined ? regnant_id : oldChar.regnant,
+      char_regnant: regnant, // regnant_id !== undefined ? regnant_id : oldChar.regnant,
       char_retainer_level: oldChar.retainer_level,
       sheetFilename: fileName,
       update: comments,

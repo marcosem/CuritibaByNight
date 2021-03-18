@@ -62,7 +62,7 @@ class Character {
   npc: boolean;
 
   @Column()
-  regnant: string;
+  regnant: string | null;
 
   @ManyToOne(() => Character)
   @JoinColumn({ name: 'regnant' })
