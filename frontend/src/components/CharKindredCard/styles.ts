@@ -48,25 +48,6 @@ export const Container = styled.div<ICharacterProps>`
   animation: ${appearingFromOpacity} 0.6s;
 `;
 
-export const CardSquarePlaceHolder = styled.div<ICardProps>`
-  position: relative;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
-  border-radius: 10px;
-
-  ${props => css`
-    background: url(${props.clanImg});
-  `}
-
-  background-repeat: no-repeat;
-  background-size: cover;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
-`;
-
 export const CardSquare = styled.div<ICardProps>`
   position: relative;
   top: 0;
@@ -83,8 +64,6 @@ export const CardSquare = styled.div<ICardProps>`
   background-repeat: no-repeat;
   background-size: cover;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
-
-  // animation: ${appearingFromOpacity} 0.3s;
 
   > span {
     cursor: default;
@@ -121,6 +100,7 @@ export const ProfileImage = styled.div<IImageProps>`
     height: 252px;
     border-radius: 50%;
     transition: opacity 0.2s;
+
     animation: ${appearingFromOpacity} 0.3s;
   }
 

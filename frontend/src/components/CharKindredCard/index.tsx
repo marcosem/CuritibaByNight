@@ -5,11 +5,9 @@ import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import api from '../../services/api';
 import getCardImg from './getCardImg';
-import getCardImgPlaceholder from './getCardImgPlaceholder';
 
 import {
   Container,
-  CardSquarePlaceHolder,
   CardSquare,
   ProfileImage,
   CharInfo,
@@ -56,7 +54,6 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
 }) => {
   const [charImg, setCharImg] = useState<string>('');
   const [clanImg, setClanImg] = useState<string>('');
-  const [clanImgPlaceholder, setClanImgPlaceholder] = useState<string>('');
   const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
   const [situationTitle, setSituationTitle] = useState<string>('');
   const { addToast } = useToast();
@@ -67,7 +64,6 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
   }, [avatar]);
 
   useEffect(() => {
-    setClanImgPlaceholder(getCardImgPlaceholder(clan));
     setClanImg(getCardImg(clan));
   }, [clan]);
 
@@ -128,75 +124,71 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
 
   return (
     <Container isMobile={isMobileVersion}>
-      <CardSquarePlaceHolder clanImg={clanImgPlaceholder}>
-        <CardSquare clanImg={clanImg}>
-          <span>{updatedAt}</span>
-          <label htmlFor={charId === '' ? 'Empty' : charId}>
-            <ProfileImage locked={locked}>
-              <img src={charImg} alt="" />
+      <CardSquare clanImg={clanImg}>
+        <span>{updatedAt}</span>
+        <label htmlFor={charId === '' ? 'Empty' : charId}>
+          <ProfileImage locked={locked}>
+            <img src={charImg} alt="" />
 
-              {!locked && (
-                <input
-                  type="file"
-                  id={charId === '' ? 'Empty' : charId}
-                  onChange={handleAvatarChange}
-                />
-              )}
-              <FiCamera />
-              <span>Trocar Foto</span>
-            </ProfileImage>
-          </label>
-          <CharInfo>
-            {readOnly ? (
-              <strong>
-                <b>{title !== '' && `${title}: `}</b>
-                {name}
-              </strong>
-            ) : (
-              <a
-                href={sheetFile}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Baixar Ficha"
-              >
-                <b>{title !== '' && `${title}: `}</b>
-                {name}
-              </a>
+            {!locked && (
+              <input
+                type="file"
+                id={charId === '' ? 'Empty' : charId}
+                onChange={handleAvatarChange}
+              />
             )}
-
-            <span>{coterie !== '' && `${coterie}`}</span>
-          </CharInfo>
-
-          {situation !== 'active' && (
-            <CharSituation title={situationTitle}>
-              {situationIcon}
-            </CharSituation>
-          )}
-
-          {npc ? (
-            <CharXP>
-              <span>NPC</span>
-            </CharXP>
+            <FiCamera />
+            <span>Trocar Foto</span>
+          </ProfileImage>
+        </label>
+        <CharInfo>
+          {readOnly ? (
+            <strong>
+              <b>{title !== '' && `${title}: `}</b>
+              {name}
+            </strong>
           ) : (
-            <>
-              {readOnly ? (
-                <CharXP>
-                  <GiFangedSkull />
-                </CharXP>
-              ) : (
-                <>
-                  <CharXPTitle>
-                    <span>XP:</span>
-                  </CharXPTitle>
-                  <CharXP>
-                    <span>{experience}</span>
-                  </CharXP>
-                </>
-              )}
-            </>
+            <a
+              href={sheetFile}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Baixar Ficha"
+            >
+              <b>{title !== '' && `${title}: `}</b>
+              {name}
+            </a>
           )}
-        </CardSquare>
-      </CardSquarePlaceHolder>
+
+          <span>{coterie !== '' && `${coterie}`}</span>
+        </CharInfo>
+
+        {situation !== 'active' && (
+          <CharSituation title={situationTitle}>{situationIcon}</CharSituation>
+        )}
+
+        {npc ? (
+          <CharXP>
+            <span>NPC</span>
+          </CharXP>
+        ) : (
+          <>
+            {readOnly ? (
+              <CharXP>
+                <GiFangedSkull />
+              </CharXP>
+            ) : (
+              <>
+                <CharXPTitle>
+                  <span>XP:</span>
+                </CharXPTitle>
+                <CharXP>
+                  <span>{experience}</span>
+                </CharXP>
+              </>
+            )}
+          </>
+        )}
+      </CardSquare>
     </Container>
   );
 };
