@@ -65,8 +65,6 @@ export const CardSquarePlaceHolder = styled.div<ICardProps>`
   background-repeat: no-repeat;
   background-size: cover;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
-
-  z-index: -1;
 `;
 
 export const CardSquare = styled.div<ICardProps>`
@@ -85,8 +83,6 @@ export const CardSquare = styled.div<ICardProps>`
   background-repeat: no-repeat;
   background-size: cover;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
-
-  z-index: 1;
 
   // animation: ${appearingFromOpacity} 0.3s;
 
