@@ -17,6 +17,7 @@ import {
   CharCardContainer,
   CharacterContainer,
   CharacterSheet,
+  TableTitle,
   TableWrapper,
   Table,
   TableCell,
@@ -436,9 +437,9 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
                   {retainerList.length > 0 && (
                     <>
-                      <div>
+                      <TableTitle>
                         <strong>Meus Lacaios:</strong>
-                      </div>
+                      </TableTitle>
                       <TableWrapper isMobile={isMobileVersion}>
                         <Table isMobile={isMobileVersion}>
                           <thead>
@@ -496,9 +497,9 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
                   {locationsList.length > 0 && (
                     <>
-                      <div>
+                      <TableTitle>
                         <strong>Locais Conhecidos por mim:</strong>
-                      </div>
+                      </TableTitle>
                       <TableWrapper isMobile={isMobileVersion}>
                         <Table isMobile={isMobileVersion}>
                           <thead>

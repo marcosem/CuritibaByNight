@@ -163,7 +163,10 @@ const Influences: React.FC = () => {
                       }
                     >
                       <TableLevelsCell title="Copiar Texto">
-                        <span id={`text-${selInfluence.influence}-${index}`}>
+                        <span
+                          id={`text-${selInfluence.influence}-${index}`}
+                          lang="pt-BR"
+                        >
                           {level}
                         </span>
                         <FiCopy />

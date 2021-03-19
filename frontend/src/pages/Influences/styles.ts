@@ -246,7 +246,7 @@ export const TableCell = styled.div`
 
   overflow-wrap: break-word;
   word-wrap: break-word;
-  hyphens: auto;
+  //hyphens: auto;
   color: #000;
 `;
 

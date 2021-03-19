@@ -194,11 +194,25 @@ export const CharacterContainer = styled.div<ICharPanelProps>`
   }
 `;
 
+export const TableTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding-bottom: 5px;
+
+  strong {
+    padding-top: 13px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+  }
+`;
+
 export const TableWrapper = styled.div<ICharPanelProps>`
-  margin: 10px auto;
+  margin: 5px auto;
   min-width: 320px;
   border-radius: 11px;
-  padding-bottom: 16px;
+  padding-bottom: 16px !important;
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
