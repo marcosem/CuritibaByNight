@@ -14,7 +14,7 @@ interface ICardProps {
   clanImg: string;
 }
 
-const appearFromLeft = keyframes`
+const appearingFromOpacity = keyframes`
   from {
     opacity: 0;
     // transform: translateX(-50px);
@@ -45,7 +45,26 @@ export const Container = styled.div<ICharacterProps>`
           `}
   }
 
-  animation: ${appearFromLeft} 0.6s;
+  animation: ${appearingFromOpacity} 0.6s;
+`;
+
+export const CardSquarePlaceHolder = styled.div<ICardProps>`
+  position: relative;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 10px;
+
+  ${props => css`
+    background: url(${props.clanImg});
+  `}
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
 `;
 
 export const CardSquare = styled.div<ICardProps>`
@@ -64,6 +83,8 @@ export const CardSquare = styled.div<ICardProps>`
   background-repeat: no-repeat;
   background-size: cover;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+
+  animation: ${appearingFromOpacity} 0.3s;
 
   > span {
     cursor: default;
