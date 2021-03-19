@@ -90,7 +90,7 @@ class AddCharacterToLocationService {
       ? await this.usersRepository.findById(char.user_id)
       : undefined;
 
-    if (player) {
+    if (player && char.situation === 'active') {
       const locationUpdateTemplate = resolve(
         __dirname,
         '..',

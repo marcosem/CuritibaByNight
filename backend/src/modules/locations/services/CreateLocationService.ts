@@ -72,6 +72,7 @@ class CreateLocationService {
 
     let player: User | undefined;
     let char_name: string | undefined;
+    let char_situation: string | undefined;
 
     if (char_id) {
       const char = await this.charactersRepository.findById(char_id);
@@ -81,6 +82,7 @@ class CreateLocationService {
       }
 
       char_name = char.name;
+      char_situation = char.situation;
 
       if (char.user_id)
         player = await this.usersRepository.findById(char.user_id);
@@ -103,7 +105,7 @@ class CreateLocationService {
       responsible: char_id,
     });
 
-    if (player && char_name) {
+    if (player && char_name && char_situation === 'active') {
       const locationUpdateTemplate = resolve(
         __dirname,
         '..',
