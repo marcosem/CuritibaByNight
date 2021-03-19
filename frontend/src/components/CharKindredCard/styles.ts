@@ -65,6 +65,8 @@ export const CardSquarePlaceHolder = styled.div<ICardProps>`
   background-repeat: no-repeat;
   background-size: cover;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+
+  z-index: -1;
 `;
 
 export const CardSquare = styled.div<ICardProps>`
@@ -84,7 +86,9 @@ export const CardSquare = styled.div<ICardProps>`
   background-size: cover;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
 
-  animation: ${appearingFromOpacity} 0.3s;
+  z-index: 1;
+
+  // animation: ${appearingFromOpacity} 0.3s;
 
   > span {
     cursor: default;
@@ -120,8 +124,8 @@ export const ProfileImage = styled.div<IImageProps>`
     width: 192px;
     height: 252px;
     border-radius: 50%;
-
     transition: opacity 0.2s;
+    animation: ${appearingFromOpacity} 0.3s;
   }
 
   svg {
