@@ -66,7 +66,6 @@ const CharAlliedCard: React.FC<ICharacterCardProps> = ({
 
   useEffect(() => {
     setCharImg(avatar || tempProfileImg);
-    console.log(coterie);
   }, [avatar]);
 
   useEffect(() => {
