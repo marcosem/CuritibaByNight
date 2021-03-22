@@ -342,6 +342,9 @@ class PDFParseProvider implements IPDFParserProvider {
           case 'Mortal':
           case 'Wraith':
           default:
+            if (!char.coterie) {
+              char.coterie = '';
+            }
         }
       }
 
