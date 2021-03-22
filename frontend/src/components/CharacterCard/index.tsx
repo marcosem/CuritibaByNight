@@ -3,9 +3,9 @@ import React, { lazy, Suspense } from 'react';
 import Loading from '../Loading';
 
 // import CharKindredCard from '../CharKindredCard';
-// import CharRetainerCard from '../CharRetainerCard';
+// import CharAlliedCard from '../CharAlliedCard';
 const CharKindredCard = lazy(() => import('../CharKindredCard'));
-const CharRetainerCard = lazy(() => import('../CharRetainerCard'));
+const CharAlliedCard = lazy(() => import('../CharAlliedCard'));
 
 interface ICharacterCardProps {
   charId: string;
@@ -49,7 +49,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
       <Suspense fallback={<Loading />}>
         {creature_type !== 'Vampire' ||
         clan.indexOf('Curitiba By Night') >= 0 ? (
-          <CharRetainerCard
+          <CharAlliedCard
             charId={charId}
             name={name}
             experience={experience}
@@ -59,6 +59,7 @@ const CharacterCard: React.FC<ICharacterCardProps> = ({
             creature_type={creature_type}
             sect={sect}
             avatar={avatar}
+            coterie={coterie}
             updatedAt={updatedAt}
             npc={npc}
             regnant={regnant}

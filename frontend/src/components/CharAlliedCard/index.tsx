@@ -32,6 +32,7 @@ interface ICharacterCardProps {
   creature_type: string;
   sect?: string;
   regnant: string;
+  coterie?: string;
   updatedAt: string;
   situation?: string;
   npc?: boolean;
@@ -39,7 +40,7 @@ interface ICharacterCardProps {
   readOnly?: boolean;
 }
 
-const CharRetainerCard: React.FC<ICharacterCardProps> = ({
+const CharAlliedCard: React.FC<ICharacterCardProps> = ({
   charId,
   name,
   experience,
@@ -49,6 +50,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   clan,
   creature_type,
   regnant,
+  coterie = '',
   updatedAt,
   situation = 'active',
   npc = false,
@@ -175,6 +177,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
               {creature_type !== 'Mortal' ? (
                 <>
                   <b>{`${creature_type}: `}</b>
+                  <br />
                   {name}
                 </>
               ) : (
@@ -190,6 +193,7 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
             <>
               {clan !== '' && <span>{clan}</span>}
               {regnant !== '' && <span>{`Ligado à ${regnant}`}</span>}
+              {coterie !== '' && <span>{coterie}</span>}
             </>
           ) : (
             <>
@@ -233,4 +237,4 @@ const CharRetainerCard: React.FC<ICharacterCardProps> = ({
   );
 };
 
-export default CharRetainerCard;
+export default CharAlliedCard;

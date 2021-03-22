@@ -130,7 +130,7 @@ export const InputFileBox = styled.div`
 
   strong {
     font-size: 16px !important;
-    margin: 0 5px 0 10px;
+    margin: 0 5px 0 10px !important;
   }
 
   span {
