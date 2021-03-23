@@ -638,7 +638,7 @@ const LocationUpdate: React.FC = () => {
       setLocMysticalLevel(selectedLevel);
 
       const tempLocationData = {
-        mysticalLevel: selectedLevel,
+        mystical_level: selectedLevel,
       };
 
       const newLocData = selectedLocation;
