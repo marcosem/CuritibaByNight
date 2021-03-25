@@ -153,9 +153,12 @@ export default class UserCharactersController {
       inputData.char_xp_total = parsedChar.experience_total;
       inputData.char_clan = parsedChar.clan;
       inputData.char_creature_type = parsedChar.creature_type;
-      inputData.char_sect = parsedChar.sect;
-      inputData.char_title = parsedChar.title;
-      inputData.char_coterie = parsedChar.coterie;
+      inputData.char_sect =
+        parsedChar.sect === undefined ? '' : parsedChar.sect;
+      inputData.char_title =
+        parsedChar.title === undefined ? '' : parsedChar.title;
+      inputData.char_coterie =
+        parsedChar.coterie === undefined ? '' : parsedChar.coterie;
       inputData.char_retainer_level = parsedChar.retainer_level;
     }
 
