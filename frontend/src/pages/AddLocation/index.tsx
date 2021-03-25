@@ -217,7 +217,9 @@ const AddLocation: React.FC = () => {
         const filteredSect = fullSectList
           .sort()
           .filter((sect: string, pos: number, ary: string[]) => {
-            return sect !== null && (!pos || sect !== ary[pos - 1]);
+            return (
+              sect !== null && sect !== '' && (!pos || sect !== ary[pos - 1])
+            );
           });
 
         setClanList(filteredClanList);
