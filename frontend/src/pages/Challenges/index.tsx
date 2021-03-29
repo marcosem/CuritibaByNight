@@ -437,7 +437,7 @@ const Challenges: React.FC = () => {
           creature_type: '',
           sect: '',
           title: 'Narrador',
-          coterie: 'Curitiba By Night',
+          coterie: '',
           avatar_url: user.avatar_url,
           experience: '',
           experience_total: '',
