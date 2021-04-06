@@ -90,6 +90,8 @@ class UpdateCharacterSheetService {
       'sheet',
     );
 
+    const oldSituation = char.situation;
+
     char.name = char_name;
     char.experience = char_xp;
     char.experience_total = char_xp_total;
@@ -168,7 +170,7 @@ class UpdateCharacterSheetService {
 
     const savedChar = await this.charactersRepository.update(char);
 
-    if (player) {
+    if (player && (char.situation === 'active' || oldSituation === 'active')) {
       const charUpdateTemplate = resolve(
         __dirname,
         '..',
