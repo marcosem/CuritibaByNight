@@ -81,7 +81,7 @@ const CharAlliedCard: React.FC<ICharacterCardProps> = ({
           setSituationTitle('Em Torpor');
           break;
         case 'inactive':
-        case 'archived':
+        case 'shelved':
           setSituationIcon(FiClock);
           setSituationTitle('Inativo');
           break;

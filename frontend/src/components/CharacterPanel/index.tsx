@@ -30,8 +30,8 @@ import Loading from '../Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
-import { useSelection } from '../../hooks/selection';
 import { useModalBox } from '../../hooks/modalBox';
+import { useSelection } from '../../hooks/selection';
 import CharacterCard from '../CharacterCard';
 import ICharacter from '../CharacterList/ICharacter';
 import Button from '../Button';
@@ -272,6 +272,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   const handleRetainerSelection = useCallback(
     async (e: MouseEvent<HTMLTableRowElement>) => {
       const retainerId = e.currentTarget.id;
+      setRetainerList([]);
+
       const retainerChar = retainerList.find(ch => ch.id === retainerId);
 
       if (retainerChar) {
@@ -281,7 +283,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
         setChar(retainerChar);
         setRetainerList([]);
-        history.push('/character');
+        // history.push('/character');
+        history.push(`/character/${retainerId}`);
       }
     },
     [dashboard, history, myChar, retainerList, setChar],
@@ -307,13 +310,12 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
   const handleGoBack = useCallback(() => {
     if (lastChar !== undefined) {
-      setChar(lastChar);
       setLastChar(undefined);
       setRetainerList([]);
     }
 
     history.goBack();
-  }, [history, lastChar, setChar]);
+  }, [history, lastChar]);
 
   return (
     <>

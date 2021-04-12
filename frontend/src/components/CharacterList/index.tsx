@@ -145,12 +145,14 @@ const CharacterList: React.FC<ICharacterListProps> = ({
   const handleSelectChar = useCallback(
     async (e: MouseEvent<HTMLTableCellElement>) => {
       const charId = e.currentTarget.id;
+
       const charRow = charList.find(cRow => cRow.find(ch => ch.id === charId));
       const char = charRow?.find(ch => ch.id === charId);
 
       if (char !== undefined) {
         setChar(char);
-        history.push('/character');
+
+        history.push(`/character/${charId}`);
       }
     },
     [charList, history, setChar],
@@ -160,7 +162,6 @@ const CharacterList: React.FC<ICharacterListProps> = ({
     <></>
   ) : (
     <>
-      {/* <Scroll options={{ suppressScrollX: true }}> */}
       <Character isMobile={isMobileVersion}>
         <table>
           <tbody>
@@ -196,7 +197,6 @@ const CharacterList: React.FC<ICharacterListProps> = ({
           </tbody>
         </table>
       </Character>
-      {/* </Scroll> */}
     </>
   );
 };

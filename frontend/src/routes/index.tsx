@@ -76,7 +76,7 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
-    <Route path="/character" component={CharacterDetails} isPrivate />
+    <Route path="/character/:charId" component={CharacterDetails} isPrivate />
     <Route path="/challenges" component={Challenges} isPrivate />
   </Switch>
 );
