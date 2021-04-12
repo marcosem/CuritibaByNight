@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
-import { GiFangedSkull, GiCoffin } from 'react-icons/gi';
+import { GiFangedSkull, GiCoffin, GiRun } from 'react-icons/gi';
 import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import api from '../../services/api';
@@ -81,8 +81,13 @@ const CharAlliedCard: React.FC<ICharacterCardProps> = ({
           setSituationTitle('Em Torpor');
           break;
         case 'inactive':
+        case 'archived':
           setSituationIcon(FiClock);
           setSituationTitle('Inativo');
+          break;
+        case 'transfered':
+          setSituationIcon(GiRun);
+          setSituationTitle('Transferido');
           break;
         default:
           setSituationIcon(null);

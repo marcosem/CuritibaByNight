@@ -11,6 +11,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   name: string;
   id: string;
   checked: boolean;
+  titlebar?: boolean;
 };
 
 const Checkbox: React.FC<InputProps> = ({
@@ -18,9 +19,10 @@ const Checkbox: React.FC<InputProps> = ({
   id,
   name,
   checked,
+  titlebar = false,
   ...rest
 }) => (
-  <Container htmlFor={id}>
+  <Container htmlFor={id} titlebar={titlebar}>
     <CheckboxContainer>
       <HiddenCheckbox
         type="checkbox"

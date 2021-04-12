@@ -11,6 +11,7 @@ import Loading from '../../components/Loading';
 import {
   Container,
   TitleBox,
+  SelectionContainer,
   Content,
   Select,
   Functions,
@@ -18,6 +19,7 @@ import {
 } from './styles';
 import CharacterList from '../../components/CharacterList';
 import ICharacter from '../../components/CharacterList/ICharacter';
+import Checkbox from '../../components/Checkbox';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
@@ -32,6 +34,7 @@ const Characters: React.FC = () => {
   const [filterList, setFilterList] = useState<string[]>([]);
   const [selectedClan, setSelectedClan] = useState<string>('');
   const [isBusy, setBusy] = useState(false);
+  const [showActiveOnly, setShowActiveOnly] = useState(true);
   const { signOut } = useAuth();
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
@@ -104,6 +107,13 @@ const Characters: React.FC = () => {
     setSelectedClan('');
   }, []);
 
+  const handleShowActiveOnlyChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setShowActiveOnly(e.target.checked);
+    },
+    [],
+  );
+
   const handleFilterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const clan = event.target.value;
@@ -132,19 +142,31 @@ const Characters: React.FC = () => {
                     : 'Clique no nome do personagem para visualizar a ficha:'}
                 </strong>
                 {filterList.length > 0 && (
-                  <Select
-                    name="clan"
-                    id="clan"
-                    value={selectedClan}
-                    onChange={handleFilterChange}
-                  >
-                    <option value="">Selecione um Clan:</option>
-                    {filterList.map(clan => (
-                      <option key={clan} value={clan}>
-                        {clan}
-                      </option>
-                    ))}
-                  </Select>
+                  <SelectionContainer>
+                    <Checkbox
+                      name="showActiveOnly"
+                      id="showActiveOnly"
+                      checked={showActiveOnly}
+                      titlebar
+                      onChange={handleShowActiveOnlyChange}
+                    >
+                      Somente Ativos
+                    </Checkbox>
+
+                    <Select
+                      name="clan"
+                      id="clan"
+                      value={selectedClan}
+                      onChange={handleFilterChange}
+                    >
+                      <option value="">Selecione um Clan:</option>
+                      {filterList.map(clan => (
+                        <option key={clan} value={clan}>
+                          {clan}
+                        </option>
+                      ))}
+                    </Select>
+                  </SelectionContainer>
                 )}
               </>
             ) : (
@@ -161,7 +183,7 @@ const Characters: React.FC = () => {
               chars={charList}
               locked
               filterClan={selectedClan}
-              filterSituation={filter === 'npc' ? 'include torpor' : 'active'}
+              filterSituation={showActiveOnly ? 'active' : 'all'}
             />
           </Content>
 

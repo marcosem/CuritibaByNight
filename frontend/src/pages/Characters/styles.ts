@@ -46,6 +46,22 @@ export const TitleBox = styled.div`
   }
 `;
 
+export const SelectionContainer = styled.div`
+  display: flex;
+  flex-direction: space-between;
+  margin-left: auto;
+
+  align-items: center;
+  justify-content: center;
+
+  span {
+    color: #eee !important;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5) !important;
+    font-size: 14px !important;
+    font-weight: 500px !important;
+  }
+`;
+
 export const Select = styled.select`
   -webkit-appearance: none;
   -moz-appearance: none;

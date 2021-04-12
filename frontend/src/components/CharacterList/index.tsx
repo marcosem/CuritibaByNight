@@ -99,11 +99,14 @@ const CharacterList: React.FC<ICharacterListProps> = ({
 
     if (filterSituation !== '') {
       tempArray = tempArray.filter((char: ICharacter) => {
-        if (filterSituation === 'include torpor') {
-          return char.situation === 'active' || char.situation === 'torpor';
+        switch (filterSituation) {
+          case 'include torpor':
+            return char.situation === 'active' || char.situation === 'torpor';
+          case 'all':
+            return true;
+          default:
+            return filterSituation !== '' && char.situation === filterSituation;
         }
-
-        return filterSituation !== '' && char.situation === filterSituation;
       });
     }
 

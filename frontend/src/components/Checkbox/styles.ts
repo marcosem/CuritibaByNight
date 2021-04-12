@@ -4,21 +4,39 @@ interface ICheckBoxProps {
   checked: boolean;
 }
 
-export const Container = styled.label`
+interface IContainerProps {
+  titlebar: boolean;
+}
+
+export const Container = styled.label<IContainerProps>`
   display: flex;
   flex-direction: row;
   padding: 5px 0;
-  width: 100%;
 
   align-items: center;
   justify-content: center;
 
-  span {
-    margin-left: 8px;
-    font-size: 16px !important;
-    color: #333;
-    font-weight: 500;
-  }
+  ${props =>
+    props.titlebar
+      ? css`
+          width: 50%;
+          span {
+            margin-left: 8px;
+            color: #eee;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+            font-size: 14px !important;
+            font-weight: 500;
+          }
+        `
+      : css`
+          width: 100%;
+          span {
+            margin-left: 8px;
+            font-size: 16px !important;
+            color: #333;
+            font-weight: 500;
+          }
+        `}
 `;
 
 export const CheckboxContainer = styled.div`
