@@ -136,11 +136,14 @@ const Characters: React.FC = () => {
           <TitleBox>
             {charList.length > 0 ? (
               <>
-                <strong>
-                  {filter === 'npc'
-                    ? 'Clique no nome do NPC para visualizar a ficha:'
-                    : 'Clique no nome do personagem para visualizar a ficha:'}
-                </strong>
+                {!isMobileVersion && (
+                  <strong>
+                    {filter === 'npc'
+                      ? 'Clique no nome do NPC para visualizar a ficha:'
+                      : 'Clique no nome do personagem para visualizar a ficha:'}
+                  </strong>
+                )}
+
                 {filterList.length > 0 && (
                   <SelectionContainer>
                     <Checkbox
