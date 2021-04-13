@@ -446,7 +446,7 @@ const LocationCharList: React.FC = () => {
 
       if (detailChar) {
         setChar(detailChar);
-        history.push('/character');
+        history.push(`/character/${charId}`);
       }
     },
     [charList, history, setChar],
@@ -675,6 +675,7 @@ const LocationCharList: React.FC = () => {
                                       type="button"
                                       onClick={handleRemoveButton}
                                       disabled={saving}
+                                      title="Remover"
                                     >
                                       {saving ? <FaSpinner /> : <FiTrash2 />}
                                     </RemoveButton>

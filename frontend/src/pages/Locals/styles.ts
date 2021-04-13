@@ -39,7 +39,7 @@ export const FunctionsContainer = styled.div`
   bottom: 20px;
 
   width: 64px;
-  height: 224px;
+  height: 304px;
 
   display: flex;
   flex-direction: column;

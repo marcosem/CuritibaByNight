@@ -11,6 +11,7 @@ import Profile from '../pages/Profile';
 import Players from '../pages/Players';
 import Characters from '../pages/Characters';
 import Locals from '../pages/Locals';
+import Territories from '../pages/Territories';
 import CreatePlayer from '../pages/CreatePlayer';
 import UpdatePlayer from '../pages/UpdatePlayer';
 import CharacterUpdate from '../pages/CharacterUpdate';
@@ -70,6 +71,7 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
+    <Route path="/territories" component={Territories} isPrivate isStoryteller />
     <Route
       path="/localchars"
       component={LocationCharList}

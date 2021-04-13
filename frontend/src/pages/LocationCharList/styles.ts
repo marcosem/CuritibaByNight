@@ -184,8 +184,8 @@ export const RemoveButton = styled.button`
 
   svg {
     color: #fff;
-    width: 20px;
-    height: 20px;
+    width: 12px;
+    height: 12px;
 
     ${props =>
       props.disabled &&
@@ -270,11 +270,6 @@ export const Table = styled.table`
       background: #888;
 
       border: 2px solid #860209;
-    }
-
-    svg {
-      width: 12px;
-      height: 12px;
     }
   }
 

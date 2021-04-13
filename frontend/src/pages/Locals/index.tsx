@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import { FiPlus, FiEdit, FiUserPlus } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiUserPlus, FiFlag } from 'react-icons/fi';
 import {
   Map,
   TileLayer,
@@ -533,6 +533,9 @@ const Locals: React.FC = () => {
 
         {user.storyteller && !isMobileVersion && (
           <FunctionsContainer>
+            <Link to="/territories" title="Lista de Territórios">
+              <FiFlag />
+            </Link>
             <Link to="/updatelocal" title="Editar Localização">
               <FiEdit />
             </Link>

@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiUpload } from 'react-icons/fi';
+
 import api from '../../services/api';
 import Header from '../../components/Header';
 import HeaderMobile from '../../components/HeaderMobile';
@@ -144,18 +145,18 @@ const Characters: React.FC = () => {
                   </strong>
                 )}
 
-                {filterList.length > 0 && (
-                  <SelectionContainer>
-                    <Checkbox
-                      name="showActiveOnly"
-                      id="showActiveOnly"
-                      checked={showActiveOnly}
-                      titlebar
-                      onChange={handleShowActiveOnlyChange}
-                    >
-                      Somente Ativos
-                    </Checkbox>
+                <SelectionContainer>
+                  <Checkbox
+                    name="showActiveOnly"
+                    id="showActiveOnly"
+                    checked={showActiveOnly}
+                    titlebar
+                    onChange={handleShowActiveOnlyChange}
+                  >
+                    Somente Ativos
+                  </Checkbox>
 
+                  {filterList.length > 0 && (
                     <Select
                       name="clan"
                       id="clan"
@@ -169,8 +170,8 @@ const Characters: React.FC = () => {
                         </option>
                       ))}
                     </Select>
-                  </SelectionContainer>
-                )}
+                  )}
+                </SelectionContainer>
               </>
             ) : (
               <strong>
