@@ -304,7 +304,7 @@ export const TableCell = styled.div<ITableCell>`
     ${props =>
     props.alignment === 'right' &&
     css`
-      justify-content: right;
+      justify-content: flex-end;
     `}
 `;
 
