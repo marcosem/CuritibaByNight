@@ -1,7 +1,13 @@
 /* eslint-disable camelcase */
-import React, { useCallback, useEffect, useState, MouseEvent } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  MouseEvent,
+  useRef,
+} from 'react';
 // import { FiCopy, FiArrowLeft } from 'react-icons/fi';
-import { FiEdit, FiSave, FiX, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiSave, FiX, FiTrash2, FiPlus } from 'react-icons/fi';
 import Header from '../../components/Header';
 import api from '../../services/api';
 
@@ -11,11 +17,15 @@ import {
   TablesContainer,
   TableWrapper,
   Table,
+  TableHeaderCell,
   TableCell,
+  TableEditCell,
   ActionsContainer,
   ActionButton,
 } from './styles';
+import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useModalBox } from '../../hooks/modalBox';
 import Loading from '../../components/Loading';
 
 interface ITerritory {
@@ -33,7 +43,13 @@ const Influences: React.FC = () => {
   const [selTerritoryList, setSelTerritoryList] = useState<ITerritory[]>([]);
   const [selectedSect, setSelectedSect] = useState<string>('');
   const [sectList, setSectList] = useState<ITerritory[]>([]);
+  const [isScrollOn, setIsScrollOn] = useState<boolean>(true);
+  const { signOut } = useAuth();
   const { addToast } = useToast();
+  const { showModal } = useModalBox();
+  const terrRowRef = useRef<HTMLTableRowElement>(null);
+  const terrBodyRef = useRef<HTMLTableSectionElement>(null);
+
   // const isMobileVersion = true;
 
   /*
@@ -112,104 +128,343 @@ const Influences: React.FC = () => {
   }, [loadInfluences]);
   */
 
-  const loadTerritories = useCallback(async () => {
-    setBusy(true);
+  const loadTerritories = useCallback(
+    async (setAsBusy = true) => {
+      setAsBusy && setBusy(true);
 
-    try {
-      await api.get('territories/list').then(response => {
-        const res: ITerritory[] = response.data;
-        // const tempSectList: ITerritory[] = [];
-        let newSectList: ITerritory[] = [];
+      try {
+        await api.get('territories/list').then(response => {
+          const res: ITerritory[] = response.data;
+          // const tempSectList: ITerritory[] = [];
+          let newSectList: ITerritory[] = [];
 
-        const formattedTerritories: ITerritory[] = res.map(
-          (territory: ITerritory) => {
-            const terr: ITerritory = {
-              id: territory.id,
-              name: territory.name,
-              population: territory.population,
-              formattedPopulation: new Intl.NumberFormat('pt-BR').format(
-                territory.population,
-              ),
-              sect: territory.sect ? territory.sect : '',
-              editMode: false,
-            };
+          const formattedTerritories: ITerritory[] = res.map(
+            (territory: ITerritory) => {
+              const terr: ITerritory = {
+                id: territory.id,
+                name: territory.name,
+                population: territory.population,
+                formattedPopulation: new Intl.NumberFormat('pt-BR').format(
+                  territory.population,
+                ),
+                sect: territory.sect ? territory.sect : '',
+                editMode: false,
+              };
 
-            if (terr.sect) {
-              const currSect: ITerritory[] = newSectList.filter(
-                sect => sect.sect === territory.sect,
-              );
-
-              if (currSect.length === 0) {
-                const newSect = {
-                  id: terr.sect,
-                  name: terr.sect,
-                  population: Number(terr.population),
-                  formattedPopulation: terr.formattedPopulation,
-                  sect: terr.sect,
-                  editMode: false,
-                };
-
-                if (newSectList.length > 0) {
-                  newSectList = [...newSectList, newSect].sort(
-                    (a: ITerritory, b: ITerritory) => {
-                      if (a.name < b.name) {
-                        return -1;
-                      }
-
-                      if (a.name > b.name) {
-                        return 1;
-                      }
-
-                      return 0;
-                    },
-                  );
-                } else {
-                  newSectList = [newSect];
-                }
-              } else {
-                const newPop =
-                  Number(currSect[0].population) + Number(terr.population);
-                const newSect: ITerritory = {
-                  id: currSect[0].id,
-                  name: currSect[0].name,
-                  population: newPop,
-                  formattedPopulation: new Intl.NumberFormat('pt-BR').format(
-                    newPop,
-                  ),
-                  sect: currSect[0].sect,
-                  editMode: false,
-                };
-
-                newSectList = newSectList.map(sect =>
-                  sect.id === newSect.id ? newSect : sect,
+              if (terr.sect) {
+                const currSect: ITerritory[] = newSectList.filter(
+                  sect => sect.sect === territory.sect,
                 );
+
+                if (currSect.length === 0) {
+                  const newSect = {
+                    id: terr.sect,
+                    name: terr.sect,
+                    population: Number(terr.population),
+                    formattedPopulation: terr.formattedPopulation,
+                    sect: terr.sect,
+                    editMode: false,
+                  };
+
+                  if (newSectList.length > 0) {
+                    newSectList = [...newSectList, newSect].sort(
+                      (a: ITerritory, b: ITerritory) => {
+                        if (a.name < b.name) {
+                          return -1;
+                        }
+
+                        if (a.name > b.name) {
+                          return 1;
+                        }
+
+                        return 0;
+                      },
+                    );
+                  } else {
+                    newSectList = [newSect];
+                  }
+                } else {
+                  const newPop =
+                    Number(currSect[0].population) + Number(terr.population);
+                  const newSect: ITerritory = {
+                    id: currSect[0].id,
+                    name: currSect[0].name,
+                    population: newPop,
+                    formattedPopulation: new Intl.NumberFormat('pt-BR').format(
+                      newPop,
+                    ),
+                    sect: currSect[0].sect,
+                    editMode: false,
+                  };
+
+                  newSectList = newSectList.map(sect =>
+                    sect.id === newSect.id ? newSect : sect,
+                  );
+                }
               }
-            }
 
-            return terr;
-          },
-        );
+              return terr;
+            },
+          );
 
-        setSectList(newSectList);
-        setSelTerritoryList(formattedTerritories);
-        setTerritoryList(formattedTerritories);
+          setSectList(newSectList);
+          setSelTerritoryList(formattedTerritories);
+          setTerritoryList(formattedTerritories);
+        });
+      } catch (error) {
+        if (error.response) {
+          const { message } = error.response.data;
+
+          if (error.response.status !== 401) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar listar os territórios',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+
+      setAsBusy && setBusy(false);
+    },
+    [addToast],
+  );
+
+  const handleEditTerritory = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      const terrId = e.currentTarget.id.replace('edit:', '');
+
+      const newTerritoryList = territoryList.map(terr => {
+        const newTerr = terr;
+        if (newTerr.id === terrId) {
+          newTerr.editMode = true;
+        } else {
+          newTerr.editMode = false;
+        }
+        return newTerr;
       });
-    } catch (error) {
-      if (error.response) {
+
+      setTerritoryList(newTerritoryList);
+    },
+    [territoryList],
+  );
+
+  const handleCancel = useCallback(
+    (currTerritory: ITerritory) => {
+      const newTerritory = currTerritory;
+
+      newTerritory.editMode = false;
+
+      const newTerritoryList = territoryList.map(terr =>
+        terr.id === newTerritory.id ? newTerritory : terr,
+      );
+
+      setTerritoryList(newTerritoryList);
+    },
+    [territoryList],
+  );
+
+  const handleCancelEditTerritory = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      const terrId = e.currentTarget.id.replace('cancel:', '');
+
+      const currTerritory = territoryList.find(terr => terr.id === terrId);
+
+      if (currTerritory) {
+        handleCancel(currTerritory);
+      }
+    },
+    [handleCancel, territoryList],
+  );
+
+  const handleSaveTerritory = useCallback(
+    async (newTerritory: ITerritory) => {
+      try {
+        const formData = {
+          territory_id: newTerritory.id,
+          name: newTerritory.name,
+          population: newTerritory.population,
+          sect: newTerritory.sect,
+        };
+
+        // setSaving
+
+        await api.patch('/territories/update', formData);
+        await loadTerritories(false);
+
+        addToast({
+          type: 'success',
+          title: 'Território atualizado!',
+          description: 'Território atualizado com sucesso!',
+        });
+      } catch (error) {
         const { message } = error.response.data;
 
-        if (error.response.status !== 401) {
+        if (error.response) {
           addToast({
             type: 'error',
-            title: 'Erro ao tentar listar os territórios',
+            title: 'Erro ao tentar atualizar o território',
             description: `Erro: '${message}'`,
           });
         }
       }
-    }
+    },
+    [addToast, loadTerritories],
+  );
 
-    setBusy(false);
-  }, [addToast]);
+  const handleConfirmSaveTerritory = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      const terrId = e.currentTarget.id.replace('save:', '');
+
+      const currTerritory = territoryList.find(terr => terr.id === terrId);
+      const newTerritory: ITerritory = {
+        id: currTerritory?.id || '',
+        name: currTerritory?.name || '',
+        population: currTerritory?.population || 0,
+        formattedPopulation: currTerritory?.formattedPopulation || '',
+        sect: currTerritory?.sect || '',
+      };
+
+      if (terrId && currTerritory) {
+        const newName = document.getElementById(
+          `name:${terrId}`,
+        ) as HTMLInputElement;
+
+        const newPop = document.getElementById(
+          `pop:${terrId}`,
+        ) as HTMLInputElement;
+
+        const newSect = document.getElementById(
+          `sect:${terrId}`,
+        ) as HTMLInputElement;
+
+        let hasChanges = false;
+        if (
+          newName &&
+          newName.value !== '' &&
+          newName.value !== currTerritory.name
+        ) {
+          newTerritory.name = newName.value;
+          hasChanges = true;
+        }
+
+        if (
+          newPop &&
+          newPop.value !== '' &&
+          Number(newPop.value) !== Number(currTerritory.population)
+        ) {
+          newTerritory.population = Number(newPop.value);
+          newTerritory.formattedPopulation = new Intl.NumberFormat(
+            'pt-BR',
+          ).format(newTerritory.population);
+
+          hasChanges = true;
+        }
+
+        if (
+          newSect &&
+          newSect.value !== '' &&
+          newSect.value !== currTerritory.sect
+        ) {
+          newTerritory.sect = newSect.value;
+          hasChanges = true;
+        }
+
+        if (hasChanges) {
+          showModal({
+            type: 'warning',
+            title: 'Confirmar alteração',
+            description: `Você está alterando o Território [${currTerritory.name}], você confirma?`,
+            btn1Title: 'Sim',
+            btn1Function: () => handleSaveTerritory(newTerritory),
+            btn2Title: 'Não',
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            btn2Function: () => handleCancel(currTerritory),
+          });
+        } else {
+          handleCancel(currTerritory);
+        }
+      }
+    },
+    [handleCancel, handleSaveTerritory, showModal, territoryList],
+  );
+
+  const handleRemoveTerritory = useCallback(
+    async (terrId: string) => {
+      try {
+        const requestData = {
+          territory_id: terrId,
+        };
+
+        const reqData = { data: requestData };
+
+        await api.delete('/territories/remove', reqData);
+
+        const newTerritoryList = territoryList.filter(
+          terr => terr.id !== terrId,
+        );
+
+        setTerritoryList(newTerritoryList);
+
+        if (selTerritoryList.length > 0) {
+          const newSelTerritoryList = selTerritoryList.filter(
+            terr => terr.id !== terrId,
+          );
+          setSelTerritoryList(newSelTerritoryList);
+        }
+
+        addToast({
+          type: 'success',
+          title: 'Território excluído',
+          description: 'Território excluído com sucesso!',
+        });
+      } catch (error) {
+        if (error.response) {
+          const { message } = error.response.data;
+
+          if (message?.indexOf('token') > 0 && error.response.status === 401) {
+            addToast({
+              type: 'error',
+              title: 'Sessão Expirada',
+              description:
+                'Sessão de usuário expirada, faça o login novamente!',
+            });
+
+            signOut();
+          } else {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar exluir o território',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+    },
+    [addToast, selTerritoryList, signOut, territoryList],
+  );
+
+  const handleConfirmRemoveTerritory = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      const terrId = e.currentTarget.id.replace('delete:', '');
+
+      const currTerritory = territoryList.find(terr => terr.id === terrId);
+
+      if (currTerritory) {
+        showModal({
+          type: 'warning',
+          title: 'Confirmar exclusão',
+          description: `Você está prestes a excluir o Território [${currTerritory.name}], você confirma?`,
+          btn1Title: 'Sim',
+          btn1Function: () => handleRemoveTerritory(terrId),
+          btn2Title: 'Não',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          btn2Function: () => {},
+        });
+      }
+    },
+    [handleRemoveTerritory, showModal, territoryList],
+  );
 
   const handleSelectSectTerritories = useCallback(
     async (e: MouseEvent<HTMLTableRowElement>) => {
@@ -228,6 +483,40 @@ const Influences: React.FC = () => {
     },
     [selectedSect, territoryList],
   );
+
+  const handleAddTerritory = useCallback(() => {
+    const newExist = territoryList.find(terr => terr.id === 'new');
+
+    if (!newExist) {
+      const newTerritory: ITerritory = {
+        id: 'new',
+        name: '',
+        population: 0,
+        formattedPopulation: '0',
+        sect: '',
+        editMode: true,
+      };
+
+      const newTerritoryList = territoryList;
+      newTerritoryList.unshift(newTerritory);
+
+      // const newSelTerritoryList = selTerritoryList;
+      // newSelTerritoryList.unshift(newTerritory);
+
+      // setSelTerritoryList(newSelTerritoryList);
+      setTerritoryList(newTerritoryList);
+    }
+  }, [territoryList]);
+
+  useEffect(() => {
+    if (selectedSect === '') {
+      setIsScrollOn(true);
+    } else if (terrRowRef.current && terrBodyRef.current) {
+      if (terrRowRef.current.offsetWidth === terrBodyRef.current.offsetWidth) {
+        setIsScrollOn(false);
+      }
+    }
+  }, [selectedSect, territoryList]);
 
   useEffect(() => {
     loadTerritories();
@@ -249,30 +538,75 @@ const Influences: React.FC = () => {
       ) : (
         <TablesContainer>
           <TableWrapper>
-            <Table>
+            <Table isScrollOn={isScrollOn}>
               <thead>
                 <tr>
-                  <th>Município</th>
+                  <th>
+                    <TableHeaderCell>
+                      {/*
+                      <ActionButton
+                        id="addNew"
+                        type="button"
+                        title="Adicionar Novo"
+                        editMode
+                        onClick={handleAddTerritory}
+                      >
+                        <FiPlus />
+                      </ActionButton>
+                      */}
+                      <span>Município</span>
+                    </TableHeaderCell>
+                  </th>
                   <th>População</th>
                   <th>Secto</th>
                   <th>Ações</th>
                 </tr>
               </thead>
-              <tbody>
-                {selTerritoryList.map(terr => (
-                  <tr key={terr.id}>
+              <tbody ref={terrBodyRef}>
+                {selTerritoryList.map((terr, index) => (
+                  <tr key={terr.id} ref={index === 0 ? terrRowRef : undefined}>
                     <td>
-                      <TableCell alignment="left">
-                        <strong>{terr.name}</strong>
-                      </TableCell>
+                      {terr.editMode ? (
+                        <TableEditCell alignment="left">
+                          <input
+                            name={`name:${terr.name}`}
+                            id={`name:${terr.id}`}
+                            placeholder={terr.name}
+                          />
+                        </TableEditCell>
+                      ) : (
+                        <TableCell alignment="left">
+                          <strong>{terr.name}</strong>
+                        </TableCell>
+                      )}
                     </td>
                     <td>
-                      <TableCell alignment="right">
-                        {terr.formattedPopulation}
-                      </TableCell>
+                      {terr.editMode ? (
+                        <TableEditCell alignment="right">
+                          <input
+                            name={`pop:${terr.name}`}
+                            id={`pop:${terr.id}`}
+                            placeholder={terr.formattedPopulation}
+                          />
+                        </TableEditCell>
+                      ) : (
+                        <TableCell alignment="right">
+                          {terr.formattedPopulation}
+                        </TableCell>
+                      )}
                     </td>
                     <td>
-                      <TableCell alignment="center">{terr.sect}</TableCell>
+                      {terr.editMode ? (
+                        <TableEditCell alignment="center">
+                          <input
+                            name={`sect:${terr.name}`}
+                            id={`sect:${terr.id}`}
+                            placeholder={terr.sect}
+                          />
+                        </TableEditCell>
+                      ) : (
+                        <TableCell alignment="center">{terr.sect}</TableCell>
+                      )}
                     </td>
                     <td>
                       <ActionsContainer>
@@ -282,6 +616,8 @@ const Influences: React.FC = () => {
                               id={`save:${terr.id}`}
                               type="button"
                               title="Salvar"
+                              editMode
+                              onClick={handleConfirmSaveTerritory}
                             >
                               <FiSave />
                             </ActionButton>
@@ -289,6 +625,7 @@ const Influences: React.FC = () => {
                               id={`cancel:${terr.id}`}
                               type="button"
                               title="Cancelar"
+                              onClick={handleCancelEditTerritory}
                             >
                               <FiX />
                             </ActionButton>
@@ -299,6 +636,7 @@ const Influences: React.FC = () => {
                               id={`edit:${terr.id}`}
                               type="button"
                               title="Editar"
+                              onClick={handleEditTerritory}
                             >
                               <FiEdit />
                             </ActionButton>
@@ -306,6 +644,7 @@ const Influences: React.FC = () => {
                               id={`delete:${terr.id}`}
                               type="button"
                               title="Remover"
+                              onClick={handleConfirmRemoveTerritory}
                             >
                               <FiTrash2 />
                             </ActionButton>

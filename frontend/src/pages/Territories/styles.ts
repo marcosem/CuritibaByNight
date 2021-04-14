@@ -17,6 +17,11 @@ interface ITableCell {
 
 interface ITableType {
   isSectTable?: boolean;
+  isScrollOn?: boolean;
+}
+
+interface IActionButton {
+  editMode?: boolean;
 }
 
 export const Container = styled.div`
@@ -207,6 +212,7 @@ export const Table = styled.table<ITableType>`
     display: block;
     max-height: 70vh;
     overflow-y: auto;
+    overflow-x: hidden;
     border-radius: 0 0 10px 10px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 
@@ -252,7 +258,13 @@ export const Table = styled.table<ITableType>`
               }
 
               &:last-child {
-                width: 75px;
+                ${props.isScrollOn
+                  ? css`
+                      width: 75px;
+                    `
+                  : css`
+                      width: 85px;
+                    `}
               }
             `}
     }
@@ -274,11 +286,27 @@ export const Table = styled.table<ITableType>`
   }
 `;
 
+export const TableHeaderCell = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  span {
+    width: calc(100% - 24px);
+  }
+
+  button {
+    width: 24px;
+    margin-left: 0;
+  }
+`;
+
 export const TableCell = styled.div<ITableCell>`
   display: flex;
   overflow-wrap: break-word;
   word-wrap: break-word;
-  color: #000;
 
   ${props =>
     props.selected
@@ -308,6 +336,62 @@ export const TableCell = styled.div<ITableCell>`
     `}
 `;
 
+export const TableEditCell = styled.div<ITableCell>`
+  display: flex;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  color: #000;
+
+  ${props =>
+    props.alignment === 'left' &&
+    css`
+      justify-content: left;
+    `}
+
+  ${props =>
+    props.alignment === 'center' &&
+    css`
+      justify-content: center;
+    `}
+
+    ${props =>
+    props.alignment === 'right' &&
+    css`
+      justify-content: flex-end;
+    `}
+
+  input {
+    width: 100%;
+    font-size: 12px;
+    background: transparent;
+    flex: 1;
+    border: 0;
+    color: #000;
+
+    ${props =>
+      props.alignment === 'left' &&
+      css`
+        text-align: left;
+      `}
+
+    ${props =>
+      props.alignment === 'center' &&
+      css`
+        text-align: center;
+      `}
+
+    ${props =>
+      props.alignment === 'right' &&
+      css`
+        text-align: right;
+      `}
+
+    &&::placeholder {
+      color: #222;
+    }
+  }
+`;
+
 export const ActionsContainer = styled.div`
   display: flex;
   flex-direction: space-between;
@@ -315,7 +399,7 @@ export const ActionsContainer = styled.div`
   align-items: center;
 `;
 
-export const ActionButton = styled.button`
+export const ActionButton = styled.button<IActionButton>`
   width: 24px;
   height: 24px;
 
@@ -328,12 +412,22 @@ export const ActionButton = styled.button`
 
   border: 0;
   border-radius: 6px;
-  background: #860209;
   transition: background-color 0.2s;
 
-  &:hover {
-    background: ${shade(0.2, '#860209')};
-  }
+  ${props =>
+    props.editMode
+      ? css`
+          background: #028609;
+          &:hover {
+            background: ${shade(0.2, '#028609')};
+          }
+        `
+      : css`
+          background: #860209;
+          &:hover {
+            background: ${shade(0.2, '#860209')};
+          }
+        `}
 
   svg {
     color: #fff;
