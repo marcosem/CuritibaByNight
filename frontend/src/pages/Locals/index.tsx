@@ -261,8 +261,10 @@ const Locals: React.FC = () => {
               terr => terr.name === territory.name,
             );
 
+            const sect = territory.sect ? territory.sect.split(' (') : [''];
+
             let color;
-            switch (territory.sect) {
+            switch (sect[0]) {
               case 'Sabbat':
                 color = 'red';
                 break;
