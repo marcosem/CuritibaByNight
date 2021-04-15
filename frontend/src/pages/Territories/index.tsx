@@ -6,7 +6,6 @@ import React, {
   MouseEvent,
   useRef,
 } from 'react';
-// import { FiCopy, FiArrowLeft } from 'react-icons/fi';
 import { FiEdit, FiSave, FiX, FiTrash2, FiPlus } from 'react-icons/fi';
 import Header from '../../components/Header';
 import api from '../../services/api';
@@ -50,84 +49,6 @@ const Influences: React.FC = () => {
   const terrRowRef = useRef<HTMLTableRowElement>(null);
   const terrBodyRef = useRef<HTMLTableSectionElement>(null);
 
-  // const isMobileVersion = true;
-
-  /*
-  const loadInfluences = useCallback(() => {
-    const infList: IInfluence[] = influences.map(inf => {
-      const parsedInfluence: IInfluence = {
-        influence: inf.influence,
-        key_ability: inf.key_ability,
-        description: inf.description,
-        levels: inf.levels,
-        notes: inf.notes,
-      };
-
-      return parsedInfluence;
-    });
-
-    setInfluencesList(infList);
-  }, []);
-  */
-
-  /*
-  const handleShowDetails = useCallback((influence: IInfluence) => {
-    const newInfluence = influence;
-
-    setSelInfluence(newInfluence);
-  }, []);
-
-  const handleCopyToClipboard = useCallback(
-    (textId: string) => {
-      const spanText = document.getElementById(textId);
-      const textArea = document.createElement('textarea');
-
-      const firstIndex = textId.indexOf('-');
-      const lastIndex = textId.lastIndexOf('-');
-      let myText = '';
-
-      if (firstIndex >= 0 && lastIndex > firstIndex) {
-        const level = textId.substr(lastIndex + 1, 1);
-        const numLevel = Number(level) + 1;
-
-        const influence = textId.substr(
-          firstIndex + 1,
-          lastIndex - firstIndex - 1,
-        );
-
-        myText = spanText?.textContent
-          ? `${influence} x${numLevel}\r${spanText.textContent}\r`
-          : '';
-      } else {
-        myText = spanText?.textContent ? spanText.textContent : '';
-      }
-
-      textArea.value = myText;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-
-      textArea.remove();
-
-      addToast({
-        type: 'success',
-        title: 'Texto Copiado',
-        description: 'Texto Copiado para Área de Transferência!',
-      });
-    },
-    [addToast],
-  );
-
-  const handleGoBack = useCallback(() => {
-    setSelInfluence(undefined);
-  }, []);
-*/
-  /*
-  useEffect(() => {
-    loadInfluences();
-  }, [loadInfluences]);
-  */
-
   const loadTerritories = useCallback(
     async (setAsBusy = true) => {
       setAsBusy && setBusy(true);
@@ -135,7 +56,6 @@ const Influences: React.FC = () => {
       try {
         await api.get('territories/list').then(response => {
           const res: ITerritory[] = response.data;
-          // const tempSectList: ITerritory[] = [];
           let newSectList: ITerritory[] = [];
 
           const formattedTerritories: ITerritory[] = res.map(
@@ -253,11 +173,17 @@ const Influences: React.FC = () => {
     (currTerritory: ITerritory) => {
       const newTerritory = currTerritory;
 
-      newTerritory.editMode = false;
+      let newTerritoryList: ITerritory[];
+      if (newTerritory.id === 'new') {
+        newTerritoryList = territoryList.filter(terr => terr.id !== 'new');
+        setSelTerritoryList(newTerritoryList);
+      } else {
+        newTerritory.editMode = false;
 
-      const newTerritoryList = territoryList.map(terr =>
-        terr.id === newTerritory.id ? newTerritory : terr,
-      );
+        newTerritoryList = territoryList.map(terr =>
+          terr.id === newTerritory.id ? newTerritory : terr,
+        );
+      }
 
       setTerritoryList(newTerritoryList);
     },
@@ -277,6 +203,72 @@ const Influences: React.FC = () => {
     [handleCancel, territoryList],
   );
 
+  const handleSaveNew = useCallback(
+    async (newTerritory: ITerritory) => {
+      try {
+        const formData = {
+          name: newTerritory.name,
+          population: newTerritory.population,
+          sect: newTerritory.sect,
+        };
+
+        await api.post('/territories/add', formData);
+
+        await loadTerritories(false);
+
+        addToast({
+          type: 'success',
+          title: 'Território adicionado!',
+          description: 'Território adicionado com sucesso!',
+        });
+      } catch (error) {
+        if (error.response) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar adicionar o território',
+            description:
+              'Não foi possível adicionar o território, verifique os campos.',
+          });
+        }
+      }
+    },
+    [addToast, loadTerritories],
+  );
+
+  const handleConfirmSaveNew = useCallback(
+    (newTerritory: ITerritory) => {
+      let hasError = false;
+      if (
+        newTerritory.name === '' ||
+        newTerritory.population === 0 ||
+        newTerritory.sect === ''
+      ) {
+        hasError = true;
+      }
+
+      if (hasError) {
+        addToast({
+          type: 'error',
+          title: 'Dados incompletos do novo território',
+          description:
+            'Verifique os campos do novo território: Município, População e Secto!',
+        });
+      } else {
+        showModal({
+          type: 'warning',
+          title: 'Confirmar inclusão',
+          description: `Você está prestes incluir um novo Território [${newTerritory.name}], você confirma?`,
+          btn1Title: 'Sim',
+          btn1Function: () => handleSaveNew(newTerritory),
+          btn2Title: 'Não',
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          btn2Function: () => handleCancel(newTerritory),
+        });
+      }
+    },
+    [addToast, handleCancel, handleSaveNew, showModal],
+  );
+
   const handleSaveTerritory = useCallback(
     async (newTerritory: ITerritory) => {
       try {
@@ -287,8 +279,6 @@ const Influences: React.FC = () => {
           sect: newTerritory.sect,
         };
 
-        // setSaving
-
         await api.patch('/territories/update', formData);
         await loadTerritories(false);
 
@@ -298,13 +288,12 @@ const Influences: React.FC = () => {
           description: 'Território atualizado com sucesso!',
         });
       } catch (error) {
-        const { message } = error.response.data;
-
         if (error.response) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar atualizar o território',
-            description: `Erro: '${message}'`,
+            description:
+              'Não foi possível atualizar o território, verique os campos.',
           });
         }
       }
@@ -315,8 +304,8 @@ const Influences: React.FC = () => {
   const handleConfirmSaveTerritory = useCallback(
     async (e: MouseEvent<HTMLButtonElement>) => {
       const terrId = e.currentTarget.id.replace('save:', '');
-
       const currTerritory = territoryList.find(terr => terr.id === terrId);
+
       const newTerritory: ITerritory = {
         id: currTerritory?.id || '',
         name: currTerritory?.name || '',
@@ -370,7 +359,9 @@ const Influences: React.FC = () => {
           hasChanges = true;
         }
 
-        if (hasChanges) {
+        if (terrId === 'new') {
+          handleConfirmSaveNew(newTerritory);
+        } else if (hasChanges) {
           showModal({
             type: 'warning',
             title: 'Confirmar alteração',
@@ -386,7 +377,13 @@ const Influences: React.FC = () => {
         }
       }
     },
-    [handleCancel, handleSaveTerritory, showModal, territoryList],
+    [
+      handleCancel,
+      handleConfirmSaveNew,
+      handleSaveTerritory,
+      showModal,
+      territoryList,
+    ],
   );
 
   const handleRemoveTerritory = useCallback(
@@ -466,6 +463,25 @@ const Influences: React.FC = () => {
     [handleRemoveTerritory, showModal, territoryList],
   );
 
+  const handleAddTerritory = useCallback(() => {
+    const newExist = territoryList.find(terr => terr.id === 'new');
+
+    if (!newExist) {
+      const newTerritory: ITerritory = {
+        id: 'new',
+        name: '',
+        population: 0,
+        formattedPopulation: '0',
+        sect: '',
+        editMode: true,
+      };
+
+      setTerritoryList([newTerritory, ...territoryList]);
+      setSelectedSect('');
+      setSelTerritoryList([newTerritory, ...territoryList]);
+    }
+  }, [territoryList]);
+
   const handleSelectSectTerritories = useCallback(
     async (e: MouseEvent<HTMLTableRowElement>) => {
       const currentSelection = e.currentTarget.id;
@@ -484,30 +500,6 @@ const Influences: React.FC = () => {
     [selectedSect, territoryList],
   );
 
-  const handleAddTerritory = useCallback(() => {
-    const newExist = territoryList.find(terr => terr.id === 'new');
-
-    if (!newExist) {
-      const newTerritory: ITerritory = {
-        id: 'new',
-        name: '',
-        population: 0,
-        formattedPopulation: '0',
-        sect: '',
-        editMode: true,
-      };
-
-      const newTerritoryList = territoryList;
-      newTerritoryList.unshift(newTerritory);
-
-      // const newSelTerritoryList = selTerritoryList;
-      // newSelTerritoryList.unshift(newTerritory);
-
-      // setSelTerritoryList(newSelTerritoryList);
-      setTerritoryList(newTerritoryList);
-    }
-  }, [territoryList]);
-
   useEffect(() => {
     if (selectedSect === '') {
       setIsScrollOn(true);
@@ -516,7 +508,7 @@ const Influences: React.FC = () => {
         setIsScrollOn(false);
       }
     }
-  }, [selectedSect, territoryList]);
+  }, [selectedSect, territoryList, selTerritoryList]);
 
   useEffect(() => {
     loadTerritories();
@@ -543,7 +535,6 @@ const Influences: React.FC = () => {
                 <tr>
                   <th>
                     <TableHeaderCell>
-                      {/*
                       <ActionButton
                         id="addNew"
                         type="button"
@@ -553,7 +544,6 @@ const Influences: React.FC = () => {
                       >
                         <FiPlus />
                       </ActionButton>
-                      */}
                       <span>Município</span>
                     </TableHeaderCell>
                   </th>
