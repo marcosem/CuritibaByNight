@@ -213,8 +213,8 @@ const Influences: React.FC = () => {
         };
 
         await api.post('/territories/add', formData);
-
         await loadTerritories(false);
+        setSelectedSect('');
 
         addToast({
           type: 'success',
@@ -281,6 +281,7 @@ const Influences: React.FC = () => {
 
         await api.patch('/territories/update', formData);
         await loadTerritories(false);
+        setSelectedSect('');
 
         addToast({
           type: 'success',
