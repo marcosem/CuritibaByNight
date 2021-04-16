@@ -59,7 +59,7 @@ export default function getCardImg(clan: string): string {
     case 'Gangrel Antitribu':
       cardImg = cardGangrelAt;
       break;
-    case 'Gargoyle':
+    case 'Gargoyles':
       cardImg = cardGargoyle;
       break;
     case 'Giovanni':
