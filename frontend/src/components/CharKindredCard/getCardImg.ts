@@ -7,7 +7,7 @@ import cardDaughter from '../../assets/cards/card_daughterofcacophony.png';
 import cardSetite from '../../assets/cards/card_followerofset.png';
 import cardGangrel from '../../assets/cards/card_gangrel.png';
 import cardGangrelAt from '../../assets/cards/card_gangrelantitribu.png';
-import cardGargoyle from '../../assets/cards/card_gargoyle.png';
+import cardGargoyles from '../../assets/cards/card_gargoyles.png';
 import cardGiovanni from '../../assets/cards/card_giovanni.png';
 import cardHarbinger from '../../assets/cards/card_harbingerofskulls.png';
 import cardLasombra from '../../assets/cards/card_lasombra.png';
@@ -60,7 +60,7 @@ export default function getCardImg(clan: string): string {
       cardImg = cardGangrelAt;
       break;
     case 'Gargoyles':
-      cardImg = cardGargoyle;
+      cardImg = cardGargoyles;
       break;
     case 'Giovanni':
       cardImg = cardGiovanni;
