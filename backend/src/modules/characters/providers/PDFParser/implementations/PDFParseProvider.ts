@@ -63,6 +63,8 @@ class PDFParseProvider implements IPDFParserProvider {
           char.creature_type = 'Werewolf';
         } else if (line.indexOf('Mage') >= 0) {
           char.creature_type = 'Mage';
+        } else if (line.indexOf('Vampire') >= 0) {
+          char.creature_type = 'Vampire';
         } else {
           // large names takes two rows
           char.name = `${char.name} ${line.substring(0, line.length - 1)}`;
