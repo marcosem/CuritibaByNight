@@ -1,5 +1,8 @@
-import IPDFParserProvider from '@modules/characters/providers/PDFParser/models/IPDFParserProvider';
+import IPDFParserProvider, {
+  IPDFParseDTO,
+} from '@modules/characters/providers/PDFParser/models/IPDFParserProvider';
 import Character from '@modules/characters/infra/typeorm/entities/Character';
+import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 
 import pdfParser from 'pdf-parse';
 import { resolve } from 'path';
@@ -8,10 +11,13 @@ import uploadConfig from '@config/upload';
 import readline from 'readline';
 import { once } from 'events';
 import { Readable } from 'stream';
+import extractSingleAbility from './extractSingleAbility';
+import extractSingleBackground from './extractSingleBackground';
 
 class PDFParseProvider implements IPDFParserProvider {
-  public async parse(filename: string): Promise<Character | undefined> {
+  public async parse(filename: string): Promise<IPDFParseDTO | undefined> {
     const char = new Character();
+    const charTraits = [] as CharacterTrait[];
 
     const pdfBuffer = await fs.promises.readFile(
       resolve(uploadConfig('sheet').tmpFolder, filename),
@@ -41,6 +47,17 @@ class PDFParseProvider implements IPDFParserProvider {
     let isParsedXP = false;
     let isParsedXPTotal = false;
     let isParsedRetainerLevel = true;
+
+    // Traits
+    let virtuesSectionDone = false;
+    let morality: string;
+    let attributesSectionDone = false;
+    let abilitiesSectionStart = false;
+    let abilitiesSectionDone = false;
+    let backgroundsSectionStart = false;
+    let backgroundsSectionDone = false;
+    let influencesSectionStart = false;
+    let influencesSectionDone = false;
 
     rl.on('line', line => {
       index += 1;
@@ -110,8 +127,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
         experience = parseInt(line.substring(startXP, endXP), 10);
 
-        // eslint-disable-next-line no-restricted-globals
-        if (!isNaN(experience)) {
+        if (!Number.isNaN(experience)) {
           char.experience = experience;
           isParsedXP = true;
         }
@@ -128,8 +144,7 @@ class PDFParseProvider implements IPDFParserProvider {
           10,
         );
 
-        // eslint-disable-next-line no-restricted-globals
-        if (!isNaN(experienceTotal)) {
+        if (!Number.isNaN(experienceTotal)) {
           char.experience_total = experienceTotal;
           isParsedXPTotal = true;
         }
@@ -319,7 +334,7 @@ class PDFParseProvider implements IPDFParserProvider {
               char.coterie = coterie;
 
               // For Vampire, it finishes here
-              rl.close();
+              // rl.close();
             }
             break;
 
@@ -350,6 +365,305 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      if (char.creature_type && !virtuesSectionDone) {
+        switch (char.creature_type) {
+          case 'Vampire':
+            if (line.indexOf('Blood: ') >= 0) {
+              const startBlood = line.indexOf('Blood: ') + 'Blood: '.length;
+              const endBlood = line.indexOf('O', startBlood) - 1;
+              const blood = parseInt(line.substring(startBlood, endBlood), 10);
+
+              if (!Number.isNaN(blood)) {
+                const trait = {
+                  trait: 'Blood',
+                  level: blood,
+                  type: 'virtues',
+                } as CharacterTrait;
+
+                charTraits.push(trait);
+              }
+            }
+
+            if (line.indexOf('Morality Path: ') >= 0) {
+              const startMorality =
+                line.indexOf('Morality Path: ') + 'Morality Path: '.length;
+              const endMorality = line.indexOf('Aura:') - 1;
+              morality = line.substring(startMorality, endMorality);
+            }
+
+            if (morality && line.indexOf('Morality Traits: ') >= 0) {
+              const startMorality =
+                line.indexOf('Morality Traits: ') + 'Morality Traits: '.length;
+              const endMorality = line.indexOf('O', startMorality) - 1;
+              const moralityTrait = parseInt(
+                line.substring(startMorality, endMorality),
+                10,
+              );
+
+              if (!Number.isNaN(moralityTrait)) {
+                const trait = {
+                  trait: `Morality: ${morality}`,
+                  level: moralityTrait,
+                  type: 'virtues',
+                } as CharacterTrait;
+
+                charTraits.push(trait);
+              }
+            }
+
+            if (line.indexOf('Willpower: ') >= 0) {
+              const startWillpower =
+                line.indexOf('Willpower: ') + 'Willpower: '.length;
+              const endWillpower = line.indexOf('O', startWillpower) - 1;
+              const willpower = parseInt(
+                line.substring(startWillpower, endWillpower),
+                10,
+              );
+
+              if (!Number.isNaN(willpower)) {
+                const trait = {
+                  trait: 'Willpower',
+                  level: willpower,
+                  type: 'virtues',
+                } as CharacterTrait;
+
+                charTraits.push(trait);
+              }
+            }
+
+            if (line.indexOf('Self-Control/Instinct: ') >= 0) {
+              const startSelfControl =
+                line.indexOf('Self-Control/Instinct: ') +
+                'Self-Control/Instinct: '.length;
+              const endSelfControl = line.indexOf('O', startSelfControl) - 1;
+              const selfControl = parseInt(
+                line.substring(startSelfControl, endSelfControl),
+                10,
+              );
+
+              if (!Number.isNaN(selfControl)) {
+                const trait = {
+                  trait: 'Self-Control/Instinct',
+                  level: selfControl,
+                  type: 'virtues',
+                } as CharacterTrait;
+
+                charTraits.push(trait);
+              }
+            }
+
+            if (line.indexOf('Conscience/Conviction: ') >= 0) {
+              const startConscience =
+                line.indexOf('Conscience/Conviction: ') +
+                'Conscience/Conviction: '.length;
+              const endConscience = line.indexOf('O', startConscience) - 1;
+              const conscience = parseInt(
+                line.substring(startConscience, endConscience),
+                10,
+              );
+
+              if (!Number.isNaN(conscience)) {
+                const trait = {
+                  trait: 'Conscience/Conviction',
+                  level: conscience,
+                  type: 'virtues',
+                } as CharacterTrait;
+
+                charTraits.push(trait);
+              }
+            }
+
+            if (line.indexOf('Courage: ') >= 0) {
+              const startCourage =
+                line.indexOf('Courage: ') + 'Courage: '.length;
+              const endCourage = line.indexOf('O', startCourage) - 1;
+              const courage = parseInt(
+                line.substring(startCourage, endCourage),
+                10,
+              );
+
+              if (!Number.isNaN(courage)) {
+                const trait = {
+                  trait: 'Courage',
+                  level: courage,
+                  type: 'virtues',
+                } as CharacterTrait;
+
+                charTraits.push(trait);
+              }
+
+              virtuesSectionDone = true;
+            }
+            break;
+
+          default:
+            virtuesSectionDone = true;
+        }
+      }
+
+      if (virtuesSectionDone && !attributesSectionDone) {
+        if (line.indexOf('Physical Traits:') >= 0) {
+          const startAttribute = line.indexOf('Physical Traits:') - 4;
+          const endAttribute = line.indexOf('Physical Traits:') - 1;
+          const attribute = parseInt(
+            line.substring(startAttribute, endAttribute),
+            10,
+          );
+
+          if (!Number.isNaN(attribute)) {
+            const trait = {
+              trait: 'Physical',
+              level: attribute,
+              type: 'attributes',
+            } as CharacterTrait;
+
+            charTraits.push(trait);
+          }
+        }
+
+        if (line.indexOf('Social Traits:') >= 0) {
+          const startAttribute = line.indexOf('Social Traits:') - 4;
+          const endAttribute = line.indexOf('Social Traits:') - 1;
+          const attribute = parseInt(
+            line.substring(startAttribute, endAttribute),
+            10,
+          );
+
+          if (!Number.isNaN(attribute)) {
+            const trait = {
+              trait: 'Social',
+              level: attribute,
+              type: 'attributes',
+            } as CharacterTrait;
+
+            charTraits.push(trait);
+          }
+        }
+
+        if (line.indexOf('Mental Traits:') >= 0) {
+          const startAttribute = line.indexOf('Mental Traits:') - 4;
+          const endAttribute = line.indexOf('Mental Traits:') - 1;
+          const attribute = parseInt(
+            line.substring(startAttribute, endAttribute),
+            10,
+          );
+
+          if (!Number.isNaN(attribute)) {
+            const trait = {
+              trait: 'Mental',
+              level: attribute,
+              type: 'attributes',
+            } as CharacterTrait;
+
+            charTraits.push(trait);
+          }
+          attributesSectionDone = true;
+        }
+      }
+
+      if (attributesSectionDone && !abilitiesSectionDone) {
+        switch (char.creature_type) {
+          case 'Vampire':
+            if (line.indexOf('Abilities:') >= 0) {
+              abilitiesSectionStart = true;
+            }
+
+            if (abilitiesSectionStart) {
+              if (line.indexOf('O ') >= 0) {
+                const startAbility = line.indexOf('O ') + 'O '.length;
+                const level = line.indexOf('O ') + 1;
+
+                let ability: string;
+                if (level > 1) {
+                  const endAbility = line.indexOf(' x');
+                  ability = line.substring(startAbility, endAbility);
+                } else {
+                  ability = extractSingleAbility(line, char.creature_type);
+                }
+
+                if (ability !== '') {
+                  const trait = {
+                    trait: ability,
+                    level,
+                    type: 'abilities',
+                  } as CharacterTrait;
+
+                  charTraits.push(trait);
+                }
+              }
+
+              if (line.indexOf('Status:') >= 0) {
+                abilitiesSectionDone = true;
+              }
+            }
+
+            break;
+
+          default:
+            abilitiesSectionDone = true;
+        }
+      }
+
+      if (abilitiesSectionDone && !backgroundsSectionDone) {
+        if (line.indexOf('Backgrounds:') >= 0) {
+          backgroundsSectionStart = true;
+        }
+
+        if (backgroundsSectionStart) {
+          switch (char.creature_type) {
+            case 'Vampire':
+              break;
+            default:
+              backgroundsSectionDone = true;
+          }
+        }
+      }
+
+      if (abilitiesSectionDone && !influencesSectionDone) {
+        if (line.indexOf('Influences:') >= 0) {
+          influencesSectionStart = true;
+        }
+
+        if (influencesSectionStart) {
+          switch (char.creature_type) {
+            case 'Vampire':
+              if (line.indexOf('O ') >= 0) {
+                const startBackground = line.indexOf('O ') + 'O '.length;
+                const level = line.indexOf('O ') + 1;
+
+                let background: string;
+                if (level > 1) {
+                  const endBackground = line.indexOf(' x');
+                  background = line.substring(startBackground, endBackground);
+                } else {
+                  background = extractSingleBackground(
+                    line,
+                    char.creature_type,
+                  );
+                }
+
+                if (background !== '') {
+                  const trait = {
+                    trait: background,
+                    level,
+                    type: 'backgrounds',
+                  } as CharacterTrait;
+
+                  charTraits.push(trait);
+                }
+              }
+
+              if (line.indexOf('Derangements:') >= 0) {
+                influencesSectionDone = true;
+              }
+
+              break;
+            default:
+              influencesSectionDone = true;
+          }
+        }
+      }
+
       if (char.creature_type === 'Mortal') {
         if (retainerLevel === 0) {
           if (line.indexOf('Retainer Level ') >= 0) {
@@ -359,8 +673,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
             retainerLevel = parseInt(line.substring(startRet, endRet), 10);
 
-            // eslint-disable-next-line no-restricted-globals
-            if (!isNaN(retainerLevel)) {
+            if (!Number.isNaN(retainerLevel)) {
               char.retainer_level = retainerLevel;
             } else {
               isParsedRetainerLevel = false;
@@ -375,8 +688,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
             retainerLevel = parseInt(line.substring(startRet, endRet), 10);
 
-            // eslint-disable-next-line no-restricted-globals
-            if (!isNaN(retainerLevel)) {
+            if (!Number.isNaN(retainerLevel)) {
               char.retainer_level = retainerLevel * 10;
               char.clan = `Powerful ${char.clan}`;
             } else {
@@ -396,8 +708,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
             retainerLevel = parseInt(line.substring(startRet, endRet), 10);
 
-            // eslint-disable-next-line no-restricted-globals
-            if (!isNaN(retainerLevel)) {
+            if (!Number.isNaN(retainerLevel)) {
               char.retainer_level = retainerLevel;
             } else {
               isParsedRetainerLevel = false;
@@ -423,7 +734,18 @@ class PDFParseProvider implements IPDFParserProvider {
       return undefined;
     }
 
-    return char;
+    console.log(charTraits);
+
+    let traitCount = 0;
+    charTraits.forEach(trait => {
+      if (trait.type === 'backgrounds') traitCount += trait.level;
+    });
+    console.log(traitCount);
+
+    return {
+      character: char,
+      charTraits,
+    };
   }
 }
 
