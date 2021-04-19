@@ -21,7 +21,7 @@ interface IRequestDTO {
   char_coterie: string;
   char_situation: string;
   is_npc: boolean;
-  char_regnant?: string;
+  char_regnant?: string | null;
   char_retainer_level?: number;
   sheetFilename: string;
   update: string;

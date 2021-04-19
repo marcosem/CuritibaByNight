@@ -20,10 +20,12 @@ export default class UserCharactersController {
       ParseCharacterSheetService,
     );
 
-    const parsedChar = await parseCharacterSheetService.execute({
+    const parsedData = await parseCharacterSheetService.execute({
       sheetFilename: fileName,
       mimetype,
     });
+
+    const parsedChar = parsedData?.character;
 
     const createCharacterSheetService = container.resolve(
       CreateCharacterSheetService,
@@ -116,10 +118,12 @@ export default class UserCharactersController {
       ParseCharacterSheetService,
     );
 
-    const parsedChar = await parseCharacterSheetService.execute({
+    const parsedData = await parseCharacterSheetService.execute({
       sheetFilename: fileName,
       mimetype,
     });
+
+    const parsedChar = parsedData?.character;
 
     let regnant;
     if (regnant_id === '') {

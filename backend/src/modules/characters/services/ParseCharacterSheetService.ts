@@ -1,7 +1,9 @@
 import { injectable, inject } from 'tsyringe';
-import Character from '@modules/characters/infra/typeorm/entities/Character';
+// import Character from '@modules/characters/infra/typeorm/entities/Character';
 import AppError from '@shared/errors/AppError';
-import IPDFParserProvider from '@modules/characters/providers/PDFParser/models/IPDFParserProvider';
+import IPDFParserProvider, {
+  IPDFParseDTO,
+} from '@modules/characters/providers/PDFParser/models/IPDFParserProvider';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
 interface IRequestDTO {
@@ -21,7 +23,7 @@ class ParseCharacterSheetService {
   public async execute({
     sheetFilename,
     mimetype,
-  }: IRequestDTO): Promise<Character | undefined> {
+  }: IRequestDTO): Promise<IPDFParseDTO | undefined> {
     if (sheetFilename === '') {
       throw new AppError('You must send a character sheet file', 400);
     }
@@ -31,14 +33,16 @@ class ParseCharacterSheetService {
       throw new AppError('File must be in PDF format', 400);
     }
 
-    const character = await this.pdfParserProvider.parse(sheetFilename);
+    const parsedData = await this.pdfParserProvider.parse(sheetFilename);
 
-    if (!character) {
+    if (!parsedData) {
       await this.storageProvider.deleteFile(sheetFilename, '');
       throw new AppError('Unable to parse the character sheet file', 400);
     }
 
-    return character;
+    // const { character, charTraits } = parsedData;
+
+    return parsedData;
   }
 }
 
