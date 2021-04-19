@@ -3,6 +3,7 @@ import FakePDFParserProvider from '@modules/characters/providers/PDFParser/fakes
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 import ParseCharacterSheetService from '@modules/characters/services/ParseCharacterSheetService';
 import Character from '@modules/characters/infra/typeorm/entities/Character';
+import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 
 import AppError from '@shared/errors/AppError';
 
@@ -22,11 +23,20 @@ describe('ParseCharacterSheet', () => {
   });
 
   it('Should be able to parse a PDF file', async () => {
-    const char = await parseCharacterSheet.execute({
+    const parsedData = await parseCharacterSheet.execute({
       sheetFilename: 'filename.pdf',
       mimetype: 'application/pdf',
     });
-    expect(char).toBeInstanceOf(Character);
+
+    expect(parsedData).toHaveProperty('character');
+    expect(parsedData).toHaveProperty('charTraits');
+    expect(parsedData?.character).toBeInstanceOf(Character);
+    expect(parsedData?.charTraits.length).toBeGreaterThan(0);
+
+    const singleTrait = parsedData?.charTraits[0] as CharacterTrait;
+    expect(singleTrait).toHaveProperty('trait');
+    expect(singleTrait).toHaveProperty('level');
+    expect(singleTrait).toHaveProperty('type');
   });
 
   it('Should handle errors in PDF file', async () => {

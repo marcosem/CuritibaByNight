@@ -45,6 +45,7 @@ describe('UpdateCharacterSheet', () => {
       clan: 'Tzimisce',
       title: 'Priest',
       coterie: 'Gangue do Parquinho',
+      situation: 'active',
       npc: false,
     });
 
@@ -61,7 +62,7 @@ describe('UpdateCharacterSheet', () => {
       char_sect: 'Camarilla',
       char_title: 'Prince',
       char_coterie: '',
-      char_situation: 'active',
+      char_situation: 'inactive',
       sheetFilename: 'nosferatu.pdf',
       update: 'Updated',
       is_npc: false,
@@ -79,6 +80,7 @@ describe('UpdateCharacterSheet', () => {
       clan: 'Nosferatu',
       title: 'Prince',
       coterie: '',
+      situation: 'inactive',
       file: 'nosferatu.pdf',
       retainer_level: 0,
     });
@@ -273,6 +275,80 @@ describe('UpdateCharacterSheet', () => {
       coterie: '',
       file: 'valdomirao.pdf',
       regnant: char.id,
+      retainer_level: 4,
+    });
+
+    expect(deleteFile).toHaveBeenCalledWith('valdomiro.pdf', 'sheet');
+  });
+
+  it('Should be able to remove an retainer from a character', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      experience_total: 667,
+      file: 'dracula.pdf',
+      clan: 'Tzimisce',
+      title: 'Priest',
+      coterie: 'Gangue do Parquinho',
+      npc: false,
+    });
+
+    const charRetainer = await fakeCharactersRepository.create({
+      name: 'Valdomiro Troca Tiro',
+      experience: 0,
+      experience_total: 0,
+      file: 'valdomiro.pdf',
+      clan: 'Mortal',
+      title: '',
+      coterie: '',
+      npc: true,
+      regnant: char.id,
+      retainer_level: 0,
+      situation: 'active',
+    });
+
+    const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
+
+    const charUpdated = await updateCharacterSheet.execute({
+      user_id: user.id,
+      char_id: charRetainer.id,
+      char_name: 'Valdomirão',
+      char_xp: 1,
+      char_xp_total: 2,
+      char_clan: 'Ghoul: Tzimisce',
+      char_creature_type: 'Mortal',
+      char_sect: '',
+      char_title: '',
+      char_coterie: '',
+      char_situation: 'active',
+      sheetFilename: 'valdomirao.pdf',
+      update: 'Updated',
+      is_npc: true,
+      char_regnant: null,
+      char_retainer_level: 4,
+    });
+
+    expect(charUpdated).toMatchObject({
+      user_id: null,
+      id: charRetainer.id,
+      name: 'Valdomirão',
+      experience: 1,
+      experience_total: 2,
+      clan: 'Ghoul: Tzimisce',
+      creature_type: 'Mortal',
+      sect: '',
+      title: '',
+      coterie: '',
+      file: 'valdomirao.pdf',
+      regnant: null,
       retainer_level: 4,
     });
 
