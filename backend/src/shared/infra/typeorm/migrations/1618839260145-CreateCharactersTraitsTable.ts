@@ -33,6 +33,7 @@ export default class CreateCharactersTraitsTable1618839260145
             name: 'type',
             type: 'enum',
             enum: [
+              'creature',
               'virtues',
               'attributes',
               'abilities',

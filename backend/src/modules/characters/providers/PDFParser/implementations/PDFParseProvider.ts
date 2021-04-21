@@ -11,13 +11,16 @@ import uploadConfig from '@config/upload';
 import readline from 'readline';
 import { once } from 'events';
 import { Readable } from 'stream';
-import extractSingleAbility from './extractSingleAbility';
-import extractSingleBackground from './extractSingleBackground';
+import extractCreatureTraits from './extractCreatureTraits';
+import extractVirtuesTraits from './extractVirtuesTraits';
+import extractAbilitiesTraits from './extractAbilitiesTraits';
+import extractBackgroundsTraits from './extractBackgroundsTraits';
+import extractInfluencesTraits from './extractInfluencesTraits';
 
 class PDFParseProvider implements IPDFParserProvider {
   public async parse(filename: string): Promise<IPDFParseDTO | undefined> {
     const char = new Character();
-    const charTraits = [] as CharacterTrait[];
+    let charTraits = [] as CharacterTrait[];
 
     const pdfBuffer = await fs.promises.readFile(
       resolve(uploadConfig('sheet').tmpFolder, filename),
@@ -105,18 +108,20 @@ class PDFParseProvider implements IPDFParserProvider {
           char.creature_type = 'Werewolf';
         } else if (line.indexOf('Mage') >= 0) {
           char.creature_type = 'Mage';
+        } else if (line.indexOf('Vampire') >= 0) {
+          char.creature_type = 'Vampire';
         }
       }
 
       // In case of titled have large names, the creature identification will appear at 6
-      if (index === 6 && isTitled && char.creature_type === '') {
+      if (index === 6 && isTitled && !char.creature_type) {
         if (line.indexOf('Vampire') >= 0) {
           char.creature_type = 'Vampire';
         }
       }
 
       // If at 7 no creature identification was found, the files is invalid
-      if (index === 7 && char.creature_type === '') {
+      if (index === 7 && !char.creature_type) {
         rl.close();
       }
 
@@ -302,7 +307,7 @@ class PDFParseProvider implements IPDFParserProvider {
               char.title = title;
 
               // For Werewolf, it finishes here
-              rl.close();
+              // rl.close();
             }
             break;
           case 'Mage':
@@ -315,7 +320,7 @@ class PDFParseProvider implements IPDFParserProvider {
               char.title = title;
 
               // For Mages, it finishes here
-              rl.close();
+              // rl.close();
             }
             break;
           default:
@@ -366,24 +371,18 @@ class PDFParseProvider implements IPDFParserProvider {
       }
 
       if (char.creature_type && !virtuesSectionDone) {
+        const creatureTraits = extractCreatureTraits(line, char.creature_type);
+        if (creatureTraits.length > 0) {
+          charTraits = charTraits.concat(creatureTraits);
+        }
+
+        const virtuesTraits = extractVirtuesTraits(line, char.creature_type);
+        if (virtuesTraits.length > 0) {
+          charTraits = charTraits.concat(virtuesTraits);
+        }
+
         switch (char.creature_type) {
           case 'Vampire':
-            if (line.indexOf('Blood: ') >= 0) {
-              const startBlood = line.indexOf('Blood: ') + 'Blood: '.length;
-              const endBlood = line.indexOf('O', startBlood) - 1;
-              const blood = parseInt(line.substring(startBlood, endBlood), 10);
-
-              if (!Number.isNaN(blood)) {
-                const trait = {
-                  trait: 'Blood',
-                  level: blood,
-                  type: 'virtues',
-                } as CharacterTrait;
-
-                charTraits.push(trait);
-              }
-            }
-
             if (line.indexOf('Morality Path: ') >= 0) {
               const startMorality =
                 line.indexOf('Morality Path: ') + 'Morality Path: '.length;
@@ -411,87 +410,13 @@ class PDFParseProvider implements IPDFParserProvider {
               }
             }
 
-            if (line.indexOf('Willpower: ') >= 0) {
-              const startWillpower =
-                line.indexOf('Willpower: ') + 'Willpower: '.length;
-              const endWillpower = line.indexOf('O', startWillpower) - 1;
-              const willpower = parseInt(
-                line.substring(startWillpower, endWillpower),
-                10,
-              );
-
-              if (!Number.isNaN(willpower)) {
-                const trait = {
-                  trait: 'Willpower',
-                  level: willpower,
-                  type: 'virtues',
-                } as CharacterTrait;
-
-                charTraits.push(trait);
-              }
-            }
-
-            if (line.indexOf('Self-Control/Instinct: ') >= 0) {
-              const startSelfControl =
-                line.indexOf('Self-Control/Instinct: ') +
-                'Self-Control/Instinct: '.length;
-              const endSelfControl = line.indexOf('O', startSelfControl) - 1;
-              const selfControl = parseInt(
-                line.substring(startSelfControl, endSelfControl),
-                10,
-              );
-
-              if (!Number.isNaN(selfControl)) {
-                const trait = {
-                  trait: 'Self-Control/Instinct',
-                  level: selfControl,
-                  type: 'virtues',
-                } as CharacterTrait;
-
-                charTraits.push(trait);
-              }
-            }
-
-            if (line.indexOf('Conscience/Conviction: ') >= 0) {
-              const startConscience =
-                line.indexOf('Conscience/Conviction: ') +
-                'Conscience/Conviction: '.length;
-              const endConscience = line.indexOf('O', startConscience) - 1;
-              const conscience = parseInt(
-                line.substring(startConscience, endConscience),
-                10,
-              );
-
-              if (!Number.isNaN(conscience)) {
-                const trait = {
-                  trait: 'Conscience/Conviction',
-                  level: conscience,
-                  type: 'virtues',
-                } as CharacterTrait;
-
-                charTraits.push(trait);
-              }
-            }
-
             if (line.indexOf('Courage: ') >= 0) {
-              const startCourage =
-                line.indexOf('Courage: ') + 'Courage: '.length;
-              const endCourage = line.indexOf('O', startCourage) - 1;
-              const courage = parseInt(
-                line.substring(startCourage, endCourage),
-                10,
-              );
+              virtuesSectionDone = true;
+            }
+            break;
 
-              if (!Number.isNaN(courage)) {
-                const trait = {
-                  trait: 'Courage',
-                  level: courage,
-                  type: 'virtues',
-                } as CharacterTrait;
-
-                charTraits.push(trait);
-              }
-
+          case 'Mortal':
+            if (line.indexOf('Courage: ') >= 0) {
               virtuesSectionDone = true;
             }
             break;
@@ -562,56 +487,55 @@ class PDFParseProvider implements IPDFParserProvider {
       }
 
       if (attributesSectionDone && !abilitiesSectionDone) {
-        switch (char.creature_type) {
-          case 'Vampire':
-            if (line.indexOf('Abilities:') >= 0) {
-              abilitiesSectionStart = true;
-            }
+        if (line.indexOf('Abilities:') >= 0) {
+          abilitiesSectionStart = true;
+        }
 
-            if (abilitiesSectionStart) {
-              if (line.indexOf('O ') >= 0) {
-                const startAbility = line.indexOf('O ') + 'O '.length;
-                const level = line.indexOf('O ') + 1;
+        if (abilitiesSectionStart) {
+          const ability = extractAbilitiesTraits(line, char.creature_type);
 
-                let ability: string;
-                if (level > 1) {
-                  const endAbility = line.indexOf(' x');
-                  ability = line.substring(startAbility, endAbility);
-                } else {
-                  ability = extractSingleAbility(line, char.creature_type);
-                }
+          if (ability) {
+            charTraits.push(ability);
+          }
 
-                if (ability !== '') {
-                  const trait = {
-                    trait: ability,
-                    level,
-                    type: 'abilities',
-                  } as CharacterTrait;
-
-                  charTraits.push(trait);
-                }
-              }
-
+          switch (char.creature_type) {
+            case 'Vampire':
               if (line.indexOf('Status:') >= 0) {
                 abilitiesSectionDone = true;
               }
-            }
+              break;
 
-            break;
+            case 'Mortal':
+              if (line.indexOf('Humanity:') >= 0) {
+                abilitiesSectionDone = true;
+              }
+              break;
 
-          default:
-            abilitiesSectionDone = true;
+            default:
+              abilitiesSectionDone = true;
+          }
         }
       }
 
-      if (abilitiesSectionDone && !backgroundsSectionDone) {
+      if (attributesSectionDone && !backgroundsSectionDone) {
         if (line.indexOf('Backgrounds:') >= 0) {
           backgroundsSectionStart = true;
         }
 
         if (backgroundsSectionStart) {
+          const background = extractBackgroundsTraits(line, char.creature_type);
+
+          if (background) {
+            charTraits.push(background);
+          }
+
           switch (char.creature_type) {
             case 'Vampire':
+            case 'Mortal':
+              if (line.indexOf('Derangements:') >= 0) {
+                backgroundsSectionDone = true;
+              }
+
               break;
             default:
               backgroundsSectionDone = true;
@@ -619,40 +543,21 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
-      if (abilitiesSectionDone && !influencesSectionDone) {
+      if (attributesSectionDone && !influencesSectionDone) {
         if (line.indexOf('Influences:') >= 0) {
           influencesSectionStart = true;
         }
 
         if (influencesSectionStart) {
+          const influence = extractInfluencesTraits(line, char.creature_type);
+
+          if (influence) {
+            charTraits.push(influence);
+          }
+
           switch (char.creature_type) {
             case 'Vampire':
-              if (line.indexOf('O ') >= 0) {
-                const startBackground = line.indexOf('O ') + 'O '.length;
-                const level = line.indexOf('O ') + 1;
-
-                let background: string;
-                if (level > 1) {
-                  const endBackground = line.indexOf(' x');
-                  background = line.substring(startBackground, endBackground);
-                } else {
-                  background = extractSingleBackground(
-                    line,
-                    char.creature_type,
-                  );
-                }
-
-                if (background !== '') {
-                  const trait = {
-                    trait: background,
-                    level,
-                    type: 'backgrounds',
-                  } as CharacterTrait;
-
-                  charTraits.push(trait);
-                }
-              }
-
+            case 'Mortal':
               if (line.indexOf('Derangements:') >= 0) {
                 influencesSectionDone = true;
               }
@@ -734,13 +639,33 @@ class PDFParseProvider implements IPDFParserProvider {
       return undefined;
     }
 
+    /*
     console.log(charTraits);
 
-    let traitCount = 0;
+    let abilitiesCount = 0;
+    let backgroundCount = 0;
+    let influecesCount = 0;
     charTraits.forEach(trait => {
-      if (trait.type === 'backgrounds') traitCount += trait.level;
+      switch (trait.type) {
+        case 'abilities':
+          abilitiesCount += trait.level;
+          break;
+        case 'backgrounds':
+          backgroundCount += trait.level;
+          break;
+        case 'influences':
+          influecesCount += trait.level;
+          break;
+        default:
+          break;
+      }
     });
-    console.log(traitCount);
+
+    console.log(`Abilities..: ${abilitiesCount}`);
+    console.log(`Backgrounds: ${backgroundCount}`);
+    console.log(`Influences.: ${influecesCount}`);
+    console.log(char);
+    */
 
     return {
       character: char,
