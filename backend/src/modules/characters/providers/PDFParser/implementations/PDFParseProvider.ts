@@ -61,6 +61,10 @@ class PDFParseProvider implements IPDFParserProvider {
     let backgroundsSectionDone = false;
     let influencesSectionStart = false;
     let influencesSectionDone = false;
+    let meritsSectionDone = false;
+    let meritsSectionStart = false;
+    let extraHealthy = 0;
+    let extraBruised = 0;
 
     rl.on('line', line => {
       index += 1;
@@ -193,6 +197,11 @@ class PDFParseProvider implements IPDFParserProvider {
 
               clan = line.substring(startClan, endClan);
               char.clan = clan;
+
+              // Get of Fenris has one extra Healthy
+              if (clan === 'Get of Fenris') {
+                extraHealthy += 1;
+              }
             }
             break;
           case 'Mage':
@@ -429,12 +438,30 @@ class PDFParseProvider implements IPDFParserProvider {
 
           case 'Mage':
             if (line.indexOf('Paradox: ') >= 0) {
+              // Mage has Blood pool fixed in 10
+              const trait = {
+                trait: 'Blood',
+                level: 10,
+                type: 'creature',
+              } as CharacterTrait;
+
+              charTraits.push(trait);
+
               virtuesSectionDone = true;
             }
             break;
 
           case 'Werewolf':
             if (line.indexOf('Glory: ') >= 0) {
+              // Werewolf has Blood pool fixed in 12
+              const trait = {
+                trait: 'Blood',
+                level: 12,
+                type: 'creature',
+              } as CharacterTrait;
+
+              charTraits.push(trait);
+
               virtuesSectionDone = true;
             }
             break;
@@ -518,12 +545,20 @@ class PDFParseProvider implements IPDFParserProvider {
 
           switch (char.creature_type) {
             case 'Vampire':
+              if (line.indexOf('Fortitude: Mettle') >= 0) {
+                extraHealthy += 1;
+              }
+
               if (line.indexOf('Status:') >= 0) {
                 abilitiesSectionDone = true;
               }
               break;
 
             case 'Mortal':
+              if (line.indexOf('Discipline: Fortitude: Mettle') >= 0) {
+                extraHealthy += 1;
+              }
+
               if (line.indexOf('Humanity:') >= 0) {
                 abilitiesSectionDone = true;
               }
@@ -633,6 +668,26 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      if (
+        char.creature_type !== 'Wraith' &&
+        influencesSectionDone &&
+        !meritsSectionDone
+      ) {
+        if (line.indexOf('Merits:') >= 0) {
+          meritsSectionStart = true;
+        }
+
+        if (meritsSectionStart) {
+          if (line.indexOf('Huge Size (') >= 0) {
+            extraBruised += 1;
+          }
+
+          if (line.indexOf('Equipment:') >= 0) {
+            meritsSectionDone = true;
+          }
+        }
+      }
+
       if (char.creature_type === 'Mortal') {
         if (retainerLevel === 0) {
           if (line.indexOf('Retainer Level ') >= 0) {
@@ -699,11 +754,43 @@ class PDFParseProvider implements IPDFParserProvider {
       }
     }
 
+    if (char.creature_type !== 'Wraith') {
+      const traitsHealth = [
+        {
+          trait: 'Healthy',
+          level: 2 + extraHealthy,
+          type: 'health',
+        },
+        {
+          trait: 'Bruised',
+          level: 3 + extraBruised,
+          type: 'health',
+        },
+        {
+          trait: 'Wounded',
+          level: 2,
+          type: 'health',
+        },
+        {
+          trait: 'Incapacited',
+          level: 1,
+          type: 'health',
+        },
+        {
+          trait:
+            char.creature_type === 'Vampire' ? 'Torpor' : 'Mortally Wounded',
+          level: 1,
+          type: 'health',
+        },
+      ] as CharacterTrait[];
+
+      charTraits = charTraits.concat(traitsHealth);
+    }
+
     if (!isParsedXP || !isParsedXPTotal || !isParsedRetainerLevel) {
       return undefined;
     }
 
-    /*
     // For Debug Purpose
     console.log(charTraits);
 
@@ -731,7 +818,6 @@ class PDFParseProvider implements IPDFParserProvider {
     console.log(`Influences.: ${influecesCount}`);
     console.log(char);
     // End of Debug block
-    */
 
     return {
       character: char,

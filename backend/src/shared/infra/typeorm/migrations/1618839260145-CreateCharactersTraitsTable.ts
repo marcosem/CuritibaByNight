@@ -39,6 +39,8 @@ export default class CreateCharactersTraitsTable1618839260145
               'abilities',
               'backgrounds',
               'influences',
+              'powers',
+              'health',
             ],
             default: "'abilities'",
           },
