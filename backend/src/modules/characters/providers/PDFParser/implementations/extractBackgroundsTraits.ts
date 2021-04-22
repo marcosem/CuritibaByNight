@@ -14,51 +14,51 @@ export default function extractBackgroundsTraits(
         const level = line.indexOf('O ') + 1;
         let endBackground: number;
 
-        if (level > 1) {
+        if (level <= 0) {
+          backgroundTrait = undefined;
+          break;
+        } else if (level > 1) {
           endBackground = line.indexOf(' x');
         } else {
-          let influenceTag: string;
+          let influenceTag = '';
 
-          if (line.indexOf('  ') >= 0) {
-            influenceTag = '  ';
-          } else if (line.indexOf(' Bureaucracy') >= 0) {
-            influenceTag = ' Bureaucracy';
-          } else if (line.indexOf(' Church') >= 0) {
-            influenceTag = ' Church';
-          } else if (line.indexOf(' Finance') >= 0) {
-            influenceTag = ' Finance';
-          } else if (line.indexOf(' Health') >= 0) {
-            influenceTag = ' Health';
-          } else if (line.indexOf(' High Society') >= 0) {
-            influenceTag = 'High Society';
-          } else if (line.indexOf(' Industry') >= 0) {
-            influenceTag = ' Industry';
-          } else if (line.indexOf(' Legal') >= 0) {
-            influenceTag = ' Legal';
-          } else if (line.indexOf(' Media') >= 0) {
-            influenceTag = ' Media';
-          } else if (line.indexOf(' Military') >= 0) {
-            influenceTag = ' Military';
-          } else if (line.indexOf(' Occult') >= 0) {
-            influenceTag = ' Occult';
-          } else if (line.indexOf(' Police') >= 0) {
-            influenceTag = ' Police';
-          } else if (line.indexOf(' Politics') >= 0) {
-            influenceTag = ' Politics';
-          } else if (line.indexOf(' Street') >= 0) {
-            influenceTag = ' Street';
-          } else if (line.indexOf(' Transportation') >= 0) {
-            influenceTag = ' Transportation';
-          } else if (line.indexOf(' Underworld') >= 0) {
-            influenceTag = ' Underworld';
-          } else if (line.indexOf(' University') >= 0) {
-            influenceTag = ' University';
+          const influencesList = [
+            'Bureaucracy',
+            'Church',
+            'Finance',
+            'Health',
+            'High Society',
+            'Industry',
+            'Legal',
+            'Media',
+            'Military',
+            'Occult',
+            'Police',
+            'Politics',
+            'Street',
+            'Transportation',
+            'Underworld',
+            'University',
+          ];
+
+          if (line.lastIndexOf('   ') >= 0) {
+            influenceTag = '   ';
           } else {
-            influenceTag = '';
+            influencesList.some(influence => {
+              if (line.lastIndexOf(` ${influence}`) >= 0) {
+                influenceTag = ` ${influence}`;
+                return true;
+              }
+              return false;
+            });
+
+            if (influenceTag === '' && line.lastIndexOf('  ') >= 0) {
+              influenceTag = '  ';
+            }
           }
 
           if (influenceTag === '') {
-            endBackground = line.length - 2;
+            endBackground = line.length - 3;
           } else {
             endBackground = line.indexOf(influenceTag);
           }
@@ -82,6 +82,7 @@ export default function extractBackgroundsTraits(
       break;
 
     case 'Mortal':
+    case 'Wraith':
       {
         const startSearchPos = line.indexOf(' O');
         if (startSearchPos >= 0) {
@@ -90,48 +91,40 @@ export default function extractBackgroundsTraits(
           const level = line.indexOf('O ', startSearchPos) - startSearchPos;
           let endBackground: number;
 
-          if (level > 1) {
+          if (level <= 0) {
+            backgroundTrait = undefined;
+            break;
+          } else if (level > 1) {
             endBackground = line.indexOf(' x', startSearchPos);
           } else {
-            let influenceTag: string;
+            let influenceTag = '';
 
-            if (line.indexOf('  ', startSearchPos) >= 0) {
-              influenceTag = '  ';
-            } else if (line.indexOf(' Bureaucracy') >= 0) {
-              influenceTag = ' Bureaucracy';
-            } else if (line.indexOf(' Church') >= 0) {
-              influenceTag = ' Church';
-            } else if (line.indexOf(' Finance') >= 0) {
-              influenceTag = ' Finance';
-            } else if (line.indexOf(' Health') >= 0) {
-              influenceTag = ' Health';
-            } else if (line.indexOf(' High Society') >= 0) {
-              influenceTag = 'High Society';
-            } else if (line.indexOf(' Industry') >= 0) {
-              influenceTag = ' Industry';
-            } else if (line.indexOf(' Legal') >= 0) {
-              influenceTag = ' Legal';
-            } else if (line.indexOf(' Media') >= 0) {
-              influenceTag = ' Media';
-            } else if (line.indexOf(' Military') >= 0) {
-              influenceTag = ' Military';
-            } else if (line.indexOf(' Occult') >= 0) {
-              influenceTag = ' Occult';
-            } else if (line.indexOf(' Police') >= 0) {
-              influenceTag = ' Police';
-            } else if (line.indexOf(' Politics') >= 0) {
-              influenceTag = ' Politics';
-            } else if (line.indexOf(' Street') >= 0) {
-              influenceTag = ' Street';
-            } else if (line.indexOf(' Transportation') >= 0) {
-              influenceTag = ' Transportation';
-            } else if (line.indexOf(' Underworld') >= 0) {
-              influenceTag = ' Underworld';
-            } else if (line.indexOf(' University') >= 0) {
-              influenceTag = ' University';
-            } else {
-              influenceTag = '';
-            }
+            const influencesList = [
+              'Bureaucracy',
+              'Church',
+              'Finance',
+              'Health',
+              'High Society',
+              'Industry',
+              'Legal',
+              'Media',
+              'Military',
+              'Occult',
+              'Police',
+              'Politics',
+              'Street',
+              'Transportation',
+              'Underworld',
+              'University',
+            ];
+
+            influencesList.some(influence => {
+              if (line.lastIndexOf(` ${influence}`) >= 0) {
+                influenceTag = ` ${influence}`;
+                return true;
+              }
+              return false;
+            });
 
             if (influenceTag === '') {
               endBackground = line.length - 2;
@@ -155,6 +148,126 @@ export default function extractBackgroundsTraits(
         } else {
           backgroundTrait = undefined;
         }
+      }
+      break;
+
+    case 'Mage':
+      if (line.indexOf('O ') >= 0) {
+        const startBackground = line.indexOf('O ') + 'O '.length;
+        const level = line.indexOf('O ') + 1;
+        let endBackground: number;
+
+        if (level <= 0) {
+          backgroundTrait = undefined;
+          break;
+        } else if (level > 1) {
+          endBackground = line.indexOf(' x');
+        } else {
+          let spheresTag = '';
+
+          const mageSpheres = [
+            'Correspondence',
+            'Dimensional Science',
+            'Entropy',
+            'Forces',
+            'Life',
+            'Matter',
+            'Mind',
+            'Prime',
+            'Spirit',
+            'Time',
+          ];
+
+          mageSpheres.some(sphere => {
+            if (line.lastIndexOf(` ${sphere}`) >= 0) {
+              spheresTag = ` ${sphere}`;
+              return true;
+            }
+            return false;
+          });
+
+          if (spheresTag === '') {
+            endBackground = line.length - 2;
+          } else {
+            endBackground = line.indexOf(spheresTag);
+          }
+
+          const bracket = line.indexOf(' (');
+          if (bracket >= 0 && bracket < endBackground) {
+            endBackground = bracket;
+          }
+        }
+
+        background = line.substring(startBackground, endBackground);
+
+        backgroundTrait = {
+          trait: background,
+          level,
+          type: 'backgrounds',
+        } as CharacterTrait;
+      } else {
+        backgroundTrait = undefined;
+      }
+      break;
+
+    case 'Werewolf':
+      if (line.indexOf('O ') >= 0) {
+        const startBackground = line.indexOf('O ') + 'O '.length;
+        const level = line.indexOf('O ') + 1;
+        let endBackground: number;
+
+        if (level <= 0) {
+          backgroundTrait = undefined;
+          break;
+        } else if (level > 1) {
+          endBackground = line.indexOf(' x');
+        } else {
+          let ritesTag = '';
+
+          const werewolfRites = [
+            'Accord',
+            'Caern',
+            'Death',
+            'Frontier',
+            'Hengeyokai',
+            'Minor',
+            'Mystic',
+            'Punishment',
+            'Pure Ones',
+            'Renown',
+            'Seasonal',
+            'Tribal',
+          ];
+
+          werewolfRites.some(rites => {
+            if (line.indexOf(` ${rites}: `) >= 0) {
+              ritesTag = ` ${rites}: `;
+              return true;
+            }
+            return false;
+          });
+
+          if (ritesTag === '') {
+            endBackground = line.length - 2;
+          } else {
+            endBackground = line.indexOf(ritesTag);
+          }
+
+          const bracket = line.indexOf(' (');
+          if (bracket >= 0 && bracket < endBackground) {
+            endBackground = bracket;
+          }
+        }
+
+        background = line.substring(startBackground, endBackground);
+
+        backgroundTrait = {
+          trait: background,
+          level,
+          type: 'backgrounds',
+        } as CharacterTrait;
+      } else {
+        backgroundTrait = undefined;
       }
       break;
 

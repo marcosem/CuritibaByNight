@@ -421,6 +421,24 @@ class PDFParseProvider implements IPDFParserProvider {
             }
             break;
 
+          case 'Wraith':
+            if (line.indexOf('Corpus: ') >= 0) {
+              virtuesSectionDone = true;
+            }
+            break;
+
+          case 'Mage':
+            if (line.indexOf('Paradox: ') >= 0) {
+              virtuesSectionDone = true;
+            }
+            break;
+
+          case 'Werewolf':
+            if (line.indexOf('Glory: ') >= 0) {
+              virtuesSectionDone = true;
+            }
+            break;
+
           default:
             virtuesSectionDone = true;
         }
@@ -511,6 +529,24 @@ class PDFParseProvider implements IPDFParserProvider {
               }
               break;
 
+            case 'Wraith':
+              if (line.indexOf('Merits:') >= 0) {
+                abilitiesSectionDone = true;
+              }
+              break;
+
+            case 'Mage':
+              if (line.indexOf('Reputation:') >= 0) {
+                abilitiesSectionDone = true;
+              }
+              break;
+
+            case 'Werewolf':
+              if (line.indexOf('Backgrounds:') >= 0) {
+                abilitiesSectionDone = true;
+              }
+              break;
+
             default:
               abilitiesSectionDone = true;
           }
@@ -535,7 +571,18 @@ class PDFParseProvider implements IPDFParserProvider {
               if (line.indexOf('Derangements:') >= 0) {
                 backgroundsSectionDone = true;
               }
+              break;
+            case 'Wraith':
+            case 'Mage':
+              if (line.indexOf('Abilities:') >= 0) {
+                backgroundsSectionDone = true;
+              }
+              break;
 
+            case 'Werewolf':
+              if (line.indexOf('Influences:') >= 0) {
+                backgroundsSectionDone = true;
+              }
               break;
             default:
               backgroundsSectionDone = true;
@@ -561,8 +608,25 @@ class PDFParseProvider implements IPDFParserProvider {
               if (line.indexOf('Derangements:') >= 0) {
                 influencesSectionDone = true;
               }
-
               break;
+            case 'Wraith':
+              if (line.indexOf('Abilities:') >= 0) {
+                influencesSectionDone = true;
+              }
+              break;
+            case 'Mage':
+              if (line.indexOf('Foci:') >= 0) {
+                influencesSectionDone = true;
+                rl.close();
+              }
+              break;
+            case 'Werewolf':
+              if (line.indexOf('Merits:') >= 0) {
+                influencesSectionDone = true;
+                rl.close();
+              }
+              break;
+
             default:
               influencesSectionDone = true;
           }
@@ -640,6 +704,7 @@ class PDFParseProvider implements IPDFParserProvider {
     }
 
     /*
+    // For Debug Purpose
     console.log(charTraits);
 
     let abilitiesCount = 0;
@@ -665,6 +730,7 @@ class PDFParseProvider implements IPDFParserProvider {
     console.log(`Backgrounds: ${backgroundCount}`);
     console.log(`Influences.: ${influecesCount}`);
     console.log(char);
+    // End of Debug block
     */
 
     return {

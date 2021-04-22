@@ -11,6 +11,10 @@ export default function extractAbilitiesTraits(
     const startAbility = line.indexOf('O ') + 'O '.length;
     const level = line.indexOf('O ') + 1;
 
+    if (level <= 0) {
+      return undefined;
+    }
+
     switch (creatureType) {
       case 'Vampire':
         {
@@ -19,140 +23,125 @@ export default function extractAbilitiesTraits(
           if (level > 1) {
             endAbility = line.indexOf(' x');
           } else {
-            let disciplineTag: string;
+            let disciplineTag = '';
 
-            if (line.indexOf(' Animalism:') >= 0) {
-              disciplineTag = ' Animalism:';
-            } else if (line.indexOf(' Auspex:') >= 0) {
-              disciplineTag = ' Auspex:';
-            } else if (line.indexOf(' Celerity:') >= 0) {
-              disciplineTag = ' Celerity:';
-            } else if (line.indexOf(' Chimerstry:') >= 0) {
-              disciplineTag = ' Chimerstry:';
-            } else if (line.indexOf(' Dementation:') >= 0) {
-              disciplineTag = ' Dementation:';
-            } else if (line.indexOf(' Dominate:') >= 0) {
-              disciplineTag = ' Dominate:';
-            } else if (line.indexOf(' Fortitude:') >= 0) {
-              disciplineTag = ' Fortitude:';
-            } else if (line.indexOf(' Flight:') >= 0) {
-              disciplineTag = ' Flight:';
-            } else if (line.indexOf(' Melpominee:') >= 0) {
-              disciplineTag = ' Melpominee:';
-            } else if (line.indexOf(' Obfuscate:') >= 0) {
-              disciplineTag = ' Obfuscate:';
-            } else if (line.indexOf(' Obtenebration:') >= 0) {
-              disciplineTag = ' Obtenebration:';
-            } else if (line.indexOf(' Potence:') >= 0) {
-              disciplineTag = ' Potence:';
-            } else if (line.indexOf(' Presence:') >= 0) {
-              disciplineTag = ' Presence:';
-            } else if (line.indexOf(' Protean:') >= 0) {
-              disciplineTag = ' Protean:';
-            } else if (line.indexOf(' Quietus:') >= 0) {
-              disciplineTag = ' Quietus:';
-            } else if (line.indexOf(' Serpentis:') >= 0) {
-              disciplineTag = ' Serpentis:';
-            } else if (line.indexOf(' Temporis:') >= 0) {
-              disciplineTag = ' Temporis:';
-            } else if (line.indexOf(' Thanatosis:') >= 0) {
-              disciplineTag = ' Thanatosis:';
-            } else if (line.indexOf(' Dark Thaumaturgy:') >= 0) {
-              disciplineTag = ' Dark Thaumaturgy:';
-            } else if (line.indexOf(' Thaumaturgy:') >= 0) {
-              disciplineTag = ' Thaumaturgy:';
-            } else if (line.indexOf(' Valeren:') >= 0) {
-              disciplineTag = ' Valeren:';
-            } else if (line.indexOf(' Vicissitude:') >= 0) {
-              disciplineTag = ' Vicissitude:';
-            } else if (line.indexOf(' Visceratika:') >= 0) {
-              disciplineTag = ' Visceratika:';
-            } else if (line.indexOf(' Akhu:') >= 0) {
-              disciplineTag = ' Akhu:';
-            } else if (line.indexOf(' Dur-An-Ki:') >= 0) {
-              disciplineTag = ' Dur-An-Ki:';
-            } else if (line.indexOf(' Inceptor:') >= 0) {
-              disciplineTag = ' Inceptor:';
-            } else if (line.indexOf(' Koldunic Sorcery:') >= 0) {
-              disciplineTag = ' Koldunic Sorcery:';
-            } else if (line.indexOf(' Necromancy:') >= 0) {
-              disciplineTag = ' Necromancy:';
-            } else if (line.indexOf(' Sadhana:') >= 0) {
-              disciplineTag = ' Sadhana:';
-            } else if (line.indexOf(' Voudoun Necromancy:') >= 0) {
-              disciplineTag = ' Voudoun Necromancy:';
-            } else if (line.indexOf(' Wanga:') >= 0) {
-              disciplineTag = ' Wanga:';
-            } else if (line.indexOf(' Assamite:') >= 0) {
-              disciplineTag = ' Assamite:';
-            } else if (line.indexOf(' Baali:') >= 0) {
-              disciplineTag = ' Baali:';
-            } else if (line.indexOf(' Brujah:') >= 0) {
-              disciplineTag = ' Brujah:';
-            } else if (line.indexOf(' Cappadocian:') >= 0) {
-              disciplineTag = ' Cappadocian:';
-            } else if (line.indexOf(' Followers of Set:') >= 0) {
-              disciplineTag = ' Followers of Set:';
-            } else if (line.indexOf(' Gangrel:') >= 0) {
-              disciplineTag = ' Gangrel:';
-            } else if (line.indexOf(' Giovanni:') >= 0) {
-              disciplineTag = ' Giovanni:';
-            } else if (line.indexOf(' Lasombra:') >= 0) {
-              disciplineTag = ' Lasombra:';
-            } else if (line.indexOf(' Malkavian:') >= 0) {
-              disciplineTag = ' Malkavian:';
-            } else if (line.indexOf(' Nosferatu:') >= 0) {
-              disciplineTag = ' Nosferatu:';
-            } else if (line.indexOf(' Ravnos:') >= 0) {
-              disciplineTag = ' Ravnos:';
-            } else if (line.indexOf(' Salubri:') >= 0) {
-              disciplineTag = ' Salubri:';
-            } else if (line.indexOf(' Toreador:') >= 0) {
-              disciplineTag = ' Toreador:';
-            } else if (line.indexOf(' Tremere:') >= 0) {
-              disciplineTag = ' Tremere:';
-            } else if (line.indexOf(' Tzimisce:') >= 0) {
-              disciplineTag = ' Tzimisce:';
-            } else if (
-              line.indexOf(' Ventrue:') >= 0 &&
-              line.indexOf(' Ventrue:') !==
+            const vampireDisciplines = [
+              'Animalism',
+              'Auspex',
+              'Celerity',
+              'Chimerstry',
+              'Dementation',
+              'Dominate',
+              'Fortitude',
+              'Flight',
+              'Melpominee',
+              'Obfuscate',
+              'Obtenebration',
+              'Potence',
+              'Presence',
+              'Protean',
+              'Quietus',
+              'Serpentis',
+              'Temporis',
+              'Thanatosis',
+              'Dark Thaumaturgy',
+              'Thaumaturgy',
+              'Valeren',
+              'Vicissitude',
+              'Visceratika',
+              'Akhu',
+              'Dur-An-Ki',
+              'Inceptor"',
+              'Koldunic Sorcery',
+              'Necromancy',
+              'Sadhana',
+              'Voudoun Necromancy',
+              'Wanga',
+              'Assamite',
+              'Baali',
+              'Brujah',
+              'Cappadocian',
+              // 'Followers of Set',
+              // 'Gangrel',
+              'Giovanni',
+              'Lasombra',
+              // 'Malkavian',
+              'Nosferatu',
+              // 'Ravnos',
+              'Salubri',
+              'Toreador',
+              'Tremere',
+              'Tzimisce',
+              // 'Ventrue',
+              'Abombwe',
+              'Bardo',
+              'Combination',
+              'Daimoinon',
+              'Deimos',
+              'Einherjar',
+              'Gargoyle Powers',
+              'Mortis',
+              'Mytherceria',
+              'Obeah',
+              'Ogham',
+              'Sanguinus',
+              'Spiritus',
+            ];
+
+            if (
+              line.lastIndexOf(' Ventrue: ') >= 0 &&
+              line.lastIndexOf(' Ventrue: ') !==
                 line.indexOf(' Ventrue: Blood Scent')
             ) {
-              disciplineTag = ' Ventrue:';
-            } else if (line.indexOf(' Abombwe:') >= 0) {
-              disciplineTag = ' Abombwe:';
-            } else if (line.indexOf(' Bardo:') >= 0) {
-              disciplineTag = ' Bardo:';
-            } else if (line.indexOf(' Combination:') >= 0) {
-              disciplineTag = ' Combination:';
-            } else if (line.indexOf(' Daimoinon:') >= 0) {
-              disciplineTag = ' Daimoinon:';
-            } else if (line.indexOf(' Deimos:') >= 0) {
-              disciplineTag = ' Deimos:';
-            } else if (line.indexOf(' Einherjar:') >= 0) {
-              disciplineTag = ' Einherjar:';
-            } else if (line.indexOf(' Gargoyle Powers:') >= 0) {
-              disciplineTag = ' Gargoyle Powers:';
-            } else if (line.indexOf(' Mortis:') >= 0) {
-              disciplineTag = ' Mortis:';
-            } else if (line.indexOf(' Mytherceria:') >= 0) {
-              disciplineTag = ' Mytherceria:';
-            } else if (line.indexOf(' Obeah:') >= 0) {
-              disciplineTag = ' Obeah:';
-            } else if (line.indexOf(' Ogham:') >= 0) {
-              disciplineTag = ' Ogham:';
-            } else if (line.indexOf(' Sanguinus:') >= 0) {
-              disciplineTag = ' Sanguinus:';
-            } else if (line.indexOf(' Spiritus:') >= 0) {
-              disciplineTag = ' Spiritus:';
+              disciplineTag = ' Ventrue: ';
+            } else if (
+              line.lastIndexOf(' Followers of Set: ') >= 0 &&
+              line.lastIndexOf(' Followers of Set: ') !==
+                line.indexOf(' Followers of Set: Mummification')
+            ) {
+              disciplineTag = ' Followers of Set: ';
+            } else if (
+              line.lastIndexOf(' Malkavian: ') >= 0 &&
+              line.lastIndexOf(' Malkavian: ') !==
+                line.indexOf(' Malkavian: Malkavian Time')
+            ) {
+              disciplineTag = ' Malkavian: ';
+            } else if (
+              line.lastIndexOf(' Gangrel: ') >= 0 &&
+              line.lastIndexOf(' Gangrel: ') !==
+                line.indexOf(' Gangrel: Divine') &&
+              line.lastIndexOf(' Gangrel: ') !==
+                line.indexOf(' Gangrel: Rending') &&
+              line.lastIndexOf(' Gangrel: ') !==
+                line.indexOf(' Gangrel: Rune-Lore') &&
+              line.lastIndexOf(' Gangrel: ') !==
+                line.indexOf(' Gangrel: Sagaman')
+            ) {
+              disciplineTag = ' Gangrel: ';
+            } else if (
+              line.lastIndexOf(' Ravnos: ') >= 0 &&
+              line.lastIndexOf(' Ravnos: ') !==
+                line.indexOf(' Ravnos: Diversion') &&
+              line.lastIndexOf(' Ravnos: ') !==
+                line.indexOf(' Ravnos: Escapology') &&
+              line.lastIndexOf(' Ravnos: ') !==
+                line.indexOf(' Ravnos: Sleight of Hand')
+            ) {
+              disciplineTag = ' Ravnos: ';
             } else {
-              disciplineTag = '';
+              vampireDisciplines.some(discipline => {
+                if (line.lastIndexOf(` ${discipline}: `) >= 0) {
+                  disciplineTag = ` ${discipline}: `;
+                  return true;
+                }
+                return false;
+              });
             }
 
             if (disciplineTag === '') {
               endAbility = line.length - 2;
             } else {
-              endAbility = line.indexOf(disciplineTag);
+              endAbility = line.lastIndexOf(disciplineTag);
             }
 
             const bracket = line.indexOf(' (');
@@ -178,44 +167,37 @@ export default function extractAbilitiesTraits(
           if (level > 1) {
             endAbility = line.indexOf(' x');
           } else {
-            let disciplineTag: string;
+            let numinaTag = '';
 
-            if (line.indexOf(' Arts:') >= 0) {
-              disciplineTag = ' Arts:';
-            } else if (line.indexOf(' Benandanti Rituals:') >= 0) {
-              disciplineTag = ' Benandanti Rituals:';
-            } else if (line.indexOf(' Bioenhancements:') >= 0) {
-              disciplineTag = ' Bioenhancements:';
-            } else if (line.indexOf(' Disciplines:') >= 0) {
-              disciplineTag = ' Disciplines:';
-            } else if (line.indexOf(' Fomori Powers:') >= 0) {
-              disciplineTag = ' Fomori Powers:';
-            } else if (line.indexOf(' Gifts:') >= 0) {
-              disciplineTag = ' Gifts:';
-            } else if (line.indexOf(' Martial Arts:') >= 0) {
-              disciplineTag = ' Martial Arts:';
-            } else if (line.indexOf(' Psychic:') >= 0) {
-              disciplineTag = ' Psychic:';
-            } else if (line.indexOf(' Realms:') >= 0) {
-              disciplineTag = ' Realms:';
-            } else if (line.indexOf(' Sorcery:') >= 0) {
-              disciplineTag = ' Sorcery:';
-            } else if (line.indexOf(' Shintai:') >= 0) {
-              disciplineTag = ' Shintai:';
-            } else if (line.indexOf(' Sorcery [Unrevised]:') >= 0) {
-              disciplineTag = ' Sorcery [Unrevised]:';
-            } else if (line.indexOf(' Theurgy:') >= 0) {
-              disciplineTag = ' Theurgy:';
-            } else if (line.indexOf(' Theurgy [Unrevised]:') >= 0) {
-              disciplineTag = ' Theurgy [Unrevised]:';
-            } else {
-              disciplineTag = '';
-            }
+            const mortalNuminas = [
+              'Arts',
+              'Benandanti Rituals',
+              'Bioenhancements',
+              'Disciplines',
+              'Fomori Powers',
+              'Gifts',
+              'Martial Arts',
+              'Psychic',
+              'Realms',
+              'Sorcery',
+              'Shintai',
+              'Sorcery [Unrevised]',
+              'Theurgy',
+              'Theurgy [Unrevised]',
+            ];
 
-            if (disciplineTag === '') {
+            mortalNuminas.some(numina => {
+              if (line.indexOf(` ${numina}: `) >= 0) {
+                numinaTag = ` ${numina}: `;
+                return true;
+              }
+              return false;
+            });
+
+            if (numinaTag === '') {
               endAbility = line.length - 2;
             } else {
-              endAbility = line.indexOf(disciplineTag);
+              endAbility = line.indexOf(numinaTag);
             }
 
             const bracket = line.indexOf(' (');
@@ -223,6 +205,393 @@ export default function extractAbilitiesTraits(
               endAbility = bracket;
             }
           }
+          ability = line.substring(startAbility, endAbility);
+
+          abilityTrait = {
+            trait: ability,
+            level,
+            type: 'abilities',
+          } as CharacterTrait;
+        }
+        break;
+
+      case 'Wraith':
+        {
+          let endAbility: number;
+
+          if (level > 1) {
+            endAbility = line.indexOf(' x');
+          } else {
+            let arcanoiTag = '';
+
+            const wraithArcanois = [
+              'Argos',
+              'Behest',
+              'Castigate',
+              'Chains of the Emperor',
+              'Displace',
+              'Embody',
+              'Fascinate',
+              'Fatalism',
+              'Flux',
+              'Inhabit',
+              'Intimation',
+              'Keening',
+              'Kinesis',
+              'Lifeweb',
+              'Mnemosynis',
+              'Moliate',
+              'Outrage',
+              'Pandemonium',
+              'Phantasm',
+              'Puppetry',
+              'Usury',
+              'Way of the Artisan',
+              'Way of the Farmer',
+              'Way of the Merchant',
+              'Way of the Scholar',
+              'Way of the Soul',
+            ];
+
+            wraithArcanois.some(arcanoi => {
+              if (line.indexOf(` ${arcanoi}: `) >= 0) {
+                arcanoiTag = ` ${arcanoi}: `;
+                return true;
+              }
+              return false;
+            });
+
+            if (arcanoiTag === '') {
+              endAbility = line.length - 2;
+            } else {
+              endAbility = line.indexOf(arcanoiTag);
+            }
+
+            const bracket = line.indexOf(' (');
+            if (bracket >= 0 && bracket < endAbility) {
+              endAbility = bracket;
+            }
+          }
+          ability = line.substring(startAbility, endAbility);
+
+          abilityTrait = {
+            trait: ability,
+            level,
+            type: 'abilities',
+          } as CharacterTrait;
+        }
+        break;
+
+      case 'Mage':
+        {
+          let endAbility: number;
+
+          if (level > 1) {
+            endAbility = line.indexOf(' x');
+          } else {
+            let rotesTag = '';
+
+            if (line.indexOf('(Lv') >= 0) {
+              const mageRotes = [
+                'Access This',
+                'Activate Next Clone',
+                'Affix Gauntlet',
+                'Akashic Cliffs Notes',
+                'Alloy',
+                'Alter Simple Creature',
+                'Alter Weight',
+                'Analyze Substance',
+                'Animal Form',
+                'Animate the Dead',
+                'Apportation',
+                'Astral Projection',
+                'Avatar Form',
+                'Awaken the Inanimate',
+                'Ball of Abysmal Flame',
+                'Battery Man',
+                'Be Cool',
+                'Bean',
+                "Beginner's Luck",
+                'Bending Willow',
+                'Better Body',
+                'Binding Oath',
+                'Blight of Aging',
+                'Block Magical Energy',
+                'Body of Light',
+                'Bond of Blood',
+                'Breach the Gauntlet',
+                'Break the Dreamshell',
+                'Bubble of Reality',
+                "Butcher's Disguise",
+                'Call Spirit',
+                'Call the Tempest',
+                'Camouflage Field Generator',
+                'Chain',
+                'Change the Flow of the Masses',
+                'Circle Ward',
+                'Cleansing Penance',
+                'Co-Location',
+                'Code: FIDA',
+                'Command the Summoned Beast',
+                'Commune',
+                'Consecration',
+                'Contingent Effect',
+                'Correspondence Sensing',
+                'Cracks in the Conscience',
+                'Create Mind',
+                'Create Normal Item',
+                'Create Talismans and Artifacts',
+                'Curse of Luck',
+                'Darksight',
+                'Decrepify',
+                'Decrypt Thoughts',
+                'Deep Umbra Travel',
+                'Deflect Bullets [Forces]',
+                'Deflect Bullets [Matter]',
+                'Destroy Structures',
+                'Detect Possession',
+                'Discordant Sanctum',
+                'Distort Time',
+                'Divinations',
+                'Duct Tape and WD-40',
+                'Electrical Chaos',
+                'Embracing the Earth Mother',
+                'Empathic Projection',
+                'Enchant Life',
+                'Enchant Weapon',
+                'Encrypt Thoughts',
+                'Energy Shield',
+                'Enhance Weapon',
+                'Fall Upon Thy Knees',
+                'Faux Curse',
+                'Feng Shui',
+                'Filter All-Space',
+                'Find Reality Flaws',
+                'Flames of Purification',
+                'Fly',
+                'Fount of Paradise',
+                'Fragments of Dream',
+                'Friction Curse',
+                'Games of Luck',
+                'Got a Hunch',
+                'Gremlins',
+                'Guilty Whispers',
+                'Head of a Pin',
+                'Heal Self',
+                'Heal Wounds',
+                "Heart's Blood",
+                'Hello, my name is...',
+                'Hermes Portal',
+                'Historic Editing',
+                'Holy Stroke',
+                'Hungarian Phrase Book',
+                'Hurl Elemental Attacks',
+                'Imbue the Living Vessel',
+                'Improve Senses',
+                'Inferno',
+                'Influence Emotions',
+                'Information Glut',
+                'Instant Karma',
+                'Iron Avatar',
+                'Knock Out',
+                'Know the Lepers Mind',
+                'Lambs to the Slaughter',
+                'Landscape of the Mind',
+                'Life Scan',
+                'Like Clockwork',
+                'Locate Disorder and Weakness',
+                'Manipulate Memory',
+                'Manna from Heaven',
+                'Masochism Tango',
+                "Master's Enchantment",
+                'Matter Association',
+                'Melt and Reform',
+                "Midwife's Blessing",
+                "Mimir's Head",
+                'Mind Empowerment',
+                'Mind GREP',
+                'Moment of Inspiration',
+                "Mr. Fusion's Clean Burning Fuel Fabrication Formula",
+                'Multiple Action [Life]',
+                'Multiple Action [Time]',
+                'Murder of Crows',
+                'Mutate Ephemera',
+                'Mutate Form',
+                'My God can Beat up your God',
+                'Mystic Tag',
+                'Nice Boots, Wanna Fuck?',
+                'No-Mind',
+                'Paradox Ward',
+                'Paralyze Opponent [Forces]',
+                'Paralyze Opponent [Life]',
+                'Paralyze Opponent [Matter]',
+                'Parma Magica',
+                'Perfect Metamorphosis',
+                'Perfect Time',
+                'Physiological Emotion Control',
+                'Place in the Dance',
+                'Plastic Body',
+                'Polyappearance',
+                "Portal's Herald",
+                'Possession',
+                'Praise Asphalta',
+                'Prayer of Healing Revelation',
+                'Precipitate the Summoned Form',
+                'Probe Thoughts',
+                'Programmed Event',
+                'Psychic Attack',
+                'Psychic Impression',
+                'Pyro Manos',
+                'Quantify Energy',
+                'Re-live Experience',
+                'Red Ones Go Faster',
+                'Release the Red Death',
+                'Remove Divine Favor',
+                'Reveal the Holy Path',
+                'Ring of Truth',
+                'Ringing Strike',
+                'Sanctify Sacred Relic',
+                'Sculpture',
+                'See the Tainted Soul',
+                'Semi-Auto Cad-Cam',
+                'Sense Connection',
+                'Sense Lies',
+                'Sense the Fleeting Moment',
+                'Seven-League Stride',
+                'Sharing the Experience',
+                'Sidestep Time',
+                'Slay Machine',
+                "Solomon's Binding",
+                'Spatial Mutations',
+                'Spirit Cloak',
+                'Spirit Sight',
+                "Spirit's Caress",
+                'Spoliato Posterus ad Pensio Nam Nunc',
+                'Stepping Sideways',
+                'Storm Watch',
+                'Straw into Gold',
+                "Surprise, You're Dead!",
+                "Taliesin's Song",
+                'Telekinesis',
+                'Telepathy',
+                'Tempest in a Teapot',
+                'Time Sense',
+                'Time Travel',
+                'Time Ward',
+                'Time Warp',
+                'Transformers',
+                'Trick Shot',
+                'Trippy Light Show',
+                'Turn Invisible [Forces]',
+                'Turn Invisible [Life]',
+                'Turn Invisible [Mind]',
+                'Undying Endurance',
+                'Void Strike',
+                'Ward',
+                'Ward the Inner Sanctum',
+                'Watch the Weaving',
+                'Wellspring',
+                'Whereami?',
+                'Woad Warrior',
+                'Work or Else',
+              ];
+
+              mageRotes.some(rote => {
+                if (line.indexOf(` ${rote} (Lv.`) >= 0) {
+                  rotesTag = ` ${rote} (Lv.`;
+                  return true;
+                }
+                return false;
+              });
+            }
+
+            if (rotesTag === '') {
+              endAbility = line.length - 2;
+            } else {
+              endAbility = line.indexOf(rotesTag);
+            }
+
+            const bracket = line.indexOf(' (');
+            if (bracket >= 0 && bracket < endAbility) {
+              endAbility = bracket;
+            }
+          }
+
+          ability = line.substring(startAbility, endAbility);
+
+          abilityTrait = {
+            trait: ability,
+            level,
+            type: 'abilities',
+          } as CharacterTrait;
+        }
+        break;
+
+      case 'Werewolf':
+        {
+          let endAbility: number;
+
+          if (level > 1) {
+            endAbility = line.indexOf(' x');
+          } else {
+            let giftsTag = '';
+
+            if (line.indexOf('  ') >= 0) {
+              giftsTag = '  ';
+            } else {
+              const werewolfGifts = [
+                'Homid',
+                'Metis',
+                'Lupus',
+                'Ragabash',
+                'Theurge',
+                'Philodox',
+                'Galliard',
+                'Ahroun',
+                'Black Furies',
+                'Black Spiral Dancers',
+                'Bone Gnawer',
+                'Children of Gaia',
+                'Fianna',
+                'Get of Fenris',
+                'Glass Walkers',
+                'Red Talons',
+                'Shadow Lords',
+                'Silent Striders',
+                'Silver Fangs',
+                'Stargazers',
+                'Uktena',
+                'Wendigo',
+                'Boli Zouhisze',
+                'Bunyip',
+                'Hakken',
+                'Hengeyokai',
+                'Iron Riders',
+                'Tetrasomians',
+                'Warders of Man',
+              ];
+
+              werewolfGifts.some(gift => {
+                if (line.indexOf(` ${gift}: `) >= 0) {
+                  giftsTag = ` ${gift}: `;
+                  return true;
+                }
+                return false;
+              });
+            }
+
+            if (giftsTag === '') {
+              endAbility = line.length - 2;
+            } else {
+              endAbility = line.indexOf(giftsTag);
+            }
+
+            const bracket = line.indexOf(' (');
+            if (bracket >= 0 && bracket < endAbility) {
+              endAbility = bracket;
+            }
+          }
+
           ability = line.substring(startAbility, endAbility);
 
           abilityTrait = {
