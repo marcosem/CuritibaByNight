@@ -183,6 +183,8 @@ const AddCharacter: React.FC = () => {
       setUploading(true);
 
       await api.post('/character/add', formData).then(response => {
+        // const justSavedData = response.data;
+        // const justSavedChar: ICharacter = justSavedData.character;
         const justSavedChar: ICharacter = response.data;
 
         justSavedChar.formatedDate = format(

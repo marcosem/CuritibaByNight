@@ -2,8 +2,9 @@ import CharacterTrait from '@modules/characters/infra/typeorm/entities/Character
 import ICreateCharacterTraitDTO from '@modules/characters/dtos/ICreateCharacterTraitDTO';
 
 export default interface ICharactersTraitsRepository {
-  create(data: ICreateCharacterTraitDTO): Promise<CharacterTrait>;
-  update(data: CharacterTrait): Promise<CharacterTrait>;
+  // create(data: ICreateCharacterTraitDTO): Promise<CharacterTrait>;
+  createList(data_list: ICreateCharacterTraitDTO[]): Promise<CharacterTrait[]>;
+  // update(data: CharacterTrait): Promise<CharacterTrait>;
   findById(char_trait_id: string): Promise<CharacterTrait | undefined>;
   findByCharId(char_id: string, type: string): Promise<CharacterTrait[]>;
   findTraitByCharId(
@@ -11,8 +12,8 @@ export default interface ICharactersTraitsRepository {
     trait: string,
     type: string,
   ): Promise<CharacterTrait | undefined>;
-  listAllByTrait(trait: string, type: string): Promise<CharacterTrait[]>;
-  listAll(): Promise<CharacterTrait[]>;
-  delete(char_trait_id: string): Promise<void>;
+  // listAllByTrait(trait: string, type: string): Promise<CharacterTrait[]>;
+  // listAll(): Promise<CharacterTrait[]>;
+  // delete(char_trait_id: string): Promise<void>;
   deleteAllByChar(char_id: string): Promise<void>;
 }

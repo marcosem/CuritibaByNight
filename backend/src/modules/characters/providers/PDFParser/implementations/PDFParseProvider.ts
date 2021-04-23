@@ -678,7 +678,10 @@ class PDFParseProvider implements IPDFParserProvider {
         }
 
         if (meritsSectionStart) {
-          if (line.indexOf('Huge Size (') >= 0) {
+          if (
+            line.indexOf('Huge Size (') >= 0 ||
+            line.indexOf('Nosferatu: Tough Hide (') >= 0
+          ) {
             extraBruised += 1;
           }
 
@@ -792,6 +795,7 @@ class PDFParseProvider implements IPDFParserProvider {
     }
 
     // For Debug Purpose
+    /*
     console.log(charTraits);
 
     let abilitiesCount = 0;
@@ -818,6 +822,7 @@ class PDFParseProvider implements IPDFParserProvider {
     console.log(`Influences.: ${influecesCount}`);
     console.log(char);
     // End of Debug block
+    */
 
     return {
       character: char,

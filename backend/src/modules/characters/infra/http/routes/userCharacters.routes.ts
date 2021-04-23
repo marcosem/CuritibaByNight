@@ -4,7 +4,8 @@ import uploadConfig from '@config/upload';
 import { celebrate, Segments, Joi } from 'celebrate';
 import UserCharactersController from '@modules/characters/infra/http/controllers/UserCharactersController';
 import CharacterAvatarController from '@modules/characters/infra/http/controllers/CharacterAvatarController';
-import CharacterRetainersController from '@modules/characters/infra/http/controllers/CharactersRetainersController';
+import CharactersRetainersController from '@modules/characters/infra/http/controllers/CharactersRetainersController';
+import CharactersTraitsController from '@modules/characters/infra/http/controllers/CharactersTraitsController';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
 
@@ -12,7 +13,8 @@ const userCharactersRouter = Router();
 
 const userCharactersController = new UserCharactersController();
 const characterAvatarController = new CharacterAvatarController();
-const characterRetainersController = new CharacterRetainersController();
+const charactersRetainersController = new CharactersRetainersController();
+const charactersTraitsController = new CharactersTraitsController();
 
 const sheetMulter = uploadConfig('sheet');
 const uploadSheet = multer(sheetMulter.multer);
@@ -116,7 +118,7 @@ userCharactersRouter.patch(
       situation: Joi.string(),
     },
   }),
-  characterRetainersController.update,
+  charactersRetainersController.update,
 );
 
 // Show user character retainers list
@@ -129,7 +131,18 @@ userCharactersRouter.post(
       situation: Joi.string(),
     },
   }),
-  characterRetainersController.index,
+  charactersRetainersController.index,
+);
+
+userCharactersRouter.get(
+  '/traits/:id',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  charactersTraitsController.index,
 );
 
 export default userCharactersRouter;

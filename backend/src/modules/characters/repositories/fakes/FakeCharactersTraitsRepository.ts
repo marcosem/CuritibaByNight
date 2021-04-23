@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
   private charsTraits: CharacterTrait[] = [];
 
+  /*
   public async create({
     trait,
     character_id,
@@ -27,7 +28,31 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
 
     return charTrait;
   }
+  */
 
+  public async createList(
+    dataList: ICreateCharacterTraitDTO[],
+  ): Promise<CharacterTrait[]> {
+    const charTraitList = dataList.map(data => {
+      const charTrait = new CharacterTrait();
+
+      Object.assign(charTrait, {
+        id: v4(),
+        trait: data.trait,
+        character_id: data.character_id,
+        level: data.level,
+        tyep: data.type,
+      });
+
+      return charTrait;
+    });
+
+    this.charsTraits = this.charsTraits.concat(charTraitList);
+
+    return charTraitList;
+  }
+
+  /*
   public async update(charTrait: CharacterTrait): Promise<CharacterTrait> {
     this.charsTraits = this.charsTraits.map(oldCharTrait =>
       oldCharTrait.id !== charTrait.id ? oldCharTrait : charTrait,
@@ -35,6 +60,7 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
 
     return charTrait;
   }
+  */
 
   public async findById(
     char_trait_id: string,
@@ -74,6 +100,7 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
     return myCharTrait;
   }
 
+  /*
   public async listAllByTrait(
     trait: string,
     type: string,
@@ -84,19 +111,24 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
 
     return charTraitList;
   }
+  */
 
+  /*
   public async listAll(): Promise<CharacterTrait[]> {
     const charTraitList = this.charsTraits;
 
     return charTraitList;
   }
+  */
 
+  /*
   public async delete(char_trait_id: string): Promise<void> {
     const listWithRemovedChars = this.charsTraits.filter(
       charTrait => charTrait.id !== char_trait_id,
     );
     this.charsTraits = listWithRemovedChars;
   }
+  */
 
   public async deleteAllByChar(char_id: string): Promise<void> {
     const listWithRemovedChars = this.charsTraits.filter(

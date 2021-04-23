@@ -22,6 +22,9 @@ import LocationsCharactersRepository from '@modules/locations/infra/typeorm/repo
 import ITerritoriesRepository from '@modules/locations/repositories/ITerritoriesRepository';
 import TerritoriesRepository from '@modules/locations/infra/typeorm/repositories/TerritoriesRepository';
 
+import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
+import CharactersTraitsRepository from '@modules/characters/infra/typeorm/repositories/CharactersTraitsRepository';
+
 // Register a container with User Repositoy in the IUsersRepository format
 // Register Singleton register a single instance
 container.registerSingleton<IUsersRepository>(
@@ -52,6 +55,11 @@ container.registerSingleton<ILocationsCharactersRepository>(
 container.registerSingleton<ITerritoriesRepository>(
   'TerritoriesRepository',
   TerritoriesRepository,
+);
+
+container.registerSingleton<ICharactersTraitsRepository>(
+  'CharactersTraitsRepository',
+  CharactersTraitsRepository,
 );
 
 // for another repository, just duplicate

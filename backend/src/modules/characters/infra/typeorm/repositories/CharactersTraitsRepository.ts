@@ -10,6 +10,7 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
     this.ormRepository = getRepository(CharacterTrait);
   }
 
+  /*
   public async create({
     trait,
     character_id,
@@ -28,7 +29,7 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
     // Return what is saved with user relationship attached.
     let savedCharTrait = await this.ormRepository.findOne({
       where: { id: charTrait.id },
-      relations: ['characterId'],
+      // relations: ['characterId'],
     });
 
     if (!savedCharTrait) {
@@ -36,6 +37,16 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
     }
 
     return savedCharTrait;
+  }
+  */
+
+  public async createList(
+    dataList: ICreateCharacterTraitDTO[],
+  ): Promise<CharacterTrait[]> {
+    const charTraits = this.ormRepository.create(dataList);
+    await this.ormRepository.save(charTraits);
+
+    return charTraits;
   }
 
   public async update(charTrait: CharacterTrait): Promise<CharacterTrait> {
@@ -100,6 +111,7 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
     return charTraitList;
   }
 
+  /*
   public async listAllByTrait(
     trait: string,
     type: string,
@@ -116,7 +128,9 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
 
     return charTraitList;
   }
+  */
 
+  /*
   public async listAll(): Promise<CharacterTrait[]> {
     const charTraitList = await this.ormRepository.find({
       order: { trait: 'ASC' },
@@ -124,7 +138,9 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
 
     return charTraitList;
   }
+  */
 
+  /*
   public async delete(char_trait_id: string): Promise<void> {
     const charTrait = await this.ormRepository.findOne({
       where: { id: char_trait_id },
@@ -133,6 +149,7 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
       await this.ormRepository.remove(charTrait);
     }
   }
+  */
 
   public async deleteAllByChar(char_id: string): Promise<void> {
     const charTrait = await this.ormRepository.find({

@@ -5,6 +5,7 @@ import GetCharacterService from '@modules/characters/services/GetCharacterServic
 import UpdateCharacterSheetService from '@modules/characters/services/UpdateCharacterSheetService';
 import ParseCharacterSheetService from '@modules/characters/services/ParseCharacterSheetService';
 import RemoveCharacterService from '@modules/characters/services/RemoveCharacterService';
+import AddCharacterTraitsService from '@modules/characters/services/AddCharacterTraitsService';
 import { container } from 'tsyringe';
 import { classToClass } from 'class-transformer';
 
@@ -26,6 +27,7 @@ export default class UserCharactersController {
     });
 
     const parsedChar = parsedData?.character;
+    const charTraits = parsedData?.charTraits;
 
     const createCharacterSheetService = container.resolve(
       CreateCharacterSheetService,
@@ -61,6 +63,18 @@ export default class UserCharactersController {
     }
 
     const char = await createCharacterSheetService.execute(inputData);
+
+    if (charTraits) {
+      const addCharacterTraitsService = container.resolve(
+        AddCharacterTraitsService,
+      );
+
+      await addCharacterTraitsService.execute({
+        user_id: req.user.id,
+        char_id: char.id,
+        char_traits: charTraits,
+      });
+    }
 
     return res.json(classToClass(char));
   }
@@ -124,6 +138,7 @@ export default class UserCharactersController {
     });
 
     const parsedChar = parsedData?.character;
+    const charTraits = parsedData?.charTraits;
 
     let regnant;
     if (regnant_id === '') {
@@ -171,6 +186,18 @@ export default class UserCharactersController {
     );
 
     const char = await updateCharacterSheetService.execute(inputData);
+
+    if (charTraits) {
+      const addCharacterTraitsService = container.resolve(
+        AddCharacterTraitsService,
+      );
+
+      await addCharacterTraitsService.execute({
+        user_id: req.user.id,
+        char_id: character_id,
+        char_traits: charTraits,
+      });
+    }
 
     return res.json(classToClass(char));
   }

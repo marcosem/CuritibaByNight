@@ -33,16 +33,23 @@ export default class CreateCharactersTraitsTable1618839260145
             name: 'type',
             type: 'enum',
             enum: [
-              'creature',
               'virtues',
               'attributes',
               'abilities',
               'backgrounds',
               'influences',
-              'powers',
-              'health',
             ],
             default: "'abilities'",
+          },
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'now()',
           },
         ],
         foreignKeys: [
