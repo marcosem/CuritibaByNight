@@ -555,7 +555,7 @@ class PDFParseProvider implements IPDFParserProvider {
               break;
 
             case 'Mortal':
-              if (line.indexOf('Discipline: Fortitude: Mettle') >= 0) {
+              if (line.indexOf('Disciplines: Fortitude: Mettle') >= 0) {
                 extraHealthy += 1;
               }
 
