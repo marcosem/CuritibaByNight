@@ -7,7 +7,7 @@ import React, {
   HTMLAttributes,
 } from 'react';
 import { useHistory } from 'react-router-dom';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiTrash2, FiChevronRight, FiChevronDown } from 'react-icons/fi';
 import { GiLoad, GiRollingDices } from 'react-icons/gi';
 import api from '../../services/api';
 
@@ -17,6 +17,7 @@ import {
   CharCardContainer,
   CharacterContainer,
   CharacterSheet,
+  TraitsContainer,
   TableTitle,
   TableWrapper,
   Table,
@@ -34,6 +35,7 @@ import { useModalBox } from '../../hooks/modalBox';
 import { useSelection } from '../../hooks/selection';
 import CharacterCard from '../CharacterCard';
 import ICharacter from '../CharacterList/ICharacter';
+import TraitsPanel from '../TraitsPanel';
 import Button from '../Button';
 
 interface ILocation {
@@ -43,6 +45,14 @@ interface ILocation {
   elysium: string;
   property: string;
   responsible: string;
+}
+
+interface ITraits {
+  id: string;
+  trait: string;
+  level: number;
+  type: string;
+  character_id: string;
 }
 
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -56,6 +66,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 }) => {
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
   const [retainerList, setRetainerList] = useState<ICharacter[]>([]);
+  // const [traitsList, setTraitsList] = useState<ITraits[]>([]);
   const { addToast } = useToast();
   const history = useHistory();
   const { user, char, signOut } = useAuth();
@@ -64,6 +75,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   const { isMobileVersion } = useMobile();
   const [lastChar, setLastChar] = useState<ICharacter>();
   const { showModal } = useModalBox();
+  const [showTraits, setShowTraits] = useState<boolean>(false);
 
   const loadRetainers = useCallback(async () => {
     if (myChar === undefined) {
@@ -212,6 +224,41 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     setBusy(false);
   }, [addToast, myChar, signOut]);
 
+  /*
+  const loadTraits = useCallback(async () => {
+    if (myChar === undefined) {
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      await api.get(`/character/traits/${myChar.id}`).then(response => {
+        const res: ITraits[] = response.data;
+
+        setTraitsList(res);
+      });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (error.response.status !== 401) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar traits do personagens',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+    setBusy(false);
+  }, [addToast, myChar]);
+  */
+
+  const handleShowTraits = useCallback(() => {
+    setShowTraits(!showTraits);
+  }, [showTraits]);
+
   const handleRemove = useCallback(async () => {
     try {
       const requestData = {
@@ -306,6 +353,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   useEffect(() => {
     loadLocations();
     loadRetainers();
+    // loadTraits();
   }, [loadLocations, loadRetainers, myChar]);
 
   const handleGoBack = useCallback(() => {
@@ -436,6 +484,13 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       )}
                     </>
                   )}
+                  <TraitsContainer>
+                    <button type="button" onClick={handleShowTraits}>
+                      {showTraits ? <FiChevronDown /> : <FiChevronRight />}
+                      <strong>Traits:</strong>
+                    </button>
+                    {showTraits && <TraitsPanel myChar={myChar} />}
+                  </TraitsContainer>
 
                   {retainerList.length > 0 && (
                     <>

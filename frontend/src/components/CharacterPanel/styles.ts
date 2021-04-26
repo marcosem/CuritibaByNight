@@ -20,6 +20,15 @@ const appearFromOpacity = keyframes`
   }
 `;
 
+const divFadeIn = keyframes`
+  from {
+    height: 0;
+  }
+  to {
+    height: 100%;
+  }
+`;
+
 export const Content = styled.main<ICharPanelProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
@@ -194,6 +203,54 @@ export const CharacterContainer = styled.div<ICharPanelProps>`
   }
 `;
 
+export const TraitsContainer = styled.div`
+  display: flex;
+  flex-direction: column !important;
+  width: 100%;
+  padding-bottom: 5px;
+
+  div {
+    animation: ${divFadeIn} 0.6s ease-in 1;
+  }
+
+  button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 13px;
+    border: none;
+    background: transparent;
+    width: 69px;
+
+    svg {
+      color: #333;
+      width: 18px;
+      height: 18px;
+      transition: color 0.3s;
+    }
+
+    strong {
+      padding: 0 !important;
+      margin-right: auto;
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+      align-items: center;
+      transition: color 0.3s;
+    }
+
+    &:hover {
+      strong {
+        color: ${lighten(0.3, '#333')};
+      }
+
+      svg {
+        color: ${lighten(0.3, '#333')};
+      }
+    }
+  }
+`;
+
 export const TableTitle = styled.div`
   display: flex;
   flex-direction: row;
@@ -205,6 +262,7 @@ export const TableTitle = styled.div`
     font-size: 18px;
     font-weight: 500;
     color: #333;
+    align-items: center;
   }
 `;
 
