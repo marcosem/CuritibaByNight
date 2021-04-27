@@ -1,17 +1,20 @@
 import styled, { css, keyframes } from 'styled-components';
 import { lighten, darken } from 'polished';
 
-interface ITraitColor {
+interface ITraitProps {
   traitColor?: string;
+  isMobile: boolean;
 }
 
 interface ITypeContainer {
   borderTop?: boolean;
   borderLeft?: boolean;
+  isMobile: boolean;
 }
 
 interface ITraitContainer {
   alignment?: string;
+  isMobile: boolean;
 }
 
 const divFadeIn = keyframes`
@@ -62,9 +65,17 @@ export const TypeContainer = styled.div<ITypeContainer>`
     `}
 
   h1 {
-    font-size: 16px;
     text-align: center;
     padding: 0 0 5px 0;
+
+    ${props =>
+      props.isMobile
+        ? css`
+            font-size: 14px;
+          `
+        : css`
+            font-size: 16px;
+          `}
   }
 `;
 
@@ -105,35 +116,73 @@ export const TraitContainer = styled.div<ITraitContainer>`
     `}
 
   strong {
-    font-size: 12px;
     margin-right: 5px;
   }
 
   span {
-    font-size: 12px;
     margin-right: 5px;
   }
+
+  ${props =>
+    props.isMobile
+      ? css`
+          strong {
+            font-size: 10px;
+          }
+
+          span {
+            font-size: 10px;
+          }
+        `
+      : css`
+          strong {
+            font-size: 12px;
+          }
+
+          span {
+            font-size: 12px;
+          }
+        `}
 `;
 
 export const VirtuesContainer = styled.div`
   display: flex;
 `;
 
-export const SingleTraitContainer = styled.div`
+export const SingleTraitContainer = styled.div<ITraitContainer>`
   display: flex;
   flex-direction: row;
   padding: 1px 0;
   height: 18px;
 
   strong {
-    font-size: 12px;
     margin-right: 5px;
   }
 
   span {
-    font-size: 12px;
     margin-right: 5px;
   }
+
+  ${props =>
+    props.isMobile
+      ? css`
+          strong {
+            font-size: 10px;
+          }
+
+          span {
+            font-size: 10px;
+          }
+        `
+      : css`
+          strong {
+            font-size: 12px;
+          }
+
+          span {
+            font-size: 12px;
+          }
+        `}
 `;
 
 export const AttributeContainer = styled.div<ITraitContainer>`
@@ -165,13 +214,29 @@ export const AttributeContainer = styled.div<ITraitContainer>`
     padding-bottom: 3px !important;
 
     strong {
-      font-size: 12px;
       margin-right: 5px;
     }
 
-    span {
-      font-size: 12px;
-    }
+    ${props =>
+      props.isMobile
+        ? css`
+            strong {
+              font-size: 10px;
+            }
+
+            span {
+              font-size: 10px;
+            }
+          `
+        : css`
+            strong {
+              font-size: 12px;
+            }
+
+            span {
+              font-size: 12px;
+            }
+          `}
   }
 `;
 
@@ -185,22 +250,40 @@ export const TraitsList = styled.div`
   flex-direction: row;
 `;
 
-export const SingleTraitsList = styled.div`
+export const SingleTraitsList = styled.div<ITraitProps>`
   display: flex;
   flex-direction: row;
-  width: 112px;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          width: 98px;
+        `
+      : css`
+          width: 112px;
+        `}
 `;
 
-export const TraitButton = styled.button<ITraitColor>`
+export const TraitButton = styled.button<ITraitProps>`
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid #000 !important;
   border-radius: 50%;
-  width: 16px !important;
-  height: 16px !important;
+
   margin: 0 !important;
   transition: background-color 0.3s;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          width: 14px !important;
+          height: 14px !important;
+        `
+      : css`
+          width: 16px !important;
+          height: 16px !important;
+        `}
 
   svg {
     padding: 0 !important;
@@ -209,14 +292,30 @@ export const TraitButton = styled.button<ITraitColor>`
     ${props =>
       props.traitColor === 'red'
         ? css`
-            width: 15px !important;
-            height: 15px !important;
             color: #560209 !important;
+
+            ${props.isMobile
+              ? css`
+                  width: 13px !important;
+                  height: 13px !important;
+                `
+              : css`
+                  width: 15px !important;
+                  height: 15px !important;
+                `}
           `
         : css`
-            width: 12px !important;
-            height: 12px !important;
             color: #000 !important;
+
+            ${props.isMobile
+              ? css`
+                  width: 10px !important;
+                  height: 10px !important;
+                `
+              : css`
+                  width: 12px !important;
+                  height: 12px !important;
+                `}
           `}
   }
 
