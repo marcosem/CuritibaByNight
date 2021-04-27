@@ -21,6 +21,8 @@ import {
   TraitButton,
 } from './styles';
 
+import Loading from '../Loading';
+
 /*
 import { useHistory } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi';
@@ -29,7 +31,6 @@ import { FiTrash2 } from 'react-icons/fi';
 
 
 
-import Loading from '../Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
@@ -539,47 +540,78 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
 
   return (
     <Container>
-      <TypeContainer>
-        {typeList.indexOf('creature') >= 0 ? (
-          <>
-            <h1>Características Comuns:</h1>
-            {buildOrdinaryTraitsList(traitsList.creature, 'creature')}
-          </>
-        ) : (
-          <h1>Ficha não atualizada!</h1>
-        )}
-      </TypeContainer>
-      <DoubleTypeContainer key="virtues:health">
-        {typeList.indexOf('virtues') >= 0 && (
-          <TypeContainer borderTop key="virtues">
-            <h1>Virtudes:</h1>
-            {traitsList.virtues.map((trait: ITrait) => (
-              <VirtuesContainer key={trait.id}>
-                {trait.trait === 'Willpower' ? (
-                  <TraitsRow key={`Row:${trait.trait}`}>
-                    <TraitContainer
-                      alignment="left"
-                      key={`Container:${trait.trait}`}
-                    >
-                      <strong>{`${trait.trait}:`}</strong>
-                      <span>{trait.level}</span>
-                      <TraitsList key={`List:${trait.trait}`}>
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            type="button"
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${trait.trait}: ${level.level}`}
-                            traitColor="black"
-                          >
-                            <GiPlainCircle />
-                          </TraitButton>
-                        ))}
-                      </TraitsList>
-                    </TraitContainer>
-                  </TraitsRow>
-                ) : (
+      {isBusy ? (
+        <Loading />
+      ) : (
+        <>
+          <TypeContainer>
+            {typeList.indexOf('creature') >= 0 ? (
+              <>
+                <h1>Características Comuns:</h1>
+                {buildOrdinaryTraitsList(traitsList.creature, 'creature')}
+              </>
+            ) : (
+              <h1>Ficha não atualizada!</h1>
+            )}
+          </TypeContainer>
+          <DoubleTypeContainer key="virtues:health">
+            {typeList.indexOf('virtues') >= 0 && (
+              <TypeContainer borderTop key="virtues">
+                <h1>Virtudes:</h1>
+                {traitsList.virtues.map((trait: ITrait) => (
+                  <VirtuesContainer key={trait.id}>
+                    {trait.trait === 'Willpower' ? (
+                      <TraitsRow key={`Row:${trait.trait}`}>
+                        <TraitContainer
+                          alignment="left"
+                          key={`Container:${trait.trait}`}
+                        >
+                          <strong>{`${trait.trait}:`}</strong>
+                          <span>{trait.level}</span>
+                          <TraitsList key={`List:${trait.trait}`}>
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                type="button"
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${trait.trait}: ${level.level}`}
+                                traitColor="black"
+                              >
+                                <GiPlainCircle />
+                              </TraitButton>
+                            ))}
+                          </TraitsList>
+                        </TraitContainer>
+                      </TraitsRow>
+                    ) : (
+                      <SingleTraitContainer key={`Container:${trait.trait}`}>
+                        <SingleTraitsList key={`List:${trait.trait}`}>
+                          {trait.levelArray.map(level => (
+                            <TraitButton
+                              type="button"
+                              id={level.id}
+                              key={level.id}
+                              disabled={!level.enabled}
+                              title={`${trait.trait}: ${level.level}`}
+                              traitColor="black"
+                            >
+                              <GiPlainCircle />
+                            </TraitButton>
+                          ))}
+                        </SingleTraitsList>
+                        <strong>{`${trait.trait}`}</strong>
+                        <span>{`x${trait.level}`}</span>
+                      </SingleTraitContainer>
+                    )}
+                  </VirtuesContainer>
+                ))}
+              </TypeContainer>
+            )}
+            {typeList.indexOf('health') >= 0 && (
+              <TypeContainer borderTop borderLeft key="health">
+                <h1>Vitalidade:</h1>
+                {traitsList.health.map((trait: ITrait) => (
                   <SingleTraitContainer key={`Container:${trait.trait}`}>
                     <SingleTraitsList key={`List:${trait.trait}`}>
                       {trait.levelArray.map(level => (
@@ -598,120 +630,95 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                     <strong>{`${trait.trait}`}</strong>
                     <span>{`x${trait.level}`}</span>
                   </SingleTraitContainer>
-                )}
-              </VirtuesContainer>
-            ))}
-          </TypeContainer>
-        )}
-        {typeList.indexOf('health') >= 0 && (
-          <TypeContainer borderTop borderLeft key="health">
-            <h1>Vitalidade:</h1>
-            {traitsList.health.map((trait: ITrait) => (
-              <SingleTraitContainer key={`Container:${trait.trait}`}>
-                <SingleTraitsList key={`List:${trait.trait}`}>
-                  {trait.levelArray.map(level => (
-                    <TraitButton
-                      type="button"
-                      id={level.id}
-                      key={level.id}
-                      disabled={!level.enabled}
-                      title={`${trait.trait}: ${level.level}`}
-                      traitColor="black"
-                    >
-                      <GiPlainCircle />
-                    </TraitButton>
-                  ))}
-                </SingleTraitsList>
-                <strong>{`${trait.trait}`}</strong>
-                <span>{`x${trait.level}`}</span>
-              </SingleTraitContainer>
-            ))}
-          </TypeContainer>
-        )}
-      </DoubleTypeContainer>
-      {typeList.indexOf('attributes') >= 0 && (
-        <TypeContainer borderTop>
-          <h1>Atributos:</h1>
-          {buildAttributesTraitsList(traitsList.attributes)}
-        </TypeContainer>
-      )}
-      {typeList.indexOf('abilities') >= 0 && (
-        <TypeContainer borderTop>
-          <h1>Habilidades:</h1>
-          {traitsList.abilities.map((trait: ITrait) => (
-            <SingleTraitContainer key={trait.id}>
-              <SingleTraitsList>
-                {trait.levelArray.map(level => (
-                  <TraitButton
-                    type="button"
-                    id={level.id}
-                    key={level.id}
-                    disabled={!level.enabled}
-                    title={`${trait.trait}: ${level.level}`}
-                    traitColor="black"
-                  >
-                    <GiPlainCircle />
-                  </TraitButton>
                 ))}
-              </SingleTraitsList>
-              <strong>{`${trait.trait}`}</strong>
-              <span>{`x${trait.level}`}</span>
-            </SingleTraitContainer>
-          ))}
-        </TypeContainer>
+              </TypeContainer>
+            )}
+          </DoubleTypeContainer>
+          {typeList.indexOf('attributes') >= 0 && (
+            <TypeContainer borderTop>
+              <h1>Atributos:</h1>
+              {buildAttributesTraitsList(traitsList.attributes)}
+            </TypeContainer>
+          )}
+          {typeList.indexOf('abilities') >= 0 && (
+            <TypeContainer borderTop>
+              <h1>Habilidades:</h1>
+              {traitsList.abilities.map((trait: ITrait) => (
+                <SingleTraitContainer key={trait.id}>
+                  <SingleTraitsList>
+                    {trait.levelArray.map(level => (
+                      <TraitButton
+                        type="button"
+                        id={level.id}
+                        key={level.id}
+                        disabled={!level.enabled}
+                        title={`${trait.trait}: ${level.level}`}
+                        traitColor="black"
+                      >
+                        <GiPlainCircle />
+                      </TraitButton>
+                    ))}
+                  </SingleTraitsList>
+                  <strong>{`${trait.trait}`}</strong>
+                  <span>{`x${trait.level}`}</span>
+                </SingleTraitContainer>
+              ))}
+            </TypeContainer>
+          )}
+          <DoubleTypeContainer>
+            {typeList.indexOf('backgrounds') >= 0 && (
+              <TypeContainer borderTop>
+                <h1>Antecedentes:</h1>
+                {traitsList.backgrounds.map((trait: ITrait) => (
+                  <SingleTraitContainer key={trait.id}>
+                    <SingleTraitsList>
+                      {trait.levelArray.map(level => (
+                        <TraitButton
+                          type="button"
+                          id={level.id}
+                          key={level.id}
+                          disabled={!level.enabled}
+                          title={`${trait.trait}: ${level.level}`}
+                          traitColor="black"
+                        >
+                          <GiPlainCircle />
+                        </TraitButton>
+                      ))}
+                    </SingleTraitsList>
+                    <strong>{`${trait.trait}`}</strong>
+                    <span>{`x${trait.level}`}</span>
+                  </SingleTraitContainer>
+                ))}
+              </TypeContainer>
+            )}
+            {typeList.indexOf('influences') >= 0 && (
+              <TypeContainer borderTop borderLeft>
+                <h1>Influências:</h1>
+                {traitsList.influences.map((trait: ITrait) => (
+                  <SingleTraitContainer key={trait.id}>
+                    <SingleTraitsList>
+                      {trait.levelArray.map(level => (
+                        <TraitButton
+                          type="button"
+                          id={level.id}
+                          key={level.id}
+                          disabled={!level.enabled}
+                          title={`${trait.trait}: ${level.level}`}
+                          traitColor="black"
+                        >
+                          <GiPlainCircle />
+                        </TraitButton>
+                      ))}
+                    </SingleTraitsList>
+                    <strong>{`${trait.trait}`}</strong>
+                    <span>{`x${trait.level}`}</span>
+                  </SingleTraitContainer>
+                ))}
+              </TypeContainer>
+            )}
+          </DoubleTypeContainer>
+        </>
       )}
-      <DoubleTypeContainer>
-        {typeList.indexOf('backgrounds') >= 0 && (
-          <TypeContainer borderTop>
-            <h1>Antecedentes:</h1>
-            {traitsList.backgrounds.map((trait: ITrait) => (
-              <SingleTraitContainer key={trait.id}>
-                <SingleTraitsList>
-                  {trait.levelArray.map(level => (
-                    <TraitButton
-                      type="button"
-                      id={level.id}
-                      key={level.id}
-                      disabled={!level.enabled}
-                      title={`${trait.trait}: ${level.level}`}
-                      traitColor="black"
-                    >
-                      <GiPlainCircle />
-                    </TraitButton>
-                  ))}
-                </SingleTraitsList>
-                <strong>{`${trait.trait}`}</strong>
-                <span>{`x${trait.level}`}</span>
-              </SingleTraitContainer>
-            ))}
-          </TypeContainer>
-        )}
-        {typeList.indexOf('influences') >= 0 && (
-          <TypeContainer borderTop borderLeft>
-            <h1>Influências:</h1>
-            {traitsList.influences.map((trait: ITrait) => (
-              <SingleTraitContainer key={trait.id}>
-                <SingleTraitsList>
-                  {trait.levelArray.map(level => (
-                    <TraitButton
-                      type="button"
-                      id={level.id}
-                      key={level.id}
-                      disabled={!level.enabled}
-                      title={`${trait.trait}: ${level.level}`}
-                      traitColor="black"
-                    >
-                      <GiPlainCircle />
-                    </TraitButton>
-                  ))}
-                </SingleTraitsList>
-                <strong>{`${trait.trait}`}</strong>
-                <span>{`x${trait.level}`}</span>
-              </SingleTraitContainer>
-            ))}
-          </TypeContainer>
-        )}
-      </DoubleTypeContainer>
     </Container>
   );
 };

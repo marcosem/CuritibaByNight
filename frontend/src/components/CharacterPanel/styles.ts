@@ -20,15 +20,6 @@ const appearFromOpacity = keyframes`
   }
 `;
 
-const divFadeIn = keyframes`
-  from {
-    height: 0;
-  }
-  to {
-    height: 100%;
-  }
-`;
-
 export const Content = styled.main<ICharPanelProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
@@ -129,78 +120,78 @@ export const CharacterContainer = styled.div<ICharPanelProps>`
           width: 100%;
           margin: 20px;
         `}
+`;
 
-  div {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    padding-bottom: 5px;
+export const TextContainter = styled.div<ICharPanelProps>`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding-bottom: 5px;
 
-    h1 {
-      color: #333;
-    }
-
-    strong {
-      font-weight: 500;
-      color: #333;
-
-      &:not(:first-child) {
-        ${props =>
-          !props.isMobile &&
-          css`
-            margin-left: auto;
-          `}
-      }
-
-      &:last-child {
-        padding-top: 13px;
-      }
-    }
-
-    span {
-      font-size: 18px;
-      font-weight: 400;
-      color: #333;
-      margin-left: 10px;
-    }
-
-    ${props =>
-      props.isMobile
-        ? css`
-            h1 {
-              font-size: 18px;
-              font-weight: 550;
-              margin: 0 auto;
-            }
-
-            strong {
-              font-size: 14px;
-            }
-
-            span {
-              font-size: 14px;
-            }
-          `
-        : css`
-            h1 {
-              font-size: 24px;
-              font-weight: 500;
-              margin-bottom: 16px;
-
-              &:not(:first-child) {
-                margin-left: auto;
-              }
-            }
-
-            strong {
-              font-size: 18px;
-            }
-
-            span {
-              font-size: 18px;
-            }
-          `}
+  h1 {
+    color: #333;
   }
+
+  strong {
+    font-weight: 500;
+    color: #333;
+
+    &:not(:first-child) {
+      ${props =>
+        !props.isMobile &&
+        css`
+          margin-left: auto;
+        `}
+    }
+
+    &:last-child {
+      padding-top: 13px;
+    }
+  }
+
+  span {
+    font-size: 18px;
+    font-weight: 400;
+    color: #333;
+    margin-left: 10px;
+  }
+
+  ${props =>
+    props.isMobile
+      ? css`
+          h1 {
+            font-size: 18px;
+            font-weight: 550;
+            margin: 0 auto;
+          }
+
+          strong {
+            font-size: 14px;
+          }
+
+          span {
+            font-size: 14px;
+          }
+        `
+      : css`
+          h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 16px;
+
+            &:not(:first-child) {
+              margin-left: auto;
+            }
+          }
+
+          strong {
+            font-size: 18px;
+          }
+
+          span {
+            font-size: 18px;
+          }
+        `}
 `;
 
 export const TraitsContainer = styled.div`
@@ -208,10 +199,6 @@ export const TraitsContainer = styled.div`
   flex-direction: column !important;
   width: 100%;
   padding-bottom: 5px;
-
-  div {
-    animation: ${divFadeIn} 0.6s ease-in 1;
-  }
 
   button {
     display: flex;
@@ -510,6 +497,7 @@ export const TableCell = styled.div<ITableCellProps>`
 export const ButtonBox = styled.div<ICharPanelProps>`
   margin: auto;
   padding: 16px 0;
+  width: 100%;
 
   ${props =>
     props.isMobile

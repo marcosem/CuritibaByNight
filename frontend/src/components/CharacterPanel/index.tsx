@@ -16,6 +16,7 @@ import {
   Content,
   CharCardContainer,
   CharacterContainer,
+  TextContainter,
   CharacterSheet,
   TraitsContainer,
   TableTitle,
@@ -425,62 +426,62 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                 <CharacterContainer isMobile={isMobileVersion}>
                   {isMobileVersion ? (
                     <>
-                      <div>
+                      <TextContainter isMobile={isMobileVersion}>
                         <h1>{myChar.name}</h1>
-                      </div>
-                      <div>
+                      </TextContainter>
+                      <TextContainter isMobile={isMobileVersion}>
                         <h1>{myChar.clan}</h1>
-                      </div>
-                      <div>
+                      </TextContainter>
+                      <TextContainter isMobile={isMobileVersion}>
                         <span>
                           <br />
                         </span>
-                      </div>
+                      </TextContainter>
                     </>
                   ) : (
                     <>
-                      <div>
+                      <TextContainter isMobile={isMobileVersion}>
                         <h1>{myChar.name}</h1>
                         <h1>{myChar.clan}</h1>
-                      </div>
+                      </TextContainter>
                     </>
                   )}
 
                   {myChar.npc && !myChar.regnant ? (
-                    <div>
+                    <TextContainter isMobile={isMobileVersion}>
                       <strong>NPC</strong>
-                    </div>
+                    </TextContainter>
                   ) : (
                     <>
                       {isMobileVersion ? (
                         <>
-                          <div>
+                          <TextContainter isMobile={isMobileVersion}>
                             <strong>Experiêcia Disponível:</strong>
                             <span>{myChar.experience}</span>
-                          </div>
-                          <div>
+                          </TextContainter>
+                          <TextContainter isMobile={isMobileVersion}>
                             <strong>Experiêcia Total:</strong>
                             <span>{myChar.experience_total}</span>
-                          </div>
+                          </TextContainter>
                         </>
                       ) : (
-                        <div>
+                        <TextContainter isMobile={isMobileVersion}>
                           <strong>Experiêcia Disponível:</strong>
                           <span>{myChar.experience}</span>
                           <strong>Experiêcia Total:</strong>
                           <span>{myChar.experience_total}</span>
-                        </div>
+                        </TextContainter>
                       )}
 
                       {!myChar.npc && (
-                        <div>
+                        <TextContainter isMobile={isMobileVersion}>
                           <strong>Jogador:</strong>
                           {dashboard ? (
                             <span>{user.name}</span>
                           ) : (
                             <span>{myChar.user && myChar.user.name}</span>
                           )}
-                        </div>
+                        </TextContainter>
                       )}
                     </>
                   )}
