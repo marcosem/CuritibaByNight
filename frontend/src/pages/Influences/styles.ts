@@ -425,7 +425,7 @@ export const TableLevelsCell = styled.div`
   display: flex;
   overflow-wrap: break-word;
   word-wrap: break-word;
-  hyphens: auto;
+  // hyphens: auto;
   color: #000;
 
   strong {
