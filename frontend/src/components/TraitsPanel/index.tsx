@@ -13,6 +13,7 @@ import {
   GiHearts,
   GiHeartMinus,
   GiCancel,
+  GiPrettyFangs,
 } from 'react-icons/gi';
 import api from '../../services/api';
 
@@ -495,9 +496,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             trait.levelTemp -= 1;
             break;
           case 'bashing':
-            level.status = 'letal';
+            level.status = 'lethal';
             break;
-          case 'letal':
+          case 'lethal':
             level.status = 'aggravated';
             break;
           case 'aggravated':
@@ -617,64 +618,75 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                 }
                 isMobile={isMobileVersion}
               >
-                <strong>{`${trait.trait}:`}</strong>
+                <strong>
+                  {`${
+                    trait.trait === 'Personal Masquerade'
+                      ? 'Quebra de Máscara Pessoal'
+                      : `${trait.trait}`
+                  }:`}
+                </strong>
                 <span>
                   {`${
                     trait.trait === 'Blood'
                       ? `${trait.levelTemp}/${trait.level}`
-                      : `${trait.level}`
+                      : `${
+                          trait.trait === 'Personal Masquerade'
+                            ? `${trait.levelTemp}`
+                            : `${trait.level}`
+                        }`
                   }`}
                 </span>
-                {trait.level > 0 &&
-                  trait.trait !== 'Personal Masquerade' &&
-                  trait.trait !== 'Rank' && (
-                    <>
-                      {trait.levelArray && (
-                        <TraitsList key={trait.levelArray[0].id}>
-                          {trait.levelArray.map(level => (
-                            <TraitButton
-                              type="button"
-                              id={level.id}
-                              key={level.id}
-                              disabled={!level.enabled}
-                              title={`${
-                                level.enabled
-                                  ? `${
-                                      level.status === 'full'
-                                        ? `Remover [${trait.trait} Trait]`
-                                        : `Adicionar [${trait.trait} Trait]`
-                                    }`
-                                  : `${trait.trait} x${trait.levelTemp}`
-                              }`}
-                              traitColor={
-                                trait.trait === 'Blood' ? 'red' : 'black'
-                              }
-                              isMobile={isMobileVersion}
-                              onClick={handleTraitClick}
-                            >
-                              {trait.trait === 'Blood' ? (
-                                <>
-                                  {level.status === 'full' ? (
-                                    <GiWaterDrop />
-                                  ) : (
-                                    ''
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  {level.status === 'full' ? (
-                                    <GiPlainCircle />
-                                  ) : (
-                                    ''
-                                  )}
-                                </>
-                              )}
-                            </TraitButton>
-                          ))}
-                        </TraitsList>
-                      )}
-                    </>
-                  )}
+                {trait.level > 0 && trait.trait !== 'Rank' && (
+                  <>
+                    {trait.levelArray && (
+                      <TraitsList key={trait.levelArray[0].id}>
+                        {trait.levelArray.map(level => (
+                          <TraitButton
+                            type="button"
+                            id={level.id}
+                            key={level.id}
+                            disabled={!level.enabled}
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? `Remover [${trait.trait} Trait]`
+                                      : `Adicionar [${trait.trait} Trait]`
+                                  }`
+                                : `${trait.trait} x${trait.levelTemp}`
+                            }`}
+                            traitColor={
+                              trait.trait === 'Blood' ||
+                              trait.trait === 'Personal Masquerade'
+                                ? 'red'
+                                : 'black'
+                            }
+                            isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
+                          >
+                            {level.status === 'full' ? (
+                              <>
+                                {trait.trait === 'Blood' ? (
+                                  <GiWaterDrop />
+                                ) : (
+                                  <>
+                                    {trait.trait === 'Personal Masquerade' ? (
+                                      <GiPrettyFangs />
+                                    ) : (
+                                      <GiPlainCircle />
+                                    )}
+                                  </>
+                                )}
+                              </>
+                            ) : (
+                              ''
+                            )}
+                          </TraitButton>
+                        ))}
+                      </TraitsList>
+                    )}
+                  </>
+                )}
               </TraitContainer>
             ))}
           </TraitsRow>,
@@ -971,7 +983,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                           level.status === 'bashing'
                                             ? 'Causar Dano Letal'
                                             : `${
-                                                level.status === 'letal'
+                                                level.status === 'lethal'
                                                   ? 'Causar Dano Agravado'
                                                   : 'Curar Dano'
                                               }`
@@ -984,7 +996,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                           level.status === 'bashing'
                                             ? 'Dano de Contusão'
                                             : `${
-                                                level.status === 'letal'
+                                                level.status === 'lethal'
                                                   ? 'Dano Letal'
                                                   : 'Dano Agravado'
                                               }`
@@ -1003,7 +1015,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                   <GiHeartMinus />
                                 ) : (
                                   <>
-                                    {level.status === 'letal' ? (
+                                    {level.status === 'lethal' ? (
                                       ''
                                     ) : (
                                       <GiCancel />
@@ -1168,7 +1180,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                           level.status === 'bashing'
                                             ? 'Causar Dano Letal'
                                             : `${
-                                                level.status === 'letal'
+                                                level.status === 'lethal'
                                                   ? 'Causar Dano Agravado'
                                                   : 'Curar Dano'
                                               }`
@@ -1181,7 +1193,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                           level.status === 'bashing'
                                             ? 'Dano de Contusão'
                                             : `${
-                                                level.status === 'letal'
+                                                level.status === 'lethal'
                                                   ? 'Dano Letal'
                                                   : 'Dano Agravado'
                                               }`
@@ -1200,7 +1212,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                   <GiHeartMinus />
                                 ) : (
                                   <>
-                                    {level.status === 'letal' ? (
+                                    {level.status === 'lethal' ? (
                                       ''
                                     ) : (
                                       <GiCancel />
