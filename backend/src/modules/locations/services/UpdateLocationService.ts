@@ -82,6 +82,9 @@ class UpdateLocationService {
 
       location.responsible = char_id;
       delete location.responsible_char;
+    } else if (char_id === null) {
+      location.responsible = null;
+      delete location.responsible_char;
     }
 
     if (name) location.name = name;

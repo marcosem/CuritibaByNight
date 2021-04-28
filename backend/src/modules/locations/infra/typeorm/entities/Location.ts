@@ -58,7 +58,7 @@ class Location {
   sect: string;
 
   @Column()
-  responsible: string;
+  responsible: string | null;
 
   @ManyToOne(() => Character)
   @JoinColumn({ name: 'responsible' })
