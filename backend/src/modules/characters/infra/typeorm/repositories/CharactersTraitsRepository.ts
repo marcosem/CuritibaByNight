@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Not } from 'typeorm';
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 import ICreateCharacterTraitDTO from '@modules/characters/dtos/ICreateCharacterTraitDTO';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
@@ -109,6 +109,34 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
 
     // if not found, return undefined
     return charTraitList;
+  }
+
+  public async resetTraitsLevel(
+    char_id: string,
+    keepMasquerade: boolean,
+  ): Promise<void> {
+    const trait = keepMasquerade ? Not('Personal Masquerade') : undefined;
+    const where = {
+      character_id: char_id,
+      trait,
+    };
+
+    const charTraitsList = await this.ormRepository.find({ where });
+
+    const newTraitsList = charTraitsList.map(myTrait => {
+      const newTrait = myTrait;
+
+      if (newTrait.trait === 'Personal Masquerade' && !keepMasquerade) {
+        newTrait.level_temp =
+          'empty|empty|empty|empty|empty|empty|empty|empty|empty|empty';
+      } else {
+        newTrait.level_temp = '';
+      }
+
+      return newTrait;
+    });
+
+    await this.ormRepository.save(newTraitsList);
   }
 
   /*

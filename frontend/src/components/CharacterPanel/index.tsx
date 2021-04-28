@@ -7,7 +7,12 @@ import React, {
   HTMLAttributes,
 } from 'react';
 import { useHistory } from 'react-router-dom';
-import { FiTrash2, FiChevronRight, FiChevronDown } from 'react-icons/fi';
+import {
+  FiTrash2,
+  FiChevronRight,
+  FiChevronDown,
+  FiRotateCcw,
+} from 'react-icons/fi';
 import { GiLoad, GiRollingDices } from 'react-icons/gi';
 import api from '../../services/api';
 
@@ -18,13 +23,13 @@ import {
   CharacterContainer,
   TextContainter,
   CharacterSheet,
-  TraitsContainer,
-  TableTitle,
+  DataContainer,
   TableWrapper,
   Table,
   TableCell,
   ButtonBox,
   PlayButton,
+  ResetButton,
   RemoveButton,
 } from './styles';
 
@@ -77,6 +82,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   const [lastChar, setLastChar] = useState<ICharacter>();
   const { showModal } = useModalBox();
   const [showTraits, setShowTraits] = useState<boolean>(false);
+  const [showRetainers, setShowRetainers] = useState<boolean>(true);
+  const [showLocals, setShowLocals] = useState<boolean>(true);
 
   const loadRetainers = useCallback(async () => {
     if (myChar === undefined) {
@@ -225,40 +232,76 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     setBusy(false);
   }, [addToast, myChar, signOut]);
 
-  /*
-  const loadTraits = useCallback(async () => {
-    if (myChar === undefined) {
-      return;
-    }
+  const handleShowTraits = useCallback(() => {
+    setShowTraits(!showTraits);
+  }, [showTraits]);
 
-    setBusy(true);
+  const handleShowRetainers = useCallback(() => {
+    setShowRetainers(!showRetainers);
+  }, [showRetainers]);
 
+  const handleShowLocals = useCallback(() => {
+    setShowLocals(!showLocals);
+  }, [showLocals]);
+
+  const handleResetTraits = useCallback(async () => {
     try {
-      await api.get(`/character/traits/${myChar.id}`).then(response => {
-        const res: ITraits[] = response.data;
+      const requestData = {
+        character_id: myChar.id,
+        keep_masquerade: true,
+      };
 
-        setTraitsList(res);
+      const reqData = { data: requestData };
+
+      await api.delete('/character/traits/reset', reqData);
+
+      addToast({
+        type: 'success',
+        title: 'Traits Resetados',
+        description: 'Os Traits do personagem foram resetados com sucesso!',
       });
     } catch (error) {
       if (error.response) {
         const { message } = error.response.data;
 
-        if (error.response.status !== 401) {
+        if (message?.indexOf('token') > 0 && error.response.status === 401) {
           addToast({
             type: 'error',
-            title: 'Erro ao tentar listar traits do personagens',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar resetar os traits do perssonagem',
             description: `Erro: '${message}'`,
           });
         }
       }
     }
-    setBusy(false);
-  }, [addToast, myChar]);
-  */
 
-  const handleShowTraits = useCallback(() => {
-    setShowTraits(!showTraits);
-  }, [showTraits]);
+    setShowTraits(true);
+  }, [addToast, myChar.id, signOut]);
+
+  const handleConfirmResetTraits = useCallback(() => {
+    if (myChar === undefined) {
+      return;
+    }
+    setShowTraits(false);
+
+    showModal({
+      type: 'warning',
+      title: 'Confirmar reset dos traits',
+      description: `Você está prestes a resetar os traits do personagem [${myChar.name}], você confirma?`,
+      btn1Title: 'Sim',
+      btn1Function: () => handleResetTraits(),
+      btn2Title: 'Não',
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      btn2Function: () => setShowTraits(true),
+    });
+  }, [handleResetTraits, myChar, showModal]);
 
   const handleRemove = useCallback(async () => {
     try {
@@ -485,20 +528,24 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       )}
                     </>
                   )}
-                  <TraitsContainer>
+                  <DataContainer>
                     <button type="button" onClick={handleShowTraits}>
                       {showTraits ? <FiChevronDown /> : <FiChevronRight />}
                       <strong>Traits:</strong>
                     </button>
                     {showTraits && <TraitsPanel myChar={myChar} />}
-                  </TraitsContainer>
+                  </DataContainer>
 
                   {retainerList.length > 0 && (
-                    <>
-                      <TableTitle>
+                    <DataContainer>
+                      <button type="button" onClick={handleShowRetainers}>
+                        {showRetainers ? <FiChevronDown /> : <FiChevronRight />}
                         <strong>Meus Lacaios:</strong>
-                      </TableTitle>
-                      <TableWrapper isMobile={isMobileVersion}>
+                      </button>
+                      <TableWrapper
+                        isMobile={isMobileVersion}
+                        isVisible={showRetainers}
+                      >
                         <Table isMobile={isMobileVersion}>
                           <thead>
                             <tr>
@@ -550,15 +597,19 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                           </tbody>
                         </Table>
                       </TableWrapper>
-                    </>
+                    </DataContainer>
                   )}
 
                   {locationsList.length > 0 && (
-                    <>
-                      <TableTitle>
+                    <DataContainer>
+                      <button type="button" onClick={handleShowLocals}>
+                        {showLocals ? <FiChevronDown /> : <FiChevronRight />}
                         <strong>Locais Conhecidos por mim:</strong>
-                      </TableTitle>
-                      <TableWrapper isMobile={isMobileVersion}>
+                      </button>
+                      <TableWrapper
+                        isMobile={isMobileVersion}
+                        isVisible={showLocals}
+                      >
                         <Table isMobile={isMobileVersion}>
                           <thead>
                             <tr>
@@ -605,7 +656,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                           </tbody>
                         </Table>
                       </TableWrapper>
-                    </>
+                    </DataContainer>
                   )}
 
                   {!dashboard && (
@@ -624,6 +675,16 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     >
                       <GiRollingDices />
                     </PlayButton>
+                  )}
+
+                  {user.storyteller && showTraits && (
+                    <ResetButton
+                      type="button"
+                      onClick={handleConfirmResetTraits}
+                      title="Resetar Traits"
+                    >
+                      <FiRotateCcw />
+                    </ResetButton>
                   )}
 
                   {user.storyteller && !dashboard && (

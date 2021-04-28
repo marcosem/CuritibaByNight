@@ -98,6 +98,27 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
     return myCharTrait;
   }
 
+  public async resetTraitsLevel(
+    char_id: string,
+    keepMasquerade: boolean,
+  ): Promise<void> {
+    const newCharsTraits = this.charsTraits.map(trait => {
+      const newTrait = trait;
+
+      if (
+        newTrait.character_id === char_id &&
+        (newTrait.trait !== 'Personal Masquerade' ||
+          (newTrait.trait === 'Personal Masquerade' && !keepMasquerade))
+      ) {
+        newTrait.level_temp = undefined;
+      }
+
+      return newTrait;
+    });
+
+    this.charsTraits = newCharsTraits;
+  }
+
   /*
   public async listAllByTrait(
     trait: string,

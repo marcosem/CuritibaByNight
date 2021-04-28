@@ -161,4 +161,16 @@ userCharactersRouter.patch(
   charactersTraitsController.update,
 );
 
+userCharactersRouter.delete(
+  '/traits/reset',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      character_id: Joi.string().uuid().required(),
+      keep_masquerade: Joi.boolean().required(),
+    },
+  }),
+  charactersTraitsController.delete,
+);
+
 export default userCharactersRouter;

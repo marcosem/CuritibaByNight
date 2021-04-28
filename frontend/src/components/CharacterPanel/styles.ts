@@ -4,6 +4,7 @@ import bgImg from '../../assets/yellow-old-paper.jpg';
 
 interface ICharPanelProps {
   isMobile: boolean;
+  isVisible?: boolean;
 }
 
 interface ITableCellProps {
@@ -11,12 +12,14 @@ interface ITableCellProps {
   isMobile?: boolean;
 }
 
-const appearFromOpacity = keyframes`
+const divFadeIn = keyframes`
   from {
     opacity: 0;
+    height: 0;
   }
   to {
     opacity: 1;
+    height: 100%;
   }
 `;
 
@@ -194,7 +197,7 @@ export const TextContainter = styled.div<ICharPanelProps>`
         `}
 `;
 
-export const TraitsContainer = styled.div`
+export const DataContainer = styled.div`
   display: flex;
   flex-direction: column !important;
   width: 100%;
@@ -207,7 +210,7 @@ export const TraitsContainer = styled.div`
     margin-top: 13px;
     border: none;
     background: transparent;
-    width: 69px;
+    width: auto;
 
     svg {
       color: #333;
@@ -238,33 +241,16 @@ export const TraitsContainer = styled.div`
   }
 `;
 
-export const TableTitle = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  padding-bottom: 5px;
-
-  strong {
-    padding-top: 13px;
-    font-size: 18px;
-    font-weight: 500;
-    color: #333;
-    align-items: center;
-  }
-`;
-
 export const TableWrapper = styled.div<ICharPanelProps>`
   margin: 5px auto;
   min-width: 320px;
   border-radius: 11px;
-  padding-bottom: 16px !important;
+  // padding-bottom: 16px !important;
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
-
-  animation: ${appearFromOpacity} 0.6s;
 
   ${props =>
     props.isMobile
@@ -273,6 +259,17 @@ export const TableWrapper = styled.div<ICharPanelProps>`
         `
       : css`
           max-width: 1012px;
+        `}
+
+  ${props =>
+    props.isVisible === false
+      ? css`
+          visibility: hidden;
+          height: 0;
+        `
+      : css`
+          visibility: visible;
+          animation: ${divFadeIn} 0.6s ease-in 1;
         `}
 `;
 
@@ -539,6 +536,35 @@ export const PlayButton = styled.button`
     svg {
       color: ${lighten(0.2, '#ccc')};
     }
+  }
+`;
+
+export const ResetButton = styled.button`
+  position: fixed;
+  bottom: 114px;
+  right: 40px;
+
+  width: 64px;
+  height: 64px;
+  border: 0;
+
+  background: #860209;
+  border-radius: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: ${shade(0.2, '#860209')};
+  }
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #ccc;
   }
 `;
 

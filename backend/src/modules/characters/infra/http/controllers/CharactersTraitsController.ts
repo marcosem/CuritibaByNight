@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import GetCharacterTraitsService from '@modules/characters/services/GetCharacterTraitsService';
 import UpdateCharacterTraitService from '@modules/characters/services/UpdateCharacterTraitService';
+import ResetCharacterTraitsService from '@modules/characters/services/ResetCharacterTraitsService';
 import { container } from 'tsyringe';
 
 export default class CharacterTraitsController {
@@ -42,5 +43,21 @@ export default class CharacterTraitsController {
     const trait = await updateCharTrait.execute(inputData);
 
     return res.json(trait);
+  }
+
+  public async delete(req: Request, res: Response): Promise<Response> {
+    const { character_id, keep_masquerade } = req.body;
+
+    const resetCharTraits = container.resolve(ResetCharacterTraitsService);
+
+    const inputData = {
+      user_id: req.user.id,
+      char_id: character_id,
+      keep_masquerade,
+    };
+
+    await resetCharTraits.execute(inputData);
+
+    return res.status(204).json();
   }
 }
