@@ -61,10 +61,16 @@ class PDFParseProvider implements IPDFParserProvider {
     let backgroundsSectionDone = false;
     let influencesSectionStart = false;
     let influencesSectionDone = false;
-    let meritsSectionDone = false;
-    let meritsSectionStart = false;
+    let meritsAndFlawsSectionDone = false;
+    let meritsAndFlawsSectionStart = false;
     let extraHealthy = 0;
     let extraBruised = 0;
+    let penaltyHealth = 0;
+
+    const penaltyBlood = {
+      level_penalty: 0,
+      level_temp: '',
+    };
 
     rl.on('line', line => {
       index += 1;
@@ -179,6 +185,16 @@ class PDFParseProvider implements IPDFParserProvider {
 
               clan = line.substring(startClan, endClan);
               char.clan = clan;
+
+              // Clan Ventrue loses one blood point
+              if (clan === 'Ventrue') {
+                if (penaltyBlood.level_penalty === 0) {
+                  penaltyBlood.level_temp = 'Clan';
+                } else {
+                  penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Clan`;
+                }
+                penaltyBlood.level_penalty += 1;
+              }
             }
             break;
           case 'Wraith':
@@ -270,6 +286,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Title
       if (!title) {
         switch (char.creature_type) {
           case 'Mortal':
@@ -336,6 +353,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Coterie / Pack
       if (!coterie) {
         switch (char.creature_type) {
           case 'Vampire':
@@ -379,6 +397,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Virtues and Creature Traits
       if (char.creature_type && !virtuesSectionDone) {
         const creatureTraits = extractCreatureTraits(line, char.creature_type);
         if (creatureTraits.length > 0) {
@@ -471,6 +490,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Attributes
       if (virtuesSectionDone && !attributesSectionDone) {
         if (line.indexOf('Physical Traits:') >= 0) {
           const startAttribute = line.indexOf('Physical Traits:') - 4;
@@ -588,6 +608,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Backgrounds
       if (attributesSectionDone && !backgroundsSectionDone) {
         if (line.indexOf('Backgrounds:') >= 0) {
           backgroundsSectionStart = true;
@@ -598,6 +619,30 @@ class PDFParseProvider implements IPDFParserProvider {
 
           if (background) {
             charTraits.push(background);
+
+            // Retainers loses one blood point
+            if (
+              background.trait === 'Retainers' ||
+              background.trait === 'Animal Retainer'
+            ) {
+              let level_temp = '';
+              let retainerCount = 0;
+              while (retainerCount < background.level) {
+                if (retainerCount === 0) {
+                  level_temp = 'Retainer';
+                } else {
+                  level_temp = `${level_temp}|Retainer`;
+                }
+                retainerCount += 1;
+              }
+
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp = level_temp;
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|${level_temp}`;
+              }
+              penaltyBlood.level_penalty += background.level;
+            }
           }
 
           switch (char.creature_type) {
@@ -625,6 +670,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Influences
       if (attributesSectionDone && !influencesSectionDone) {
         if (line.indexOf('Influences:') >= 0) {
           influencesSectionStart = true;
@@ -668,16 +714,17 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Merits and Flaws
       if (
         char.creature_type !== 'Wraith' &&
         influencesSectionDone &&
-        !meritsSectionDone
+        !meritsAndFlawsSectionDone
       ) {
-        if (line.indexOf('Merits:') >= 0) {
-          meritsSectionStart = true;
+        if (line.indexOf('Merits:') >= 0 || line.indexOf('Flaws:') >= 0) {
+          meritsAndFlawsSectionStart = true;
         }
 
-        if (meritsSectionStart) {
+        if (meritsAndFlawsSectionStart) {
           if (
             line.indexOf('Huge Size (') >= 0 ||
             line.indexOf('Nosferatu: Tough Hide (') >= 0
@@ -685,8 +732,85 @@ class PDFParseProvider implements IPDFParserProvider {
             extraBruised += 1;
           }
 
+          if (char.creature_type === 'Vampire') {
+            if (line.indexOf('Prey Exclusion (') >= 0) {
+              // Prey Exclusion has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp = 'Prey Exclusion';
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Prey Exclusion`;
+              }
+              penaltyBlood.level_penalty += 1;
+            } else if (line.indexOf('Addiction (') >= 0) {
+              // Addiction has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp = 'Addiction|Addiction';
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Addiction|Addiction`;
+              }
+              penaltyBlood.level_penalty += 2;
+            } else if (line.indexOf('Selective Digestion (') >= 0) {
+              // Selective Digestion has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp = 'Selective Digestion';
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Selective Digestion`;
+              }
+              penaltyBlood.level_penalty += 1;
+            } else if (line.indexOf('Restricted Diet (') >= 0) {
+              // Restricted Diet has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp = 'Restricted Diet';
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Restricted Diet`;
+              }
+              penaltyBlood.level_penalty += 1;
+            } else if (line.indexOf('Thirst of Caine (') >= 0) {
+              // Thirst of Caine has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp =
+                  'Thirst of Caine|Thirst of Caine|Thirst of Caine';
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Thirst of Caine|Thirst of Caine|Thirst of Caine`;
+              }
+              penaltyBlood.level_penalty += 3;
+            } else if (line.indexOf('Selective Thirst (') >= 0) {
+              // Selective Thirst has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp = 'Selective Thirst|Selective Thirst';
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Selective Thirst|Selective Thirst`;
+              }
+              penaltyBlood.level_penalty += 2;
+            } else if (line.indexOf('Poor Digestion (') >= 0) {
+              // Poor Digestion has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp = 'Poor Digestion|Poor Digestion';
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Poor Digestion|Poor Digestion`;
+              }
+              penaltyBlood.level_penalty += 2;
+            } else if (line.indexOf("Methuselah's Thirst (") >= 0) {
+              // Methuselah's Thirst has one blood point penalty
+              if (penaltyBlood.level_penalty === 0) {
+                penaltyBlood.level_temp =
+                  "Methuselah's Thirst|Methuselah's Thirst|Methuselah's Thirst";
+              } else {
+                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Methuselah's Thirst|Methuselah's Thirst|Methuselah's Thirst`;
+              }
+              penaltyBlood.level_penalty += 3;
+            }
+          }
+
           if (line.indexOf('Equipment:') >= 0) {
-            meritsSectionDone = true;
+            meritsAndFlawsSectionDone = true;
+          }
+
+          if (
+            line.indexOf('Permanent Wound (') >= 0 ||
+            line.indexOf('Open Wound (4') >= 0
+          ) {
+            penaltyHealth += 5;
           }
         }
       }
@@ -755,37 +879,157 @@ class PDFParseProvider implements IPDFParserProvider {
         // eslint-disable-next-line prefer-destructuring
         char.name = newName[1];
       }
+    } else if (penaltyBlood.level_penalty > 0) {
+      const bloodTrait = charTraits.find(myTrait => myTrait.trait === 'Blood');
+
+      if (bloodTrait) {
+        if (penaltyBlood.level_penalty >= bloodTrait.level) {
+          const penaltyBloodLevels = penaltyBlood.level_temp.split('|');
+          const newLevelTemp = penaltyBloodLevels
+            .slice(0, bloodTrait.level - 1)
+            .join('|');
+
+          penaltyBlood.level_penalty = bloodTrait.level - 1;
+          penaltyBlood.level_temp = `full|${newLevelTemp}`;
+        } else {
+          const penaltyDiff = bloodTrait.level - penaltyBlood.level_penalty;
+          let penaltyCount = 0;
+
+          let { level_temp } = penaltyBlood;
+          while (penaltyCount < penaltyDiff) {
+            level_temp = `full|${level_temp}`;
+            penaltyCount += 1;
+          }
+          penaltyBlood.level_temp = level_temp;
+        }
+
+        bloodTrait.level_temp = penaltyBlood.level_temp;
+
+        const newCharTraits = charTraits.map(myTrait =>
+          myTrait.trait === 'Blood' ? bloodTrait : myTrait,
+        );
+
+        charTraits = newCharTraits;
+      }
     }
 
     if (char.creature_type !== 'Wraith') {
-      const traitsHealth = [
-        {
+      let traitsHealth;
+      if (penaltyHealth > 0) {
+        let penaltyCount = penaltyHealth;
+
+        // Healthy
+        let healthLevel = 2 + extraHealthy;
+        let healthCount = 0;
+        let healthArray = [];
+        while (healthCount < healthLevel) {
+          if (penaltyCount > 0) {
+            healthArray.push('lethal');
+            penaltyCount -= 1;
+          } else {
+            healthArray.push('full');
+          }
+          healthCount += 1;
+        }
+        healthArray.reverse();
+
+        const healthy = {
           trait: 'Healthy',
-          level: 2 + extraHealthy,
+          level: healthLevel,
+          level_temp: healthArray.join('|'),
           type: 'health',
-        },
-        {
+        } as CharacterTrait;
+
+        // Bruised
+        healthLevel = 3 + extraBruised;
+        healthCount = 0;
+        healthArray = [];
+        while (healthCount < healthLevel) {
+          if (penaltyCount > 0) {
+            healthArray.push('lethal');
+            penaltyCount -= 1;
+          } else {
+            healthArray.push('full');
+          }
+          healthCount += 1;
+        }
+        healthArray.reverse();
+
+        const brusied = {
           trait: 'Bruised',
-          level: 3 + extraBruised,
+          level: healthLevel,
+          level_temp: healthArray.join('|'),
           type: 'health',
-        },
-        {
+        } as CharacterTrait;
+
+        // Wounded
+        healthLevel = 2;
+        healthCount = 0;
+        healthArray = [];
+        while (healthCount < healthLevel) {
+          if (penaltyCount > 0) {
+            healthArray.push('lethal');
+            penaltyCount -= 1;
+          } else {
+            healthArray.push('full');
+          }
+          healthCount += 1;
+        }
+        healthArray.reverse();
+
+        const wounded = {
           trait: 'Wounded',
-          level: 2,
+          level: healthLevel,
+          level_temp: healthArray.join('|'),
           type: 'health',
-        },
-        {
-          trait: 'Incapacited',
-          level: 1,
-          type: 'health',
-        },
-        {
-          trait:
-            char.creature_type === 'Vampire' ? 'Torpor' : 'Mortally Wounded',
-          level: 1,
-          type: 'health',
-        },
-      ] as CharacterTrait[];
+        } as CharacterTrait;
+
+        traitsHealth = [
+          healthy,
+          brusied,
+          wounded,
+          {
+            trait: 'Incapacited',
+            level: 1,
+            type: 'health',
+          },
+          {
+            trait:
+              char.creature_type === 'Vampire' ? 'Torpor' : 'Mortally Wounded',
+            level: 1,
+            type: 'health',
+          },
+        ] as CharacterTrait[];
+      } else {
+        traitsHealth = [
+          {
+            trait: 'Healthy',
+            level: 2 + extraHealthy,
+            type: 'health',
+          },
+          {
+            trait: 'Bruised',
+            level: 3 + extraBruised,
+            type: 'health',
+          },
+          {
+            trait: 'Wounded',
+            level: 2,
+            type: 'health',
+          },
+          {
+            trait: 'Incapacited',
+            level: 1,
+            type: 'health',
+          },
+          {
+            trait:
+              char.creature_type === 'Vampire' ? 'Torpor' : 'Mortally Wounded',
+            level: 1,
+            type: 'health',
+          },
+        ] as CharacterTrait[];
+      }
 
       charTraits = charTraits.concat(traitsHealth);
     }

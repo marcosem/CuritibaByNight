@@ -67,7 +67,9 @@ class AddCharacterTraitsService {
       const masqTrait = {
         trait: 'Personal Masquerade',
         character_id: char_id,
-        level: 0,
+        level: 10,
+        level_temp:
+          'empty|empty|empty|empty|empty|empty|empty|empty|empty|empty',
         type: 'creature',
       } as CharacterTrait;
 
@@ -79,6 +81,7 @@ class AddCharacterTraitsService {
         trait: charTrait.trait,
         character_id: char_id,
         level: charTrait.level,
+        level_temp: charTrait.level_temp,
         type: charTrait.type,
       };
 
