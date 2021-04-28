@@ -4,7 +4,7 @@ import ICreateCharacterTraitDTO from '@modules/characters/dtos/ICreateCharacterT
 export default interface ICharactersTraitsRepository {
   // create(data: ICreateCharacterTraitDTO): Promise<CharacterTrait>;
   createList(data_list: ICreateCharacterTraitDTO[]): Promise<CharacterTrait[]>;
-  // update(data: CharacterTrait): Promise<CharacterTrait>;
+  update(data: CharacterTrait): Promise<CharacterTrait>;
   findById(char_trait_id: string): Promise<CharacterTrait | undefined>;
   findByCharId(char_id: string, type: string): Promise<CharacterTrait[]>;
   findTraitByCharId(

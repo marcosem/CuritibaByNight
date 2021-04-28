@@ -1,12 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  TableColumn,
-  // getRepository,
-  // Like,
-  // Not,
-} from 'typeorm';
-// import Character from '@modules/characters/infra/typeorm/entities/Character';
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
 export default class AddCreatureTypeAndSectToCharacters1614096154303
   implements MigrationInterface {

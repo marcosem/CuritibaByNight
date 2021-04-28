@@ -145,4 +145,20 @@ userCharactersRouter.get(
   charactersTraitsController.index,
 );
 
+userCharactersRouter.patch(
+  '/traits/update',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      character_id: Joi.string().uuid().required(),
+      trait_id: Joi.string().uuid().required(),
+      trait_name: Joi.string().required(),
+      trait_type: Joi.string().required(),
+      trait_level: Joi.number().min(0).required(),
+      trait_level_temp: Joi.string().optional(),
+    },
+  }),
+  charactersTraitsController.update,
+);
+
 export default userCharactersRouter;

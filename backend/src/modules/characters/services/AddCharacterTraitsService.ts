@@ -31,12 +31,12 @@ class AddCharacterTraitsService {
 
     if (!user) {
       throw new AppError(
-        'Only authenticated Storytellers can upload character sheets',
+        'Only authenticated Storytellers can add character traits',
         401,
       );
     } else if (!user.storyteller) {
       throw new AppError(
-        'Only authenticated Storytellers can upload character sheets',
+        'Only authenticated Storytellers can add character traits',
         401,
       );
     }

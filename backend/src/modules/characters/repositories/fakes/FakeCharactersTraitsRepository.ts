@@ -52,7 +52,6 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
     return charTraitList;
   }
 
-  /*
   public async update(charTrait: CharacterTrait): Promise<CharacterTrait> {
     this.charsTraits = this.charsTraits.map(oldCharTrait =>
       oldCharTrait.id !== charTrait.id ? oldCharTrait : charTrait,
@@ -60,7 +59,6 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
 
     return charTrait;
   }
-  */
 
   public async findById(
     char_trait_id: string,
