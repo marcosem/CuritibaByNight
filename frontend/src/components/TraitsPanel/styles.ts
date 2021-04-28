@@ -257,10 +257,10 @@ export const SingleTraitsList = styled.div<ITraitProps>`
   ${props =>
     props.isMobile
       ? css`
-          width: 98px;
+          width: 102px;
         `
       : css`
-          width: 112px;
+          width: 116px;
         `}
 `;
 
@@ -273,6 +273,7 @@ export const TraitButton = styled.button<ITraitProps>`
 
   margin: 0 !important;
   transition: background-color 0.3s;
+  transition: transform 0.2s;
 
   ${props =>
     props.isMobile
@@ -288,34 +289,26 @@ export const TraitButton = styled.button<ITraitProps>`
   svg {
     padding: 0 !important;
     transition: color 0.3s;
+    transition: transform 0.2s;
+
+    ${props =>
+      props.isMobile
+        ? css`
+            width: 10px !important;
+            height: 10px !important;
+          `
+        : css`
+            width: 12px !important;
+            height: 12px !important;
+          `}
 
     ${props =>
       props.traitColor === 'red'
         ? css`
             color: #560209 !important;
-
-            ${props.isMobile
-              ? css`
-                  width: 13px !important;
-                  height: 13px !important;
-                `
-              : css`
-                  width: 15px !important;
-                  height: 15px !important;
-                `}
           `
         : css`
             color: #000 !important;
-
-            ${props.isMobile
-              ? css`
-                  width: 10px !important;
-                  height: 10px !important;
-                `
-              : css`
-                  width: 12px !important;
-                  height: 12px !important;
-                `}
           `}
   }
 
@@ -326,6 +319,7 @@ export const TraitButton = styled.button<ITraitProps>`
             cursor: default;
           `
         : css`
+            transform: scale(1.4);
             background-color: ${darken(0.3, '#fff')} !important;
             svg {
               ${props.traitColor === 'red'

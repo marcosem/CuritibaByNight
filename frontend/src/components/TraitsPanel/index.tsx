@@ -1,7 +1,19 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback, useEffect, HTMLAttributes } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  HTMLAttributes,
+  MouseEvent,
+} from 'react';
 
-import { GiDrop, GiPlainCircle } from 'react-icons/gi';
+import {
+  GiWaterDrop,
+  GiPlainCircle,
+  GiHearts,
+  GiHeartMinus,
+  GiCancel,
+} from 'react-icons/gi';
 import api from '../../services/api';
 
 import {
@@ -23,15 +35,7 @@ import ICharacter from '../CharacterList/ICharacter';
 import Loading from '../Loading';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
-
-/*
-import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth';
-import { useToast } from '../../hooks/toast';
-
-import { useModalBox } from '../../hooks/modalBox';
-import { useSelection } from '../../hooks/selection';
-*/
 
 interface ILevel {
   id: string;
@@ -44,7 +48,9 @@ interface ITrait {
   id: string;
   trait: string;
   level: number;
+  levelTemp: number;
   levelArray: ILevel[];
+  level_temp?: string;
   type: string;
   character_id: string;
   index: [number, number]; // [index, index in the row]
@@ -77,21 +83,14 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   const [typeList, setTypeList] = useState<string[]>([]);
   const { addToast } = useToast();
   const [isBusy, setBusy] = useState(true);
-  const [showTraits, setShowTraits] = useState<boolean>(false);
   const { isMobileVersion } = useMobile();
-  /*
-  const history = useHistory();
-  const { user, char, signOut } = useAuth();
-  const { setChar } = useSelection();
-
-  const [lastChar, setLastChar] = useState<ICharacter>();
-  const { showModal } = useModalBox();
-  */
+  const { user } = useAuth();
 
   const loadTraits = useCallback(async () => {
     if (myChar === undefined) {
       return;
     }
+
     setBusy(true);
 
     try {
@@ -117,21 +116,81 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
 
           let traitLevel = Number(trait.level);
 
+          const tempLevels = trait.level_temp
+            ? trait.level_temp.split('|')
+            : [];
           const levelArray: ILevel[] = [];
-          while (traitLevel > 0) {
-            const level: ILevel = {
-              id: `${trait.trait}:${traitLevel}`,
-              enabled: traitLevel === 1,
-              level: traitLevel,
-              status: 'full',
-            };
 
-            levelArray.push(level);
-            traitLevel -= 1;
+          if (tempLevels.length === traitLevel && trait.level_temp !== null) {
+            tempLevels.reverse();
+
+            let enableNext = false;
+            while (traitLevel > 0) {
+              const status = tempLevels[traitLevel - 1];
+              let enabled = false;
+
+              if (user.storyteller) {
+                if (trait.type === 'health') {
+                  enabled = true;
+                } else if (status === 'full') {
+                  if (traitLevel === 1) {
+                    enabled = true;
+                    enableNext = false;
+                  } else {
+                    const nextStatus = tempLevels[traitLevel - 2];
+                    if (nextStatus !== 'full') {
+                      enabled = true;
+                      enableNext = true;
+                    } else {
+                      enableNext = false;
+                    }
+                  }
+                } else if (enableNext) {
+                  enabled = true;
+                  enableNext = false;
+                } else if (traitLevel === tempLevels.length) {
+                  enabled = true;
+                  enableNext = false;
+                }
+              }
+
+              const level: ILevel = {
+                id: `${trait.type}|${trait.trait}|${traitLevel}`,
+                enabled,
+                level: traitLevel,
+                status,
+              };
+
+              levelArray.push(level);
+              traitLevel -= 1;
+            }
+          } else {
+            while (traitLevel > 0) {
+              const level: ILevel = {
+                id: `${trait.type}|${trait.trait}|${traitLevel}`,
+                enabled:
+                  user.storyteller &&
+                  (trait.type === 'health' ? true : traitLevel === 1),
+
+                level: traitLevel,
+                status: 'full',
+              };
+
+              levelArray.push(level);
+              traitLevel -= 1;
+            }
           }
 
           const newTrait = trait;
           newTrait.levelArray = levelArray;
+
+          // Initial point for temporary level
+          let tempLevelCount = 0;
+          newTrait.levelArray.forEach(level => {
+            if (level.status === 'full') tempLevelCount += 1;
+          });
+
+          newTrait.levelTemp = tempLevelCount;
 
           switch (traitType) {
             case 'creature':
@@ -319,7 +378,182 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
       }
     }
     setBusy(false);
-  }, [addToast, myChar]);
+  }, [addToast, myChar, user.storyteller]);
+
+  const updateTraits = useCallback(
+    async (trait: ITrait) => {
+      try {
+        const levelArray = trait.levelArray.map(level => level.status);
+        const levelArrayString = levelArray.join('|');
+
+        await api.patch('/character/traits/update', {
+          character_id: trait.character_id,
+          trait_id: trait.id,
+          trait_name: trait.trait,
+          trait_type: trait.type,
+          trait_level: trait.level,
+          trait_level_temp: levelArrayString,
+        });
+      } catch (error) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao tentar atualizar Trait de personagens',
+          description: error.response.data.message
+            ? `Erro: ${error.response.data.message}`
+            : 'Erro ao tentat atualizar Trait de personagem, tente novamente.',
+        });
+      }
+    },
+    [addToast],
+  );
+
+  const handleTraitClick = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      if (!user.storyteller) return;
+
+      const traitLevelId = e.currentTarget.id;
+      const traitInfo = traitLevelId.split('|');
+
+      if (traitInfo.length !== 3) {
+        addToast({
+          type: 'error',
+          title: 'Trait inválido',
+          description:
+            "Este Trait possuí um caracter inválido: '|' e deve ser corrigido na ficha original.",
+        });
+        return;
+      }
+
+      let traits: ITrait[];
+
+      switch (traitInfo[0]) {
+        case 'creature':
+          traits = traitsList.creature;
+          break;
+        case 'virtues':
+          traits = traitsList.virtues;
+          break;
+        case 'attributes':
+          traits = traitsList.attributes;
+          break;
+        case 'abilities':
+          traits = traitsList.abilities;
+          break;
+        case 'backgrounds':
+          traits = traitsList.backgrounds;
+          break;
+        case 'influences':
+          traits = traitsList.influences;
+          break;
+        case 'health':
+          traits = traitsList.health;
+          break;
+        default:
+          addToast({
+            type: 'error',
+            title: 'Trait inválido',
+            description: `Trait de tipo inválido: '${traitInfo[0]}', verifique se a ficha está correta.`,
+          });
+          return;
+      }
+
+      const trait: ITrait | undefined = traits.find(
+        (myTrait: ITrait) => myTrait.trait === traitInfo[1],
+      );
+
+      if (!trait) {
+        addToast({
+          type: 'error',
+          title: 'Trait inválido',
+          description: `Trait inválido: '${traitInfo[1]}', verifique se a ficha está correta.`,
+        });
+        return;
+      }
+
+      const { levelArray } = trait;
+      const levelIndex = levelArray.findIndex(
+        myLevel => myLevel.id === traitLevelId,
+      );
+
+      const level = levelIndex >= 0 ? levelArray[levelIndex] : undefined;
+
+      if (levelIndex === -1 || !level) {
+        addToast({
+          type: 'error',
+          title: 'Trait Level inválido',
+          description: `Trait Level inválido: '${traitLevelId}', verifique se a ficha está correta.`,
+        });
+        return;
+      }
+
+      // let healthTrait: ITrait | undefined;
+      // let healthTraitLevels: ILevel[] | undefined;
+      if (trait.type === 'health') {
+        switch (levelArray[levelIndex].status) {
+          case 'full':
+            level.status = 'bashing';
+            trait.levelTemp -= 1;
+            break;
+          case 'bashing':
+            level.status = 'letal';
+            break;
+          case 'letal':
+            level.status = 'aggravated';
+            break;
+          case 'aggravated':
+            level.status = 'full';
+            trait.levelTemp += 1;
+            break;
+          default:
+        }
+      } else if (levelArray[levelIndex].status === 'full') {
+        levelArray[levelIndex].status = 'empty';
+
+        if (levelIndex > 0) {
+          levelArray[levelIndex - 1].enabled = true;
+        }
+
+        if (levelIndex < levelArray.length - 1) {
+          levelArray[levelIndex + 1].enabled = false;
+        }
+
+        trait.levelTemp -= 1;
+      } else if (
+        (trait.type === 'virtues' || trait.type === 'attributes') &&
+        levelArray[levelIndex].status === 'empty'
+      ) {
+        level.status = 'permanent';
+      } else {
+        level.status = 'full';
+        if (levelIndex > 0) {
+          levelArray[levelIndex - 1].enabled = false;
+        }
+
+        if (levelIndex < levelArray.length - 1) {
+          levelArray[levelIndex + 1].enabled = true;
+        }
+
+        trait.levelTemp += 1;
+      }
+
+      const newLevelArray = [...levelArray];
+      trait.levelArray = newLevelArray;
+
+      const newTypeTraitsList = traits.map(myTrait =>
+        myTrait.id === trait.id ? trait : myTrait,
+      );
+
+      // Create a new object to force the rendering
+      const newTraitsList = JSON.parse(JSON.stringify(traitsList));
+
+      newTraitsList[traitInfo[0]] = [...newTypeTraitsList];
+      setTraitsList(newTraitsList);
+
+      // Update Traits to DB
+      updateTraits(trait);
+    },
+    [addToast, traitsList, updateTraits, user.storyteller],
+  );
 
   const buildOrdinaryTraitsList = useCallback(
     (traits: ITrait[], type: string): JSX.Element[] => {
@@ -384,7 +618,13 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                 isMobile={isMobileVersion}
               >
                 <strong>{`${trait.trait}:`}</strong>
-                <span>{trait.level}</span>
+                <span>
+                  {`${
+                    trait.trait === 'Blood'
+                      ? `${trait.levelTemp}/${trait.level}`
+                      : `${trait.level}`
+                  }`}
+                </span>
                 {trait.level > 0 &&
                   trait.trait !== 'Personal Masquerade' &&
                   trait.trait !== 'Rank' && (
@@ -397,16 +637,37 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                               id={level.id}
                               key={level.id}
                               disabled={!level.enabled}
-                              title={`${trait.trait}: ${level.level}`}
+                              title={`${
+                                level.enabled
+                                  ? `${
+                                      level.status === 'full'
+                                        ? `Remover [${trait.trait} Trait]`
+                                        : `Adicionar [${trait.trait} Trait]`
+                                    }`
+                                  : `${trait.trait} x${trait.levelTemp}`
+                              }`}
                               traitColor={
                                 trait.trait === 'Blood' ? 'red' : 'black'
                               }
                               isMobile={isMobileVersion}
+                              onClick={handleTraitClick}
                             >
                               {trait.trait === 'Blood' ? (
-                                <>{level.status === 'full' ? <GiDrop /> : ''}</>
+                                <>
+                                  {level.status === 'full' ? (
+                                    <GiWaterDrop />
+                                  ) : (
+                                    ''
+                                  )}
+                                </>
                               ) : (
-                                <GiPlainCircle />
+                                <>
+                                  {level.status === 'full' ? (
+                                    <GiPlainCircle />
+                                  ) : (
+                                    ''
+                                  )}
+                                </>
                               )}
                             </TraitButton>
                           ))}
@@ -424,7 +685,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
 
       return rows;
     },
-    [isMobileVersion],
+    [handleTraitClick, isMobileVersion],
   );
 
   const buildAttributesTraitsList = useCallback(
@@ -484,7 +745,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             >
               <div key={trait.trait}>
                 <strong>{`${trait.trait}:`}</strong>
-                <span>{trait.level}</span>
+                <span>{`${trait.levelTemp}/${trait.level}`}</span>
               </div>
 
               {trait.level > 0 && (
@@ -501,11 +762,34 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                               id={level.id}
                               key={level.id}
                               disabled={!level.enabled}
-                              title={`${trait.trait}: ${level.level}`}
+                              title={`${
+                                level.enabled
+                                  ? `${
+                                      level.status === 'full'
+                                        ? `Remover [${trait.trait} Trait]`
+                                        : `${
+                                            level.status === 'empty'
+                                              ? `Remover [${trait.trait} Trait] Permanente`
+                                              : `Adicionar [${trait.trait} Trait]`
+                                          }`
+                                    }`
+                                  : `${trait.trait} x${trait.levelTemp}`
+                              }`}
                               traitColor="black"
                               isMobile={isMobileVersion}
+                              onClick={handleTraitClick}
                             >
-                              <GiPlainCircle />
+                              {level.status === 'full' ? (
+                                <GiPlainCircle />
+                              ) : (
+                                <>
+                                  {level.status === 'permanent' ? (
+                                    <GiCancel />
+                                  ) : (
+                                    ''
+                                  )}
+                                </>
+                              )}
                             </TraitButton>
                           ))}
                         </TraitsListRow>
@@ -519,7 +803,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         </TraitsRow>
       );
     },
-    [isMobileVersion],
+    [handleTraitClick, isMobileVersion],
   );
 
   useEffect(() => {
@@ -561,7 +845,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             isMobile={isMobileVersion}
                           >
                             <strong>{`${trait.trait}:`}</strong>
-                            <span>{trait.level}</span>
+                            <span>{`${trait.levelTemp}/${trait.level}`}</span>
                             <TraitsList key={`List:${trait.trait}`}>
                               {trait.levelArray.map(level => (
                                 <TraitButton
@@ -569,11 +853,34 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                   id={level.id}
                                   key={level.id}
                                   disabled={!level.enabled}
-                                  title={`${trait.trait}: ${level.level}`}
+                                  title={`${
+                                    level.enabled
+                                      ? `${
+                                          level.status === 'full'
+                                            ? `Remover [${trait.trait} Trait]`
+                                            : `${
+                                                level.status === 'empty'
+                                                  ? `Remover [${trait.trait} Trait] Permanente`
+                                                  : `Adicionar [${trait.trait} Trait]`
+                                              }`
+                                        }`
+                                      : `${trait.trait} x${trait.levelTemp}`
+                                  }`}
                                   traitColor="black"
                                   isMobile={isMobileVersion}
+                                  onClick={handleTraitClick}
                                 >
-                                  <GiPlainCircle />
+                                  {level.status === 'full' ? (
+                                    <GiPlainCircle />
+                                  ) : (
+                                    <>
+                                      {level.status === 'permanent' ? (
+                                        <GiCancel />
+                                      ) : (
+                                        ''
+                                      )}
+                                    </>
+                                  )}
                                 </TraitButton>
                               ))}
                             </TraitsList>
@@ -594,11 +901,34 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                 id={level.id}
                                 key={level.id}
                                 disabled={!level.enabled}
-                                title={`${trait.trait}: ${level.level}`}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `${
+                                              level.status === 'empty'
+                                                ? `Remover [${trait.trait} Trait] Permanente`
+                                                : `Adicionar [${trait.trait} Trait]`
+                                            }`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
                                 traitColor="black"
                                 isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
                               >
-                                <GiPlainCircle />
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  <>
+                                    {level.status === 'permanent' ? (
+                                      <GiCancel />
+                                    ) : (
+                                      ''
+                                    )}
+                                  </>
+                                )}
                               </TraitButton>
                             ))}
                           </SingleTraitsList>
@@ -632,11 +962,56 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
-                            title={`${trait.trait}: ${level.level}`}
-                            traitColor="black"
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? 'Causar Dano de Contusão'
+                                      : `${
+                                          level.status === 'bashing'
+                                            ? 'Causar Dano Letal'
+                                            : `${
+                                                level.status === 'letal'
+                                                  ? 'Causar Dano Agravado'
+                                                  : 'Curar Dano'
+                                              }`
+                                        }`
+                                  }`
+                                : `${
+                                    level.status === 'full'
+                                      ? 'Sem Dano'
+                                      : `${
+                                          level.status === 'bashing'
+                                            ? 'Dano de Contusão'
+                                            : `${
+                                                level.status === 'letal'
+                                                  ? 'Dano Letal'
+                                                  : 'Dano Agravado'
+                                              }`
+                                        }`
+                                  }`
+                            }`}
+                            traitColor="red"
                             isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
                           >
-                            <GiPlainCircle />
+                            {level.status === 'full' ? (
+                              <GiHearts />
+                            ) : (
+                              <>
+                                {level.status === 'bashing' ? (
+                                  <GiHeartMinus />
+                                ) : (
+                                  <>
+                                    {level.status === 'letal' ? (
+                                      ''
+                                    ) : (
+                                      <GiCancel />
+                                    )}
+                                  </>
+                                )}
+                              </>
+                            )}
                           </TraitButton>
                         ))}
                       </SingleTraitsList>
@@ -666,7 +1041,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             isMobile={isMobileVersion}
                           >
                             <strong>{`${trait.trait}:`}</strong>
-                            <span>{trait.level}</span>
+                            <span>{`${trait.levelTemp}/${trait.level}`}</span>
                             <TraitsList key={`List:${trait.trait}`}>
                               {trait.levelArray.map(level => (
                                 <TraitButton
@@ -674,11 +1049,34 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                   id={level.id}
                                   key={level.id}
                                   disabled={!level.enabled}
-                                  title={`${trait.trait}: ${level.level}`}
+                                  title={`${
+                                    level.enabled
+                                      ? `${
+                                          level.status === 'full'
+                                            ? `Remover [${trait.trait} Trait]`
+                                            : `${
+                                                level.status === 'empty'
+                                                  ? `Remover [${trait.trait} Trait] Permanente`
+                                                  : `Adicionar [${trait.trait} Trait]`
+                                              }`
+                                        }`
+                                      : `${trait.trait} x${trait.levelTemp}`
+                                  }`}
                                   traitColor="black"
                                   isMobile={isMobileVersion}
+                                  onClick={handleTraitClick}
                                 >
-                                  <GiPlainCircle />
+                                  {level.status === 'full' ? (
+                                    <GiPlainCircle />
+                                  ) : (
+                                    <>
+                                      {level.status === 'permanent' ? (
+                                        <GiCancel />
+                                      ) : (
+                                        ''
+                                      )}
+                                    </>
+                                  )}
                                 </TraitButton>
                               ))}
                             </TraitsList>
@@ -699,11 +1097,34 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                 id={level.id}
                                 key={level.id}
                                 disabled={!level.enabled}
-                                title={`${trait.trait}: ${level.level}`}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `${
+                                              level.status === 'empty'
+                                                ? `Remover [${trait.trait} Trait] Permanente`
+                                                : `Adicionar [${trait.trait} Trait]`
+                                            }`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
                                 traitColor="black"
                                 isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
                               >
-                                <GiPlainCircle />
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  <>
+                                    {level.status === 'permanent' ? (
+                                      <GiCancel />
+                                    ) : (
+                                      ''
+                                    )}
+                                  </>
+                                )}
                               </TraitButton>
                             ))}
                           </SingleTraitsList>
@@ -738,11 +1159,56 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
-                            title={`${trait.trait}: ${level.level}`}
-                            traitColor="black"
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? 'Causar Dano de Contusão'
+                                      : `${
+                                          level.status === 'bashing'
+                                            ? 'Causar Dano Letal'
+                                            : `${
+                                                level.status === 'letal'
+                                                  ? 'Causar Dano Agravado'
+                                                  : 'Curar Dano'
+                                              }`
+                                        }`
+                                  }`
+                                : `${
+                                    level.status === 'full'
+                                      ? 'Sem Dano'
+                                      : `${
+                                          level.status === 'bashing'
+                                            ? 'Dano de Contusão'
+                                            : `${
+                                                level.status === 'letal'
+                                                  ? 'Dano Letal'
+                                                  : 'Dano Agravado'
+                                              }`
+                                        }`
+                                  }`
+                            }`}
+                            traitColor="red"
                             isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
                           >
-                            <GiPlainCircle />
+                            {level.status === 'full' ? (
+                              <GiHearts />
+                            ) : (
+                              <>
+                                {level.status === 'bashing' ? (
+                                  <GiHeartMinus />
+                                ) : (
+                                  <>
+                                    {level.status === 'letal' ? (
+                                      ''
+                                    ) : (
+                                      <GiCancel />
+                                    )}
+                                  </>
+                                )}
+                              </>
+                            )}
                           </TraitButton>
                         ))}
                       </SingleTraitsList>
@@ -772,11 +1238,20 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                         id={level.id}
                         key={level.id}
                         disabled={!level.enabled}
-                        title={`${trait.trait}: ${level.level}`}
+                        title={`${
+                          level.enabled
+                            ? `${
+                                level.status === 'full'
+                                  ? `Remover [${trait.trait} Trait]`
+                                  : `Adicionar [${trait.trait} Trait]`
+                              }`
+                            : `${trait.trait} x${trait.levelTemp}`
+                        }`}
                         traitColor="black"
                         isMobile={isMobileVersion}
+                        onClick={handleTraitClick}
                       >
-                        <GiPlainCircle />
+                        {level.status === 'full' ? <GiPlainCircle /> : ''}
                       </TraitButton>
                     ))}
                   </SingleTraitsList>
@@ -803,11 +1278,20 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
-                            title={`${trait.trait}: ${level.level}`}
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? `Remover [${trait.trait} Trait]`
+                                      : `Adicionar [${trait.trait} Trait]`
+                                  }`
+                                : `${trait.trait} x${trait.levelTemp}`
+                            }`}
                             traitColor="black"
                             isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
                           >
-                            <GiPlainCircle />
+                            {level.status === 'full' ? <GiPlainCircle /> : ''}
                           </TraitButton>
                         ))}
                       </SingleTraitsList>
@@ -832,11 +1316,20 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
-                            title={`${trait.trait}: ${level.level}`}
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? `Remover [${trait.trait} Trait]`
+                                      : `Adicionar [${trait.trait} Trait]`
+                                  }`
+                                : `${trait.trait} x${trait.levelTemp}`
+                            }`}
                             traitColor="black"
                             isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
                           >
-                            <GiPlainCircle />
+                            {level.status === 'full' ? <GiPlainCircle /> : ''}
                           </TraitButton>
                         ))}
                       </SingleTraitsList>
@@ -864,11 +1357,20 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
-                            title={`${trait.trait}: ${level.level}`}
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? `Remover [${trait.trait} Trait]`
+                                      : `Adicionar [${trait.trait} Trait]`
+                                  }`
+                                : `${trait.trait} x${trait.levelTemp}`
+                            }`}
                             traitColor="black"
                             isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
                           >
-                            <GiPlainCircle />
+                            {level.status === 'full' ? <GiPlainCircle /> : ''}
                           </TraitButton>
                         ))}
                       </SingleTraitsList>
@@ -893,11 +1395,20 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
-                            title={`${trait.trait}: ${level.level}`}
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? `Remover [${trait.trait} Trait]`
+                                      : `Adicionar [${trait.trait} Trait]`
+                                  }`
+                                : `${trait.trait} x${trait.levelTemp}`
+                            }`}
                             traitColor="black"
                             isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
                           >
-                            <GiPlainCircle />
+                            {level.status === 'full' ? <GiPlainCircle /> : ''}
                           </TraitButton>
                         ))}
                       </SingleTraitsList>
