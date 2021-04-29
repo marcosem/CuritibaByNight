@@ -318,7 +318,7 @@ export const TraitButton = styled.button<ITraitProps>`
     ${props =>
       props.disabled
         ? css`
-            cursor: default;
+            cursor: default !important;
           `
         : css`
             transform: scale(1.4);

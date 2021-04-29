@@ -37,6 +37,7 @@ import Loading from '../Loading';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useAuth } from '../../hooks/auth';
+import { useSocket } from '../../hooks/socket';
 
 interface ILevel {
   id: string;
@@ -86,6 +87,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
   const { user } = useAuth();
+  const {
+    isConnected,
+    updatedTrait,
+    notifyTraitUpdate,
+    resetUpdatedTrait,
+  } = useSocket();
 
   const loadTraits = useCallback(async () => {
     if (myChar === undefined) {
@@ -395,6 +402,10 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           trait_level: trait.level,
           trait_level_temp: levelArrayString,
         });
+
+        if (isConnected) {
+          notifyTraitUpdate(trait);
+        }
       } catch (error) {
         addToast({
           type: 'error',
@@ -405,7 +416,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         });
       }
     },
-    [addToast],
+    [addToast, isConnected, notifyTraitUpdate],
   );
 
   const handleTraitClick = useCallback(
@@ -817,6 +828,91 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     },
     [handleTraitClick, isMobileVersion],
   );
+
+  useEffect(() => {
+    if (updatedTrait.id) {
+      const myUpdatedTrait: ITrait = JSON.parse(JSON.stringify(updatedTrait));
+      resetUpdatedTrait();
+
+      if (myUpdatedTrait.character_id !== myChar.id) {
+        return;
+      }
+
+      const updatedLevels = myUpdatedTrait.levelArray.map(myLevel => {
+        const newLevel = myLevel;
+        newLevel.enabled = user.storyteller && newLevel.enabled;
+        return newLevel;
+      });
+
+      myUpdatedTrait.levelArray = updatedLevels;
+
+      let typeTraits: ITrait[] = [];
+      switch (myUpdatedTrait.type) {
+        case 'creature':
+          typeTraits = traitsList.creature;
+          break;
+        case 'virtues':
+          typeTraits = traitsList.virtues;
+          break;
+        case 'attributes':
+          typeTraits = traitsList.attributes;
+          break;
+        case 'abilities':
+          typeTraits = traitsList.abilities;
+          break;
+        case 'backgrounds':
+          typeTraits = traitsList.backgrounds;
+          break;
+        case 'influences':
+          typeTraits = traitsList.influences;
+          break;
+        case 'health':
+          typeTraits = traitsList.health;
+          break;
+        default:
+      }
+
+      if (typeTraits.length > 0) {
+        const updatedTraits = typeTraits.map(myTrait =>
+          myTrait.id === myUpdatedTrait.id ? myUpdatedTrait : myTrait,
+        );
+
+        const newTraitsList = JSON.parse(JSON.stringify(traitsList));
+        switch (updatedTrait.type) {
+          case 'creature':
+            newTraitsList.creature = updatedTraits;
+            break;
+          case 'virtues':
+            newTraitsList.virtues = updatedTraits;
+            break;
+          case 'attributes':
+            newTraitsList.attributes = updatedTraits;
+            break;
+          case 'abilities':
+            newTraitsList.abilities = updatedTraits;
+            break;
+          case 'backgrounds':
+            newTraitsList.backgrounds = updatedTraits;
+            break;
+          case 'influences':
+            newTraitsList.influences = updatedTraits;
+            break;
+          case 'health':
+            newTraitsList.health = updatedTraits;
+            break;
+          default:
+        }
+
+        setTraitsList(newTraitsList);
+      }
+    }
+  }, [
+    myChar.id,
+    resetUpdatedTrait,
+    traitsList,
+    updatedTrait,
+    user.storyteller,
+  ]);
 
   useEffect(() => {
     loadTraits();
