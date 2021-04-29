@@ -667,7 +667,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     </ButtonBox>
                   )}
 
-                  {dashboard && (
+                  {/* dashboard && (
                     <PlayButton
                       type="button"
                       onClick={handleChallenges}
@@ -675,7 +675,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     >
                       <GiRollingDices />
                     </PlayButton>
-                  )}
+                  ) */}
 
                   {user.storyteller && showTraits && (
                     <ResetButton
