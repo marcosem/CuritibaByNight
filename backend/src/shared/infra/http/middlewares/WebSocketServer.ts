@@ -38,11 +38,11 @@ interface ISocketServerMessage {
   message: string;
   id?: string;
   error?: string;
-  character?: string;
   connected?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trait?: any;
   users?: IUser[];
+  char_id?: string;
 }
 
 class WebSocketServer {
@@ -182,18 +182,16 @@ class WebSocketServer {
                   errorMsg = 'User not Authenticated';
                   closeMe = true;
                 } else {
-                  const { trait, char_id } = parsedMsg;
+                  const { char_id } = parsedMsg;
                   const wsToNotify = this.sockets.filter(
-                    myWs =>
-                      myWs.char_id === char_id ||
-                      (myWs.st && myWs.id !== socket?.id),
+                    myWs => myWs.char_id === char_id || myWs.st,
                   );
 
                   if (wsToNotify.length >= 1) {
                     wsToNotify.forEach(myWs => {
                       this.sendMsg(myWs.ws, {
-                        message: 'trait:reset',
-                        trait,
+                        message: 'trait:reload',
+                        char_id,
                       });
                     });
                   }
@@ -228,7 +226,7 @@ class WebSocketServer {
             stSockets.forEach(stWs => {
               this.sendMsg(stWs.ws, {
                 message: 'connection',
-                character: charId,
+                char_id: charId,
                 connected: false,
               });
             });

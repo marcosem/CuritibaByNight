@@ -90,11 +90,16 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   const {
     isConnected,
     updatedTrait,
+    reloadCharTraits,
     notifyTraitUpdate,
-    resetUpdatedTrait,
+    clearUpdatedTrait,
+    clearReloadTraits,
   } = useSocket();
 
   const loadTraits = useCallback(async () => {
+    clearUpdatedTrait();
+    clearReloadTraits();
+
     if (myChar === undefined) {
       return;
     }
@@ -386,7 +391,13 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
       }
     }
     setBusy(false);
-  }, [addToast, myChar, user.storyteller]);
+  }, [
+    addToast,
+    clearReloadTraits,
+    clearUpdatedTrait,
+    myChar,
+    user.storyteller,
+  ]);
 
   const updateTraits = useCallback(
     async (trait: ITrait) => {
@@ -832,7 +843,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   useEffect(() => {
     if (updatedTrait.id) {
       const myUpdatedTrait: ITrait = JSON.parse(JSON.stringify(updatedTrait));
-      resetUpdatedTrait();
+      clearUpdatedTrait();
 
       if (myUpdatedTrait.character_id !== myChar.id) {
         return;
@@ -908,11 +919,22 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     }
   }, [
     myChar.id,
-    resetUpdatedTrait,
+    clearUpdatedTrait,
     traitsList,
     updatedTrait,
     user.storyteller,
   ]);
+
+  useEffect(() => {
+    if (reloadCharTraits === '') return;
+
+    if (reloadCharTraits === myChar.id) {
+      // loadTraits executes clearRealoadTraits()
+      loadTraits();
+    } else {
+      clearReloadTraits();
+    }
+  }, [clearReloadTraits, loadTraits, myChar.id, reloadCharTraits]);
 
   useEffect(() => {
     loadTraits();

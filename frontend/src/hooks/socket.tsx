@@ -74,8 +74,11 @@ interface ISocketContextData {
   isConnected: boolean;
   updatedTrait: ITrait;
   onLineUsers: IOnLineUser[];
-  resetUpdatedTrait(): void;
+  reloadCharTraits: string;
+  clearUpdatedTrait(): void;
+  clearReloadTraits(): void;
   notifyTraitUpdate(trait: ITrait): void;
+  resetTraits(char_id: string): void;
 }
 
 const SocketContext = createContext<ISocketContextData>(
@@ -87,6 +90,7 @@ const SocketProvider: React.FC = ({ children }) => {
   const [connected, setConnected] = useState<boolean>(false);
   const [onLineUsers, setOnLineUsers] = useState<IOnLineUser[]>([]);
   const [updatedTrait, setUpdatedTrait] = useState<ITrait>({} as ITrait);
+  const [reloadCharTraits, setReloadCharTraits] = useState<string>('');
 
   const socket = useRef<WebSocket>();
   const serverPing = useRef<number>(0);
@@ -140,8 +144,22 @@ const SocketProvider: React.FC = ({ children }) => {
     [sendSocketMessage],
   );
 
-  const resetUpdatedTrait = useCallback(() => {
+  const clearUpdatedTrait = useCallback(() => {
     setUpdatedTrait({} as ITrait);
+  }, []);
+
+  const resetTraits = useCallback(
+    (char_id: string) => {
+      sendSocketMessage({
+        type: 'trait:reset',
+        char_id,
+      });
+    },
+    [sendSocketMessage],
+  );
+
+  const clearReloadTraits = useCallback(() => {
+    setReloadCharTraits('');
   }, []);
 
   const connect = useCallback(() => {
@@ -185,6 +203,12 @@ const SocketProvider: React.FC = ({ children }) => {
                 setUpdatedTrait(myMsg.trait);
               }
               break;
+
+            case 'trait:reload':
+              if (myMsg.char_id) {
+                setReloadCharTraits(myMsg.char_id);
+              }
+              break;
             default:
           }
         }
@@ -209,8 +233,11 @@ const SocketProvider: React.FC = ({ children }) => {
         isConnected: connected,
         onLineUsers,
         updatedTrait,
+        reloadCharTraits,
         notifyTraitUpdate,
-        resetUpdatedTrait,
+        clearUpdatedTrait,
+        clearReloadTraits,
+        resetTraits,
       }}
     >
       {children}

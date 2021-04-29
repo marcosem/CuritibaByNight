@@ -39,6 +39,8 @@ import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useModalBox } from '../../hooks/modalBox';
 import { useSelection } from '../../hooks/selection';
+import { useSocket } from '../../hooks/socket';
+
 import CharacterCard from '../CharacterCard';
 import ICharacter from '../CharacterList/ICharacter';
 import TraitsPanel from '../TraitsPanel';
@@ -79,6 +81,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   const { setChar } = useSelection();
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
+  const { resetTraits } = useSocket();
   const [lastChar, setLastChar] = useState<ICharacter>();
   const { showModal } = useModalBox();
   const [showTraits, setShowTraits] = useState<boolean>(false);
@@ -260,6 +263,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
         title: 'Traits Resetados',
         description: 'Os Traits do personagem foram resetados com sucesso!',
       });
+
+      resetTraits(myChar.id);
     } catch (error) {
       if (error.response) {
         const { message } = error.response.data;
@@ -282,14 +287,14 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       }
     }
 
-    setShowTraits(true);
-  }, [addToast, myChar.id, signOut]);
+    // setShowTraits(true);
+  }, [addToast, myChar.id, resetTraits, signOut]);
 
   const handleConfirmResetTraits = useCallback(() => {
     if (myChar === undefined) {
       return;
     }
-    setShowTraits(false);
+    // setShowTraits(false);
 
     showModal({
       type: 'warning',
@@ -299,7 +304,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       btn1Function: () => handleResetTraits(),
       btn2Title: 'Não',
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      btn2Function: () => setShowTraits(true),
+      btn2Function: () => {},
     });
   }, [handleResetTraits, myChar, showModal]);
 

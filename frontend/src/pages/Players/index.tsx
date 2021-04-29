@@ -52,17 +52,10 @@ const Players: React.FC = () => {
   const history = useHistory();
 
   const loadPlayers = useCallback(async () => {
-    // setBusy(true);
-
     try {
       await api.get('users/list').then(response => {
         const res = response.data;
         const newArray = res.map((user: IPlayer) => {
-          const isOnLine: boolean =
-            onLineUsers
-              .map((connUser: IOnLineUser) => connUser.user_id)
-              .indexOf(user.id) >= 0;
-
           const newUser = {
             id: user.id,
             name: user.name,
@@ -72,7 +65,7 @@ const Players: React.FC = () => {
             storyteller: user.storyteller,
             avatar_url: user.avatar_url,
             lastLogin_at: user.lastLogin_at,
-            isOnLine,
+            isOnLine: false,
           };
           return newUser;
         });
@@ -101,7 +94,7 @@ const Players: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, onLineUsers, signOut]);
+  }, [addToast, signOut]);
 
   useEffect(() => {
     loadPlayers();
@@ -155,7 +148,13 @@ const Players: React.FC = () => {
                           alt=""
                           isSt={player.storyteller}
                         />
-                        <ConnectionStatus isConnected={player.isOnLine} />
+                        <ConnectionStatus
+                          isConnected={
+                            onLineUsers
+                              .map((connUser: IOnLineUser) => connUser.user_id)
+                              .indexOf(player.id) >= 0
+                          }
+                        />
                       </AvatarCell>
                     </td>
                     <td>
