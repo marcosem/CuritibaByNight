@@ -163,13 +163,15 @@ const SocketProvider: React.FC = ({ children }) => {
   }, []);
 
   const connect = useCallback(() => {
+    if (user === undefined) return;
+
     socket.current = getSocket();
     if (socket.current) {
       socket.current.onopen = () => {
         sendSocketMessage({
           type: 'connection:auth',
           user_id: user.id,
-          char_id: char.id,
+          char_id: char ? char.id : '',
           token: token.current,
         });
 
@@ -214,7 +216,7 @@ const SocketProvider: React.FC = ({ children }) => {
         }
       };
     }
-  }, [char.id, sendSocketMessage, startPing, updateOnLineUsersList, user.id]);
+  }, [char, sendSocketMessage, startPing, updateOnLineUsersList, user]);
 
   useEffect(() => {
     if (user) {
