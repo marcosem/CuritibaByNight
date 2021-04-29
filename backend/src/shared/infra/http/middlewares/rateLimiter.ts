@@ -18,7 +18,7 @@ const limiter = new RateLimiterRedis({
 
 export default async function rateLimiter(
   req: Request,
-  res: Response,
+  _: Response,
   next: NextFunction,
 ): Promise<void> {
   try {

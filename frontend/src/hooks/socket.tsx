@@ -205,7 +205,7 @@ const SocketProvider: React.FC = ({ children }) => {
         title: 'Jogador Conectado',
         description: `${userName} ${
           charName !== '' && `- ${charName},`
-        } está OnLine!`,
+        } está Online!`,
       });
     },
     [addToast, setUserConnectionTimer],
