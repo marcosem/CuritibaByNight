@@ -40,7 +40,7 @@ interface IOnLineUser {
 
 interface IUserConn {
   user_id: string;
-  timer: number;
+  timer: number | null;
 }
 
 interface ILevel {
@@ -170,19 +170,36 @@ const SocketProvider: React.FC = ({ children }) => {
     setReloadCharTraits('');
   }, []);
 
-  const setUserConnectionTimer = useCallback((user_id: string) => {
-    const userTimer = setTimeout(() => {
-      const removeConnUser = userConnList.current.filter(
-        connUser => connUser.user_id !== user_id,
+  const setUserConnectionTimer = useCallback(
+    (user_id: string) => {
+      const userTimer = setTimeout(() => {
+        const removeConnUser = userConnList.current.filter(
+          connUser => connUser.user_id !== user_id,
+        );
+
+        addToast({
+          type: 'info',
+          title: 'Finalizou o contador',
+          description: 'Finalizou',
+        });
+
+        userConnList.current = removeConnUser;
+      }, 300000);
+
+      addToast({
+        type: 'info',
+        title: 'Iniciou o contador',
+        description: `Iniciou: ${userTimer}`,
+      });
+
+      const newUserConnList = userConnList.current.filter(
+        myUser => myUser.user_id !== user_id,
       );
-
-      userConnList.current = removeConnUser;
-    }, 300000);
-
-    const newUserConnList = userConnList.current;
-    newUserConnList.push({ user_id, timer: userTimer });
-    userConnList.current = newUserConnList;
-  }, []);
+      newUserConnList.push({ user_id, timer: userTimer });
+      userConnList.current = newUserConnList;
+    },
+    [addToast],
+  );
 
   const notifyUserConnection = useCallback(
     (user_id: string, userName: string, charName: string) => {
@@ -192,7 +209,13 @@ const SocketProvider: React.FC = ({ children }) => {
 
       // If user is already in the connection list, reset its timeout
       if (userConn) {
-        clearTimeout(userConn.timer);
+        addToast({
+          type: 'info',
+          title: 'Resetou o contador',
+          description: `resetou: ${userConn.timer}`,
+        });
+
+        userConn.timer !== null && clearTimeout(userConn.timer);
         setUserConnectionTimer(user_id);
         return;
       }
