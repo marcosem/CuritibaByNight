@@ -14,12 +14,15 @@ import {
   TableWrapper,
   Table,
   AvatarCell,
+  Avatar,
+  ConnectionStatus,
   TableCell,
   AddLink,
 } from './styles';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
+import { useSocket } from '../../hooks/socket';
 import imgProfile from '../../assets/profile.jpg';
 
 interface IPlayer {
@@ -31,6 +34,12 @@ interface IPlayer {
   storyteller: boolean;
   avatar_url: string;
   lastLogin_at: string;
+  isOnLine: boolean;
+}
+
+interface IOnLineUser {
+  user_id: string;
+  char_id: string;
 }
 
 const Players: React.FC = () => {
@@ -38,16 +47,22 @@ const Players: React.FC = () => {
   const [isBusy, setBusy] = useState(true);
   const { signOut } = useAuth();
   const { addToast } = useToast();
+  const { onLineUsers } = useSocket();
   const { isMobileVersion } = useMobile();
   const history = useHistory();
 
   const loadPlayers = useCallback(async () => {
-    setBusy(true);
+    // setBusy(true);
 
     try {
       await api.get('users/list').then(response => {
         const res = response.data;
         const newArray = res.map((user: IPlayer) => {
+          const isOnLine: boolean =
+            onLineUsers
+              .map((connUser: IOnLineUser) => connUser.user_id)
+              .indexOf(user.id) >= 0;
+
           const newUser = {
             id: user.id,
             name: user.name,
@@ -57,6 +72,7 @@ const Players: React.FC = () => {
             storyteller: user.storyteller,
             avatar_url: user.avatar_url,
             lastLogin_at: user.lastLogin_at,
+            isOnLine,
           };
           return newUser;
         });
@@ -85,7 +101,7 @@ const Players: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, signOut]);
+  }, [addToast, onLineUsers, signOut]);
 
   useEffect(() => {
     loadPlayers();
@@ -130,14 +146,17 @@ const Players: React.FC = () => {
                 {playerList.map(player => (
                   <tr key={player.id} onClick={() => handleProfile(player)}>
                     <td>
-                      <AvatarCell
-                        src={
-                          player.avatar_url || imgProfile
-                          // `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
-                        }
-                        alt=""
-                        isSt={player.storyteller}
-                      />
+                      <AvatarCell>
+                        <Avatar
+                          src={
+                            player.avatar_url || imgProfile
+                            // `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
+                          }
+                          alt=""
+                          isSt={player.storyteller}
+                        />
+                        <ConnectionStatus isConnected={player.isOnLine} />
+                      </AvatarCell>
                     </td>
                     <td>
                       <TableCell>{player.name}</TableCell>

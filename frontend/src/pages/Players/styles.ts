@@ -5,6 +5,10 @@ interface IAvatarCellProps {
   isSt: boolean;
 }
 
+interface IConnectionProps {
+  isConnected: boolean;
+}
+
 export const Container = styled.div`
   height: 100vh;
 `;
@@ -177,7 +181,7 @@ export const Table = styled.table`
   }
 `;
 
-export const AvatarCell = styled.img<IAvatarCellProps>`
+export const Avatar = styled.img<IAvatarCellProps>`
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -190,6 +194,36 @@ export const AvatarCell = styled.img<IAvatarCellProps>`
         `
       : css`
           border: 2px solid #860209;
+        `}
+`;
+
+export const AvatarCell = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`;
+
+export const ConnectionStatus = styled.div<IConnectionProps>`
+  display: flex;
+  width: 8px;
+  height: 8px;
+  margin: 0 !important;
+  padding: 0;
+  border-radius: 50%;
+  position: absolute;
+  right: 6px;
+  bottom: 2px;
+
+  ${props =>
+    props.isConnected
+      ? css`
+          background: #049c10;
+        `
+      : css`
+          background: #860209;
         `}
 `;
 
