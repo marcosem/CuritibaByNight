@@ -29,6 +29,11 @@ interface ISocketClientMessage {
   trait?: any;
 }
 
+interface IUser {
+  user_id: string;
+  char_id: string;
+}
+
 interface ISocketServerMessage {
   message: string;
   id?: string;
@@ -37,6 +42,7 @@ interface ISocketServerMessage {
   connected?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trait?: any;
+  users?: IUser[];
 }
 
 class WebSocketServer {
@@ -123,17 +129,70 @@ class WebSocketServer {
                 }
                 break;
 
+              case 'connection:connectedusers':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else {
+                  const userList = this.sockets.map(
+                    myWs =>
+                      ({
+                        user_id: myWs.user_id || '',
+                        char_id: myWs.char_id || '',
+                      } as IUser),
+                  );
+
+                  if (userList.length > 0) {
+                    this.sendMsg(socket.ws, {
+                      message: 'connection:connectedusers',
+                      users: userList,
+                    });
+                  }
+                }
+                break;
+
               case 'trait:notify':
-                {
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else {
                   const { trait, char_id } = parsedMsg;
                   const wsToNotify = this.sockets.filter(
-                    myWs => myWs.char_id === char_id || myWs.st,
+                    myWs =>
+                      myWs.char_id === char_id ||
+                      (myWs.st && myWs.id !== socket?.id),
                   );
 
                   if (wsToNotify.length >= 1) {
                     wsToNotify.forEach(myWs => {
                       this.sendMsg(myWs.ws, {
                         message: 'trait:update',
+                        trait,
+                      });
+                    });
+                  }
+                }
+                break;
+
+              case 'trait:reset':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else {
+                  const { trait, char_id } = parsedMsg;
+                  const wsToNotify = this.sockets.filter(
+                    myWs =>
+                      myWs.char_id === char_id ||
+                      (myWs.st && myWs.id !== socket?.id),
+                  );
+
+                  if (wsToNotify.length >= 1) {
+                    wsToNotify.forEach(myWs => {
+                      this.sendMsg(myWs.ws, {
+                        message: 'trait:reset',
                         trait,
                       });
                     });
@@ -151,7 +210,6 @@ class WebSocketServer {
 
           if (isError) {
             this.sendMsg(ws, { message: 'error', error: errorMsg });
-
             if (closeMe) ws.close();
           }
         } catch (error) {
@@ -162,7 +220,6 @@ class WebSocketServer {
 
       ws.on('close', () => {
         const charId = socket?.char_id;
-
         this.sockets = this.sockets.filter(myWs => myWs.id !== id);
 
         if (charId !== undefined) {
