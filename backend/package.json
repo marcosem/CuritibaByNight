@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "repository": "https://github.com/marcosem/CuritibaByNight.git",
   "author": "Marcos Mathias <marcos-github@memathias.com>",
   "main": "server.ts",
