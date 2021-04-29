@@ -7,6 +7,10 @@ interface ProfileProps {
   isST: boolean;
 }
 
+interface IConnectionProps {
+  isConnected: boolean;
+}
+
 export const Container = styled.header`
   position: relative;
   background: url(${bgImg}) repeat-x;
@@ -60,6 +64,7 @@ export const Profile = styled.div<ProfileProps>`
   padding: 3px 5px;
   border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0);
+  position: relative;
 
   a {
     display: flex;
@@ -116,6 +121,27 @@ export const Profile = styled.div<ProfileProps>`
         `}
     }
   }
+`;
+
+export const ConnectionStatus = styled.div<IConnectionProps>`
+  display: flex;
+  width: 8px;
+  height: 8px;
+  margin: 0 !important;
+  padding: 0;
+  border-radius: 50%;
+  position: absolute;
+  right: 9px;
+  bottom: 28px;
+
+  ${props =>
+    props.isConnected
+      ? css`
+          background: #049c10;
+        `
+      : css`
+          background: #860209;
+        `}
 `;
 
 export const MyPages = styled.div`
