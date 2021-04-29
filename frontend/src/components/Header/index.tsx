@@ -17,6 +17,8 @@ import {
   GiStabbedNote,
 } from 'react-icons/gi';
 import { useAuth } from '../../hooks/auth';
+import { useSocket } from '../../hooks/socket';
+
 import imgLogoHeader from '../../assets/logo_header.svg';
 import imgProfile from '../../assets/profile.jpg';
 import {
@@ -25,6 +27,7 @@ import {
   Navigation,
   NavSpan,
   Profile,
+  ConnectionStatus,
   MyPages,
   ToolTip,
 } from './styles';
@@ -35,6 +38,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ page }) => {
   const { signOut, user } = useAuth();
+  const { isConnected } = useSocket();
 
   return (
     <Container>
@@ -102,6 +106,7 @@ const Header: React.FC<HeaderProps> = ({ page }) => {
               alt=""
             />
           </Link>
+          <ConnectionStatus isConnected={isConnected} />
         </Profile>
 
         <button type="button" onClick={signOut}>
