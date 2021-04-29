@@ -9,8 +9,8 @@ import '@shared/container';
 import AppError from '@shared/errors/AppError';
 import rateLimiter from '@shared/infra/http/middlewares/rateLimiter';
 // import JanKenPoWebSocket from '@shared/infra/http/middlewares/JanKenPoWebSocket';
-import WebSockerServer from '@shared/infra/http/middlewares/WebSocketServer';
 
+import WebSockerServer from '@shared/infra/http/middlewares/WebSocketServer';
 import routes from './routes';
 
 const app = express();

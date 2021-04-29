@@ -1,6 +1,9 @@
 import { Express } from 'express';
 import expressWs from 'express-ws';
+import { container } from 'tsyringe';
 import validateToken from '@modules/users/infra/http/middlewares/validateToken';
+import GetUserService from '@modules/users/services/GetUserService';
+import GetCharacterService from '@modules/characters/services/GetCharacterService';
 
 interface IMyConnection {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,7 +45,10 @@ interface ISocketServerMessage {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trait?: any;
   users?: IUser[];
+  user_id?: string;
+  user_name?: string;
   char_id?: string;
+  char_name?: string;
 }
 
 class WebSocketServer {
@@ -50,8 +56,16 @@ class WebSocketServer {
 
   private sockets: IMyConnection[];
 
+  private usersService: GetUserService;
+
+  private charactersService: GetCharacterService;
+
   constructor() {
     this.sockets = [];
+
+    // this.usersService = container.resolve(GetUserService);
+
+    // this.charactersService = container.resolve(GetCharacterService);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,6 +80,19 @@ class WebSocketServer {
     } catch {
       return false;
     }
+  }
+
+  private sendMsgToSts(msg: ISocketServerMessage): boolean {
+    const wsSts = this.sockets.filter(myWs => myWs.st);
+
+    if (wsSts.length >= 1) {
+      wsSts.forEach(myWs => {
+        this.sendMsg(myWs.ws, msg);
+      });
+
+      return true;
+    }
+    return false;
   }
 
   public initializeServer(serverApp: Express): expressWs.Application {
@@ -125,6 +152,42 @@ class WebSocketServer {
 
                     this.sockets = [...this.sockets, socket];
                     this.sendMsg(ws, { message: 'id', id: socket.id });
+
+                    if (!socket.st) {
+                      const connectedStUser = this.sockets.find(
+                        myWs => myWs.st,
+                      );
+
+                      if (connectedStUser) {
+                        this.usersService = container.resolve(GetUserService);
+                        this.charactersService = container.resolve(
+                          GetCharacterService,
+                        );
+
+                        const userName = socket.user_id
+                          ? await this.usersService.execute({
+                              user_id: socket.user_id,
+                            })
+                          : '';
+
+                        const charName =
+                          socket.char_id && connectedStUser.user_id
+                            ? await this.charactersService.execute({
+                                user_id: connectedStUser.user_id,
+                                char_id: socket.char_id,
+                              })
+                            : '';
+
+                        if (userName) {
+                          this.sendMsgToSts({
+                            message: 'connection:user',
+                            user_id: socket.user_id,
+                            user_name: userName.name,
+                            char_name: charName ? charName.name : '',
+                          });
+                        }
+                      }
+                    }
                   }
                 }
                 break;

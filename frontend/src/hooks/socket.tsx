@@ -31,6 +31,7 @@ interface ISocketServerMessage {
 */
 
 import { useAuth } from './auth';
+import { useToast } from './toast';
 
 interface IOnLineUser {
   user_id: string;
@@ -87,8 +88,10 @@ const SocketContext = createContext<ISocketContextData>(
 
 const SocketProvider: React.FC = ({ children }) => {
   const { user, char } = useAuth();
+  const { addToast } = useToast();
   const [connected, setConnected] = useState<boolean>(false);
   const [onLineUsers, setOnLineUsers] = useState<IOnLineUser[]>([]);
+  const [userConnList, setUserConnList] = useState<string[]>([]);
   const [updatedTrait, setUpdatedTrait] = useState<ITrait>({} as ITrait);
   const [reloadCharTraits, setReloadCharTraits] = useState<string>('');
 
@@ -162,6 +165,34 @@ const SocketProvider: React.FC = ({ children }) => {
     setReloadCharTraits('');
   }, []);
 
+  const notifyUserConnection = useCallback(
+    (user_id: string, userName: string, charName: string) => {
+      if (userConnList.indexOf(user_id) >= 0) {
+        return;
+      }
+
+      const newUserConnList = userConnList;
+      newUserConnList.push(user_id);
+      setUserConnList(newUserConnList);
+
+      setTimeout(() => {
+        const removeConnUser = userConnList.filter(
+          connUser => connUser !== user_id,
+        );
+        setUserConnList(removeConnUser);
+      }, 120000);
+
+      addToast({
+        type: 'success',
+        title: 'Jogador Conectado',
+        description: `${userName} ${
+          charName !== '' && `- ${charName},`
+        } está OnLine!`,
+      });
+    },
+    [addToast, userConnList],
+  );
+
   const connect = useCallback(() => {
     if (user === undefined) return;
 
@@ -200,6 +231,16 @@ const SocketProvider: React.FC = ({ children }) => {
               }
               break;
 
+            case 'connection:user':
+              if (myMsg.user_name !== '' && myMsg.user_id) {
+                notifyUserConnection(
+                  myMsg.user_id,
+                  myMsg.user_name,
+                  myMsg.char_name || '',
+                );
+              }
+              break;
+
             case 'trait:update':
               if (myMsg.trait) {
                 setUpdatedTrait(myMsg.trait);
@@ -216,7 +257,14 @@ const SocketProvider: React.FC = ({ children }) => {
         }
       };
     }
-  }, [char, sendSocketMessage, startPing, updateOnLineUsersList, user]);
+  }, [
+    char,
+    notifyUserConnection,
+    sendSocketMessage,
+    startPing,
+    updateOnLineUsersList,
+    user,
+  ]);
 
   useEffect(() => {
     if (user) {
