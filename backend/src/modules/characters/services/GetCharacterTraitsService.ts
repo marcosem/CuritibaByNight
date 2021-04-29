@@ -37,7 +37,11 @@ class GetCharacterTraitsService {
       throw new AppError('Character not found', 400);
     }
 
-    if (!user.storyteller && user_id !== char.user_id) {
+    if (
+      !user.storyteller &&
+      user_id !== char.user_id &&
+      user_id !== char.regnant_char?.user_id
+    ) {
       throw new AppError(
         'Only authenticated Storytellers can get other players traits list',
         401,
