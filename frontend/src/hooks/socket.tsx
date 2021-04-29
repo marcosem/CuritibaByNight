@@ -32,7 +32,10 @@ interface ISocketServerMessage {
 
 import { useAuth } from './auth';
 
-// const socket = getSocket();
+interface IOnLineUser {
+  user_id: string;
+  char_id: string;
+}
 
 interface ILevel {
   id: string;
@@ -70,6 +73,7 @@ interface ISocketMessage {
 interface ISocketContextData {
   isConnected: boolean;
   updatedTrait: ITrait;
+  onLineUsers: IOnLineUser[];
   resetUpdatedTrait(): void;
   notifyTraitUpdate(trait: ITrait): void;
 }
@@ -81,9 +85,12 @@ const SocketContext = createContext<ISocketContextData>(
 const SocketProvider: React.FC = ({ children }) => {
   const { user, char } = useAuth();
   const [connected, setConnected] = useState<boolean>(false);
+  const [onLineUsers, setOnLineUsers] = useState<IOnLineUser[]>([]);
   const [updatedTrait, setUpdatedTrait] = useState<ITrait>({} as ITrait);
+
   const socket = useRef<WebSocket>();
   const serverPing = useRef<number>(0);
+  const serverGetUsers = useRef<number>(0);
   const token = useRef<string>('');
   // const tryReconnect = useRef<boolean>(false);
 
@@ -109,6 +116,16 @@ const SocketProvider: React.FC = ({ children }) => {
       sendSocketMessage({ type: 'ping' });
       serverPing.current = 0;
       startPing();
+    }, 10000);
+  }, [sendSocketMessage]);
+
+  const updateOnLineUsersList = useCallback(() => {
+    if (serverGetUsers.current !== 0) return;
+
+    serverGetUsers.current = setTimeout(() => {
+      sendSocketMessage({ type: 'connection:connectedusers' });
+      serverGetUsers.current = 0;
+      updateOnLineUsersList();
     }, 10000);
   }, [sendSocketMessage]);
 
@@ -139,6 +156,7 @@ const SocketProvider: React.FC = ({ children }) => {
         });
 
         startPing();
+        updateOnLineUsersList();
         setConnected(true);
       };
 
@@ -152,6 +170,16 @@ const SocketProvider: React.FC = ({ children }) => {
 
         if (myMsg.message) {
           switch (myMsg.message) {
+            case 'connection:connectedusers':
+              if (myMsg.users) {
+                const connUsers: IOnLineUser[] = myMsg.users.filter(
+                  (connUser: IOnLineUser) => connUser.user_id !== '',
+                );
+
+                setOnLineUsers(connUsers);
+              }
+              break;
+
             case 'trait:update':
               if (myMsg.trait) {
                 setUpdatedTrait(myMsg.trait);
@@ -162,7 +190,7 @@ const SocketProvider: React.FC = ({ children }) => {
         }
       };
     }
-  }, [char.id, sendSocketMessage, startPing, user.id]);
+  }, [char.id, sendSocketMessage, startPing, updateOnLineUsersList, user.id]);
 
   useEffect(() => {
     if (user) {
@@ -179,6 +207,7 @@ const SocketProvider: React.FC = ({ children }) => {
     <SocketContext.Provider
       value={{
         isConnected: connected,
+        onLineUsers,
         updatedTrait,
         notifyTraitUpdate,
         resetUpdatedTrait,
