@@ -38,6 +38,11 @@ interface IOnLineUser {
   char_id: string;
 }
 
+interface IUserConn {
+  user_id: string;
+  timer: number;
+}
+
 interface ILevel {
   id: string;
   level: number;
@@ -91,10 +96,10 @@ const SocketProvider: React.FC = ({ children }) => {
   const { addToast } = useToast();
   const [connected, setConnected] = useState<boolean>(false);
   const [onLineUsers, setOnLineUsers] = useState<IOnLineUser[]>([]);
-  const [userConnList, setUserConnList] = useState<string[]>([]);
   const [updatedTrait, setUpdatedTrait] = useState<ITrait>({} as ITrait);
   const [reloadCharTraits, setReloadCharTraits] = useState<string>('');
 
+  const userConnList = useRef<IUserConn[]>([]);
   const socket = useRef<WebSocket>();
   const serverPing = useRef<number>(0);
   const serverGetUsers = useRef<number>(0);
@@ -165,23 +170,34 @@ const SocketProvider: React.FC = ({ children }) => {
     setReloadCharTraits('');
   }, []);
 
+  const setUserConnectionTimer = useCallback((user_id: string) => {
+    const userTimer = setTimeout(() => {
+      const removeConnUser = userConnList.current.filter(
+        connUser => connUser.user_id !== user_id,
+      );
+
+      userConnList.current = removeConnUser;
+    }, 300000);
+
+    const newUserConnList = userConnList.current;
+    newUserConnList.push({ user_id, timer: userTimer });
+    userConnList.current = newUserConnList;
+  }, []);
+
   const notifyUserConnection = useCallback(
     (user_id: string, userName: string, charName: string) => {
-      if (userConnList.indexOf(user_id) >= 0) {
+      const userConn = userConnList.current.find(
+        myUserConn => myUserConn.user_id === user_id,
+      );
+
+      // If user is already in the connection list, reset its timeout
+      if (userConn) {
+        clearTimeout(userConn.timer);
+        setUserConnectionTimer(user_id);
         return;
       }
 
-      const newUserConnList = userConnList;
-      newUserConnList.push(user_id);
-      setUserConnList(newUserConnList);
-
-      setTimeout(() => {
-        const removeConnUser = userConnList.filter(
-          connUser => connUser !== user_id,
-        );
-        setUserConnList(removeConnUser);
-      }, 120000);
-
+      setUserConnectionTimer(user_id);
       addToast({
         type: 'success',
         title: 'Jogador Conectado',
@@ -190,7 +206,7 @@ const SocketProvider: React.FC = ({ children }) => {
         } está OnLine!`,
       });
     },
-    [addToast, userConnList],
+    [addToast, setUserConnectionTimer],
   );
 
   const connect = useCallback(() => {
