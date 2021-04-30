@@ -136,48 +136,117 @@ const Players: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {playerList.map(player => (
-                  <tr key={player.id} onClick={() => handleProfile(player)}>
-                    <td>
-                      <AvatarCell>
-                        <Avatar
-                          src={
-                            player.avatar_url || imgProfile
-                            // `https://api.adorable.io/avatars/56/${player.name}@adorable.png`
-                          }
-                          alt=""
-                          isSt={player.storyteller}
-                        />
-                        <ConnectionStatus
-                          isConnected={
-                            onLineUsers
-                              .map((connUser: IOnLineUser) => connUser.user_id)
-                              .indexOf(player.id) >= 0
-                          }
-                        />
-                      </AvatarCell>
-                    </td>
-                    <td>
-                      <TableCell>{player.name}</TableCell>
-                    </td>
-                    {!isMobileVersion && (
-                      <>
+                <>
+                  {playerList
+                    .filter(
+                      player =>
+                        onLineUsers
+                          .map((connUser: IOnLineUser) => connUser.user_id)
+                          .indexOf(player.id) >= 0,
+                    )
+                    .map(playerOn => (
+                      <tr
+                        key={playerOn.id}
+                        onClick={() => handleProfile(playerOn)}
+                      >
                         <td>
-                          <TableCell>{player.email}</TableCell>
+                          <AvatarCell>
+                            <Avatar
+                              src={
+                                playerOn.avatar_url || imgProfile
+                                // `https://api.adorable.io/avatars/56/${playerOn.name}@adorable.png`
+                              }
+                              alt=""
+                              isSt={playerOn.storyteller}
+                            />
+                            <ConnectionStatus
+                              isConnected={
+                                onLineUsers
+                                  .map(
+                                    (connUser: IOnLineUser) => connUser.user_id,
+                                  )
+                                  .indexOf(playerOn.id) >= 0
+                              }
+                            />
+                          </AvatarCell>
                         </td>
-                        <td>{player.phone}</td>
-                      </>
-                    )}
+                        <td>
+                          <TableCell>{playerOn.name}</TableCell>
+                        </td>
+                        {!isMobileVersion && (
+                          <>
+                            <td>
+                              <TableCell>{playerOn.email}</TableCell>
+                            </td>
+                            <td>{playerOn.phone}</td>
+                          </>
+                        )}
 
-                    <td>
-                      {player.active ? (
-                        <FaCheckCircle color="green" />
-                      ) : (
-                        <FaMinusCircle color="red" />
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                        <td>
+                          {playerOn.active ? (
+                            <FaCheckCircle color="green" />
+                          ) : (
+                            <FaMinusCircle color="red" />
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+
+                  {playerList
+                    .filter(
+                      player =>
+                        onLineUsers
+                          .map((connUser: IOnLineUser) => connUser.user_id)
+                          .indexOf(player.id) === -1,
+                    )
+                    .map(playerOff => (
+                      <tr
+                        key={playerOff.id}
+                        onClick={() => handleProfile(playerOff)}
+                      >
+                        <td>
+                          <AvatarCell>
+                            <Avatar
+                              src={
+                                playerOff.avatar_url || imgProfile
+                                // `https://api.adorable.io/avatars/56/${playerOff.name}@adorable.png`
+                              }
+                              alt=""
+                              isSt={playerOff.storyteller}
+                            />
+                            <ConnectionStatus
+                              isConnected={
+                                onLineUsers
+                                  .map(
+                                    (connUser: IOnLineUser) => connUser.user_id,
+                                  )
+                                  .indexOf(playerOff.id) >= 0
+                              }
+                            />
+                          </AvatarCell>
+                        </td>
+                        <td>
+                          <TableCell>{playerOff.name}</TableCell>
+                        </td>
+                        {!isMobileVersion && (
+                          <>
+                            <td>
+                              <TableCell>{playerOff.email}</TableCell>
+                            </td>
+                            <td>{playerOff.phone}</td>
+                          </>
+                        )}
+
+                        <td>
+                          {playerOff.active ? (
+                            <FaCheckCircle color="green" />
+                          ) : (
+                            <FaMinusCircle color="red" />
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                </>
               </tbody>
             </Table>
           </TableWrapper>
