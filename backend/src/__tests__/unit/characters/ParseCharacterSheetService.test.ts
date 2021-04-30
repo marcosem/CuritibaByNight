@@ -26,6 +26,7 @@ describe('ParseCharacterSheet', () => {
     const parsedData = await parseCharacterSheet.execute({
       sheetFilename: 'filename.pdf',
       mimetype: 'application/pdf',
+      masqueradeLevel: 0,
     });
 
     expect(parsedData).toHaveProperty('character');
@@ -46,6 +47,7 @@ describe('ParseCharacterSheet', () => {
       parseCharacterSheet.execute({
         sheetFilename: 'invalidPDFFile',
         mimetype: 'application/pdf',
+        masqueradeLevel: 0,
       }),
     ).rejects.toBeInstanceOf(AppError);
 
@@ -57,6 +59,7 @@ describe('ParseCharacterSheet', () => {
       parseCharacterSheet.execute({
         sheetFilename: '',
         mimetype: 'application/pdf',
+        masqueradeLevel: 0,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -68,6 +71,7 @@ describe('ParseCharacterSheet', () => {
       parseCharacterSheet.execute({
         sheetFilename: 'filename.rtf',
         mimetype: 'application/rtf',
+        masqueradeLevel: 0,
       }),
     ).rejects.toBeInstanceOf(AppError);
 

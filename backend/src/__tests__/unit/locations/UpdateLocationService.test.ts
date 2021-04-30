@@ -76,6 +76,41 @@ describe('UpdateLocation', () => {
     expect(updatedLocation).toMatchObject(newLocation);
   });
 
+  it('Should be able to remove the owner of a location', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Dracula',
+      experience: 666,
+      clan: 'Tzimisce',
+      file: 'dracula.pdf',
+      npc: false,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      responsible: char.id,
+    });
+
+    const updatedLocation = await updateLocation.execute({
+      user_id: user.id,
+      location_id: location.id,
+      char_id: null,
+    });
+
+    expect(updatedLocation.responsible).toBeNull();
+    expect(updatedLocation).not.toHaveProperty('responsible_char');
+  });
+
   it('Should be able to update the location responsible character only', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',

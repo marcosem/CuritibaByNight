@@ -24,6 +24,11 @@ class FakeCharactersRepository implements ICharactersRepository {
     file,
   }: ICreateCharacterDTO): Promise<Character> {
     const char = new Character();
+    let charRegnant: Character | undefined;
+
+    if (regnant) {
+      charRegnant = await this.findById(regnant);
+    }
 
     Object.assign(char, {
       id: v4(),
@@ -39,6 +44,7 @@ class FakeCharactersRepository implements ICharactersRepository {
       situation,
       npc,
       regnant: regnant === undefined ? null : regnant,
+      regnant_char: regnant ? charRegnant : undefined,
       retainer_level,
       file,
     });

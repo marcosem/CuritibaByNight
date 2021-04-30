@@ -22,7 +22,7 @@ class ParseCharacterSheetService {
 
   public async execute({
     sheetFilename,
-    masqueradeLevel = 0,
+    masqueradeLevel,
     mimetype,
   }: IRequestDTO): Promise<IPDFParseDTO | undefined> {
     if (sheetFilename === '') {

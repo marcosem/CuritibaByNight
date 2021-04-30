@@ -21,7 +21,7 @@ interface IRequestDTO {
   clan?: string;
   creature_type?: string;
   sect?: string;
-  char_id?: string;
+  char_id?: string | null;
 }
 
 @injectable()

@@ -7,29 +7,6 @@ import { v4 } from 'uuid';
 class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
   private charsTraits: CharacterTrait[] = [];
 
-  /*
-  public async create({
-    trait,
-    character_id,
-    level,
-    type,
-  }: ICreateCharacterTraitDTO): Promise<CharacterTrait> {
-    const charTrait = new CharacterTrait();
-
-    Object.assign(charTrait, {
-      id: v4(),
-      trait,
-      character_id,
-      level,
-      type,
-    });
-
-    this.charsTraits.push(charTrait);
-
-    return charTrait;
-  }
-  */
-
   public async createList(
     dataList: ICreateCharacterTraitDTO[],
   ): Promise<CharacterTrait[]> {
@@ -41,7 +18,8 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
         trait: data.trait,
         character_id: data.character_id,
         level: data.level,
-        tyep: data.type,
+        level_temp: data.level_temp ? data.level_temp : undefined,
+        type: data.type,
       });
 
       return charTrait;
@@ -118,36 +96,6 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
 
     this.charsTraits = newCharsTraits;
   }
-
-  /*
-  public async listAllByTrait(
-    trait: string,
-    type: string,
-  ): Promise<CharacterTrait[]> {
-    const charTraitList = this.charsTraits.filter(
-      charTrait => charTrait.trait === trait && charTrait.type === type,
-    );
-
-    return charTraitList;
-  }
-  */
-
-  /*
-  public async listAll(): Promise<CharacterTrait[]> {
-    const charTraitList = this.charsTraits;
-
-    return charTraitList;
-  }
-  */
-
-  /*
-  public async delete(char_trait_id: string): Promise<void> {
-    const listWithRemovedChars = this.charsTraits.filter(
-      charTrait => charTrait.id !== char_trait_id,
-    );
-    this.charsTraits = listWithRemovedChars;
-  }
-  */
 
   public async deleteAllByChar(char_id: string): Promise<void> {
     const listWithRemovedChars = this.charsTraits.filter(
