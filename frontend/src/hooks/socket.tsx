@@ -107,6 +107,7 @@ const SocketProvider: React.FC = ({ children }) => {
   const serverGetUsers = useRef<number>(0);
   const token = useRef<string>('');
   // const tryReconnect = useRef<boolean>(false);
+  const blockDuplicatedMessage = useRef<boolean>(false);
 
   const sendSocketMessage = useCallback(
     (msg: ISocketMessage) => {
@@ -284,6 +285,12 @@ const SocketProvider: React.FC = ({ children }) => {
               break;
 
             case 'masquerade:increased':
+              if (blockDuplicatedMessage.current === true) return;
+              blockDuplicatedMessage.current = true;
+              setTimeout(() => {
+                blockDuplicatedMessage.current = false;
+              }, 500);
+
               if (myMsg.masquerade_level) {
                 addToast({
                   type: 'error',
@@ -294,6 +301,12 @@ const SocketProvider: React.FC = ({ children }) => {
               break;
 
             case 'masquerade:decreased':
+              if (blockDuplicatedMessage.current === true) return;
+              blockDuplicatedMessage.current = true;
+              setTimeout(() => {
+                blockDuplicatedMessage.current = false;
+              }, 500);
+
               if (myMsg.masquerade_level) {
                 addToast({
                   type: 'success',
