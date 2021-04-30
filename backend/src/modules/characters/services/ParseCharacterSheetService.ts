@@ -1,5 +1,4 @@
 import { injectable, inject } from 'tsyringe';
-// import Character from '@modules/characters/infra/typeorm/entities/Character';
 import AppError from '@shared/errors/AppError';
 import IPDFParserProvider, {
   IPDFParseDTO,
@@ -8,6 +7,7 @@ import IStorageProvider from '@shared/container/providers/StorageProvider/models
 
 interface IRequestDTO {
   sheetFilename: string;
+  masqueradeLevel: number;
   mimetype: string;
 }
 
@@ -22,6 +22,7 @@ class ParseCharacterSheetService {
 
   public async execute({
     sheetFilename,
+    masqueradeLevel = 0,
     mimetype,
   }: IRequestDTO): Promise<IPDFParseDTO | undefined> {
     if (sheetFilename === '') {
@@ -33,7 +34,10 @@ class ParseCharacterSheetService {
       throw new AppError('File must be in PDF format', 400);
     }
 
-    const parsedData = await this.pdfParserProvider.parse(sheetFilename);
+    const parsedData = await this.pdfParserProvider.parse(
+      sheetFilename,
+      masqueradeLevel,
+    );
 
     if (!parsedData) {
       await this.storageProvider.deleteFile(sheetFilename, '');

@@ -1,5 +1,6 @@
 import IDomainMasqueradeProvider from '@modules/characters/providers/DomainMasqueradeProvider/models/IDomainMasqueradeProvider';
 import redis from 'redis';
+import util from 'util';
 
 class DomainMasqueradeProvider implements IDomainMasqueradeProvider {
   private redisClient: redis.RedisClient;
@@ -16,20 +17,18 @@ class DomainMasqueradeProvider implements IDomainMasqueradeProvider {
     this.domainMasquerade = 0;
   }
 
-  public get(): number {
-    let currentMasquerade: string | null;
+  public async get(): Promise<number> {
+    const getMasquerade = util
+      .promisify(this.redisClient.get)
+      .bind(this.redisClient);
 
-    this.redisClient.get('Masquerade', (_, value) => {
-      currentMasquerade = value;
+    const currentMasquerade: string | null = await getMasquerade('Masquerade');
 
-      if (currentMasquerade === null) {
-        this.domainMasquerade = 0;
-      } else {
-        this.domainMasquerade = parseInt(currentMasquerade, 10);
-      }
-
-      return true;
-    });
+    if (currentMasquerade === null) {
+      this.domainMasquerade = 0;
+    } else {
+      this.domainMasquerade = parseInt(currentMasquerade, 10);
+    }
 
     return this.domainMasquerade;
   }

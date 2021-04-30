@@ -18,7 +18,10 @@ import extractBackgroundsTraits from './extractBackgroundsTraits';
 import extractInfluencesTraits from './extractInfluencesTraits';
 
 class PDFParseProvider implements IPDFParserProvider {
-  public async parse(filename: string): Promise<IPDFParseDTO | undefined> {
+  public async parse(
+    filename: string,
+    masqueradeLevel = 0,
+  ): Promise<IPDFParseDTO | undefined> {
     const char = new Character();
     let charTraits = [] as CharacterTrait[];
 
@@ -66,11 +69,18 @@ class PDFParseProvider implements IPDFParserProvider {
     let extraHealthy = 0;
     let extraBruised = 0;
     let penaltyHealth = 0;
+    const penaltyInfluences = Math.floor(masqueradeLevel / 2);
+    const penaltyBackgrounds = Math.floor(masqueradeLevel / 3);
 
     const penaltyBlood = {
-      level_penalty: 0,
+      level_penalty: masqueradeLevel,
       level_temp: '',
     };
+
+    for (let i = 0; i < penaltyBlood.level_penalty; i += 1) {
+      penaltyBlood.level_temp =
+        i === 0 ? 'Masquerade' : `${penaltyBlood.level_temp}|Masquerade`;
+    }
 
     rl.on('line', line => {
       index += 1;
@@ -618,6 +628,38 @@ class PDFParseProvider implements IPDFParserProvider {
           const background = extractBackgroundsTraits(line, char.creature_type);
 
           if (background) {
+            if (penaltyBackgrounds > 0) {
+              let myPenalty =
+                background.level < penaltyBackgrounds
+                  ? background.level
+                  : penaltyBackgrounds;
+
+              let backgroundCount = 0;
+              let level_temp = '';
+              let level_name = '';
+
+              while (backgroundCount < background.level) {
+                if (myPenalty > 0) {
+                  level_name = 'Masquerade';
+                  myPenalty -= 1;
+                } else {
+                  level_name = 'full';
+                }
+
+                if (backgroundCount === 0) {
+                  level_temp = level_name;
+                } else {
+                  level_temp = `${level_temp}|${level_name}`;
+                }
+                backgroundCount += 1;
+              }
+
+              const tempArray = level_temp.split('|').reverse();
+              level_temp = tempArray.join('|');
+
+              background.level_temp = level_temp;
+            }
+
             charTraits.push(background);
 
             // Retainers loses one blood point
@@ -680,6 +722,38 @@ class PDFParseProvider implements IPDFParserProvider {
           const influence = extractInfluencesTraits(line, char.creature_type);
 
           if (influence) {
+            if (penaltyInfluences > 0) {
+              let myPenalty =
+                influence.level < penaltyInfluences
+                  ? influence.level
+                  : penaltyInfluences;
+
+              let influenceCount = 0;
+              let level_temp = '';
+              let level_name = '';
+
+              while (influenceCount < influence.level) {
+                if (myPenalty > 0) {
+                  level_name = 'Masquerade';
+                  myPenalty -= 1;
+                } else {
+                  level_name = 'full';
+                }
+
+                if (influenceCount === 0) {
+                  level_temp = level_name;
+                } else {
+                  level_temp = `${level_temp}|${level_name}`;
+                }
+                influenceCount += 1;
+              }
+
+              const tempArray = level_temp.split('|').reverse();
+              level_temp = tempArray.join('|');
+
+              influence.level_temp = level_temp;
+            }
+
             charTraits.push(influence);
           }
 

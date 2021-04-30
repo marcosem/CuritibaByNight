@@ -7,8 +7,8 @@ class FakeDomainMasqueradeProvider implements IDomainMasqueradeProvider {
     this.masqueradeLevel = 0;
   }
 
-  public get(): number {
-    return this.masqueradeLevel;
+  public get(): Promise<number> {
+    return Promise.resolve(this.masqueradeLevel);
   }
 
   public set(masquerade: number): boolean {

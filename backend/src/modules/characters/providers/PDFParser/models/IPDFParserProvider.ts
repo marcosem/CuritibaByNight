@@ -7,5 +7,8 @@ export interface IPDFParseDTO {
 }
 
 export default interface IPDFParserProvider {
-  parse(filename: string): Promise<IPDFParseDTO | undefined>;
+  parse(
+    filename: string,
+    masqueradeLevel: number,
+  ): Promise<IPDFParseDTO | undefined>;
 }

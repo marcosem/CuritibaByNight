@@ -6,10 +6,17 @@ import Character from '@modules/characters/infra/typeorm/entities/Character';
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 
 class FakePDFParserProvider implements IPDFParserProvider {
-  public async parse(filename: string): Promise<IPDFParseDTO | undefined> {
+  public async parse(
+    filename: string,
+    masqueradeLevel = 0,
+  ): Promise<IPDFParseDTO | undefined> {
     if (filename === '' || filename.indexOf('.pdf') < 0) {
       return undefined;
     }
+
+    let bloodPenalty = masqueradeLevel;
+    let influencePenalty = Math.floor(masqueradeLevel / 2);
+    let backgroundPenalty = Math.floor(masqueradeLevel / 3);
 
     const char = new Character();
     char.file = filename;
@@ -23,6 +30,67 @@ class FakePDFParserProvider implements IPDFParserProvider {
     char.sect = 'Independent';
     char.retainer_level = 0;
 
+    let bloodTemp = '';
+    let influenceTemp = '';
+    let backgroundTemp = '';
+
+    if (bloodPenalty >= 13) {
+      bloodPenalty = 12;
+    }
+
+    for (let i = 0; i < 13; i += 1) {
+      if (bloodPenalty > 0) {
+        if (i === 0) {
+          bloodTemp = 'Masquerade';
+        } else {
+          bloodTemp = `${bloodTemp}|Masquerade`;
+        }
+        bloodPenalty -= 1;
+      } else if (i === 0) {
+        bloodTemp = 'full';
+      } else {
+        bloodTemp = `${bloodTemp}|full`;
+      }
+    }
+
+    if (influencePenalty >= 1) {
+      influencePenalty = 1;
+    }
+
+    for (let i = 0; i < 3; i += 1) {
+      if (influencePenalty > 0) {
+        if (i === 0) {
+          influenceTemp = 'Masquerade';
+        } else {
+          influenceTemp = `${influenceTemp}|Masquerade`;
+        }
+        influencePenalty -= 1;
+      } else if (i === 0) {
+        influenceTemp = 'full';
+      } else {
+        influenceTemp = `${influenceTemp}|full`;
+      }
+    }
+
+    if (backgroundPenalty >= 1) {
+      backgroundPenalty = 1;
+    }
+
+    for (let i = 0; i < 3; i += 1) {
+      if (backgroundPenalty > 0) {
+        if (i === 0) {
+          backgroundTemp = 'Masquerade';
+        } else {
+          backgroundTemp = `${backgroundTemp}|Masquerade`;
+        }
+        backgroundPenalty -= 1;
+      } else if (i === 0) {
+        backgroundTemp = 'full';
+      } else {
+        backgroundTemp = `${backgroundTemp}|full`;
+      }
+    }
+
     const charTraits = [
       {
         trait: 'Willpower',
@@ -32,6 +100,7 @@ class FakePDFParserProvider implements IPDFParserProvider {
       {
         trait: 'Blood',
         level: 13,
+        level_temp: bloodTemp,
         type: 'virtues',
       },
       {
@@ -47,11 +116,13 @@ class FakePDFParserProvider implements IPDFParserProvider {
       {
         trait: 'Resourses',
         level: 3,
+        level_temp: backgroundTemp,
         type: 'backgrounds',
       },
       {
         trait: 'Police',
         level: 1,
+        level_Temp: influenceTemp,
         type: 'influences',
       },
     ] as CharacterTrait[];

@@ -6,6 +6,8 @@ import UpdateCharacterSheetService from '@modules/characters/services/UpdateChar
 import ParseCharacterSheetService from '@modules/characters/services/ParseCharacterSheetService';
 import RemoveCharacterService from '@modules/characters/services/RemoveCharacterService';
 import AddCharacterTraitsService from '@modules/characters/services/AddCharacterTraitsService';
+import GetCharacterTraitsService from '@modules/characters/services/GetCharacterTraitsService';
+import GetDomainMasqueradeService from '@modules/characters/services/GetDomainMasqueradeService';
 import { container } from 'tsyringe';
 import { classToClass } from 'class-transformer';
 
@@ -17,12 +19,21 @@ export default class UserCharactersController {
 
     const isNPC = is_npc === 'true';
 
+    const getDomainMasqueradeService = container.resolve(
+      GetDomainMasqueradeService,
+    );
+
+    const domainMasquerade = await getDomainMasqueradeService.execute({
+      user_id: req.user.id,
+    });
+
     const parseCharacterSheetService = container.resolve(
       ParseCharacterSheetService,
     );
 
     const parsedData = await parseCharacterSheetService.execute({
       sheetFilename: fileName,
+      masqueradeLevel: domainMasquerade,
       mimetype,
     });
 
@@ -128,12 +139,45 @@ export default class UserCharactersController {
       char_id: character_id,
     });
 
+    const getCharacterTraitsService = container.resolve(
+      GetCharacterTraitsService,
+    );
+
+    const oldCharTraits = await getCharacterTraitsService.execute({
+      user_id: req.user.id,
+      char_id: character_id,
+    });
+
+    const personalMasqueradeTrait = oldCharTraits.find(
+      myTrait => myTrait.trait === 'Personal Masquerade',
+    );
+
+    let personalMasquerade = 0;
+    if (personalMasqueradeTrait) {
+      const personalMAsqueradeTempLevel = personalMasqueradeTrait.level_temp
+        ? personalMasqueradeTrait.level_temp.split('|')
+        : [];
+
+      personalMasquerade = personalMAsqueradeTempLevel.filter(
+        elemt => elemt === 'full',
+      ).length;
+    }
+
+    const getDomainMasqueradeService = container.resolve(
+      GetDomainMasqueradeService,
+    );
+
+    const domainMasquerade = await getDomainMasqueradeService.execute({
+      user_id: req.user.id,
+    });
+
     const parseCharacterSheetService = container.resolve(
       ParseCharacterSheetService,
     );
 
     const parsedData = await parseCharacterSheetService.execute({
       sheetFilename: fileName,
+      masqueradeLevel: domainMasquerade + personalMasquerade,
       mimetype,
     });
 

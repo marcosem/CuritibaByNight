@@ -30,6 +30,7 @@ interface ISocketClientMessage {
   char?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trait?: any;
+  masquerade_level?: number;
 }
 
 interface IUser {
@@ -49,6 +50,7 @@ interface ISocketServerMessage {
   user_name?: string;
   char_id?: string;
   char_name?: string;
+  masquerade_level?: number;
 }
 
 class WebSocketServer {
@@ -255,6 +257,40 @@ class WebSocketServer {
                       this.sendMsg(myWs.ws, {
                         message: 'trait:reload',
                         char_id,
+                      });
+                    });
+                  }
+                }
+                break;
+
+              case 'masquerade:notify:up':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else if (parsedMsg.masquerade_level) {
+                  if (this.sockets.length >= 1) {
+                    this.sockets.forEach(myWs => {
+                      this.sendMsg(myWs.ws, {
+                        message: 'masquerade:increased',
+                        masquerade_level: parsedMsg.masquerade_level,
+                      });
+                    });
+                  }
+                }
+                break;
+
+              case 'masquerade:notify:down':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else if (parsedMsg.masquerade_level) {
+                  if (this.sockets.length >= 1) {
+                    this.sockets.forEach(myWs => {
+                      this.sendMsg(myWs.ws, {
+                        message: 'masquerade:decreased',
+                        masquerade_level: parsedMsg.masquerade_level,
                       });
                     });
                   }
