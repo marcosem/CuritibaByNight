@@ -6,13 +6,14 @@ import React, {
   MouseEvent,
   useRef,
 } from 'react';
-import { FiEdit, FiSave, FiX, FiTrash2, FiPlus } from 'react-icons/fi';
+import { FiEdit, FiSave, FiX, FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
 import Header from '../../components/Header';
 import api from '../../services/api';
 
 import {
   Container,
   TitleBox,
+  DomainMasqueradeBox,
   TablesContainer,
   TableWrapper,
   Table,
@@ -25,6 +26,7 @@ import {
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useModalBox } from '../../hooks/modalBox';
+import { useSocket } from '../../hooks/socket';
 import Loading from '../../components/Loading';
 
 interface ITerritory {
@@ -38,6 +40,8 @@ interface ITerritory {
 
 const Influences: React.FC = () => {
   const [isBusy, setBusy] = useState(false);
+  const [domainMasquerade, setDomainMasquerade] = useState<number>(0);
+  const [loadingMasquerade, setLoadingMasquerade] = useState<boolean>(true);
   const [territoryList, setTerritoryList] = useState<ITerritory[]>([]);
   const [selTerritoryList, setSelTerritoryList] = useState<ITerritory[]>([]);
   const [selectedSect, setSelectedSect] = useState<string>('');
@@ -46,8 +50,35 @@ const Influences: React.FC = () => {
   const { signOut } = useAuth();
   const { addToast } = useToast();
   const { showModal } = useModalBox();
+  const { notifyMasquerade } = useSocket();
   const terrRowRef = useRef<HTMLTableRowElement>(null);
   const terrBodyRef = useRef<HTMLTableSectionElement>(null);
+
+  const loadDomainMasquerade = useCallback(async () => {
+    setLoadingMasquerade(true);
+
+    try {
+      await api.get('/domain/masqueradeLevel').then(response => {
+        const res: number = response.data.masquerade_level;
+
+        setDomainMasquerade(res);
+      });
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (error.response.status !== 401) {
+          addToast({
+            type: 'error',
+            title:
+              'Erro ao tentar recuperar o nível de Quebra de Máscara atual',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+    setLoadingMasquerade(false);
+  }, [addToast]);
 
   const loadTerritories = useCallback(
     async (setAsBusy = true) => {
@@ -501,6 +532,50 @@ const Influences: React.FC = () => {
     [selectedSect, territoryList],
   );
 
+  const setDomainMasqueradeLevel = useCallback(
+    async (newLevel: number) => {
+      try {
+        await api
+          .patch('/domain/setMasqueradeLevel', { masquerade_level: newLevel })
+          .then(() => {
+            setDomainMasquerade(newLevel);
+          });
+      } catch (error) {
+        if (error.response) {
+          const { message } = error.response.data;
+
+          if (error.response.status !== 401) {
+            addToast({
+              type: 'error',
+              title:
+                'Erro ao tentar definir no novo nível de Quebra de Máscara',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+    },
+    [addToast],
+  );
+
+  const handleIncreaseMasqueradeLevel = useCallback(
+    async (currentLevel: number) => {
+      const newLevel = currentLevel + 1;
+      await setDomainMasqueradeLevel(newLevel);
+      notifyMasquerade(newLevel, true);
+    },
+    [notifyMasquerade, setDomainMasqueradeLevel],
+  );
+
+  const handleDecreaseMasqueradeLevel = useCallback(
+    async (currentLevel: number) => {
+      const newLevel = currentLevel - 1;
+      await setDomainMasqueradeLevel(newLevel);
+      notifyMasquerade(newLevel, false);
+    },
+    [notifyMasquerade, setDomainMasqueradeLevel],
+  );
+
   useEffect(() => {
     if (selectedSect === '') {
       setIsScrollOn(true);
@@ -512,8 +587,9 @@ const Influences: React.FC = () => {
   }, [selectedSect, territoryList, selTerritoryList]);
 
   useEffect(() => {
+    loadDomainMasquerade();
     loadTerritories();
-  }, [loadTerritories]);
+  }, [loadDomainMasquerade, loadTerritories]);
 
   return (
     <Container>
@@ -525,6 +601,30 @@ const Influences: React.FC = () => {
             selectedSect !== '' ? ` (${selectedSect})` : ''
           }`}
         </strong>
+        <DomainMasqueradeBox>
+          <strong>Quebra de Máscara Atual</strong>
+          <ActionButton
+            id="addNew"
+            type="button"
+            title="Diminuir Quebra de Máscara"
+            editMode
+            disabled={domainMasquerade === 0 || loadingMasquerade}
+            onClick={() => handleDecreaseMasqueradeLevel(domainMasquerade)}
+          >
+            {domainMasquerade > 0 ? <FiMinus /> : ''}
+          </ActionButton>
+          <strong>{loadingMasquerade ? '..' : domainMasquerade}</strong>
+          <ActionButton
+            id="addNew"
+            type="button"
+            title="Aumentar Quebra de Máscara"
+            editMode={false}
+            disabled={domainMasquerade === 10 || loadingMasquerade}
+            onClick={() => handleIncreaseMasqueradeLevel(domainMasquerade)}
+          >
+            {domainMasquerade < 10 ? <FiPlus /> : ''}
+          </ActionButton>
+        </DomainMasqueradeBox>
       </TitleBox>
       {isBusy ? (
         <Loading />

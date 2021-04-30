@@ -53,6 +53,26 @@ export const TitleBox = styled.div`
   }
 `;
 
+export const DomainMasqueradeBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: auto 0;
+  width: auto;
+
+  > strong {
+    color: #eee;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+    font-weight: 500;
+    margin: auto 10px auto auto;
+    width: auto;
+
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+`;
+
 export const TablesContainer = styled.div`
   margin: 10px auto;
   display: flex;

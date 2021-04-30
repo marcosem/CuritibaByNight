@@ -69,6 +69,7 @@ interface ISocketMessage {
   char_id?: string;
   char?: ICharacter;
   trait?: ITrait;
+  masquerade_level?: number;
   /*
   play?: string;
   char1_id?: string;
@@ -85,6 +86,7 @@ interface ISocketContextData {
   clearReloadTraits(): void;
   notifyTraitUpdate(trait: ITrait): void;
   resetTraits(char_id: string): void;
+  notifyMasquerade(newLevel: number, increased: boolean): void;
 }
 
 const SocketContext = createContext<ISocketContextData>(
@@ -211,6 +213,16 @@ const SocketProvider: React.FC = ({ children }) => {
     [addToast, setUserConnectionTimer],
   );
 
+  const notifyMasquerade = useCallback(
+    (newLevel: number, increased: boolean) => {
+      sendSocketMessage({
+        type: increased ? 'masquerade:notify:up' : 'masquerade:notify:down',
+        masquerade_level: newLevel,
+      });
+    },
+    [sendSocketMessage],
+  );
+
   const connect = useCallback(() => {
     if (user === undefined) return;
 
@@ -270,12 +282,34 @@ const SocketProvider: React.FC = ({ children }) => {
                 setReloadCharTraits(myMsg.char_id);
               }
               break;
+
+            case 'masquerade:increased':
+              if (myMsg.masquerade_level) {
+                addToast({
+                  type: 'error',
+                  title: 'QUEBRA DE MÁSCARA',
+                  description: `Quebra de Máscara subiu para ${myMsg.masquerade_level}.`,
+                });
+              }
+              break;
+
+            case 'masquerade:decreased':
+              if (myMsg.masquerade_level) {
+                addToast({
+                  type: 'success',
+                  title: 'QUEBRA DE MÁSCARA',
+                  description: `Quebra de Máscara desceu para ${myMsg.masquerade_level}.`,
+                });
+              }
+              break;
+
             default:
           }
         }
       };
     }
   }, [
+    addToast,
     char,
     notifyUserConnection,
     sendSocketMessage,
@@ -306,6 +340,7 @@ const SocketProvider: React.FC = ({ children }) => {
         clearUpdatedTrait,
         clearReloadTraits,
         resetTraits,
+        notifyMasquerade,
       }}
     >
       {children}
