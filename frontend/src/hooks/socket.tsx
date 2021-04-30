@@ -206,8 +206,8 @@ const SocketProvider: React.FC = ({ children }) => {
       addToast({
         type: 'success',
         title: 'Jogador Conectado',
-        description: `${userName} ${
-          charName !== '' && `- ${charName},`
+        description: `${userName}${
+          charName !== '' ? `- ${charName},` : ''
         } está Online!`,
       });
     },
