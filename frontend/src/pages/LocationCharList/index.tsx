@@ -609,29 +609,31 @@ const LocationCharList: React.FC = () => {
                     <>
                       <SelectContainer isMobile={isMobileVersion}>
                         <strong>Adicionar Personagem:</strong>
-                        <Select
-                          name="responsible"
-                          id="responsible"
-                          value={selectedChar ? selectedChar.id : ''}
-                          onChange={handleSelectedCharCharge}
-                          isMobile={isMobileVersion}
-                        >
-                          <option value="">Personagem:</option>
-                          {charList.map(char => (
-                            <option key={char.id} value={char.id}>
-                              {char.name}
-                            </option>
-                          ))}
-                        </Select>
-                        {selectedChar && (
-                          <AddButton
-                            type="button"
-                            onClick={handleAddCharToLocation}
-                            disabled={saving}
+                        <div>
+                          <Select
+                            name="responsible"
+                            id="responsible"
+                            value={selectedChar ? selectedChar.id : ''}
+                            onChange={handleSelectedCharCharge}
+                            isMobile={isMobileVersion}
                           >
-                            {saving ? <FaSpinner /> : <FiPlus />}
-                          </AddButton>
-                        )}
+                            <option value="">Personagem:</option>
+                            {charList.map(char => (
+                              <option key={char.id} value={char.id}>
+                                {char.name}
+                              </option>
+                            ))}
+                          </Select>
+                          {selectedChar && (
+                            <AddButton
+                              type="button"
+                              onClick={handleAddCharToLocation}
+                              disabled={saving}
+                            >
+                              {saving ? <FaSpinner /> : <FiPlus />}
+                            </AddButton>
+                          )}
+                        </div>
                       </SelectContainer>
 
                       {locationChars !== undefined && locationChars.length > 0 && (

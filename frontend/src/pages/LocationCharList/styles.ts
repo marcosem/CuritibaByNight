@@ -156,7 +156,7 @@ export const SelectContainer = styled.div<ILocationPanelProps>`
   display: flex;
   align-items: center;
 
-  // height: 24px;
+  height: 29px;
   width: 100%;
 
   strong {
@@ -164,11 +164,22 @@ export const SelectContainer = styled.div<ILocationPanelProps>`
     color: #333;
   }
 
+  div {
+    width: 284px;
+    display: flex;
+    height: 24px;
+    flex-direction: row;
+    align-content: center;
+    justify-content: left;
+  }
+
   ${props =>
     props.isMobile
       ? css`
           margin-top: 8px;
           flex-direction: column;
+          margin-bottom: 16px !important;
+
           strong {
             font-size: 12px;
             margin-bottom: 3px;
@@ -177,6 +188,7 @@ export const SelectContainer = styled.div<ILocationPanelProps>`
       : css`
           padding: 16px 0;
           flex-direction: row;
+
           strong {
             font-size: 18px;
             margin-right: 10px;
@@ -191,15 +203,16 @@ export const Select = styled.select<ILocationPanelProps>`
   outline: none;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   width: 250px;
+  height: 22px;
 
   ${props =>
     props.isMobile
       ? css`
-          height: 17px;
+          margin-left: 0;
+          margin-right: auto;
           font-size: 13px;
         `
       : css`
-          height: 22px;
           font-size: 14px;
         `}
 
@@ -219,6 +232,7 @@ export const AddButton = styled.button`
   height: 24px;
 
   margin-left: 10px;
+  // margin-right: auto;
 
   display: flex;
   flex-direction: space-between;
