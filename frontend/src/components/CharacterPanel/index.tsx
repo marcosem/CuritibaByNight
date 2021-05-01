@@ -690,7 +690,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     {user.storyteller && !dashboard && (
                       <>
                         {!isMobileVersion && (
-                          <FunctionLink>
+                          <FunctionLink middle={showTraits}>
                             <Link
                               to={`/updatechar/${myChar.npc ? 'npc' : 'pc'}/${
                                 myChar.id

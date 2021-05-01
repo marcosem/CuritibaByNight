@@ -18,10 +18,15 @@ interface ITableCell {
 interface ITableType {
   isSectTable?: boolean;
   isScrollOn?: boolean;
+  isMobile?: boolean;
 }
 
 interface IActionButton {
   editMode?: boolean;
+}
+
+interface ITerritoriesProps {
+  isMobile: boolean;
 }
 
 export const Container = styled.div`
@@ -73,12 +78,22 @@ export const DomainMasqueradeBox = styled.div`
   }
 `;
 
-export const TablesContainer = styled.div`
+export const TablesContainer = styled.div<ITerritoriesProps>`
   margin: 10px auto;
   display: flex;
-  flex-direction: space-between;
-  max-width: 1012px;
   justify-content: center;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 340px;
+          flex-direction: column;
+          align-items: center;
+        `
+      : css`
+          max-width: 1012px;
+          flex-direction: space-between;
+        `}
 `;
 
 export const TableWrapper = styled.div<ITableType>`
@@ -92,9 +107,16 @@ export const TableWrapper = styled.div<ITableType>`
           width: 250px;
         `
       : css`
-          margin-right: 20px;
           min-width: 340px;
-          max-width: 535px;
+
+          ${props.isMobile
+            ? css`
+                max-width: 340px;
+              `
+            : css`
+                margin-right: 20px;
+                max-width: 535px;
+              `}
         `}
 
   -webkit-user-select: none; /* Safari */
@@ -117,10 +139,18 @@ export const Table = styled.table<ITableType>`
         `
       : css`
           min-width: 340px;
-          max-width: 535px;
+
+          ${props.isMobile
+            ? css`
+                max-width: 340px;
+              `
+            : css`
+                max-width: 535px;
+              `}
         `}
 
   font-size: 12px;
+
   background-color: transparent;
   opacity: 0.9;
 
@@ -184,7 +214,13 @@ export const Table = styled.table<ITableType>`
             `
           : css`
               &:first-child {
-                width: 200px;
+                ${props.isMobile
+                  ? css`
+                      width: 140px;
+                    `
+                  : css`
+                      width: 200px;
+                    `}
               }
 
               &:nth-child(3) {
@@ -270,7 +306,13 @@ export const Table = styled.table<ITableType>`
             `
           : css`
               &:first-child {
-                width: 200px;
+                ${props.isMobile
+                  ? css`
+                      width: 140px;
+                    `
+                  : css`
+                      width: 200px;
+                    `}
               }
 
               &:nth-child(3) {
@@ -278,7 +320,7 @@ export const Table = styled.table<ITableType>`
               }
 
               &:last-child {
-                ${props.isScrollOn
+                ${props.isScrollOn && !props.isMobile
                   ? css`
                       width: 75px;
                     `

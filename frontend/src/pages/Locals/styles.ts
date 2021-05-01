@@ -3,7 +3,7 @@ import { shade } from 'polished';
 
 interface ILocalsProps {
   isMobile: boolean;
-  isSt: boolean;
+  isSt?: boolean;
 }
 
 export const Container = styled.div`
@@ -33,13 +33,19 @@ export const Content = styled.main<ILocalsProps>`
   }
 `;
 
-export const FunctionsContainer = styled.div`
+export const FunctionsContainer = styled.div<ILocalsProps>`
   position: absolute;
   right: 20px;
   bottom: 20px;
-
   width: 64px;
-  height: 304px;
+  ${props =>
+    props.isMobile
+      ? css`
+          height: 136px;
+        `
+      : css`
+          height: 304px;
+        `}
 
   display: flex;
   flex-direction: column;
@@ -64,7 +70,14 @@ export const FunctionsContainer = styled.div`
     }
 
     &:not(:first-child) {
-      margin-top: 16px;
+      ${props =>
+        props.isMobile
+          ? css`
+              margin-top: 8px;
+            `
+          : css`
+              margin-top: 16px;
+            `}
     }
 
     svg {

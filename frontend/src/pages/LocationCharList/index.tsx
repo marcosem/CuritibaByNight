@@ -29,11 +29,13 @@ import {
 } from './styles';
 
 import Header from '../../components/Header';
+import HeaderMobile from '../../components/HeaderMobile';
 import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useSelection } from '../../hooks/selection';
+import { useMobile } from '../../hooks/mobile';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import LocationCard from '../../components/LocationCard';
 
@@ -87,15 +89,16 @@ const LocationCharList: React.FC = () => {
     myIndex: -1,
   });
 
-  const { addToast } = useToast();
-  const { signOut } = useAuth();
-  const history = useHistory();
   const [isBusy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
-  const { setChar } = useSelection();
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
   const [locationChars, setLocationChars] = useState<ILocationChar[]>();
+  const { addToast } = useToast();
+  const { signOut } = useAuth();
+  const { setChar } = useSelection();
+  const { isMobileVersion } = useMobile();
+  const history = useHistory();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -469,12 +472,20 @@ const LocationCharList: React.FC = () => {
 
   return (
     <Container>
-      <Header page="addlocal" />
+      {isMobileVersion ? (
+        <HeaderMobile page="localchars" />
+      ) : (
+        <Header page="localchars" />
+      )}
 
       <TitleBox>
         {charList.length > 0 ? (
           <>
-            <strong>Selecione uma Localização:</strong>
+            {isMobileVersion ? (
+              <strong>Localização:</strong>
+            ) : (
+              <strong>Selecione uma Localização:</strong>
+            )}
 
             <SelectLocation
               name="location"
@@ -483,7 +494,7 @@ const LocationCharList: React.FC = () => {
               defaultValue={selectedLocation.id}
               onChange={handleLocationChange}
             >
-              <option value="">Seleciona uma Localização:</option>
+              <option value="">Selecione uma Localização:</option>
               {locationList.map(location => (
                 <option key={location.id} value={location.id}>
                   {location.name}
@@ -497,12 +508,12 @@ const LocationCharList: React.FC = () => {
           </strong>
         )}
       </TitleBox>
-      <Content>
+      <Content isMobile={isMobileVersion}>
         {isBusy ? (
           <Loading />
         ) : (
           <>
-            <LocationCardContainer>
+            <LocationCardContainer isMobile={isMobileVersion}>
               <LocationCard
                 locationId={selectedLocation.id ? selectedLocation.id : ''}
                 name={selectedLocation.name}
@@ -530,14 +541,19 @@ const LocationCharList: React.FC = () => {
                 locked={selectedLocation.id === undefined}
               />
             </LocationCardContainer>
-            <LocationCharsContainer>
+            <LocationCharsContainer isMobile={isMobileVersion}>
               <div>
                 <h1>Personagens que sabem desta Localização:</h1>
               </div>
 
               {selectedLocation.responsible_char && (
                 <div>
-                  <strong>Proprietário / Responsável:</strong>
+                  {isMobileVersion ? (
+                    <strong>Responsável:</strong>
+                  ) : (
+                    <strong>Proprietário / Responsável:</strong>
+                  )}
+
                   <span>
                     {selectedLocation.responsible_char
                       ? selectedLocation.responsible_char.name
@@ -555,14 +571,23 @@ const LocationCharList: React.FC = () => {
 
               {selectedLocation.sect && (
                 <div>
-                  <strong>Todos os membros:</strong>
+                  {isMobileVersion ? (
+                    <strong>Secto:</strong>
+                  ) : (
+                    <strong>Todos os membros:</strong>
+                  )}
+
                   <span>{selectedLocation.sect}</span>
                 </div>
               )}
 
               {selectedLocation.clan && (
                 <div>
-                  <strong>Todos os membros do Clã:</strong>
+                  {isMobileVersion ? (
+                    <strong>Todos do Clã:</strong>
+                  ) : (
+                    <strong>Todos os membros do Clã:</strong>
+                  )}
                   <span>{selectedLocation.clan}</span>
                 </div>
               )}
@@ -582,13 +607,14 @@ const LocationCharList: React.FC = () => {
                 <>
                   {selectedLocation.id && (
                     <>
-                      <SelectContainer>
+                      <SelectContainer isMobile={isMobileVersion}>
                         <strong>Adicionar Personagem:</strong>
                         <Select
                           name="responsible"
                           id="responsible"
                           value={selectedChar ? selectedChar.id : ''}
                           onChange={handleSelectedCharCharge}
+                          isMobile={isMobileVersion}
                         >
                           <option value="">Personagem:</option>
                           {charList.map(char => (
@@ -614,7 +640,7 @@ const LocationCharList: React.FC = () => {
                             <thead>
                               <tr>
                                 <th>Personagem</th>
-                                <th>Clã</th>
+                                {!isMobileVersion && <th>Clã</th>}
                                 <th>Remover?</th>
                               </tr>
                             </thead>
@@ -629,46 +655,49 @@ const LocationCharList: React.FC = () => {
                                       {locChar.characterId.name}
                                     </TableCell>
                                   </td>
-                                  <td
-                                    id={locChar.character_id}
-                                    onClick={handleCharacterDetails}
-                                  >
-                                    <TableCell>
-                                      {locChar.characterId.creature_type !==
-                                        'Vampire' &&
-                                      locChar.characterId.creature_type !==
-                                        'Mortal' ? (
-                                        // eslint-disable-next-line react/jsx-indent
-                                        <>
-                                          {locChar.characterId.clan ? (
-                                            <>
-                                              {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
-                                            </>
-                                          ) : (
-                                            <>
-                                              {
-                                                locChar.characterId
-                                                  .creature_type
-                                              }
-                                            </>
-                                          )}
-                                        </>
-                                      ) : (
-                                        <>
-                                          {locChar.characterId.clan.indexOf(
-                                            ' (',
-                                          ) > 0
-                                            ? locChar.characterId.clan.substring(
-                                                0,
-                                                locChar.characterId.clan.indexOf(
-                                                  ' (',
-                                                ),
-                                              )
-                                            : locChar.characterId.clan}
-                                        </>
-                                      )}
-                                    </TableCell>
-                                  </td>
+                                  {!isMobileVersion && (
+                                    <td
+                                      id={locChar.character_id}
+                                      onClick={handleCharacterDetails}
+                                    >
+                                      <TableCell>
+                                        {locChar.characterId.creature_type !==
+                                          'Vampire' &&
+                                        locChar.characterId.creature_type !==
+                                          'Mortal' ? (
+                                          // eslint-disable-next-line react/jsx-indent
+                                          <>
+                                            {locChar.characterId.clan ? (
+                                              <>
+                                                {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
+                                              </>
+                                            ) : (
+                                              <>
+                                                {
+                                                  locChar.characterId
+                                                    .creature_type
+                                                }
+                                              </>
+                                            )}
+                                          </>
+                                        ) : (
+                                          <>
+                                            {locChar.characterId.clan.indexOf(
+                                              ' (',
+                                            ) > 0
+                                              ? locChar.characterId.clan.substring(
+                                                  0,
+                                                  locChar.characterId.clan.indexOf(
+                                                    ' (',
+                                                  ),
+                                                )
+                                              : locChar.characterId.clan}
+                                          </>
+                                        )}
+                                      </TableCell>
+                                    </td>
+                                  )}
+
                                   <td>
                                     <RemoveButton
                                       id={locChar.character_id}

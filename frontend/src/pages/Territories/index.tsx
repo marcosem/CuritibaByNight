@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { FiEdit, FiSave, FiX, FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
 import Header from '../../components/Header';
+import HeaderMobile from '../../components/HeaderMobile';
 import api from '../../services/api';
 
 import {
@@ -27,6 +28,7 @@ import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useModalBox } from '../../hooks/modalBox';
 import { useSocket } from '../../hooks/socket';
+import { useMobile } from '../../hooks/mobile';
 import Loading from '../../components/Loading';
 
 interface ITerritory {
@@ -51,6 +53,7 @@ const Influences: React.FC = () => {
   const { addToast } = useToast();
   const { showModal } = useModalBox();
   const { notifyMasquerade } = useSocket();
+  const { isMobileVersion } = useMobile();
   const terrRowRef = useRef<HTMLTableRowElement>(null);
   const terrBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -593,7 +596,11 @@ const Influences: React.FC = () => {
 
   return (
     <Container>
-      <Header page="territories" />
+      {isMobileVersion ? (
+        <HeaderMobile page="territories" />
+      ) : (
+        <Header page="territories" />
+      )}
 
       <TitleBox>
         <strong>
@@ -602,7 +609,12 @@ const Influences: React.FC = () => {
           }`}
         </strong>
         <DomainMasqueradeBox>
-          <strong>Quebra de Máscara Atual</strong>
+          {isMobileVersion ? (
+            <strong>Máscara Atual</strong>
+          ) : (
+            <strong>Quebra de Máscara Atual</strong>
+          )}
+
           <ActionButton
             id="addNew"
             type="button"
@@ -629,9 +641,9 @@ const Influences: React.FC = () => {
       {isBusy ? (
         <Loading />
       ) : (
-        <TablesContainer>
-          <TableWrapper>
-            <Table isScrollOn={isScrollOn}>
+        <TablesContainer isMobile={isMobileVersion}>
+          <TableWrapper isMobile={isMobileVersion}>
+            <Table isScrollOn={isScrollOn} isMobile={isMobileVersion}>
               <thead>
                 <tr>
                   <th>
@@ -648,7 +660,7 @@ const Influences: React.FC = () => {
                       <span>Município</span>
                     </TableHeaderCell>
                   </th>
-                  <th>População</th>
+                  {!isMobileVersion && <th>População</th>}
                   <th>Secto</th>
                   <th>Ações</th>
                 </tr>
@@ -671,24 +683,29 @@ const Influences: React.FC = () => {
                         </TableCell>
                       )}
                     </td>
+                    {!isMobileVersion && (
+                      <td>
+                        {terr.editMode ? (
+                          <TableEditCell alignment="right">
+                            <input
+                              name={`pop:${terr.name}`}
+                              id={`pop:${terr.id}`}
+                              placeholder={terr.formattedPopulation}
+                            />
+                          </TableEditCell>
+                        ) : (
+                          <TableCell alignment="right">
+                            {terr.formattedPopulation}
+                          </TableCell>
+                        )}
+                      </td>
+                    )}
+
                     <td>
                       {terr.editMode ? (
-                        <TableEditCell alignment="right">
-                          <input
-                            name={`pop:${terr.name}`}
-                            id={`pop:${terr.id}`}
-                            placeholder={terr.formattedPopulation}
-                          />
-                        </TableEditCell>
-                      ) : (
-                        <TableCell alignment="right">
-                          {terr.formattedPopulation}
-                        </TableCell>
-                      )}
-                    </td>
-                    <td>
-                      {terr.editMode ? (
-                        <TableEditCell alignment="center">
+                        <TableEditCell
+                          alignment={isMobileVersion ? 'left' : 'center'}
+                        >
                           <input
                             name={`sect:${terr.name}`}
                             id={`sect:${terr.id}`}
@@ -696,7 +713,11 @@ const Influences: React.FC = () => {
                           />
                         </TableEditCell>
                       ) : (
-                        <TableCell alignment="center">{terr.sect}</TableCell>
+                        <TableCell
+                          alignment={isMobileVersion ? 'left' : 'center'}
+                        >
+                          {terr.sect}
+                        </TableCell>
                       )}
                     </td>
                     <td>

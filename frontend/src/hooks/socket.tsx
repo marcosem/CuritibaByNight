@@ -207,7 +207,7 @@ const SocketProvider: React.FC = ({ children }) => {
         type: 'success',
         title: 'Jogador Conectado',
         description: `${userName}${
-          charName !== '' ? `- ${charName},` : ''
+          charName !== '' ? ` - ${charName},` : ''
         } está Online!`,
       });
     },

@@ -20,7 +20,6 @@ const Dashboard: React.FC = () => {
   const { user, signOut, setChar } = useAuth();
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
-  // const isMobileVersion = true;
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);

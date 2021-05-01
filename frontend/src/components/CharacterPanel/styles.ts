@@ -14,6 +14,7 @@ interface ITableCellProps {
 
 interface IFunctionButtonProps {
   isGreen?: boolean;
+  middle?: boolean;
 }
 
 const divFadeIn = keyframes`
@@ -550,7 +551,7 @@ export const FunctionButton = styled.button<IFunctionButtonProps>`
 
   &:first-child {
     margin-top: auto;
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
   }
 
   &:not(:first-child) {
@@ -599,7 +600,15 @@ export const FunctionLink = styled.div<IFunctionButtonProps>`
   height: 64px;
   border: 0;
 
-  margin-top: auto;
+  ${props =>
+    props.middle
+      ? css`
+          margin-top: 16px;
+        `
+      : css`
+          margin-top: auto;
+        `}
+
   margin-bottom: 16px;
   border-radius: 20px;
 
@@ -653,6 +662,7 @@ export const FunctionsContainer = styled.div`
 
   display: flex;
   flex-direction: column;
+  align-content: flex-end;
 
   z-index: 10;
 `;

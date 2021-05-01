@@ -533,20 +533,24 @@ const Locals: React.FC = () => {
           </CheckboxContainer>
         )}
 
-        {user.storyteller && !isMobileVersion && (
-          <FunctionsContainer>
+        {user.storyteller && (
+          <FunctionsContainer isMobile={isMobileVersion}>
             <Link to="/territories" title="Lista de Territórios">
               <FiFlag />
             </Link>
-            <Link to="/updatelocal" title="Editar Localização">
-              <FiEdit />
-            </Link>
+            {!isMobileVersion && (
+              <Link to="/updatelocal" title="Editar Localização">
+                <FiEdit />
+              </Link>
+            )}
             <Link to="/localchars" title="Definir quem conhece a Localização">
               <FiUserPlus />
             </Link>
-            <Link to="/addlocal" title="Adicionar Localização">
-              <FiPlus />
-            </Link>
+            {!isMobileVersion && (
+              <Link to="/addlocal" title="Adicionar Localização">
+                <FiPlus />
+              </Link>
+            )}
           </FunctionsContainer>
         )}
       </Content>

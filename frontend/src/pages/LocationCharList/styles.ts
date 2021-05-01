@@ -11,11 +11,15 @@ const rotate = keyframes`
   }
 `;
 
+interface ILocationPanelProps {
+  isMobile: boolean;
+}
+
 export const Container = styled.div`
   height: 100vh;
 `;
 
-export const Content = styled.main`
+export const Content = styled.main<ILocationPanelProps>`
   min-width: 340px;
   max-width: 1012px;
   margin: 0 auto;
@@ -24,6 +28,19 @@ export const Content = styled.main`
   flex-direction: row;
   border-radius: 4px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 340px;
+          flex-direction: column;
+        `
+      : css`
+          min-width: 340px;
+          max-width: 1012px;
+
+          flex-direction: row;
+        `}
 `;
 
 export const TitleBox = styled.div`
@@ -51,16 +68,31 @@ export const TitleBox = styled.div`
   }
 `;
 
-export const LocationCardContainer = styled.div`
+export const LocationCardContainer = styled.div<ILocationPanelProps>`
   padding: 16px;
+  display: flex;
+
+  ${props =>
+    props.isMobile &&
+    css`
+      justify-content: center;
+    `}
 `;
 
-export const LocationCharsContainer = styled.div`
-  width: 100%;
-  margin: 20px;
-
+export const LocationCharsContainer = styled.div<ILocationPanelProps>`
   display: flex;
   flex-direction: column;
+  width: 100%;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          margin: 10px;
+          max-width: 320px;
+        `
+      : css`
+          margin: 20px;
+        `}
 
   div {
     display: flex;
@@ -71,56 +103,110 @@ export const LocationCharsContainer = styled.div`
       font-size: 24px;
       font-weight: 500;
       color: #333;
-      margin-bottom: 16px;
     }
 
     strong {
-      font-size: 18px;
       font-weight: 500;
       color: #333;
     }
 
     span {
-      font-size: 18px;
       font-weight: 400;
       color: #333;
-      margin-left: 10px;
     }
+
+    ${props =>
+      props.isMobile
+        ? css`
+            h1 {
+              font-size: 16px;
+              font-weight: 550;
+              margin: 0 auto;
+            }
+
+            strong {
+              font-size: 12px;
+            }
+
+            span {
+              font-size: 12px;
+              margin-left: 5px;
+            }
+          `
+        : css`
+            h1 {
+              font-size: 24px;
+              font-weight: 500;
+              margin-bottom: 16px;
+            }
+
+            strong {
+              font-size: 18px;
+            }
+
+            span {
+              font-size: 18px;
+              margin-left: 10px;
+            }
+          `}
   }
 `;
 
-export const SelectContainer = styled.div`
+export const SelectContainer = styled.div<ILocationPanelProps>`
   display: flex;
-  flex-direction: row;
-  padding: 16px 0;
   align-items: center;
 
-  height: 24px;
+  // height: 24px;
   width: 100%;
 
   strong {
-    font-size: 18px;
     font-weight: 500;
     color: #333;
-    margin-right: 10px;
   }
+
+  ${props =>
+    props.isMobile
+      ? css`
+          margin-top: 8px;
+          flex-direction: column;
+          strong {
+            font-size: 12px;
+            margin-bottom: 3px;
+          }
+        `
+      : css`
+          padding: 16px 0;
+          flex-direction: row;
+          strong {
+            font-size: 18px;
+            margin-right: 10px;
+          }
+        `}
 `;
 
-export const Select = styled.select`
+export const Select = styled.select<ILocationPanelProps>`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   outline: none;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-
-  height: 22px;
   width: 250px;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          height: 17px;
+          font-size: 13px;
+        `
+      : css`
+          height: 22px;
+          font-size: 14px;
+        `}
 
   background: #222;
   border-radius: 4px;
   border: 0;
   padding: 0 8px;
-  font-size: 14px;
   font-weight: 500;
   color: #ccc;
   text-align: center;
@@ -223,7 +309,7 @@ export const SelectLocation = styled.select`
 export const TableWrapper = styled.div`
   margin: 10px auto;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-  min-width: 340px;
+  min-width: 320px;
   max-width: 1012px;
   border-radius: 11px;
 
@@ -240,7 +326,7 @@ export const Table = styled.table`
   border: none;
   border-collapse: collapse;
   width: 100%;
-  min-width: 340px;
+  min-width: 320px;
   max-width: 1012px;
   white-space: nowrap;
   background-color: transparent;
