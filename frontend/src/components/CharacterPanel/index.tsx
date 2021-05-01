@@ -689,16 +689,18 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
                     {user.storyteller && !dashboard && (
                       <>
-                        <FunctionLink>
-                          <Link
-                            to={`/updatechar/${myChar.npc ? 'npc' : 'pc'}/${
-                              myChar.id
-                            }`}
-                            title="Atualizar Personagem"
-                          >
-                            <FiUpload />
-                          </Link>
-                        </FunctionLink>
+                        {!isMobileVersion && (
+                          <FunctionLink>
+                            <Link
+                              to={`/updatechar/${myChar.npc ? 'npc' : 'pc'}/${
+                                myChar.id
+                              }`}
+                              title="Atualizar Personagem"
+                            >
+                              <FiUpload />
+                            </Link>
+                          </FunctionLink>
+                        )}
                         <FunctionButton
                           type="button"
                           onClick={handleConfirmRemove}
