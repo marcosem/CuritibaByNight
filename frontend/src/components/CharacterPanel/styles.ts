@@ -551,7 +551,7 @@ export const FunctionButton = styled.button<IFunctionButtonProps>`
 
   &:first-child {
     margin-top: auto;
-    margin-bottom: 0 !important;
+    margin-bottom: 0;
   }
 
   &:not(:first-child) {
@@ -601,13 +601,10 @@ export const FunctionLink = styled.div<IFunctionButtonProps>`
   border: 0;
 
   ${props =>
-    props.middle
-      ? css`
-          margin-top: 16px;
-        `
-      : css`
-          margin-top: auto;
-        `}
+    !props.middle &&
+    css`
+      margin-top: auto;
+    `}
 
   margin-bottom: 16px;
   border-radius: 20px;

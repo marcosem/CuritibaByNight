@@ -664,8 +664,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                   )}
 
                   <FunctionsContainer>
-                    {/*
-                    dashboard && (
+                    {dashboard && (
                       <FunctionButton
                         type="button"
                         onClick={handleChallenges}
@@ -674,8 +673,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       >
                         <GiRollingDices />
                       </FunctionButton>
-                    )
-                    */}
+                    )}
 
                     {user.storyteller && showTraits && (
                       <FunctionButton
