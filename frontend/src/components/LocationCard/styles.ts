@@ -214,8 +214,7 @@ export const LocationInfo = styled.div`
   span {
     font-size: 13px;
     font-style: normal;
-    font-weight: 500;
-    text-decoration: none;
+    font-weight: 400;
     padding: 0 5px 0 5px;
 
     overflow: hidden;
