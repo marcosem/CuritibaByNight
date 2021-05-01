@@ -6,12 +6,13 @@ import React, {
   MouseEvent,
   HTMLAttributes,
 } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import {
   FiTrash2,
   FiChevronRight,
   FiChevronDown,
   FiRotateCcw,
+  FiUpload,
 } from 'react-icons/fi';
 import { GiLoad, GiRollingDices } from 'react-icons/gi';
 import api from '../../services/api';
@@ -28,9 +29,12 @@ import {
   Table,
   TableCell,
   ButtonBox,
-  PlayButton,
-  ResetButton,
-  RemoveButton,
+  FunctionsContainer,
+  FunctionLink,
+  // PlayButton,
+  FunctionButton,
+  // ResetButton,
+  // RemoveButton,
 } from './styles';
 
 import Loading from '../Loading';
@@ -659,35 +663,50 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     </ButtonBox>
                   )}
 
-                  {/* dashboard && (
-                    <PlayButton
-                      type="button"
-                      onClick={handleChallenges}
-                      title="Rolar Jan-Ken-Po"
-                    >
-                      <GiRollingDices />
-                    </PlayButton>
-                  ) */}
+                  <FunctionsContainer>
+                    {dashboard && (
+                      <FunctionButton
+                        type="button"
+                        onClick={handleChallenges}
+                        title="Rolar Jan-Ken-Po"
+                        isGreen
+                      >
+                        <GiRollingDices />
+                      </FunctionButton>
+                    )}
 
-                  {user.storyteller && showTraits && (
-                    <ResetButton
-                      type="button"
-                      onClick={handleConfirmResetTraits}
-                      title="Resetar Traits"
-                    >
-                      <FiRotateCcw />
-                    </ResetButton>
-                  )}
+                    {user.storyteller && showTraits && (
+                      <FunctionButton
+                        type="button"
+                        onClick={handleConfirmResetTraits}
+                        title="Resetar Traits"
+                      >
+                        <FiRotateCcw />
+                      </FunctionButton>
+                    )}
 
-                  {user.storyteller && !dashboard && (
-                    <RemoveButton
-                      type="button"
-                      onClick={handleConfirmRemove}
-                      title="Excluir Personagem"
-                    >
-                      <FiTrash2 />
-                    </RemoveButton>
-                  )}
+                    {user.storyteller && !dashboard && (
+                      <>
+                        <FunctionLink>
+                          <Link
+                            to={`/updatechar/${myChar.npc ? 'npc' : 'pc'}/${
+                              myChar.id
+                            }`}
+                            title="Atualizar Personagem"
+                          >
+                            <FiUpload />
+                          </Link>
+                        </FunctionLink>
+                        <FunctionButton
+                          type="button"
+                          onClick={handleConfirmRemove}
+                          title="Excluir Personagem"
+                        >
+                          <FiTrash2 />
+                        </FunctionButton>
+                      </>
+                    )}
+                  </FunctionsContainer>
                 </CharacterContainer>
               </>
             )}

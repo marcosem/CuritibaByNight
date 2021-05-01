@@ -73,10 +73,11 @@ const situationList: ISituation[] = [
 
 interface IRouteParams {
   filter: string;
+  charId: string;
 }
 
 const CharacterUpdate: React.FC = () => {
-  const { filter } = useParams<IRouteParams>();
+  const { filter, charId } = useParams<IRouteParams>();
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [regnantList, setRegnatList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
@@ -108,6 +109,12 @@ const CharacterUpdate: React.FC = () => {
 
         setCharList(filteredList);
         setRegnatList(regList);
+        if (charId) {
+          const selChar = filteredList.find(myChar => myChar.id === charId);
+          if (selChar) {
+            setSelectedChar(selChar);
+          }
+        }
       });
     } catch (error) {
       if (error.response) {
@@ -131,7 +138,7 @@ const CharacterUpdate: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, filter, signOut, uploading]);
+  }, [addToast, charId, filter, signOut, uploading]);
 
   const handleSubmit = useCallback(
     async ({ comments }) => {

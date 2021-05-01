@@ -12,6 +12,10 @@ interface ITableCellProps {
   isMobile?: boolean;
 }
 
+interface IFunctionButtonProps {
+  isGreen?: boolean;
+}
+
 const divFadeIn = keyframes`
   from {
     opacity: 0;
@@ -539,16 +543,24 @@ export const PlayButton = styled.button`
   }
 `;
 
-export const ResetButton = styled.button`
-  position: fixed;
-  bottom: 114px;
-  right: 40px;
-
+export const FunctionButton = styled.button<IFunctionButtonProps>`
   width: 64px;
   height: 64px;
   border: 0;
 
-  background: #860209;
+  &:first-child {
+    margin-top: auto;
+    margin-bottom: 0;
+  }
+
+  &:not(:first-child) {
+    margin-top: 0;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+
   border-radius: 20px;
 
   display: flex;
@@ -557,9 +569,23 @@ export const ResetButton = styled.button`
 
   transition: background-color 0.2s;
 
-  &:hover {
-    background: ${shade(0.2, '#860209')};
-  }
+  ${props =>
+    props.isGreen
+      ? css`
+          background: #025609;
+          &:hover {
+            background: ${lighten(0.2, '#025609')};
+            svg {
+              color: ${lighten(0.2, '#ccc')};
+            }
+          }
+        `
+      : css`
+          background: #860209;
+          &:hover {
+            background: ${shade(0.2, '#860209')};
+          }
+        `}
 
   svg {
     width: 32px;
@@ -568,33 +594,67 @@ export const ResetButton = styled.button`
   }
 `;
 
-export const RemoveButton = styled.button`
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-
+export const FunctionLink = styled.div<IFunctionButtonProps>`
   width: 64px;
   height: 64px;
   border: 0;
 
-  background: #860209;
+  margin-top: auto;
+  margin-bottom: 16px;
   border-radius: 20px;
 
   display: flex;
-  justify-content: center;
-  align-items: center;
 
-  transition: background-color 0.2s;
+  a {
+    width: 64px;
+    height: 64px;
+    border: 0;
+    border-radius: 20px;
 
-  &:hover {
-    background: ${shade(0.2, '#860209')};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: background-color 0.2s;
+
+    ${props =>
+      props.isGreen
+        ? css`
+            background: #025609;
+            &:hover {
+              background: ${lighten(0.2, '#025609')};
+              svg {
+                color: ${lighten(0.2, '#ccc')};
+              }
+            }
+          `
+        : css`
+            background: #860209;
+            &:hover {
+              background: ${shade(0.2, '#860209')};
+            }
+          `}
+
+    svg {
+      width: 32px;
+      height: 32px;
+      color: #ccc;
+    }
   }
+`;
 
-  svg {
-    width: 32px;
-    height: 32px;
-    color: #ccc;
-  }
+export const FunctionsContainer = styled.div`
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+
+  width: 64px;
+  height: 304px;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 10;
 `;
 
 export const CharacterSheet = styled.div`

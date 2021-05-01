@@ -53,6 +53,12 @@ const Routes: React.FC = () => (
       isStoryteller
     />
     <Route
+      path="/updatechar/:filter/:charId"
+      component={CharacterUpdate}
+      isPrivate
+      isStoryteller
+    />
+    <Route
       path="/updatechar/:filter"
       component={CharacterUpdate}
       isPrivate
@@ -71,7 +77,12 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
-    <Route path="/territories" component={Territories} isPrivate isStoryteller />
+    <Route
+      path="/territories"
+      component={Territories}
+      isPrivate
+      isStoryteller
+    />
     <Route
       path="/localchars"
       component={LocationCharList}
