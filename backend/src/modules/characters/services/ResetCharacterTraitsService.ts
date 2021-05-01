@@ -24,7 +24,7 @@ class ResetCharacterTraitsService {
   public async execute({
     user_id,
     char_id,
-    keep_masquerade = false,
+    keep_masquerade,
   }: IRequestDTO): Promise<void> {
     const user = await this.usersRepository.findById(user_id);
 

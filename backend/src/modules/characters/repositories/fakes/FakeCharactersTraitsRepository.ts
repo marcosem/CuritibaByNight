@@ -80,15 +80,18 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
     char_id: string,
     keepMasquerade: boolean,
   ): Promise<void> {
-    const newCharsTraits = this.charsTraits.map(trait => {
+    const newCharsTraits = this.charsTraits.map((trait: CharacterTrait) => {
       const newTrait = trait;
 
       if (
         newTrait.character_id === char_id &&
-        (newTrait.trait !== 'Personal Masquerade' ||
-          (newTrait.trait === 'Personal Masquerade' && !keepMasquerade))
+        newTrait.trait !== 'Personal Masquerade'
       ) {
         newTrait.level_temp = undefined;
+      } else if (newTrait.trait === 'Personal Masquerade' && !keepMasquerade) {
+        newTrait.level = 10;
+        newTrait.level_temp =
+          'empty|empty|empty|empty|empty|empty|empty|empty|empty|empty';
       }
 
       return newTrait;

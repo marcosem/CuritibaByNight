@@ -10,7 +10,7 @@ let fakeCharactersRepository: FakeCharactersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
 let getCharacterTraits: GetCharacterTraitsService;
 
-describe('GetCharactersList', () => {
+describe('GetCharacterTraits', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
