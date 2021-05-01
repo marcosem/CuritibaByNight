@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ChangeEvent,
 } from 'react';
-import { FiHome, FiFileText, FiMap, FiMapPin } from 'react-icons/fi';
+import { FiHome, FiFileText, FiMap, FiMapPin, FiTrash2 } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -25,6 +25,7 @@ import {
   SelectContainer,
   Select,
   ButtonBox,
+  RemoveButton,
 } from './styles';
 import Header from '../../components/Header';
 import Input from '../../components/Input';
@@ -33,6 +34,7 @@ import Checkbox from '../../components/Checkbox';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useModalBox } from '../../hooks/modalBox';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import LocationCard from '../../components/LocationCard';
 
@@ -176,8 +178,6 @@ const LocationUpdate: React.FC = () => {
     myIndex: -1,
   });
 
-  const { addToast } = useToast();
-  const { signOut } = useAuth();
   const [isBusy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [charList, setCharList] = useState<ICharacter[]>([]);
@@ -194,6 +194,9 @@ const LocationUpdate: React.FC = () => {
   );
   const [locLevel, setLocLevel] = useState<number>(1);
   const [locMysticalLevel, setLocMysticalLevel] = useState<number>(0);
+  const { addToast } = useToast();
+  const { signOut } = useAuth();
+  const { showModal } = useModalBox();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -726,6 +729,63 @@ const LocationUpdate: React.FC = () => {
     [locationList],
   );
 
+  const handleRemove = useCallback(async () => {
+    try {
+      const requestData = {
+        location_id: selectedLocation.id,
+      };
+
+      const reqData = { data: requestData };
+
+      await api.delete('/locations/remove', reqData);
+
+      addToast({
+        type: 'success',
+        title: 'Localização excluída',
+        description: 'Localização excluída com sucesso!',
+      });
+
+      loadLocations();
+    } catch (error) {
+      if (error.response) {
+        const { message } = error.response.data;
+
+        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+          addToast({
+            type: 'error',
+            title: 'Sessão Expirada',
+            description: 'Sessão de usuário expirada, faça o login novamente!',
+          });
+
+          signOut();
+        } else {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar exluir a localização',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+  }, [addToast, loadLocations, selectedLocation.id, signOut]);
+
+  const handleConfirmRemove = useCallback(() => {
+    if (!selectedLocation.id) {
+      return;
+    }
+
+    showModal({
+      type: 'warning',
+      title: 'Confirmar exclusão',
+      description: `Você está prestes a localização [${selectedLocation.name}], você confirma?`,
+      btn1Title: 'Sim',
+      btn1Function: () => handleRemove(),
+      btn2Title: 'Não',
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      btn2Function: () => {},
+    });
+  }, [handleRemove, selectedLocation, showModal]);
+
   useEffect(() => {
     loadCharacters();
     loadLocations();
@@ -1016,6 +1076,15 @@ const LocationUpdate: React.FC = () => {
                   </Button>
                 </ButtonBox>
               </Form>
+              {selectedLocation.id && (
+                <RemoveButton
+                  type="button"
+                  onClick={handleConfirmRemove}
+                  title="Excluir Localização"
+                >
+                  <FiTrash2 />
+                </RemoveButton>
+              )}
             </LocationFormContainer>
           </>
         )}

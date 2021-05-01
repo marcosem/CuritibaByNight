@@ -55,14 +55,6 @@ interface ILocation {
   responsible: string;
 }
 
-interface ITraits {
-  id: string;
-  trait: string;
-  level: number;
-  type: string;
-  character_id: string;
-}
-
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
   myChar: ICharacter;
   dashboard?: boolean;
@@ -74,19 +66,18 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 }) => {
   const [locationsList, setLocationsList] = useState<ILocation[]>([]);
   const [retainerList, setRetainerList] = useState<ICharacter[]>([]);
-  // const [traitsList, setTraitsList] = useState<ITraits[]>([]);
-  const { addToast } = useToast();
-  const history = useHistory();
-  const { user, char, signOut } = useAuth();
-  const { setChar } = useSelection();
   const [isBusy, setBusy] = useState(true);
-  const { isMobileVersion } = useMobile();
-  const { resetTraits } = useSocket();
   const [lastChar, setLastChar] = useState<ICharacter>();
-  const { showModal } = useModalBox();
   const [showTraits, setShowTraits] = useState<boolean>(false);
   const [showRetainers, setShowRetainers] = useState<boolean>(true);
   const [showLocals, setShowLocals] = useState<boolean>(true);
+  const { addToast } = useToast();
+  const { showModal } = useModalBox();
+  const { setChar } = useSelection();
+  const { resetTraits } = useSocket();
+  const { user, char, signOut } = useAuth();
+  const { isMobileVersion } = useMobile();
+  const history = useHistory();
 
   const loadRetainers = useCallback(async () => {
     if (myChar === undefined) {
@@ -286,16 +277,12 @@ const CharacterPanel: React.FC<IPanelProps> = ({
         }
       }
     }
-
-    // setShowTraits(true);
   }, [addToast, myChar.id, resetTraits, signOut]);
 
   const handleConfirmResetTraits = useCallback(() => {
     if (myChar === undefined) {
       return;
     }
-    // setShowTraits(false);
-
     showModal({
       type: 'warning',
       title: 'Confirmar reset dos traits',
