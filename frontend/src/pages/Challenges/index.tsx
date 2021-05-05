@@ -13,8 +13,6 @@ import {
   FaHandScissors,
   FaBomb,
   FaTimes,
-  FaHandshake,
-  FaUnlink,
   FaSmile,
   FaDizzy,
 } from 'react-icons/fa';
@@ -24,6 +22,7 @@ import {
   Container,
   TitleBox,
   SelectCharacter,
+  SelectOption,
   Content,
   CardsContent,
   CharCardContainer,
@@ -33,7 +32,6 @@ import {
   JanKenPoContainer,
   JanKenPoButton,
   ButtonBox,
-  ConnectionButton,
   TitleContainerMobile,
   SelectorContainerMobile,
   CardContainerMobile,
@@ -46,12 +44,14 @@ import HeaderMobile from '../../components/HeaderMobile';
 import CharacterCard from '../../components/CharacterCard';
 import Button from '../../components/Button';
 import ICharacter from '../../components/CharacterList/ICharacter';
-import getSocket from '../../utils/getSocket';
+// import getSocket from '../../utils/getSocket';
 
 import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
+import { useSocket } from '../../hooks/socket';
 
+/*
 interface ISocketMessage {
   type: string;
   user_id?: string;
@@ -61,6 +61,12 @@ interface ISocketMessage {
   play?: string;
   char1_id?: string;
   char2_id?: string;
+}
+*/
+
+interface IOnLineUser {
+  user_id: string;
+  char_id: string;
 }
 
 const Challenges: React.FC = () => {
@@ -75,80 +81,23 @@ const Challenges: React.FC = () => {
   const [selOpponentPo, setSelOpponentPo] = useState<string>('');
   const [char1Result, setChar1Result] = useState<number>(-2);
   const [char2Result, setChar2Result] = useState<number>(-2);
-  const connList = useRef<string[]>([]);
-  const [socket, setSocket] = useState<WebSocket>(getSocket());
   const [mode, setMode] = useState<string>('initial');
   const [title, setTitle] = useState<string>('');
-  const [connected, setConnected] = useState<boolean>(false);
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
   const [play, setPlay] = useState<boolean>(false);
-  const [changingConState, setChanConState] = useState<boolean>(true);
-  const [connStatus1, setConnStatus1] = useState<boolean>(false);
-  const [connStatus2, setConnStatus2] = useState<boolean>(false);
   const char1Id = useRef<string>('');
   const char2Id = useRef<string>('');
   const [retestMode, setRetestMode] = useState<boolean>(false);
+  const {
+    onLineUsers,
+    challangeOpponent,
+    challengeSelect,
+    challengeCancel,
+    clearChallengeOpponent,
+  } = useSocket();
 
-  const token = useRef<string>(
-    api.defaults.headers.Authorization.replace('Bearer ', ''),
-  );
-  const serverPing = useRef<number>(0);
-
-  const sendSocketMessage = useCallback(
-    (msg: ISocketMessage) => {
-      if (socket.readyState === socket.OPEN) {
-        socket.send(JSON.stringify(msg));
-      }
-    },
-    [socket],
-  );
-
-  const startPing = useCallback(() => {
-    if (serverPing.current !== 0) return;
-
-    serverPing.current = setTimeout(() => {
-      sendSocketMessage({ type: 'ping' });
-      serverPing.current = 0;
-      startPing();
-    }, 20000);
-  }, [sendSocketMessage]);
-
-  useEffect(() => {
-    if (myChar?.npc || myChar?.id === char.id) {
-      setConnStatus1(connected);
-    } else {
-      setConnStatus1(connList.current.findIndex(ch => ch === myChar?.id) >= 0);
-    }
-
-    setConnStatus2(
-      connList.current.findIndex(ch => ch === opponentChar?.id) >= 0,
-    );
-  }, [char.id, connected, myChar, opponentChar]);
-
-  const popupCharacterConnectionStatus = useCallback(
-    (charId: string, isConnected: boolean) => {
-      const charStatus = charListRef.current.find(ch => ch.id === charId);
-
-      if (charStatus) {
-        addToast({
-          type: isConnected ? 'success' : 'error',
-          title: `Personagem ${isConnected ? 'Conectado' : 'Desconectado'}`,
-          description: `[${charStatus.name}] está ${
-            isConnected ? 'Online' : 'Offline'
-          }`,
-        });
-
-        if (charStatus.id === char1Id.current) {
-          setConnStatus1(isConnected);
-        } else if (charStatus.id === char2Id.current) {
-          setConnStatus2(isConnected);
-        }
-      }
-    },
-    [addToast],
-  );
-
+  /*
   const initializeSocket = useCallback(() => {
     // const token = api.defaults.headers.Authorization.replace('Bearer ', '');
     if (socket.readyState === socket.OPEN) {
@@ -412,10 +361,25 @@ const Challenges: React.FC = () => {
     user.id,
     user.storyteller,
   ]);
+  */
 
-  useEffect(() => {
-    setChanConState(false);
-  }, [connected]);
+  const isCharOnline = useCallback(
+    (char_id: string, isNPC = false) => {
+      if (isNPC) return true;
+
+      if (char_id.indexOf('Storyteller') >= 0) return true;
+
+      if (
+        onLineUsers
+          .map((connUser: IOnLineUser) => connUser.char_id)
+          .indexOf(char_id) >= 0
+      )
+        return true;
+
+      return false;
+    },
+    [onLineUsers],
+  );
 
   const loadCharacters = useCallback(async () => {
     try {
@@ -514,11 +478,14 @@ const Challenges: React.FC = () => {
         setMyChar(loadedChar);
         char1Id.current = loadedChar.id;
 
+        // TODO
+        /*
         sendSocketMessage({
           type: 'char',
           char_id: loadedChar.id,
           char: loadedChar,
         });
+        */
       });
     } catch (error) {
       if (error.response) {
@@ -535,7 +502,7 @@ const Challenges: React.FC = () => {
         }
       }
     }
-  }, [addToast, char, sendSocketMessage, signOut]);
+  }, [addToast, char, signOut]);
 
   const HandleSelectPo = useCallback(
     po => {
@@ -554,11 +521,12 @@ const Challenges: React.FC = () => {
     setChar1Result(0);
 
     if (selectedPo !== undefined) {
-      sendSocketMessage({ type: 'play', play: selectedPo });
+      // TODO
+      // sendSocketMessage({ type: 'play', play: selectedPo });
     }
 
     setMode('ready');
-  }, [selectedPo, sendSocketMessage]);
+  }, [selectedPo]);
 
   const SwitchJanKenPo = useCallback(po => {
     switch (po) {
@@ -575,6 +543,7 @@ const Challenges: React.FC = () => {
     return <></>;
   }, []);
 
+  /*
   const SelectCharByIndex = useCallback((index, myList) => {
     let selectedCharacter: ICharacter | undefined;
     if (index > 0) {
@@ -599,29 +568,71 @@ const Challenges: React.FC = () => {
 
     return selectedCharacter;
   }, []);
+  */
+
+  const SelectCharById = useCallback((id, myList) => {
+    let selectedCharacter: ICharacter | undefined;
+
+    // selectedCharacter = myList.find(character => character.id === id);
+
+    if (id !== '') {
+      const selChar = myList.find(
+        (character: ICharacter) => character.id === id,
+      );
+
+      if (selChar) {
+        selChar.formatedDate = format(
+          new Date(selChar.updated_at),
+          'dd/MM/yyyy',
+        );
+
+        let filteredClan: string[];
+        if (selChar.clan) {
+          filteredClan = selChar.clan.split(' (');
+          filteredClan = filteredClan[0].split(':');
+        } else {
+          filteredClan = [''];
+        }
+
+        const clanIndex = 0;
+        selChar.clan = filteredClan[clanIndex];
+
+        selectedCharacter = selChar;
+      } else {
+        selectedCharacter = undefined;
+      }
+    } else {
+      selectedCharacter = undefined;
+    }
+
+    return selectedCharacter;
+  }, []);
 
   const handleCharacter1Change = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
-      const selIndex = event.target.selectedIndex;
+      const selId = event.target.item(event.target.selectedIndex)?.id;
 
-      const selectedCharacter: ICharacter | undefined = SelectCharByIndex(
-        selIndex,
+      const selectedCharacter: ICharacter | undefined = SelectCharById(
+        selId,
         charList,
       );
 
       if (selectedCharacter !== undefined) {
         if (selectedCharacter.npc || selectedCharacter.id === char.id) {
+          // TODO
+          /*
           sendSocketMessage({
             type: 'char',
             char_id: selectedCharacter.id,
             char: selectedCharacter,
           });
-        } else {
+          */
+        } /* else {
           sendSocketMessage({
             type: 'is_connected',
             char_id: selectedCharacter.id,
           });
-        }
+        } */
 
         setMyChar(selectedCharacter);
         char1Id.current = selectedCharacter.id;
@@ -647,15 +658,15 @@ const Challenges: React.FC = () => {
         char1Id.current = '';
       }
     },
-    [SelectCharByIndex, char.id, charList, sendSocketMessage],
+    [SelectCharById, char.id, charList],
   );
 
   const handleCharacter2Change = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
-      const selIndex = event.target.selectedIndex;
+      const selId = event.target.item(event.target.selectedIndex)?.id;
 
-      const selectedCharacter: ICharacter | undefined = SelectCharByIndex(
-        selIndex,
+      const selectedCharacter: ICharacter | undefined = SelectCharById(
+        selId,
         opponentList,
       );
 
@@ -664,10 +675,12 @@ const Challenges: React.FC = () => {
 
         char2Id.current = selectedCharacter.id;
 
+        /*
         sendSocketMessage({
           type: 'is_connected',
           char_id: selectedCharacter.id,
         });
+        */
       } else {
         setOpponentChar({
           id: '',
@@ -691,7 +704,7 @@ const Challenges: React.FC = () => {
         char2Id.current = '';
       }
     },
-    [SelectCharByIndex, opponentList, sendSocketMessage],
+    [SelectCharById, opponentList],
   );
 
   const showOptions = useCallback(() => {
@@ -721,70 +734,71 @@ const Challenges: React.FC = () => {
       return;
     }
 
-    if (connStatus2 === false) {
-      addToast({
-        type: 'error',
-        title: 'Personagem Desconectado',
-        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
-      });
+    if (opponentChar) {
+      if (!isCharOnline(opponentChar.id, opponentChar.npc)) {
+        addToast({
+          type: 'error',
+          title: 'Personagem Desconectado',
+          description: `O pesonagem [${opponentChar.name}] está desconectado!`,
+        });
 
-      return;
+        return;
+      }
     }
 
-    if (connStatus1 === false) {
-      addToast({
-        type: 'error',
-        title: 'Personagem Desconectado',
-        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
-      });
+    if (myChar) {
+      if (!isCharOnline(myChar.id, myChar.npc)) {
+        addToast({
+          type: 'error',
+          title: 'Personagem Desconectado',
+          description: `O pesonagem [${myChar.name}] está desconectado!`,
+        });
 
-      return;
+        return;
+      }
     }
 
     setRetestMode(false);
 
-    sendSocketMessage({
-      type: 'select',
-      char1_id: myChar?.id,
-      char2_id: opponentChar?.id,
-    });
+    if (myChar && opponentChar) {
+      challengeSelect(myChar, opponentChar);
+    }
 
     setMode('battle');
-  }, [
-    addToast,
-    connStatus1,
-    connStatus2,
-    myChar,
-    opponentChar,
-    sendSocketMessage,
-  ]);
+  }, [addToast, challengeSelect, isCharOnline, myChar, opponentChar]);
 
   const handleRetestButton = useCallback(() => {
-    if (connStatus2 === false) {
-      addToast({
-        type: 'error',
-        title: 'Personagem Desconectado',
-        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
-      });
+    if (opponentChar) {
+      if (!isCharOnline(opponentChar.id, opponentChar.npc)) {
+        addToast({
+          type: 'error',
+          title: 'Personagem Desconectado',
+          description: `O pesonagem [${opponentChar.name}] está desconectado!`,
+        });
 
-      return;
+        return;
+      }
     }
 
-    if (connStatus1 === false) {
-      addToast({
-        type: 'error',
-        title: 'Personagem Desconectado',
-        description: `O pesonagem [${opponentChar?.name}] está desconectado!`,
-      });
+    if (myChar) {
+      if (!isCharOnline(myChar.id, myChar.npc)) {
+        addToast({
+          type: 'error',
+          title: 'Personagem Desconectado',
+          description: `O pesonagem [${myChar.name}] está desconectado!`,
+        });
 
-      return;
+        return;
+      }
     }
 
+    /*
     sendSocketMessage({
       type: 'retest',
       char1_id: myChar?.id,
       char2_id: opponentChar?.id,
     });
+    */
 
     setRetestMode(true);
 
@@ -795,21 +809,12 @@ const Challenges: React.FC = () => {
     setChar2Result(-5);
     setPlay(false);
     setMode('battle');
-  }, [
-    addToast,
-    connStatus1,
-    connStatus2,
-    myChar,
-    opponentChar,
-    sendSocketMessage,
-  ]);
+  }, [addToast, isCharOnline, myChar, opponentChar]);
 
   const handleCancelChallangeButton = useCallback(() => {
-    sendSocketMessage({
-      type: 'cancel',
-      char1_id: myChar?.id,
-      char2_id: opponentChar?.id,
-    });
+    if (myChar && opponentChar) {
+      challengeCancel(myChar, opponentChar);
+    }
 
     setRetestMode(false);
 
@@ -820,52 +825,7 @@ const Challenges: React.FC = () => {
     setChar2Result(-5);
     setPlay(false);
     setMode('initial');
-  }, [myChar, opponentChar, sendSocketMessage]);
-
-  const handleConnection = useCallback(() => {
-    if (connected) {
-      setChanConState(true);
-      socket.close();
-    } else {
-      setSelectedPo('');
-      setMyPo('');
-      setSelOpponentPo('');
-      setChar1Result(-5);
-      setChar2Result(-5);
-      setPlay(false);
-      setMode('initial');
-
-      if (!user.storyteller) {
-        setOpponentChar({
-          id: '',
-          name: 'Desconhecido',
-          clan: 'Desconhecido',
-          creature_type: 'Vampire',
-          sect: '',
-          title: '',
-          coterie: '',
-          avatar_url: '',
-          experience: '',
-          experience_total: '',
-          updated_at: new Date(),
-          character_url: '',
-          situation: 'active',
-          npc: false,
-          retainer_level: '0',
-          formatedDate: format(new Date(), 'dd/MM/yyyy'),
-        });
-
-        char2Id.current = '';
-      }
-
-      setChanConState(true);
-      setSocket(getSocket());
-    }
-  }, [connected, socket, user.storyteller]);
-
-  useEffect(() => {
-    initializeSocket();
-  }, [initializeSocket]);
+  }, [challengeCancel, myChar, opponentChar]);
 
   useEffect(() => {
     setOpponentChar({
@@ -917,6 +877,89 @@ const Challenges: React.FC = () => {
   }, [loadCharacters, loadMyChar, user.storyteller]);
 
   useEffect(() => {
+    if (challangeOpponent.id && myChar) {
+      if (challangeOpponent.id === 'restart') {
+        clearChallengeOpponent();
+        if (!user.storyteller) {
+          setSelectedPo('');
+          setMyPo('');
+          setSelOpponentPo('');
+          setChar1Result(-5);
+          setChar2Result(-5);
+          setPlay(false);
+          setRetestMode(false);
+          setMode('initial');
+
+          setOpponentChar({
+            id: '',
+            name: 'Desconhecido',
+            clan: 'Desconhecido',
+            creature_type: 'Vampire',
+            sect: '',
+            title: '',
+            coterie: '',
+            avatar_url: '',
+            experience: '',
+            experience_total: '',
+            updated_at: new Date(),
+            character_url: '',
+            situation: 'active',
+            npc: false,
+            retainer_level: '0',
+            formatedDate: format(new Date(), 'dd/MM/yyyy'),
+          });
+
+          char2Id.current = '';
+        }
+      } else if (
+        challangeOpponent.id !== myChar.id &&
+        challangeOpponent.id !== opponentChar?.id
+      ) {
+        const opponent = challangeOpponent;
+
+        setOpponentChar({
+          id: opponent.id,
+          name: opponent.name,
+          clan: opponent.clan,
+          creature_type: opponent.creature_type,
+          sect: opponent.sect,
+          title: opponent.title,
+          coterie: opponent.coterie,
+          avatar_url: opponent.avatar_url,
+          experience: '',
+          experience_total: '',
+          updated_at: opponent.updated_at,
+          character_url: '',
+          situation: 'active',
+          npc: opponent.npc,
+          retainer_level: opponent.retainer_level,
+          formatedDate: format(new Date(opponent.updated_at), 'dd/MM/yyyy'),
+        });
+
+        char2Id.current = opponent.id;
+
+        /*
+        addToast({
+          type: 'info',
+          title: 'Hora do Desafio',
+          description: `Oponente selecionado: [${opponent.name}]...`,
+        });
+        */
+
+        clearChallengeOpponent();
+
+        setMode('battle');
+      }
+    }
+  }, [
+    challangeOpponent,
+    clearChallengeOpponent,
+    myChar,
+    opponentChar,
+    user.storyteller,
+  ]);
+
+  useEffect(() => {
     if (mode === 'battle') {
       if (myChar?.id === char.id || (myChar?.npc && user.storyteller)) {
         setTitle('Escolha seu Jan-Ken-Po');
@@ -948,15 +991,6 @@ const Challenges: React.FC = () => {
     }
   }, [addToast, char.id, mode, myChar, opponentChar, user.storyteller]);
 
-  useEffect(() => {
-    return () => {
-      if (serverPing.current !== 0) {
-        clearTimeout(serverPing.current);
-      }
-      socket.close();
-    };
-  }, [socket]);
-
   return (
     <Container>
       {isMobileVersion ? (
@@ -982,12 +1016,36 @@ const Challenges: React.FC = () => {
                   value={myChar && myChar.id !== '' ? myChar.name : undefined}
                   onChange={handleCharacter1Change}
                 >
-                  <option value="">Selecione um Personagem:</option>
-                  {charList.map(character => (
-                    <option key={`1${character.id}`} value={character.name}>
-                      {character.name}
-                    </option>
-                  ))}
+                  <SelectOption value="">Selecione um Personagem:</SelectOption>
+                  {charList
+                    .filter(charFilter =>
+                      isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                        isConnected
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
+
+                  {charList
+                    .filter(
+                      charFilter =>
+                        !isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
                 </SelectCharacter>
               </SelectorContainerMobile>
             )}
@@ -1020,10 +1078,18 @@ const Challenges: React.FC = () => {
 
                   {user.storyteller && (
                     <ConnectionStatus
-                      connected={connStatus1}
-                      title={connStatus1 ? 'Online' : 'Offline'}
+                      connected={isCharOnline(myChar.id, myChar.npc)}
+                      title={
+                        isCharOnline(myChar.id, myChar.npc)
+                          ? 'Online'
+                          : 'Offline'
+                      }
                     >
-                      {connStatus1 ? <FaSmile /> : <FaDizzy />}
+                      {isCharOnline(myChar.id, myChar.npc) ? (
+                        <FaSmile />
+                      ) : (
+                        <FaDizzy />
+                      )}
                     </ConnectionStatus>
                   )}
                 </CharCardContainerMobile>
@@ -1126,12 +1192,36 @@ const Challenges: React.FC = () => {
                   }
                   onChange={handleCharacter2Change}
                 >
-                  <option value="">Selecione um Personagem:</option>
-                  {opponentList.map(character => (
-                    <option key={`2${character.id}`} value={character.name}>
-                      {character.name}
-                    </option>
-                  ))}
+                  <SelectOption value="">Selecione um Personagem:</SelectOption>
+                  {opponentList
+                    .filter(charFilter =>
+                      isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                        isConnected
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
+
+                  {opponentList
+                    .filter(
+                      charFilter =>
+                        !isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
                 </SelectCharacter>
               </SelectorContainerMobile>
             )}
@@ -1165,10 +1255,21 @@ const Challenges: React.FC = () => {
                   />
                   {user.storyteller && (
                     <ConnectionStatus
-                      connected={connStatus2}
-                      title={connStatus2 ? 'Online' : 'Offline'}
+                      connected={isCharOnline(
+                        opponentChar.id,
+                        opponentChar.npc,
+                      )}
+                      title={
+                        isCharOnline(opponentChar.id, opponentChar.npc)
+                          ? 'Online'
+                          : 'Offline'
+                      }
                     >
-                      {connStatus2 ? <FaSmile /> : <FaDizzy />}
+                      {isCharOnline(opponentChar.id, opponentChar.npc) ? (
+                        <FaSmile />
+                      ) : (
+                        <FaDizzy />
+                      )}
                     </ConnectionStatus>
                   )}
                 </CharCardContainerMobile>
@@ -1201,15 +1302,6 @@ const Challenges: React.FC = () => {
                 </Button>
               </ButtonBox>
             )}
-            <ConnectionButton
-              type="button"
-              connected={connected}
-              title={connected ? 'Desconectar' : 'Conectar'}
-              onClick={handleConnection}
-              disabled={changingConState}
-            >
-              {connected ? <FaHandshake /> : <FaUnlink />}
-            </ConnectionButton>
           </Content>
         </>
       ) : (
@@ -1223,12 +1315,36 @@ const Challenges: React.FC = () => {
                   value={myChar && myChar.id !== '' ? myChar.name : undefined}
                   onChange={handleCharacter1Change}
                 >
-                  <option value="">Selecione um Personagem:</option>
-                  {charList.map(character => (
-                    <option key={`1${character.id}`} value={character.name}>
-                      {character.name}
-                    </option>
-                  ))}
+                  <SelectOption value="">Selecione um Personagem:</SelectOption>
+                  {charList
+                    .filter(charFilter =>
+                      isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                        isConnected
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
+
+                  {charList
+                    .filter(
+                      charFilter =>
+                        !isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
                 </SelectCharacter>
                 <strong>Modo de Desafio</strong>
                 <SelectCharacter
@@ -1241,12 +1357,36 @@ const Challenges: React.FC = () => {
                   }
                   onChange={handleCharacter2Change}
                 >
-                  <option value="">Selecione um Personagem:</option>
-                  {opponentList.map(character => (
-                    <option key={`2${character.id}`} value={character.name}>
-                      {character.name}
-                    </option>
-                  ))}
+                  <SelectOption value="">Selecione um Personagem:</SelectOption>
+                  {opponentList
+                    .filter(charFilter =>
+                      isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                        isConnected
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
+
+                  {opponentList
+                    .filter(
+                      charFilter =>
+                        !isCharOnline(charFilter.id, charFilter.npc),
+                    )
+                    .map(character => (
+                      <SelectOption
+                        key={`1${character.id}`}
+                        id={character.id}
+                        value={character.name}
+                      >
+                        {character.name}
+                      </SelectOption>
+                    ))}
                 </SelectCharacter>
               </>
             ) : (
@@ -1282,10 +1422,18 @@ const Challenges: React.FC = () => {
 
                   {user.storyteller && (
                     <ConnectionStatus
-                      connected={connStatus1}
-                      title={connStatus1 ? 'Online' : 'Offline'}
+                      connected={isCharOnline(myChar.id, myChar.npc)}
+                      title={
+                        isCharOnline(myChar.id, myChar.npc)
+                          ? 'Online'
+                          : 'Offline'
+                      }
                     >
-                      {connStatus1 ? <FaSmile /> : <FaDizzy />}
+                      {isCharOnline(myChar.id, myChar.npc) ? (
+                        <FaSmile />
+                      ) : (
+                        <FaDizzy />
+                      )}
                     </ConnectionStatus>
                   )}
                 </CharCardContainer>
@@ -1409,10 +1557,21 @@ const Challenges: React.FC = () => {
                   />
                   {user.storyteller && (
                     <ConnectionStatus
-                      connected={connStatus2}
-                      title={connStatus2 ? 'Online' : 'Offline'}
+                      connected={isCharOnline(
+                        opponentChar.id,
+                        opponentChar.npc,
+                      )}
+                      title={
+                        isCharOnline(opponentChar.id, opponentChar.npc)
+                          ? 'Online'
+                          : 'Offline'
+                      }
                     >
-                      {connStatus2 ? <FaSmile /> : <FaDizzy />}
+                      {isCharOnline(opponentChar.id, opponentChar.npc) ? (
+                        <FaSmile />
+                      ) : (
+                        <FaDizzy />
+                      )}
                     </ConnectionStatus>
                   )}
                 </CharCardContainer>
@@ -1444,15 +1603,6 @@ const Challenges: React.FC = () => {
                   </Button>
                 </ButtonBox>
               )}
-              <ConnectionButton
-                type="button"
-                connected={connected}
-                title={connected ? 'Desconectar' : 'Conectar'}
-                onClick={handleConnection}
-                disabled={changingConState}
-              >
-                {connected ? <FaHandshake /> : <FaUnlink />}
-              </ConnectionButton>
             </Content>
           )}
         </>

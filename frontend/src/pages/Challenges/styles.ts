@@ -26,6 +26,10 @@ interface IIconProps {
   vertical?: boolean;
 }
 
+interface IOptionProps {
+  isConnected?: boolean;
+}
+
 const bounceButton = keyframes`
   from {
     transform: scale(1) translateY(0);
@@ -341,6 +345,19 @@ export const SelectCharacter = styled.select`
   color: #888;
 `;
 
+export const SelectOption = styled.option<IOptionProps>`
+  background: #111;
+
+  ${props =>
+    props.isConnected
+      ? css`
+          color: #0b0;
+        `
+      : css`
+          color: #888;
+        `}
+`;
+
 export const ButtonBox = styled.div<IContentsProps>`
   margin: auto;
   padding: 16px 0;
@@ -390,58 +407,6 @@ export const ConnectionStatus = styled.div<IConnectionButtonProps>`
       : css`
           background: #860209;
         `}
-`;
-
-export const ConnectionButton = styled.button<IConnectionButtonProps>`
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-
-  width: 64px;
-  height: 64px;
-  border: 0;
-
-  border-radius: 20px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: background-color 0.2s;
-
-  :disabled {
-    cursor: not-allowed;
-  }
-
-  svg {
-    width: 32px;
-    height: 32px;
-    color: #ccc;
-    transition: color 0.2s;
-  }
-
-  ${props =>
-    props.connected
-      ? css`
-          background: #025609;
-
-          &:hover {
-            background: ${lighten(0.2, '#025609')};
-          }
-        `
-      : css`
-          background: #860209;
-
-          &:hover {
-            background: ${lighten(0.2, '#860209')};
-          }
-        `}
-
-  &:hover {
-    svg {
-      color: ${lighten(0.2, '#ccc')};
-    }
-  }
 `;
 
 export const SelectorContainerMobile = styled.div`

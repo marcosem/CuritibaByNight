@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Express } from 'express';
 import expressWs from 'express-ws';
 import { container } from 'tsyringe';
@@ -6,13 +7,21 @@ import GetUserService from '@modules/users/services/GetUserService';
 import GetCharacterService from '@modules/characters/services/GetCharacterService';
 
 interface IMyConnection {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ws: any;
   id: string;
   user_id?: string;
   char_id?: string;
-  char?: string;
+  char?: any;
+  stChar?: any;
   st?: boolean;
+}
+
+interface IMatch {
+  char1Connection: IMyConnection;
+  char1JanKenPo?: string;
+  char2Connection: IMyConnection;
+  char2JanKenPo?: string;
+  stConnection: IMyConnection;
 }
 
 interface ITokenResult {
@@ -26,11 +35,11 @@ interface ISocketClientMessage {
   user_id?: string;
   token?: string;
   char_id?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   char?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trait?: any;
   masquerade_level?: number;
+  char1?: any;
+  char2?: any;
 }
 
 interface IUser {
@@ -43,7 +52,6 @@ interface ISocketServerMessage {
   id?: string;
   error?: string;
   connected?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trait?: any;
   users?: IUser[];
   user_id?: string;
@@ -51,6 +59,7 @@ interface ISocketServerMessage {
   char_id?: string;
   char_name?: string;
   masquerade_level?: number;
+  opponentChar?: any;
 }
 
 class WebSocketServer {
@@ -58,12 +67,16 @@ class WebSocketServer {
 
   private sockets: IMyConnection[];
 
+  private matches: IMatch[];
+
   private usersService: GetUserService;
 
   private charactersService: GetCharacterService;
 
   constructor() {
     this.sockets = [];
+
+    this.matches = [];
 
     // this.usersService = container.resolve(GetUserService);
 
@@ -150,6 +163,7 @@ class WebSocketServer {
                       st: validation.st,
                       user_id: validation.user_id,
                       char_id: parsedMsg.char_id,
+                      char: parsedMsg.char,
                     };
 
                     this.sockets = [...this.sockets, socket];
@@ -214,6 +228,126 @@ class WebSocketServer {
                       users: userList,
                     });
                   }
+                }
+                break;
+
+              case 'challenge:select':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else if (socket.st === false) {
+                  isError = true;
+                  errorMsg =
+                    'Only authenticates storyteller can select characters for challanges';
+                } else {
+                  const { char1, char2 } = parsedMsg;
+
+                  let getChar1Socket;
+                  const isSTChar =
+                    char1.npc || char1.id.indexOf('Storyteller') >= -1;
+
+                  if (isSTChar) {
+                    getChar1Socket = socket;
+                    getChar1Socket.stChar = char1;
+                  } else {
+                    getChar1Socket = this.sockets.find(
+                      myWs => myWs.char_id === char1.id,
+                    );
+
+                    if (!getChar1Socket || !getChar1Socket.char) {
+                      isError = true;
+                      errorMsg =
+                        'Character One is not connected, ask him to connect and try again';
+                      closeMe = false;
+                      break;
+                    }
+                  }
+
+                  const getChar2Socket = this.sockets.find(
+                    myWs => myWs.char_id === char2.id,
+                  );
+
+                  if (!getChar2Socket || !getChar2Socket.char) {
+                    isError = true;
+                    errorMsg =
+                      'Character Two is not connected, ask him to connect and try again';
+                    closeMe = false;
+                    break;
+                  }
+
+                  this.matches.push({
+                    char1Connection: getChar1Socket,
+                    char2Connection: getChar2Socket,
+                    stConnection: socket,
+                  });
+
+                  if (!isSTChar) {
+                    this.sendMsg(getChar1Socket.ws, {
+                      message: 'challenge:opponentSelected',
+                      opponentChar: getChar2Socket.char,
+                    });
+                  }
+
+                  this.sendMsg(getChar2Socket.ws, {
+                    message: 'challenge:opponentSelected',
+                    opponentChar: isSTChar
+                      ? getChar1Socket.stChar
+                      : getChar1Socket.char,
+                  });
+                }
+                break;
+
+              case 'challenge:cancel':
+                console.log('Sending');
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else if (socket.st === false) {
+                  isError = true;
+                  errorMsg =
+                    'Only authenticates storyteller can cancel a challange';
+                } else {
+                  const { char1, char2 } = parsedMsg;
+
+                  let getChar1Socket;
+                  const isSTChar =
+                    char1.npc || char1.id.indexOf('Storyteller') >= -1;
+
+                  if (!isSTChar) {
+                    getChar1Socket = this.sockets.find(
+                      myWs => myWs.char_id === char1.id,
+                    );
+
+                    if (!getChar1Socket || !getChar1Socket.char) {
+                      isError = true;
+                      errorMsg =
+                        'Character One is not connected, ask him to connect and try again';
+                      closeMe = false;
+                      break;
+                    }
+
+                    this.sendMsg(getChar1Socket.ws, {
+                      message: 'challenge:restart',
+                    });
+                  }
+
+                  const getChar2Socket = this.sockets.find(
+                    myWs => myWs.char_id === char2.id,
+                  );
+
+                  if (!getChar2Socket || !getChar2Socket.char) {
+                    isError = true;
+                    errorMsg =
+                      'Character Two is not connected, ask him to connect and try again';
+                    closeMe = false;
+                    break;
+                  }
+
+                  this.sendMsg(getChar2Socket.ws, {
+                    message: 'challenge:restart',
+                  });
                 }
                 break;
 
