@@ -11,25 +11,6 @@ import ICharacter from '../components/CharacterList/ICharacter';
 import api from '../services/api';
 import getSocket from '../utils/getSocket';
 
-/*
-interface ISocketClientMessage {
-  type: string;
-  user_id?: string;
-  token?: string;
-  char_id?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  char?: any;
-}
-
-interface ISocketServerMessage {
-  message: string;
-  id?: string;
-  error?: string;
-  character?: string;
-  connected?: boolean;
-}
-*/
-
 import { useAuth } from './auth';
 import { useToast } from './toast';
 
@@ -62,6 +43,12 @@ interface ITrait {
   index: [number, number];
 }
 
+interface IChallengeResult {
+  result: string;
+  char1_jkp: string;
+  char2_jkp: string;
+}
+
 interface ISocketMessage {
   type: string;
   user_id?: string;
@@ -72,10 +59,7 @@ interface ISocketMessage {
   masquerade_level?: number;
   char1?: ICharacter;
   char2?: ICharacter;
-  /*
   play?: string;
-
-  */
 }
 
 interface ISocketContextData {
@@ -83,15 +67,24 @@ interface ISocketContextData {
   updatedTrait: ITrait;
   onLineUsers: IOnLineUser[];
   reloadCharTraits: string;
-  challangeOpponent: ICharacter;
+  challengeOpponent: ICharacter;
+  challengeReady: string;
+  challengeResult: IChallengeResult;
+  challengeDoRetest: boolean;
   clearUpdatedTrait(): void;
   clearReloadTraits(): void;
   clearChallengeOpponent(): void;
+  clearChallengeReady(): void;
+  clearChallengeResult(): void;
+  clearChallengeDoRetest(): void;
   notifyTraitUpdate(trait: ITrait): void;
   resetTraits(char_id: string): void;
   notifyMasquerade(newLevel: number, increased: boolean): void;
   challengeSelect(char1: ICharacter, char2: ICharacter): void;
-  challengeCancel(char1: ICharacter, char2: ICharacter): void;
+  challengeCancel(char1?: ICharacter, char2?: ICharacter): void;
+  challengePlay(char_id: string, play: string): void;
+  challengeRetest(char1: ICharacter, char2: ICharacter): void;
+  enterChallengeMode(mode: boolean): void;
 }
 
 const SocketContext = createContext<ISocketContextData>(
@@ -105,26 +98,25 @@ const SocketProvider: React.FC = ({ children }) => {
   const [onLineUsers, setOnLineUsers] = useState<IOnLineUser[]>([]);
   const [updatedTrait, setUpdatedTrait] = useState<ITrait>({} as ITrait);
   const [reloadCharTraits, setReloadCharTraits] = useState<string>('');
-  const [challangeOpponent, setChallangeOpponent] = useState<ICharacter>(
+  const [challengeOpponent, setChallengeOpponent] = useState<ICharacter>(
     {} as ICharacter,
   );
+  const [challengeReady, setChallengeReady] = useState<string>('');
+  const [challengeResult, setChallengeResult] = useState<IChallengeResult>(
+    {} as IChallengeResult,
+  );
+  const [challengeDoRetest, setChallengeDoRetest] = useState<boolean>(false);
+  const [challengeMode, setChallengeMode] = useState<boolean>(false);
 
   const userConnList = useRef<IUserConn[]>([]);
   const socket = useRef<WebSocket>();
   const serverPing = useRef<number>(0);
   const serverGetUsers = useRef<number>(0);
   const token = useRef<string>('');
-  // const tryReconnect = useRef<boolean>(false);
-  const blockDuplicatedMessage = useRef<boolean>(false);
+  const blockDuplicatedMessage = useRef<string[]>([]);
 
   const sendSocketMessage = useCallback(
     (msg: ISocketMessage) => {
-      /*
-      console.log(
-        socket.current?.readyState === socket.current?.OPEN ? 'Open' : 'Closed',
-      );
-      */
-
       if (socket.current?.readyState === socket.current?.OPEN) {
         socket.current?.send(JSON.stringify(msg));
       }
@@ -182,7 +174,23 @@ const SocketProvider: React.FC = ({ children }) => {
   }, []);
 
   const clearChallengeOpponent = useCallback(() => {
-    setChallangeOpponent({} as ICharacter);
+    setChallengeOpponent({} as ICharacter);
+  }, []);
+
+  const clearChallengeReady = useCallback(() => {
+    setChallengeReady('');
+  }, []);
+
+  const clearChallengeResult = useCallback(() => {
+    setChallengeResult({} as IChallengeResult);
+  }, []);
+
+  const clearChallengeDoRetest = useCallback(() => {
+    setChallengeDoRetest(false);
+  }, []);
+
+  const enterChallengeMode = useCallback((mode: boolean) => {
+    setChallengeMode(mode);
   }, []);
 
   const setUserConnectionTimer = useCallback((user_id: string) => {
@@ -249,8 +257,36 @@ const SocketProvider: React.FC = ({ children }) => {
 
   const challengeCancel = useCallback(
     (char1: ICharacter, char2: ICharacter) => {
+      if (char1 && char2) {
+        sendSocketMessage({
+          type: 'challenge:cancel',
+          char1,
+          char2,
+        });
+      } else {
+        sendSocketMessage({
+          type: 'challenge:cancel',
+        });
+      }
+    },
+    [sendSocketMessage],
+  );
+
+  const challengePlay = useCallback(
+    (char_id: string, play: string) => {
       sendSocketMessage({
-        type: 'challenge:cancel',
+        type: 'challenge:play',
+        char_id,
+        play,
+      });
+    },
+    [sendSocketMessage],
+  );
+
+  const challengeRetest = useCallback(
+    (char1: ICharacter, char2: ICharacter) => {
+      sendSocketMessage({
+        type: 'challenge:retest',
         char1,
         char2,
       });
@@ -286,6 +322,16 @@ const SocketProvider: React.FC = ({ children }) => {
         const myMsg = JSON.parse(msg.data);
 
         if (myMsg.message) {
+          // Block duplicated messages
+          if (blockDuplicatedMessage.current.indexOf(myMsg.message) >= 0)
+            return;
+          blockDuplicatedMessage.current.push(myMsg.message);
+          setTimeout(() => {
+            blockDuplicatedMessage.current = blockDuplicatedMessage.current.filter(
+              msgFilter => msgFilter !== myMsg.message,
+            );
+          }, 500);
+
           switch (myMsg.message) {
             case 'connection:connectedusers':
               if (myMsg.users) {
@@ -320,12 +366,6 @@ const SocketProvider: React.FC = ({ children }) => {
               break;
 
             case 'masquerade:increased':
-              if (blockDuplicatedMessage.current === true) return;
-              blockDuplicatedMessage.current = true;
-              setTimeout(() => {
-                blockDuplicatedMessage.current = false;
-              }, 500);
-
               if (myMsg.masquerade_level) {
                 addToast({
                   type: 'error',
@@ -336,12 +376,6 @@ const SocketProvider: React.FC = ({ children }) => {
               break;
 
             case 'masquerade:decreased':
-              if (blockDuplicatedMessage.current === true) return;
-              blockDuplicatedMessage.current = true;
-              setTimeout(() => {
-                blockDuplicatedMessage.current = false;
-              }, 500);
-
               if (myMsg.masquerade_level) {
                 addToast({
                   type: 'success',
@@ -352,43 +386,33 @@ const SocketProvider: React.FC = ({ children }) => {
               break;
 
             case 'challenge:opponentSelected':
-              if (blockDuplicatedMessage.current === true) return;
-              blockDuplicatedMessage.current = true;
-              setTimeout(() => {
-                blockDuplicatedMessage.current = false;
-              }, 500);
-
               if (myMsg.opponentChar) {
                 const { opponentChar } = myMsg;
                 const opponentName = opponentChar.name;
                 const isST = opponentChar.id.indexOf('Storyteller') >= 0;
 
-                setChallangeOpponent(opponentChar);
+                setChallengeOpponent(opponentChar);
 
-                if (isST) {
-                  addToast({
-                    type: 'success',
-                    title: 'Desafio!',
-                    description: `O Narrador ${opponentName} chamou um desafio!`,
-                  });
-                } else {
-                  addToast({
-                    type: 'success',
-                    title: 'Desafio!',
-                    description: `Seu personagem foi desafiado por [${opponentName}]`,
-                  });
+                if (challengeMode) {
+                  if (isST) {
+                    addToast({
+                      type: 'success',
+                      title: 'Desafio!',
+                      description: `O Narrador ${opponentName} chamou um desafio!`,
+                    });
+                  } else {
+                    addToast({
+                      type: 'success',
+                      title: 'Desafio!',
+                      description: `Seu personagem foi desafiado por [${opponentName}]`,
+                    });
+                  }
                 }
               }
               break;
 
             case 'challenge:restart':
-              if (blockDuplicatedMessage.current === true) return;
-              blockDuplicatedMessage.current = true;
-              setTimeout(() => {
-                blockDuplicatedMessage.current = false;
-              }, 500);
-
-              setChallangeOpponent({
+              setChallengeOpponent({
                 id: 'restart',
               } as ICharacter);
 
@@ -399,6 +423,44 @@ const SocketProvider: React.FC = ({ children }) => {
               });
               break;
 
+            case 'challenge:ready:1':
+            case 'challenge:ready:2':
+              if (myMsg.character) {
+                if (myMsg.character === 1) {
+                  setChallengeReady('1');
+                } else {
+                  setChallengeReady('2');
+                }
+              }
+              break;
+
+            case 'challenge:result':
+              if (myMsg.result && myMsg.char1_jkp && myMsg.char2_jkp) {
+                const result: IChallengeResult = {
+                  result: myMsg.result,
+                  char1_jkp: myMsg.char1_jkp,
+                  char2_jkp: myMsg.char2_jkp,
+                };
+
+                setChallengeResult(result);
+              }
+              break;
+
+            case 'challenge:retest':
+              setChallengeDoRetest(true);
+              break;
+
+            case 'error':
+              if (myMsg.error) {
+                addToast({
+                  type: 'error',
+                  title: 'Erro de comunicação com servidor',
+                  description: `Erro: ${myMsg.error}`,
+                });
+              }
+
+              break;
+
             default:
           }
         }
@@ -406,6 +468,7 @@ const SocketProvider: React.FC = ({ children }) => {
     }
   }, [
     addToast,
+    challengeMode,
     char,
     notifyUserConnection,
     sendSocketMessage,
@@ -432,15 +495,24 @@ const SocketProvider: React.FC = ({ children }) => {
         onLineUsers,
         updatedTrait,
         reloadCharTraits,
-        challangeOpponent,
+        challengeOpponent,
+        challengeReady,
+        challengeResult,
+        challengeDoRetest,
         notifyTraitUpdate,
         clearUpdatedTrait,
         clearReloadTraits,
         clearChallengeOpponent,
+        clearChallengeReady,
+        clearChallengeResult,
+        clearChallengeDoRetest,
         resetTraits,
         notifyMasquerade,
         challengeSelect,
         challengeCancel,
+        challengePlay,
+        challengeRetest,
+        enterChallengeMode,
       }}
     >
       {children}

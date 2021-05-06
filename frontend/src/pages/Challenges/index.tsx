@@ -44,25 +44,11 @@ import HeaderMobile from '../../components/HeaderMobile';
 import CharacterCard from '../../components/CharacterCard';
 import Button from '../../components/Button';
 import ICharacter from '../../components/CharacterList/ICharacter';
-// import getSocket from '../../utils/getSocket';
 
 import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
 import { useSocket } from '../../hooks/socket';
-
-/*
-interface ISocketMessage {
-  type: string;
-  user_id?: string;
-  token?: string;
-  char_id?: string;
-  char?: ICharacter;
-  play?: string;
-  char1_id?: string;
-  char2_id?: string;
-}
-*/
 
 interface IOnLineUser {
   user_id: string;
@@ -91,277 +77,20 @@ const Challenges: React.FC = () => {
   const [retestMode, setRetestMode] = useState<boolean>(false);
   const {
     onLineUsers,
-    challangeOpponent,
+    challengeOpponent,
+    challengeReady,
+    challengeResult,
+    challengeDoRetest,
     challengeSelect,
     challengeCancel,
     clearChallengeOpponent,
+    clearChallengeDoRetest,
+    challengePlay,
+    clearChallengeReady,
+    clearChallengeResult,
+    challengeRetest,
+    enterChallengeMode,
   } = useSocket();
-
-  /*
-  const initializeSocket = useCallback(() => {
-    // const token = api.defaults.headers.Authorization.replace('Bearer ', '');
-    if (socket.readyState === socket.OPEN) {
-      sendSocketMessage({
-        type: 'auth',
-        user_id: user.id,
-        token: token.current,
-      });
-
-      setConnected(true);
-    }
-
-    if (socket.readyState !== socket.CONNECTING) {
-      return;
-    }
-
-    socket.addEventListener('open', () => {
-      addToast({
-        type: 'success',
-        title: 'Conectado ao Servidor',
-        description: 'Você está conectado ao Servidor do Jan-ken-po!',
-      });
-
-      sendSocketMessage({
-        type: 'auth',
-        user_id: user.id,
-        token: token.current,
-      });
-
-      startPing();
-
-      setConnected(true);
-    });
-
-    socket.addEventListener('close', () => {
-      addToast({
-        type: 'error',
-        title: 'Desconectado ao Servidor',
-        description: 'Você foi desconectador do Servidor do Jan-ken-po!',
-      });
-
-      setConnected(false);
-    });
-
-    socket.addEventListener('message', msg => {
-      try {
-        const parsedMsg = JSON.parse(msg.data);
-
-        if (parsedMsg.error) {
-          addToast({
-            type: 'error',
-            title: 'Erro de Comunicação com servidor',
-            description: `Erro: ${parsedMsg.error}`,
-          });
-        } else if (parsedMsg.message) {
-          switch (parsedMsg.message) {
-            case 'selected':
-              {
-                const opponent = parsedMsg.opponentChar;
-
-                if (opponent) {
-                  setOpponentChar({
-                    id: opponent.id,
-                    name: opponent.name,
-                    clan: opponent.clan,
-                    creature_type: opponent.creature_type,
-                    sect: opponent.sect,
-                    title: opponent.title,
-                    coterie: opponent.coterie,
-                    avatar_url: opponent.avatar_url,
-                    experience: '',
-                    experience_total: '',
-                    updated_at: opponent.updated_at,
-                    character_url: '',
-                    situation: 'active',
-                    npc: opponent.npc,
-                    retainer_level: opponent.retainer_level,
-                    formatedDate: format(
-                      new Date(opponent.updated_at),
-                      'dd/MM/yyyy',
-                    ),
-                  });
-
-                  char2Id.current = opponent.id;
-                }
-
-                addToast({
-                  type: 'info',
-                  title: 'Hora do Desafio',
-                  description: `Oponente selecionado: [${opponent.name}]...`,
-                });
-
-                setMode('battle');
-              }
-              break;
-
-            case 'restart':
-              if (!user.storyteller) {
-                setSelectedPo('');
-                setMyPo('');
-                setSelOpponentPo('');
-                setChar1Result(-5);
-                setChar2Result(-5);
-                setPlay(false);
-                setRetestMode(false);
-                setMode('initial');
-
-                setOpponentChar({
-                  id: '',
-                  name: 'Desconhecido',
-                  clan: 'Desconhecido',
-                  creature_type: 'Vampire',
-                  sect: '',
-                  title: '',
-                  coterie: '',
-                  avatar_url: '',
-                  experience: '',
-                  experience_total: '',
-                  updated_at: new Date(),
-                  character_url: '',
-                  situation: 'active',
-                  npc: false,
-                  retainer_level: '0',
-                  formatedDate: format(new Date(), 'dd/MM/yyyy'),
-                });
-
-                char2Id.current = '';
-
-                addToast({
-                  type: 'info',
-                  title: 'Desafio encerrado',
-                  description: 'Desafio encerrado pelo narrador.',
-                });
-              }
-              break;
-
-            case 'retest':
-              setSelectedPo('');
-              setMyPo('');
-              setSelOpponentPo('');
-              setChar1Result(-5);
-              setChar2Result(-5);
-              setPlay(false);
-              setRetestMode(true);
-
-              addToast({
-                type: 'info',
-                title: 'Reteste Requisitado',
-                description:
-                  'Novo teste requisitado pelo narrador ou seu oponente.',
-              });
-
-              setMode('battle');
-              break;
-
-            case 'connection':
-              if (parsedMsg.character) {
-                popupCharacterConnectionStatus(
-                  parsedMsg.character,
-                  parsedMsg.connected,
-                );
-
-                if (parsedMsg.connected) {
-                  if (
-                    connList.current.find(
-                      charId => charId === parsedMsg.character,
-                    ) === undefined
-                  ) {
-                    const newList = connList.current;
-                    newList.push(parsedMsg.character);
-                    connList.current = newList;
-                  }
-                } else {
-                  const tmpConnList = connList.current.filter(
-                    charId => charId !== parsedMsg.character,
-                  );
-                  connList.current = tmpConnList;
-                }
-              }
-
-              break;
-
-            case 'ready':
-              if (parsedMsg.character === '1') {
-                setSelectedPo('rock');
-                setChar1Result(0);
-              } else {
-                setSelOpponentPo('rock');
-                setChar2Result(0);
-              }
-              break;
-
-            case 'result':
-              {
-                const matchResult = parsedMsg.result;
-                const char1Res = parsedMsg.char1;
-                const char2Res = parsedMsg.char2;
-
-                setMode('resolving');
-                setSelectedPo('rock');
-                setPlay(true);
-
-                setTimeout(() => {
-                  if (matchResult === '1' || matchResult === 'win') {
-                    setChar1Result(1);
-                    setChar2Result(-1);
-                  } else if (matchResult === '2' || matchResult === 'lose') {
-                    setChar1Result(-1);
-                    setChar2Result(1);
-                  }
-
-                  if (matchResult.length > 1) {
-                    setMode(matchResult);
-
-                    if (matchResult === 'win') {
-                      addToast({
-                        type: 'success',
-                        title: 'Disputa vencida!',
-                        description: 'Você ganhou a aposta!',
-                      });
-                    } else if (matchResult === 'lose') {
-                      addToast({
-                        type: 'error',
-                        title: 'Disputa perdida!',
-                        description: 'Você perdeu a aposta!',
-                      });
-                    } else if (matchResult === 'tie') {
-                      addToast({
-                        type: 'info',
-                        title: 'Disputa empatada!',
-                        description: 'A aposta foi empatada!',
-                      });
-                    }
-                  } else {
-                    setMode('resolved');
-                  }
-
-                  setSelectedPo(char1Res);
-                  setSelOpponentPo(char2Res);
-                }, 2200);
-              }
-              break;
-
-            default:
-          }
-        }
-      } catch (error) {
-        addToast({
-          type: 'error',
-          title: 'Mensagem Inválida',
-          description: 'O servidor enviou uma mensagem inválida!',
-        });
-      }
-    });
-  }, [
-    addToast,
-    popupCharacterConnectionStatus,
-    sendSocketMessage,
-    socket,
-    startPing,
-    user.id,
-    user.storyteller,
-  ]);
-  */
 
   const isCharOnline = useCallback(
     (char_id: string, isNPC = false) => {
@@ -477,15 +206,6 @@ const Challenges: React.FC = () => {
 
         setMyChar(loadedChar);
         char1Id.current = loadedChar.id;
-
-        // TODO
-        /*
-        sendSocketMessage({
-          type: 'char',
-          char_id: loadedChar.id,
-          char: loadedChar,
-        });
-        */
       });
     } catch (error) {
       if (error.response) {
@@ -520,13 +240,12 @@ const Challenges: React.FC = () => {
   const HandleSendPo = useCallback(() => {
     setChar1Result(0);
 
-    if (selectedPo !== undefined) {
-      // TODO
-      // sendSocketMessage({ type: 'play', play: selectedPo });
+    if (selectedPo !== undefined && myChar) {
+      challengePlay(myChar.id, selectedPo);
     }
 
     setMode('ready');
-  }, [selectedPo]);
+  }, [challengePlay, myChar, selectedPo]);
 
   const SwitchJanKenPo = useCallback(po => {
     switch (po) {
@@ -543,37 +262,8 @@ const Challenges: React.FC = () => {
     return <></>;
   }, []);
 
-  /*
-  const SelectCharByIndex = useCallback((index, myList) => {
-    let selectedCharacter: ICharacter | undefined;
-    if (index > 0) {
-      const selChar = myList[index - 1];
-      selChar.formatedDate = format(new Date(selChar.updated_at), 'dd/MM/yyyy');
-
-      let filteredClan: string[];
-      if (selChar.clan) {
-        filteredClan = selChar.clan.split(' (');
-        filteredClan = filteredClan[0].split(':');
-      } else {
-        filteredClan = [''];
-      }
-
-      const clanIndex = 0;
-      selChar.clan = filteredClan[clanIndex];
-
-      selectedCharacter = selChar;
-    } else {
-      selectedCharacter = undefined;
-    }
-
-    return selectedCharacter;
-  }, []);
-  */
-
   const SelectCharById = useCallback((id, myList) => {
     let selectedCharacter: ICharacter | undefined;
-
-    // selectedCharacter = myList.find(character => character.id === id);
 
     if (id !== '') {
       const selChar = myList.find(
@@ -618,22 +308,6 @@ const Challenges: React.FC = () => {
       );
 
       if (selectedCharacter !== undefined) {
-        if (selectedCharacter.npc || selectedCharacter.id === char.id) {
-          // TODO
-          /*
-          sendSocketMessage({
-            type: 'char',
-            char_id: selectedCharacter.id,
-            char: selectedCharacter,
-          });
-          */
-        } /* else {
-          sendSocketMessage({
-            type: 'is_connected',
-            char_id: selectedCharacter.id,
-          });
-        } */
-
         setMyChar(selectedCharacter);
         char1Id.current = selectedCharacter.id;
       } else {
@@ -658,7 +332,7 @@ const Challenges: React.FC = () => {
         char1Id.current = '';
       }
     },
-    [SelectCharById, char.id, charList],
+    [SelectCharById, charList],
   );
 
   const handleCharacter2Change = useCallback(
@@ -672,15 +346,7 @@ const Challenges: React.FC = () => {
 
       if (selectedCharacter !== undefined) {
         setOpponentChar(selectedCharacter);
-
         char2Id.current = selectedCharacter.id;
-
-        /*
-        sendSocketMessage({
-          type: 'is_connected',
-          char_id: selectedCharacter.id,
-        });
-        */
       } else {
         setOpponentChar({
           id: '',
@@ -792,16 +458,11 @@ const Challenges: React.FC = () => {
       }
     }
 
-    /*
-    sendSocketMessage({
-      type: 'retest',
-      char1_id: myChar?.id,
-      char2_id: opponentChar?.id,
-    });
-    */
+    if (myChar && opponentChar) {
+      challengeRetest(myChar, opponentChar);
+    }
 
     setRetestMode(true);
-
     setSelectedPo('');
     setMyPo('');
     setSelOpponentPo('');
@@ -809,7 +470,7 @@ const Challenges: React.FC = () => {
     setChar2Result(-5);
     setPlay(false);
     setMode('battle');
-  }, [addToast, isCharOnline, myChar, opponentChar]);
+  }, [addToast, challengeRetest, isCharOnline, myChar, opponentChar]);
 
   const handleCancelChallangeButton = useCallback(() => {
     if (myChar && opponentChar) {
@@ -876,46 +537,53 @@ const Challenges: React.FC = () => {
     }
   }, [loadCharacters, loadMyChar, user.storyteller]);
 
+  const clearMyChallenge = useCallback(() => {
+    setSelectedPo('');
+    setMyPo('');
+    setSelOpponentPo('');
+    setChar1Result(-5);
+    setChar2Result(-5);
+    setPlay(false);
+    setRetestMode(false);
+    setMode('initial');
+
+    setOpponentChar({
+      id: '',
+      name: 'Desconhecido',
+      clan: 'Desconhecido',
+      creature_type: 'Vampire',
+      sect: '',
+      title: '',
+      coterie: '',
+      avatar_url: '',
+      experience: '',
+      experience_total: '',
+      updated_at: new Date(),
+      character_url: '',
+      situation: 'active',
+      npc: false,
+      retainer_level: '0',
+      formatedDate: format(new Date(), 'dd/MM/yyyy'),
+    });
+
+    char2Id.current = '';
+  }, []);
+
   useEffect(() => {
-    if (challangeOpponent.id && myChar) {
-      if (challangeOpponent.id === 'restart') {
-        clearChallengeOpponent();
+    if (challengeOpponent.id && myChar) {
+      if (challengeOpponent.id !== opponentChar?.id) {
         if (!user.storyteller) {
-          setSelectedPo('');
-          setMyPo('');
-          setSelOpponentPo('');
-          setChar1Result(-5);
-          setChar2Result(-5);
-          setPlay(false);
-          setRetestMode(false);
-          setMode('initial');
-
-          setOpponentChar({
-            id: '',
-            name: 'Desconhecido',
-            clan: 'Desconhecido',
-            creature_type: 'Vampire',
-            sect: '',
-            title: '',
-            coterie: '',
-            avatar_url: '',
-            experience: '',
-            experience_total: '',
-            updated_at: new Date(),
-            character_url: '',
-            situation: 'active',
-            npc: false,
-            retainer_level: '0',
-            formatedDate: format(new Date(), 'dd/MM/yyyy'),
-          });
-
-          char2Id.current = '';
+          clearMyChallenge();
         }
+      }
+
+      if (challengeOpponent.id === 'restart') {
+        clearChallengeOpponent();
       } else if (
-        challangeOpponent.id !== myChar.id &&
-        challangeOpponent.id !== opponentChar?.id
+        challengeOpponent.id !== myChar.id &&
+        challengeOpponent.id !== opponentChar?.id
       ) {
-        const opponent = challangeOpponent;
+        const opponent = challengeOpponent;
 
         setOpponentChar({
           id: opponent.id,
@@ -938,25 +606,119 @@ const Challenges: React.FC = () => {
 
         char2Id.current = opponent.id;
 
-        /*
-        addToast({
-          type: 'info',
-          title: 'Hora do Desafio',
-          description: `Oponente selecionado: [${opponent.name}]...`,
-        });
-        */
-
         clearChallengeOpponent();
 
         setMode('battle');
       }
     }
   }, [
-    challangeOpponent,
+    challengeOpponent,
     clearChallengeOpponent,
+    clearMyChallenge,
     myChar,
     opponentChar,
     user.storyteller,
+  ]);
+
+  useEffect(() => {
+    // Challenge Ready
+    if (challengeReady !== '') {
+      const ready = challengeReady;
+      clearChallengeReady();
+
+      if (ready === '1') {
+        setSelectedPo('rock');
+        setChar1Result(0);
+      } else {
+        setSelOpponentPo('rock');
+        setChar2Result(0);
+      }
+    }
+  }, [challengeReady, clearChallengeReady]);
+
+  useEffect(() => {
+    // Reset Challenge
+    if (challengeDoRetest) {
+      clearChallengeDoRetest();
+
+      setSelectedPo('');
+      setMyPo('');
+      setSelOpponentPo('');
+      setChar1Result(-5);
+      setChar2Result(-5);
+      setPlay(false);
+      setRetestMode(true);
+
+      if (mode !== 'battle') {
+        addToast({
+          type: 'info',
+          title: 'Reteste Requisitado',
+          description: 'Novo teste requisitado pelo narrador ou seu oponente.',
+        });
+      }
+
+      setMode('battle');
+    }
+  }, [addToast, challengeDoRetest, clearChallengeDoRetest, mode]);
+
+  useEffect(() => {
+    // Challenge Result
+    if (challengeResult.result) {
+      const matchResult = challengeResult.result;
+      const char1Res = challengeResult.char1_jkp;
+      const char2Res = challengeResult.char2_jkp;
+
+      clearChallengeResult();
+
+      setMode('resolving');
+      setSelectedPo('rock');
+      setPlay(true);
+
+      setTimeout(() => {
+        if (matchResult === '1' || matchResult === 'win') {
+          setChar1Result(1);
+          setChar2Result(-1);
+        } else if (matchResult === '2' || matchResult === 'lose') {
+          setChar1Result(-1);
+          setChar2Result(1);
+        }
+
+        if (matchResult.length > 1) {
+          setMode(matchResult);
+
+          if (matchResult === 'win') {
+            addToast({
+              type: 'success',
+              title: 'Disputa vencida!',
+              description: 'Você ganhou a aposta!',
+            });
+          } else if (matchResult === 'lose') {
+            addToast({
+              type: 'error',
+              title: 'Disputa perdida!',
+              description: 'Você perdeu a aposta!',
+            });
+          } else if (matchResult === 'tie') {
+            addToast({
+              type: 'info',
+              title: 'Disputa empatada!',
+              description: 'A aposta foi empatada!',
+            });
+          }
+        } else {
+          setMode('resolved');
+        }
+
+        setSelectedPo(char1Res);
+        setSelOpponentPo(char2Res);
+      }, 2200);
+    }
+  }, [
+    addToast,
+    challengeResult.char1_jkp,
+    challengeResult.char2_jkp,
+    challengeResult.result,
+    clearChallengeResult,
   ]);
 
   useEffect(() => {
@@ -990,6 +752,15 @@ const Challenges: React.FC = () => {
       setTitle('Aguardando Desafio...');
     }
   }, [addToast, char.id, mode, myChar, opponentChar, user.storyteller]);
+
+  useEffect(() => {
+    enterChallengeMode(true);
+
+    return () => {
+      enterChallengeMode(false);
+      challengeCancel();
+    };
+  }, [challengeCancel, enterChallengeMode]);
 
   return (
     <Container>
