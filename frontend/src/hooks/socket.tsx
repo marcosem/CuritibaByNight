@@ -106,7 +106,8 @@ const SocketProvider: React.FC = ({ children }) => {
     {} as IChallengeResult,
   );
   const [challengeDoRetest, setChallengeDoRetest] = useState<boolean>(false);
-  const [challengeMode, setChallengeMode] = useState<boolean>(false);
+  // const [challengeMode, setChallengeMode] = useState<boolean>(false);
+  const challengeMode = useRef<boolean>(false);
 
   const userConnList = useRef<IUserConn[]>([]);
   const socket = useRef<WebSocket>();
@@ -190,7 +191,7 @@ const SocketProvider: React.FC = ({ children }) => {
   }, []);
 
   const enterChallengeMode = useCallback((mode: boolean) => {
-    setChallengeMode(mode);
+    challengeMode.current = mode;
   }, []);
 
   const setUserConnectionTimer = useCallback((user_id: string) => {
@@ -393,7 +394,7 @@ const SocketProvider: React.FC = ({ children }) => {
 
                 setChallengeOpponent(opponentChar);
 
-                if (challengeMode) {
+                if (challengeMode.current) {
                   if (isST) {
                     addToast({
                       type: 'success',
