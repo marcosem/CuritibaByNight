@@ -5,6 +5,7 @@ import { container } from 'tsyringe';
 import validateToken from '@modules/users/infra/http/middlewares/validateToken';
 import GetUserService from '@modules/users/services/GetUserService';
 import GetCharacterService from '@modules/characters/services/GetCharacterService';
+import { compareJanKenPo } from 'rolld20';
 
 interface IMyConnection {
   ws: any;
@@ -17,9 +18,9 @@ interface IMyConnection {
 }
 
 interface IMatch {
-  char1Connection: IMyConnection;
+  char1: any;
   char1JanKenPo?: string;
-  char2Connection: IMyConnection;
+  char2: any;
   char2JanKenPo?: string;
   stConnection: IMyConnection;
 }
@@ -40,6 +41,7 @@ interface ISocketClientMessage {
   masquerade_level?: number;
   char1?: any;
   char2?: any;
+  play?: string;
 }
 
 interface IUser {
@@ -60,6 +62,10 @@ interface ISocketServerMessage {
   char_name?: string;
   masquerade_level?: number;
   opponentChar?: any;
+  character?: string;
+  result?: string;
+  char1_jkp?: string;
+  char2_jkp?: string;
 }
 
 class WebSocketServer {
@@ -77,13 +83,8 @@ class WebSocketServer {
     this.sockets = [];
 
     this.matches = [];
-
-    // this.usersService = container.resolve(GetUserService);
-
-    // this.charactersService = container.resolve(GetCharacterService);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private sendMsg(ws: any, msg: ISocketServerMessage): boolean {
     try {
       if (ws.readyState !== ws.OPEN) {
@@ -277,8 +278,8 @@ class WebSocketServer {
                   }
 
                   this.matches.push({
-                    char1Connection: getChar1Socket,
-                    char2Connection: getChar2Socket,
+                    char1,
+                    char2,
                     stConnection: socket,
                   });
 
@@ -299,7 +300,6 @@ class WebSocketServer {
                 break;
 
               case 'challenge:cancel':
-                console.log('Sending');
                 if (!socket) {
                   isError = true;
                   errorMsg = 'User not Authenticated';
@@ -347,6 +347,250 @@ class WebSocketServer {
 
                   this.sendMsg(getChar2Socket.ws, {
                     message: 'challenge:restart',
+                  });
+                }
+                break;
+
+              case 'challenge:play':
+                {
+                  if (!socket) {
+                    isError = true;
+                    errorMsg = 'User not Authenticated';
+                    closeMe = true;
+                    break;
+                  }
+
+                  const { char_id } = parsedMsg;
+
+                  const myMatch = this.matches.find(
+                    mtch =>
+                      mtch.char1.id === char_id || mtch.char2.id === char_id,
+                  );
+
+                  if (myMatch) {
+                    if (!parsedMsg.play) {
+                      isError = true;
+                      errorMsg = 'Missing Jan-Ken-Po option';
+                      closeMe = false;
+                      break;
+                    }
+
+                    const getChar1Socket = this.sockets.find(myWs => {
+                      if (
+                        myMatch.char1.npc ||
+                        myMatch.char1.id.indexOf('Storyteller') >= 0
+                      ) {
+                        return myWs.stChar.id === myMatch.char1.id;
+                      }
+
+                      return myWs.char_id === myMatch.char1.id;
+                    });
+
+                    if (!getChar1Socket) {
+                      isError = true;
+                      errorMsg =
+                        'Character One is not connected, ask him to connect and try again';
+                      closeMe = false;
+                      break;
+                    }
+
+                    const getChar2Socket = this.sockets.find(
+                      myWs => myWs.char_id === myMatch.char2.id,
+                    );
+
+                    if (!getChar2Socket) {
+                      isError = true;
+                      errorMsg =
+                        'Character Two is not connected, ask him to connect and try again';
+                      closeMe = false;
+                      break;
+                    }
+
+                    if (myMatch.char1.id === char_id) {
+                      myMatch.char1JanKenPo = parsedMsg.play;
+
+                      this.sendMsg(getChar2Socket.ws, {
+                        message: 'challenge:ready:1',
+                        character: 'opponent',
+                      });
+
+                      if (myMatch.stConnection.id !== getChar1Socket.id) {
+                        this.sendMsg(myMatch.stConnection.ws, {
+                          message: 'challenge:ready:1',
+                          character: '1',
+                        });
+                      }
+                    } else {
+                      myMatch.char2JanKenPo = parsedMsg.play;
+                      this.sendMsg(getChar1Socket.ws, {
+                        message: 'challenge:ready:2',
+                        character: 'opponent',
+                      });
+
+                      this.sendMsg(myMatch.stConnection.ws, {
+                        message: 'challenge:ready:2',
+                        character: '2',
+                      });
+                    }
+
+                    if (myMatch.char1JanKenPo && myMatch.char2JanKenPo) {
+                      // Process tie first
+                      if (
+                        compareJanKenPo(
+                          myMatch.char1JanKenPo,
+                          myMatch.char2JanKenPo,
+                        ) === 0
+                      ) {
+                        if (
+                          myMatch.stConnection.id !== getChar1Socket.id &&
+                          myMatch.stConnection.id !== getChar2Socket.id
+                        ) {
+                          this.sendMsg(myMatch.stConnection.ws, {
+                            message: 'challenge:result',
+                            result: 'tie',
+                            char1_jkp: myMatch.char1JanKenPo,
+                            char2_jkp: myMatch.char2JanKenPo,
+                          });
+                        }
+
+                        this.sendMsg(getChar1Socket.ws, {
+                          message: 'challenge:result',
+                          result: 'tie',
+                          char1_jkp: myMatch.char1JanKenPo,
+                          char2_jkp: myMatch.char2JanKenPo,
+                        });
+
+                        this.sendMsg(getChar2Socket.ws, {
+                          message: 'challenge:result',
+                          result: 'tie',
+                          char1_jkp: myMatch.char2JanKenPo,
+                          char2_jkp: myMatch.char1JanKenPo,
+                        });
+                      } else if (
+                        compareJanKenPo(
+                          myMatch.char1JanKenPo,
+                          myMatch.char2JanKenPo,
+                        ) === -1
+                      ) {
+                        if (
+                          myMatch.stConnection.id !== getChar1Socket.id &&
+                          myMatch.stConnection.id !== getChar2Socket.id
+                        ) {
+                          this.sendMsg(myMatch.stConnection.ws, {
+                            message: 'challenge:result',
+                            result: '1',
+                            char1_jkp: myMatch.char1JanKenPo,
+                            char2_jkp: myMatch.char2JanKenPo,
+                          });
+                        }
+
+                        this.sendMsg(getChar1Socket.ws, {
+                          message: 'challenge:result',
+                          result: 'win',
+                          char1_jkp: myMatch.char1JanKenPo,
+                          char2_jkp: myMatch.char2JanKenPo,
+                        });
+
+                        this.sendMsg(getChar2Socket.ws, {
+                          message: 'challenge:result',
+                          result: 'lose',
+                          char1_jkp: myMatch.char2JanKenPo,
+                          char2_jkp: myMatch.char1JanKenPo,
+                        });
+                      } else {
+                        if (
+                          myMatch.stConnection.id !== getChar1Socket.id &&
+                          myMatch.stConnection.id !== getChar2Socket.id
+                        ) {
+                          this.sendMsg(myMatch.stConnection.ws, {
+                            message: 'challenge:result',
+                            result: '2',
+                            char1_jkp: myMatch.char1JanKenPo,
+                            char2_jkp: myMatch.char2JanKenPo,
+                          });
+                        }
+
+                        this.sendMsg(getChar1Socket.ws, {
+                          message: 'challenge:result',
+                          result: 'lose',
+                          char1_jkp: myMatch.char1JanKenPo,
+                          char2_jkp: myMatch.char2JanKenPo,
+                        });
+
+                        this.sendMsg(getChar2Socket.ws, {
+                          message: 'challenge:result',
+                          result: 'win',
+                          char1_jkp: myMatch.char2JanKenPo,
+                          char2_jkp: myMatch.char1JanKenPo,
+                        });
+                      }
+
+                      this.matches = this.matches.filter(
+                        mtch => mtch !== myMatch,
+                      );
+                    }
+                  }
+                }
+                break;
+
+              case 'challenge:retest':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else if (socket.st === false) {
+                  isError = true;
+                  errorMsg =
+                    'Only authenticates storyteller can cancel a challange';
+                } else {
+                  const { char1, char2 } = parsedMsg;
+
+                  const getChar1Socket = this.sockets.find(myWs => {
+                    if (char1.npc || char1.id.indexOf('Storyteller') >= 0) {
+                      return myWs.stChar.id === char1.id;
+                    }
+
+                    return myWs.char_id === char1.id;
+                  });
+
+                  this.matches = this.matches.filter(mtch => {
+                    return (
+                      mtch.char1.id !== char1.id && mtch.char2.id !== char2.id
+                    );
+                  });
+
+                  if (!getChar1Socket) {
+                    isError = true;
+                    errorMsg =
+                      'Character One is not connected, ask him to connect and try again';
+                    closeMe = false;
+                    break;
+                  }
+
+                  this.sendMsg(getChar1Socket.ws, {
+                    message: 'challenge:retest',
+                  });
+
+                  const getChar2Socket = this.sockets.find(
+                    myWs => myWs.char_id === char2.id,
+                  );
+
+                  if (!getChar2Socket) {
+                    isError = true;
+                    errorMsg =
+                      'Character Two is not connected, ask him to connect and try again';
+                    closeMe = false;
+                    break;
+                  }
+
+                  this.matches.push({
+                    char1,
+                    char2,
+                    stConnection: socket,
+                  });
+
+                  this.sendMsg(getChar2Socket.ws, {
+                    message: 'challenge:retest',
                   });
                 }
                 break;
