@@ -174,7 +174,9 @@ const Locals: React.FC = () => {
                 <MapMaker
                   image={location.picture_url}
                   isOwner={ownerId === location.responsible}
-                  selected={location.id === local}
+                  selected={
+                    location.id === local || ownerId === location.responsible
+                  }
                 />,
               ),
               iconSize: [42, 42],
