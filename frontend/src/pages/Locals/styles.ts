@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
-interface ContainerProps {
+interface IContainerProps {
   isMobile: boolean;
 }
 
@@ -10,7 +10,7 @@ interface ILocalsProps {
   isSt?: boolean;
 }
 
-export const Container = styled.div<ContainerProps>`
+export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
       ? css`

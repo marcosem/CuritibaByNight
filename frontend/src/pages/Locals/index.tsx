@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import ReactDomServer from 'react-dom/server';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiEdit, FiUserPlus, FiFlag } from 'react-icons/fi';
@@ -46,9 +47,11 @@ import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useHeader } from '../../hooks/header';
 
-import mapMakerIcon from '../../assets/mapMakerIcon.svg';
+// import mapMakerIcon from '../../assets/mapMakerIcon.svg';
 
 import { territories } from './territories.json';
+
+import MapMaker from '../../components/MapMaker';
 
 interface IRouteParams {
   local: string;
@@ -164,6 +167,20 @@ const Locals: React.FC = () => {
 
           // https://leafletjs.com/reference-1.7.1.html#divicon-option
           const newArray = res.map((location: ILocation) => {
+            const icon = Leaflet.divIcon({
+              className: 'custom-icon',
+              html: ReactDomServer.renderToString(
+                <MapMaker
+                  image={location.picture_url}
+                  isOwner={char.id === location.responsible}
+                  selected={location.id === local}
+                />,
+              ),
+              iconSize: [42, 42],
+              iconAnchor: [21, 42],
+            });
+
+            /*
             const icon = Leaflet.icon({
               iconUrl: location.picture_url || imgBuilding,
               iconSize: [48, 48],
@@ -172,6 +189,7 @@ const Locals: React.FC = () => {
               iconAnchor: [24, 61],
               tooltipAnchor: [24, -32],
             });
+            */
 
             const newLocation = {
               id: location.id,
