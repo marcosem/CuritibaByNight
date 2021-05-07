@@ -400,6 +400,16 @@ const Challenges: React.FC = () => {
       return;
     }
 
+    if (opponentChar?.id === char.id) {
+      addToast({
+        type: 'error',
+        title: 'Disputa inválida',
+        description: 'Você não pode disputar contra o próprio personagem!',
+      });
+
+      return;
+    }
+
     if (opponentChar) {
       if (!isCharOnline(opponentChar.id, opponentChar.npc)) {
         addToast({
@@ -431,7 +441,7 @@ const Challenges: React.FC = () => {
     }
 
     setMode('battle');
-  }, [addToast, challengeSelect, isCharOnline, myChar, opponentChar]);
+  }, [addToast, challengeSelect, char.id, isCharOnline, myChar, opponentChar]);
 
   const handleRetestButton = useCallback(() => {
     if (opponentChar) {
