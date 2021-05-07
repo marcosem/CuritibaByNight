@@ -31,10 +31,7 @@ import {
   ButtonBox,
   FunctionsContainer,
   FunctionLink,
-  // PlayButton,
   FunctionButton,
-  // ResetButton,
-  // RemoveButton,
 } from './styles';
 
 import Loading from '../Loading';

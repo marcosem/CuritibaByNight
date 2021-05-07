@@ -7,8 +7,6 @@ import React, {
   useRef,
 } from 'react';
 import { FiEdit, FiSave, FiX, FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 import api from '../../services/api';
 
 import {
@@ -29,6 +27,8 @@ import { useToast } from '../../hooks/toast';
 import { useModalBox } from '../../hooks/modalBox';
 import { useSocket } from '../../hooks/socket';
 import { useMobile } from '../../hooks/mobile';
+import { useHeader } from '../../hooks/header';
+
 import Loading from '../../components/Loading';
 
 interface ITerritory {
@@ -54,6 +54,7 @@ const Influences: React.FC = () => {
   const { showModal } = useModalBox();
   const { notifyMasquerade } = useSocket();
   const { isMobileVersion } = useMobile();
+  const { setCurrentPage } = useHeader();
   const terrRowRef = useRef<HTMLTableRowElement>(null);
   const terrBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -590,18 +591,13 @@ const Influences: React.FC = () => {
   }, [selectedSect, territoryList, selTerritoryList]);
 
   useEffect(() => {
+    setCurrentPage('territories');
     loadDomainMasquerade();
     loadTerritories();
-  }, [loadDomainMasquerade, loadTerritories]);
+  }, [loadDomainMasquerade, loadTerritories, setCurrentPage]);
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="territories" />
-      ) : (
-        <Header page="territories" />
-      )}
-
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         <strong>
           {`Lista de Territórios${

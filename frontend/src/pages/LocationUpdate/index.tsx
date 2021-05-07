@@ -27,7 +27,6 @@ import {
   ButtonBox,
   RemoveButton,
 } from './styles';
-import Header from '../../components/Header';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
@@ -35,6 +34,8 @@ import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useModalBox } from '../../hooks/modalBox';
+import { useHeader } from '../../hooks/header';
+import { useMobile } from '../../hooks/mobile';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import LocationCard from '../../components/LocationCard';
 
@@ -197,6 +198,8 @@ const LocationUpdate: React.FC = () => {
   const { addToast } = useToast();
   const { signOut } = useAuth();
   const { showModal } = useModalBox();
+  const { setCurrentPage } = useHeader();
+  const { isMobileVersion } = useMobile();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -787,14 +790,13 @@ const LocationUpdate: React.FC = () => {
   }, [handleRemove, selectedLocation, showModal]);
 
   useEffect(() => {
+    setCurrentPage('addlocal');
     loadCharacters();
     loadLocations();
-  }, [loadCharacters, loadLocations]);
+  }, [loadCharacters, loadLocations, setCurrentPage]);
 
   return (
-    <Container>
-      <Header page="addlocal" />
-
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         {charList.length > 0 ? (
           <>

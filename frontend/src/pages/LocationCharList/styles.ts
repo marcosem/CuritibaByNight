@@ -11,15 +11,22 @@ const rotate = keyframes`
   }
 `;
 
-interface ILocationPanelProps {
+interface IContainerProps {
   isMobile: boolean;
 }
 
-export const Container = styled.div`
-  height: 100vh;
+export const Container = styled.div<IContainerProps>`
+  ${props =>
+    props.isMobile
+      ? css`
+          height: calc(100vh - 110px);
+        `
+      : css`
+          height: calc(100vh - 140px);
+        `}
 `;
 
-export const Content = styled.main<ILocationPanelProps>`
+export const Content = styled.main<IContainerProps>`
   min-width: 340px;
   max-width: 1012px;
   margin: 0 auto;
@@ -68,7 +75,7 @@ export const TitleBox = styled.div`
   }
 `;
 
-export const LocationCardContainer = styled.div<ILocationPanelProps>`
+export const LocationCardContainer = styled.div<IContainerProps>`
   padding: 16px;
   display: flex;
 
@@ -79,7 +86,7 @@ export const LocationCardContainer = styled.div<ILocationPanelProps>`
     `}
 `;
 
-export const LocationCharsContainer = styled.div<ILocationPanelProps>`
+export const LocationCharsContainer = styled.div<IContainerProps>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -152,7 +159,7 @@ export const LocationCharsContainer = styled.div<ILocationPanelProps>`
   }
 `;
 
-export const SelectContainer = styled.div<ILocationPanelProps>`
+export const SelectContainer = styled.div<IContainerProps>`
   display: flex;
   align-items: center;
 
@@ -196,7 +203,7 @@ export const SelectContainer = styled.div<ILocationPanelProps>`
         `}
 `;
 
-export const Select = styled.select<ILocationPanelProps>`
+export const Select = styled.select<IContainerProps>`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;

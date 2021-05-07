@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, ChangeEvent } from 'react';
+import React, { useCallback, useRef, ChangeEvent, useEffect } from 'react';
 import { FiUser, FiMail, FiLock, FiArrowLeft, FiCamera } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
@@ -15,6 +15,7 @@ import { Container, Content, AvatarInput } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { useAuth } from '../../hooks/auth';
+import { useHeader } from '../../hooks/header';
 import imgProfile from '../../assets/profile.jpg';
 
 interface FormData {
@@ -29,6 +30,7 @@ interface FormData {
 const Profile: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { setCurrentPage } = useHeader();
   const history = useHistory();
 
   const { user, updateUser } = useAuth();
@@ -136,6 +138,10 @@ const Profile: React.FC = () => {
   const handleGoBackClick = useCallback(() => {
     history.goBack();
   }, [history]);
+
+  useEffect(() => {
+    setCurrentPage('profile', true);
+  }, [setCurrentPage]);
 
   return (
     <Container>

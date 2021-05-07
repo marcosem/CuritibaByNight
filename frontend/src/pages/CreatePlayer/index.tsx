@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { FiUser, FiMail, FiArrowLeft } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
@@ -6,6 +6,7 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -25,6 +26,8 @@ interface FormData {
 const CreatePlayer: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
+  const { setCurrentPage } = useHeader();
+
   const history = useHistory();
   const [isLoading, setLoading] = useState(false);
 
@@ -89,6 +92,10 @@ const CreatePlayer: React.FC = () => {
   const handleGoBackClick = useCallback(() => {
     history.goBack();
   }, [history]);
+
+  useEffect(() => {
+    setCurrentPage('createplayer', true);
+  }, [setCurrentPage]);
 
   return (
     <Container>

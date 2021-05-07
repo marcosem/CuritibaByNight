@@ -1,15 +1,22 @@
 import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
-interface ICharacterProps {
+interface IContainerProps {
   isMobile: boolean;
 }
 
-export const Container = styled.div`
-  height: 100vh;
+export const Container = styled.div<IContainerProps>`
+  ${props =>
+    props.isMobile
+      ? css`
+          height: calc(100vh - 110px);
+        `
+      : css`
+          height: calc(100vh - 140px);
+        `}
 `;
 
-export const Content = styled.main<ICharacterProps>`
+export const Content = styled.main<IContainerProps>`
   min-width: 340px;
   max-width: 1012px;
   margin: 0 auto;

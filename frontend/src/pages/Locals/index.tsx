@@ -35,8 +35,6 @@ import {
   FunctionsContainer,
   CheckboxContainer,
 } from './styles';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 import 'leaflet/dist/leaflet.css';
 import imgBuilding from '../../assets/building.jpg';
@@ -46,6 +44,7 @@ import Checkbox from '../../components/Checkbox';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
+import { useHeader } from '../../hooks/header';
 
 import mapMakerIcon from '../../assets/mapMakerIcon.svg';
 
@@ -118,6 +117,7 @@ const Locals: React.FC = () => {
   const { addToast } = useToast();
   const { user, char, signOut } = useAuth();
   const { isMobileVersion } = useMobile();
+  const { setCurrentPage } = useHeader();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -344,13 +344,20 @@ const Locals: React.FC = () => {
   );
 
   useEffect(() => {
+    setCurrentPage('locals');
     if (user.storyteller) {
       loadCharacters();
       loadTerritories();
     }
 
     loadLocations();
-  }, [loadLocations, loadCharacters, user.storyteller, loadTerritories]);
+  }, [
+    loadLocations,
+    loadCharacters,
+    user.storyteller,
+    loadTerritories,
+    setCurrentPage,
+  ]);
 
   const handleCharacterChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -379,13 +386,7 @@ const Locals: React.FC = () => {
   );
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="locals" />
-      ) : (
-        <Header page="locals" />
-      )}
-
+    <Container isMobile={isMobileVersion}>
       {user.storyteller && (
         <TitleBox>
           {charList.length > 0 ? (

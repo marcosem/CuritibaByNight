@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { FiMail, FiLogIn } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 
 import { Link } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 import { Container, Content, AnimationContainer, Background } from './styles';
@@ -24,7 +25,7 @@ const ResetPassword: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { addToast } = useToast();
-  // const history = useHistory();
+  const { setCurrentPage } = useHeader();
 
   const handleSubmit = useCallback(
     async (data: ResetPasswordFormData) => {
@@ -75,6 +76,10 @@ const ResetPassword: React.FC = () => {
     },
     [addToast, loading],
   );
+
+  useEffect(() => {
+    setCurrentPage('forgotpassword', true);
+  }, [setCurrentPage]);
 
   return (
     <Container>

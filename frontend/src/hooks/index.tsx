@@ -5,6 +5,7 @@ import { MobileProvider } from './mobile';
 import { SelectionProvider } from './selection';
 import { ModalBoxProvider } from './modalBox';
 import { SocketProvider } from './socket';
+import { HeaderProvider } from './header';
 
 const AppProvider: React.FC = ({ children }) => (
   <AuthProvider>
@@ -12,7 +13,9 @@ const AppProvider: React.FC = ({ children }) => (
       <SelectionProvider>
         <ModalBoxProvider>
           <ToastProvider>
-            <SocketProvider>{children}</SocketProvider>
+            <SocketProvider>
+              <HeaderProvider>{children}</HeaderProvider>
+            </SocketProvider>
           </ToastProvider>
         </ModalBoxProvider>
       </SelectionProvider>

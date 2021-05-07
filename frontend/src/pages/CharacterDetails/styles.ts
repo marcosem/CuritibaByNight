@@ -1,5 +1,16 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Container = styled.div`
-  height: 100vh;
+interface IContainerProps {
+  isMobile: boolean;
+}
+
+export const Container = styled.div<IContainerProps>`
+  ${props =>
+    props.isMobile
+      ? css`
+          height: calc(100vh - 110px);
+        `
+      : css`
+          height: calc(100vh - 140px);
+        `}
 `;

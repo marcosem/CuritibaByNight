@@ -18,11 +18,13 @@ import {
   SelectRegnant,
   ButtonBox,
 } from './styles';
-import Header from '../../components/Header';
 import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
+import { useMobile } from '../../hooks/mobile';
+
 import CharacterCard from '../../components/CharacterCard';
 import ICharacter from '../../components/CharacterList/ICharacter';
 
@@ -60,6 +62,8 @@ const AddCharacter: React.FC = () => {
   const [charSheet, setCharSheet] = useState<File>();
   const { addToast } = useToast();
   const { signOut } = useAuth();
+  const { setCurrentPage } = useHeader();
+  const { isMobileVersion } = useMobile();
   const history = useHistory();
   const [isBusy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -262,14 +266,14 @@ const AddCharacter: React.FC = () => {
   }, [history]);
 
   useEffect(() => {
+    setCurrentPage('addchar');
+
     if (filter !== 'npc') loadPlayers();
     loadRegnants();
-  }, [filter, loadPlayers, loadRegnants]);
+  }, [filter, loadPlayers, loadRegnants, setCurrentPage]);
 
   return (
-    <Container>
-      <Header page="addchar" />
-
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         {playerList.length > 0 ? (
           <>

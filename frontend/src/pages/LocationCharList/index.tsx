@@ -28,14 +28,13 @@ import {
   ButtonBox,
 } from './styles';
 
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useSelection } from '../../hooks/selection';
 import { useMobile } from '../../hooks/mobile';
+import { useHeader } from '../../hooks/header';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import LocationCard from '../../components/LocationCard';
 
@@ -98,6 +97,7 @@ const LocationCharList: React.FC = () => {
   const { signOut } = useAuth();
   const { setChar } = useSelection();
   const { isMobileVersion } = useMobile();
+  const { setCurrentPage } = useHeader();
   const history = useHistory();
 
   const loadCharacters = useCallback(async () => {
@@ -456,9 +456,10 @@ const LocationCharList: React.FC = () => {
   );
 
   useEffect(() => {
+    setCurrentPage('localchars');
     loadCharacters();
     loadLocations();
-  }, [loadCharacters, loadLocations]);
+  }, [loadCharacters, loadLocations, setCurrentPage]);
 
   useEffect(() => {
     if (selectedLocation.id !== undefined) {
@@ -471,13 +472,7 @@ const LocationCharList: React.FC = () => {
   }, [history]);
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="localchars" />
-      ) : (
-        <Header page="localchars" />
-      )}
-
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         {charList.length > 0 ? (
           <>

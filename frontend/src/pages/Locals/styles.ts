@@ -1,13 +1,24 @@
 import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
+interface ContainerProps {
+  isMobile: boolean;
+}
+
 interface ILocalsProps {
   isMobile: boolean;
   isSt?: boolean;
 }
 
-export const Container = styled.div`
-  height: 100vh;
+export const Container = styled.div<ContainerProps>`
+  ${props =>
+    props.isMobile
+      ? css`
+          height: calc(100vh - 110px);
+        `
+      : css`
+          height: calc(100vh - 140px);
+        `}
 `;
 
 export const Content = styled.main<ILocalsProps>`

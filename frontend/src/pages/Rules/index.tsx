@@ -1,11 +1,9 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
-
 import { documents } from './documents.json';
 
 import { Container, TitleBox, TableWrapper, Table, TableCell } from './styles';
+import { useHeader } from '../../hooks/header';
 import { useMobile } from '../../hooks/mobile';
 
 interface IDoc {
@@ -16,6 +14,7 @@ interface IDoc {
 
 const Rules: React.FC = () => {
   const [docsList, setDocsList] = useState<IDoc[]>([]);
+  const { setCurrentPage } = useHeader();
   const { isMobileVersion } = useMobile();
 
   const loadDocuments = useCallback(() => {
@@ -32,16 +31,12 @@ const Rules: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    setCurrentPage('rules');
     loadDocuments();
-  }, [loadDocuments]);
+  }, [loadDocuments, setCurrentPage]);
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="rules" />
-      ) : (
-        <Header page="rules" />
-      )}
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         <strong>Regras e Materiais de Referência</strong>
       </TitleBox>

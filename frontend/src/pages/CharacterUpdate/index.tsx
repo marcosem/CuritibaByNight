@@ -19,7 +19,6 @@ import {
   InputFileBox,
   ButtonBox,
 } from './styles';
-import Header from '../../components/Header';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -28,6 +27,8 @@ import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useModalBox } from '../../hooks/modalBox';
+import { useHeader } from '../../hooks/header';
+import { useMobile } from '../../hooks/mobile';
 import CharacterCard from '../../components/CharacterCard';
 import ICharacter from '../../components/CharacterList/ICharacter';
 
@@ -87,9 +88,11 @@ const CharacterUpdate: React.FC = () => {
   const [lastComment, setLastComment] = useState<string>();
   const { addToast } = useToast();
   const { signOut } = useAuth();
+  const { showModal } = useModalBox();
+  const { setCurrentPage } = useHeader();
+  const { isMobileVersion } = useMobile();
   const [isBusy, setBusy] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const { showModal } = useModalBox();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true && !uploading);
@@ -377,13 +380,12 @@ const CharacterUpdate: React.FC = () => {
   }, [selectedChar, setCharSituation]);
 
   useEffect(() => {
+    setCurrentPage('updatechar');
     loadCharacters();
-  }, [loadCharacters]);
+  }, [loadCharacters, setCurrentPage]);
 
   return (
-    <Container>
-      <Header page="updatechar" />
-
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         {charList.length > 0 ? (
           <>

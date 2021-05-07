@@ -13,7 +13,7 @@ interface IButtonProps {
   isMobile?: boolean;
 }
 
-interface IContentsProps {
+interface IContainerProps {
   isMobile: boolean;
 }
 
@@ -82,8 +82,15 @@ const characterOut = keyframes`
   }
 `;
 
-export const Container = styled.div`
-  height: 100vh;
+export const Container = styled.div<IContainerProps>`
+  ${props =>
+    props.isMobile
+      ? css`
+          height: calc(100vh - 110px);
+        `
+      : css`
+          height: calc(100vh - 140px);
+        `}
 `;
 
 export const TitleBox = styled.div`
@@ -111,7 +118,7 @@ export const TitleBox = styled.div`
   }
 `;
 
-export const Content = styled.main<IContentsProps>`
+export const Content = styled.main<IContainerProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
   display: flex;
@@ -358,7 +365,7 @@ export const SelectOption = styled.option<IOptionProps>`
         `}
 `;
 
-export const ButtonBox = styled.div<IContentsProps>`
+export const ButtonBox = styled.div<IContainerProps>`
   margin: auto;
   padding: 16px 0;
   display: flex;

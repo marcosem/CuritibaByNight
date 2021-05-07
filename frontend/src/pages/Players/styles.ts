@@ -1,6 +1,10 @@
 import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
+interface IContainerProps {
+  isMobile: boolean;
+}
+
 interface IAvatarCellProps {
   isSt: boolean;
 }
@@ -9,8 +13,15 @@ interface IConnectionProps {
   isConnected: boolean;
 }
 
-export const Container = styled.div`
-  height: 100vh;
+export const Container = styled.div<IContainerProps>`
+  ${props =>
+    props.isMobile
+      ? css`
+          height: calc(100vh - 110px);
+        `
+      : css`
+          height: calc(100vh - 140px);
+        `}
 `;
 
 export const TableWrapper = styled.div`

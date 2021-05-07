@@ -16,6 +16,7 @@ import { useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
 import { useAuth } from '../../hooks/auth';
 import { useModalBox } from '../../hooks/modalBox';
+import { useHeader } from '../../hooks/header';
 import ICharacter from '../../components/CharacterList/ICharacter';
 
 import api from '../../services/api';
@@ -59,6 +60,7 @@ const UpdatePlayer: React.FC = () => {
   const history = useHistory();
   const [isLoading, setLoading] = useState(false);
   const { showModal } = useModalBox();
+  const { setCurrentPage } = useHeader();
 
   const loadPlayer = useCallback(async () => {
     setLoading(true);
@@ -297,6 +299,10 @@ const UpdatePlayer: React.FC = () => {
   useEffect(() => {
     loadPlayer();
   }, [id, loadPlayer]);
+
+  useEffect(() => {
+    setCurrentPage('updateplayer', true);
+  }, [setCurrentPage]);
 
   return (
     <Container>

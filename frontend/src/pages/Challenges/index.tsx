@@ -39,8 +39,6 @@ import {
   ChallangeArenaMobile,
   JanKenPoContainerMobile,
 } from './styles';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 import CharacterCard from '../../components/CharacterCard';
 import Button from '../../components/Button';
 import ICharacter from '../../components/CharacterList/ICharacter';
@@ -49,6 +47,7 @@ import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
 import { useSocket } from '../../hooks/socket';
+import { useHeader } from '../../hooks/header';
 
 interface IOnLineUser {
   user_id: string;
@@ -71,6 +70,7 @@ const Challenges: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
+  const { setCurrentPage } = useHeader();
   const [play, setPlay] = useState<boolean>(false);
   const char1Id = useRef<string>('');
   const char2Id = useRef<string>('');
@@ -754,21 +754,17 @@ const Challenges: React.FC = () => {
   }, [addToast, char.id, mode, myChar, opponentChar, user.storyteller]);
 
   useEffect(() => {
+    setCurrentPage('challenge');
     enterChallengeMode(true);
 
     return () => {
       enterChallengeMode(false);
       challengeCancel();
     };
-  }, [challengeCancel, enterChallengeMode]);
+  }, [challengeCancel, enterChallengeMode, setCurrentPage]);
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="challenge" />
-      ) : (
-        <Header page="challenge" />
-      )}
+    <Container isMobile={isMobileVersion}>
       {isMobileVersion ? (
         <>
           <TitleBox>

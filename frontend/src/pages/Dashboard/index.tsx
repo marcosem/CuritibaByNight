@@ -4,11 +4,10 @@ import { format } from 'date-fns';
 import api from '../../services/api';
 
 import { Container } from './styles';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
 import { useMobile } from '../../hooks/mobile';
 import Loading from '../../components/Loading';
 import ICharacter from '../../components/CharacterList/ICharacter';
@@ -19,6 +18,7 @@ const Dashboard: React.FC = () => {
   const { addToast } = useToast();
   const { user, signOut, setChar } = useAuth();
   const [isBusy, setBusy] = useState(true);
+  const { setCurrentPage } = useHeader();
   const { isMobileVersion } = useMobile();
 
   const loadCharacters = useCallback(async () => {
@@ -68,17 +68,12 @@ const Dashboard: React.FC = () => {
   }, [addToast, setChar, signOut, user.id]);
 
   useEffect(() => {
+    setCurrentPage('dashboard');
     loadCharacters();
-  }, [loadCharacters]);
+  }, [loadCharacters, setCurrentPage]);
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="dashboard" />
-      ) : (
-        <Header page="dashboard" />
-      )}
-
+    <Container isMobile={isMobileVersion}>
       {isBusy ? (
         <Loading />
       ) : (

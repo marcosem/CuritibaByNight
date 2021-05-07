@@ -26,13 +26,14 @@ import {
   Select,
   ButtonBox,
 } from './styles';
-import Header from '../../components/Header';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
+import { useMobile } from '../../hooks/mobile';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import LocationCard from '../../components/LocationCard';
 
@@ -152,6 +153,8 @@ const AddLocation: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const { signOut } = useAuth();
+  const { setCurrentPage } = useHeader();
+  const { isMobileVersion } = useMobile();
   const history = useHistory();
   const [isBusy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -584,13 +587,12 @@ const AddLocation: React.FC = () => {
   );
 
   useEffect(() => {
+    setCurrentPage('addlocal');
     loadCharacters();
-  }, [loadCharacters]);
+  }, [loadCharacters, setCurrentPage]);
 
   return (
-    <Container>
-      <Header page="addlocal" />
-
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         <strong>Adicionar uma nova Localização</strong>
       </TitleBox>

@@ -25,12 +25,19 @@ interface IActionButton {
   editMode?: boolean;
 }
 
-interface ITerritoriesProps {
+interface IContainerProps {
   isMobile: boolean;
 }
 
-export const Container = styled.div`
-  height: 100vh;
+export const Container = styled.div<IContainerProps>`
+  ${props =>
+    props.isMobile
+      ? css`
+          height: calc(100vh - 110px);
+        `
+      : css`
+          height: calc(100vh - 140px);
+        `}
 `;
 
 export const TitleBox = styled.div`
@@ -78,7 +85,7 @@ export const DomainMasqueradeBox = styled.div`
   }
 `;
 
-export const TablesContainer = styled.div<ITerritoriesProps>`
+export const TablesContainer = styled.div<IContainerProps>`
   margin: 10px auto;
   display: flex;
   justify-content: center;

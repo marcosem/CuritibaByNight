@@ -5,13 +5,12 @@ import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 import { Container } from './styles';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 
 import { useAuth } from '../../hooks/auth';
-import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
 import { useSelection } from '../../hooks/selection';
+import { useHeader } from '../../hooks/header';
+import { useMobile } from '../../hooks/mobile';
 import Loading from '../../components/Loading';
 import ICharacter from '../../components/CharacterList/ICharacter';
 import CharacterPanel from '../../components/CharacterPanel';
@@ -23,12 +22,13 @@ interface IRouteParams {
 const CharacterDetails: React.FC = () => {
   const { charId } = useParams<IRouteParams>();
   const { addToast } = useToast();
-  const [myChar, setMyChar] = useState<ICharacter>();
   const { signOut } = useAuth();
   const { char } = useSelection();
-  const [isBusy, setBusy] = useState(false);
+  const { setCurrentPage } = useHeader();
   const { isMobileVersion } = useMobile();
   const history = useHistory();
+  const [myChar, setMyChar] = useState<ICharacter>();
+  const [isBusy, setBusy] = useState(false);
 
   const loadCharacter = useCallback(async () => {
     try {
@@ -90,6 +90,8 @@ const CharacterDetails: React.FC = () => {
   }, [addToast, charId, history, signOut]);
 
   useEffect(() => {
+    setCurrentPage('character');
+
     if (char?.id === charId) {
       setMyChar(char);
     } else if (charId) {
@@ -97,16 +99,10 @@ const CharacterDetails: React.FC = () => {
     } else {
       history.push('/');
     }
-  }, [char, charId, history, loadCharacter]);
+  }, [char, charId, history, loadCharacter, setCurrentPage]);
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="character" />
-      ) : (
-        <Header page="character" />
-      )}
-
+    <Container isMobile={isMobileVersion}>
       {isBusy ? <Loading /> : myChar && <CharacterPanel myChar={myChar} />}
     </Container>
   );

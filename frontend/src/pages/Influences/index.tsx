@@ -1,8 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { FiCopy, FiArrowLeft } from 'react-icons/fi';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 import InfluenceCard from '../../components/InfluenceCard';
 
 import { influences } from './influences.json';
@@ -22,6 +20,7 @@ import {
 } from './styles';
 import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
 
 interface IInfluence {
   influence: string;
@@ -36,7 +35,7 @@ const Influences: React.FC = () => {
   const [selInfluence, setSelInfluence] = useState<IInfluence>();
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
-  // const isMobileVersion = true;
+  const { setCurrentPage } = useHeader();
 
   const loadInfluences = useCallback(() => {
     const infList: IInfluence[] = influences.map(inf => {
@@ -106,16 +105,12 @@ const Influences: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    setCurrentPage('influences');
     loadInfluences();
-  }, [loadInfluences]);
+  }, [loadInfluences, setCurrentPage]);
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="influences" />
-      ) : (
-        <Header page="influences" />
-      )}
+    <Container isMobile={isMobileVersion}>
       <TitleBox>
         <strong>Influências</strong>
       </TitleBox>

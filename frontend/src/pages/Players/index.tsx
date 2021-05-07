@@ -5,8 +5,6 @@ import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
 import api from '../../services/api';
 
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
 import {
@@ -23,6 +21,7 @@ import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useSocket } from '../../hooks/socket';
+import { useHeader } from '../../hooks/header';
 import imgProfile from '../../assets/profile.jpg';
 
 interface IPlayer {
@@ -49,6 +48,7 @@ const Players: React.FC = () => {
   const { addToast } = useToast();
   const { onLineUsers } = useSocket();
   const { isMobileVersion } = useMobile();
+  const { setCurrentPage } = useHeader();
   const history = useHistory();
 
   const loadPlayers = useCallback(async () => {
@@ -97,8 +97,9 @@ const Players: React.FC = () => {
   }, [addToast, signOut]);
 
   useEffect(() => {
+    setCurrentPage('players');
     loadPlayers();
-  }, [loadPlayers]);
+  }, [loadPlayers, setCurrentPage]);
 
   const handleProfile = useCallback(
     (profile: IPlayer) => {
@@ -110,12 +111,7 @@ const Players: React.FC = () => {
   );
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page="players" />
-      ) : (
-        <Header page="players" />
-      )}
+    <Container isMobile={isMobileVersion}>
       {isBusy ? (
         <Loading />
       ) : (

@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 import { FiPlus, FiUpload } from 'react-icons/fi';
 
 import api from '../../services/api';
-import Header from '../../components/Header';
-import HeaderMobile from '../../components/HeaderMobile';
 import Loading from '../../components/Loading';
 
 import {
@@ -24,6 +22,7 @@ import Checkbox from '../../components/Checkbox';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
+import { useHeader } from '../../hooks/header';
 
 interface IRouteParams {
   filter: string;
@@ -39,6 +38,7 @@ const Characters: React.FC = () => {
   const { signOut } = useAuth();
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
+  const { setCurrentPage } = useHeader();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -101,8 +101,9 @@ const Characters: React.FC = () => {
   }, [addToast, filter, signOut]);
 
   useEffect(() => {
+    setCurrentPage(filter === 'npc' ? 'npcs' : 'characters');
     loadCharacters();
-  }, [loadCharacters]);
+  }, [filter, loadCharacters, setCurrentPage]);
 
   useEffect(() => {
     setSelectedClan('');
@@ -124,12 +125,7 @@ const Characters: React.FC = () => {
   );
 
   return (
-    <Container>
-      {isMobileVersion ? (
-        <HeaderMobile page={filter === 'npc' ? 'npcs' : 'characters'} />
-      ) : (
-        <Header page={filter === 'npc' ? 'npcs' : 'characters'} />
-      )}
+    <Container isMobile={isMobileVersion}>
       {isBusy ? (
         <Loading />
       ) : (

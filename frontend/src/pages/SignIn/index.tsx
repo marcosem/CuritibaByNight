@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { FiMail, FiLock } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -7,6 +7,7 @@ import { useHistory, Link } from 'react-router-dom';
 
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 import { Container, Content, AnimationContainer, Background } from './styles';
@@ -25,6 +26,7 @@ const SignIn: React.FC = () => {
 
   const { signIn } = useAuth();
   const { addToast } = useToast();
+  const { setCurrentPage } = useHeader();
   const history = useHistory();
 
   const handleSubmit = useCallback(
@@ -64,6 +66,10 @@ const SignIn: React.FC = () => {
     },
     [signIn, addToast, history],
   );
+
+  useEffect(() => {
+    setCurrentPage('signin', true);
+  }, [setCurrentPage]);
 
   return (
     <Container>

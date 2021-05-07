@@ -7,6 +7,7 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { Link, useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
+import { useHeader } from '../../hooks/header';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -44,6 +45,7 @@ const SignUp: React.FC = () => {
     {} as InitialUserData,
   );
   const { addToast } = useToast();
+  const { setCurrentPage } = useHeader();
   const history = useHistory();
 
   useEffect(() => {
@@ -135,6 +137,10 @@ const SignUp: React.FC = () => {
     },
     [history, addToast, id],
   );
+
+  useEffect(() => {
+    setCurrentPage('signup', true);
+  }, [setCurrentPage]);
 
   return (
     <Container>
