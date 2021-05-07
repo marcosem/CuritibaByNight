@@ -759,9 +759,9 @@ const Challenges: React.FC = () => {
 
     return () => {
       enterChallengeMode(false);
-      challengeCancel();
+      if (user.storyteller) challengeCancel();
     };
-  }, [challengeCancel, enterChallengeMode, setCurrentPage]);
+  }, [challengeCancel, enterChallengeMode, setCurrentPage, user.storyteller]);
 
   return (
     <Container isMobile={isMobileVersion}>
