@@ -164,6 +164,7 @@ const Locals: React.FC = () => {
         .then(response => {
           const res = response.data;
           let foundMyLocal = false;
+          const ownerId = selectedChar.id || char.id;
 
           // https://leafletjs.com/reference-1.7.1.html#divicon-option
           const newArray = res.map((location: ILocation) => {
@@ -172,7 +173,7 @@ const Locals: React.FC = () => {
               html: ReactDomServer.renderToString(
                 <MapMaker
                   image={location.picture_url}
-                  isOwner={char.id === location.responsible}
+                  isOwner={ownerId === location.responsible}
                   selected={location.id === local}
                 />,
               ),
