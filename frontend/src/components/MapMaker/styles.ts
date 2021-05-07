@@ -121,8 +121,8 @@ export const Pulsate = styled.div<IMapMakerProps>`
           box-shadow: 0 0 1px 2px #f60209;
         `}
 
-  animation: ${pulsate} 1s ease-out;
-  animation-iteration-count: infinite;
+  animation: ${pulsate} 1s ease-out infinite;
+  // animation-iteration-count: infinite;
   animation-delay: 1.1s;
   z-index: -2 !important;
 `;
