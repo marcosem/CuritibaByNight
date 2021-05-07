@@ -2,11 +2,11 @@ import styled, { css } from 'styled-components';
 import { lighten } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
-interface ContainerProps {
+interface IContainerProps {
   isMobile: boolean;
 }
 
-export const Container = styled.div<ContainerProps>`
+export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
       ? css`

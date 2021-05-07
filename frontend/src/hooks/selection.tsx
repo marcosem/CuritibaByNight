@@ -4,13 +4,13 @@
 import React, { createContext, useCallback, useState, useContext } from 'react';
 import ICharacter from '../components/CharacterList/ICharacter';
 
-interface SelectionContextData {
+interface ISelectionContextData {
   char: ICharacter | undefined;
   setChar(char: ICharacter): void;
 }
 
-const SelectionContext = createContext<SelectionContextData>(
-  {} as SelectionContextData,
+const SelectionContext = createContext<ISelectionContextData>(
+  {} as ISelectionContextData,
 );
 
 const SelectionProvider: React.FC = ({ children }) => {
@@ -32,7 +32,7 @@ const SelectionProvider: React.FC = ({ children }) => {
   );
 };
 
-function useSelection(): SelectionContextData {
+function useSelection(): ISelectionContextData {
   const context = useContext(SelectionContext);
 
   if (!context) {

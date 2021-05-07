@@ -18,7 +18,7 @@ import { useAuth } from '../../hooks/auth';
 import { useHeader } from '../../hooks/header';
 import imgProfile from '../../assets/profile.jpg';
 
-interface FormData {
+interface IFormData {
   name: string;
   email: string;
   phone: string;
@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
   const { user, updateUser } = useAuth();
 
   const handleSubmit = useCallback(
-    async (data: FormData) => {
+    async (data: IFormData) => {
       try {
         formRef.current?.setErrors({});
         const phoneRegExp = /^$|(\d{2}-\d{4,5}-\d{4})$/;

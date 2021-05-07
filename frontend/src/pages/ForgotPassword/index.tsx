@@ -16,7 +16,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import api from '../../services/api';
 
-interface ResetPasswordFormData {
+interface IResetPasswordFormData {
   email: string;
 }
 
@@ -28,7 +28,7 @@ const ResetPassword: React.FC = () => {
   const { setCurrentPage } = useHeader();
 
   const handleSubmit = useCallback(
-    async (data: ResetPasswordFormData) => {
+    async (data: IResetPasswordFormData) => {
       if (loading === true) {
         return;
       }

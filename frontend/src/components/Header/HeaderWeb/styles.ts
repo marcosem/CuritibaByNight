@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { lighten, shade } from 'polished';
-import bgImg from '../../assets/header_bg.png';
-import navBgImg from '../../assets/nav_bg.png';
+import bgImg from '../../../assets/header_bg.png';
+import navBgImg from '../../../assets/nav_bg.png';
 
 interface IProfileProps {
   isST: boolean;

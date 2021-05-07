@@ -30,7 +30,7 @@ import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import imgProfile from '../../assets/profile.jpg';
 
-interface FormData {
+interface IFormData {
   email: string;
 }
 
@@ -100,7 +100,7 @@ const UpdatePlayer: React.FC = () => {
   }, [addToast, id, signOut]);
 
   const handleSubmit = useCallback(
-    async (data: FormData) => {
+    async (data: IFormData) => {
       if (!player) {
         return;
       }

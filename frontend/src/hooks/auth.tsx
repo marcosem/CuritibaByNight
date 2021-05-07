@@ -25,30 +25,30 @@ interface ICharacter {
   clan: string;
 }
 
-interface AuthState {
+interface IAuthState {
   token: string;
   user: IUser;
 }
 
-interface SingInCreadentials {
+interface ISingInCreadentials {
   email: string;
   password: string;
 }
 
-interface AuthContextData {
+interface IAuthContextData {
   user: IUser;
   char: ICharacter;
-  signIn(credentials: SingInCreadentials): Promise<void>;
+  signIn(credentials: ISingInCreadentials): Promise<void>;
   signOut(): void;
   updateUser(user: IUser): void;
   setChar(char: ICharacter): void;
 }
 
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);
 
 const AuthProvider: React.FC = ({ children }) => {
   // Initilizing token if it is in the local storage
-  const [data, setData] = useState<AuthState>(() => {
+  const [data, setData] = useState<IAuthState>(() => {
     const token = localStorage.getItem('@CuritibaByNight:token');
     const user = localStorage.getItem('@CuritibaByNight:user');
 
@@ -57,7 +57,7 @@ const AuthProvider: React.FC = ({ children }) => {
       return { token, user: JSON.parse(user) };
     }
 
-    return {} as AuthState;
+    return {} as IAuthState;
   });
 
   const [character, setCharacter] = useState<ICharacter>(() => {
@@ -97,7 +97,7 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.removeItem('@CuritibaByNight:character');
     Cookies.remove('@CuritibaByNight:refreshToken', { secure: true });
 
-    setData({} as AuthState);
+    setData({} as IAuthState);
     setCharacter({} as ICharacter);
   }, []);
 
@@ -168,7 +168,7 @@ const AuthProvider: React.FC = ({ children }) => {
   );
 };
 
-function useAuth(): AuthContextData {
+function useAuth(): IAuthContextData {
   const context = useContext(AuthContext);
 
   if (!context) {

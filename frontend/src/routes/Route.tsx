@@ -2,7 +2,7 @@ import React from 'react';
 import { RouteProps, Route as ReactDOMRoute, Redirect } from 'react-router-dom';
 import { useAuth } from '../hooks/auth';
 
-interface NewRouteProps extends RouteProps {
+interface INewRouteProps extends RouteProps {
   isPrivate?: boolean;
   isStoryteller?: boolean;
   component: React.ComponentType;
@@ -14,7 +14,7 @@ interface NewRouteProps extends RouteProps {
 // false / true = Redirect to Dashboard
 // false / false = OK
 
-const Route: React.FC<NewRouteProps> = ({
+const Route: React.FC<INewRouteProps> = ({
   isPrivate = false,
   isStoryteller = false,
   component: Component,

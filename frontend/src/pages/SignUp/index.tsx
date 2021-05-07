@@ -19,7 +19,7 @@ import Logo from '../../components/Logo';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-interface FormData {
+interface IFormData {
   name: string;
   email: string;
   phone: string;
@@ -27,7 +27,7 @@ interface FormData {
   passwordConfirm: string;
 }
 
-interface InitialUserData {
+interface IInitialUserData {
   name: string;
   email?: string;
   phone?: string;
@@ -41,8 +41,8 @@ const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { id } = useParams<IRouteParams>();
   const [isBusy, setBusy] = useState(true);
-  const [userData, setUserData] = useState<InitialUserData>(
-    {} as InitialUserData,
+  const [userData, setUserData] = useState<IInitialUserData>(
+    {} as IInitialUserData,
   );
   const { addToast } = useToast();
   const { setCurrentPage } = useHeader();
@@ -78,7 +78,7 @@ const SignUp: React.FC = () => {
   }, [id, addToast, history]);
 
   const handleSubmit = useCallback(
-    async (data: FormData) => {
+    async (data: IFormData) => {
       try {
         formRef.current?.setErrors({});
         const phoneRegExp = /^$|(\d{2}-\d{4,5}-\d{4})$/;

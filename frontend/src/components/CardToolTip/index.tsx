@@ -1,12 +1,12 @@
 import React from 'react';
 import { Container } from './styles';
 
-interface CardToolTipProps {
+interface ICardToolTipProps {
   title: string;
   className?: string;
 }
 
-const CardToolTip: React.FC<CardToolTipProps> = ({
+const CardToolTip: React.FC<ICardToolTipProps> = ({
   title,
   className,
   children,

@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components';
 import { lighten, shade } from 'polished';
-import bgImg from '../../assets/header_bg.png';
-import navBgImg from '../../assets/nav_bg.png';
+import bgImg from '../../../assets/header_bg.png';
+import navBgImg from '../../../assets/nav_bg.png';
 
-interface ProfileProps {
+interface IProfileProps {
   isST: boolean;
 }
 
@@ -57,7 +57,7 @@ export const HeaderContent = styled.div`
   }
 `;
 
-export const Profile = styled.div<ProfileProps>`
+export const Profile = styled.div<IProfileProps>`
   display: flex;
   align-items: center;
   margin: auto 8px auto auto;

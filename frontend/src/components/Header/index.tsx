@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { useMobile } from '../../hooks/mobile';
-import HeaderWeb from '../HeaderWeb';
-import HeaderMobile from '../HeaderMobile';
+import HeaderWeb from './HeaderWeb';
+import HeaderMobile from './HeaderMobile';
 
-interface HeaderProps {
+interface IHeaderProps {
   page?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ page }) => {
+const Header: React.FC<IHeaderProps> = ({ page }) => {
   const { isMobileVersion } = useMobile();
 
   return (

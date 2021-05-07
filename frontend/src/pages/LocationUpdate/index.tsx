@@ -126,7 +126,7 @@ const creatureTypeList = [
 
 const levelList = [0, 1, 2, 3, 4, 5, 6];
 
-interface FormData {
+interface IFormData {
   name: string;
   description: string;
   address: string;
@@ -313,7 +313,7 @@ const LocationUpdate: React.FC = () => {
   }, [addToast, signOut]);
 
   const handleSubmit = useCallback(
-    async (data: FormData) => {
+    async (data: IFormData) => {
       try {
         formRef.current?.setErrors({});
         const latlongRegExp = /^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,6}/;

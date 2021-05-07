@@ -17,7 +17,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import imgProfile from '../../assets/profile.jpg';
 
-interface FormData {
+interface IFormData {
   name: string;
   email: string;
   phone: string;
@@ -32,7 +32,7 @@ const CreatePlayer: React.FC = () => {
   const [isLoading, setLoading] = useState(false);
 
   const handleSubmit = useCallback(
-    async (data: FormData) => {
+    async (data: IFormData) => {
       setLoading(true);
       try {
         formRef.current?.setErrors({});

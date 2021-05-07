@@ -1,13 +1,13 @@
 import styled, { css } from 'styled-components';
 import ToolTip from '../ToolTip';
 
-interface ContainerProps {
+interface IContainerProps {
   isErrored: boolean;
   isFilled: boolean;
   isFocused: boolean;
 }
 
-export const Container = styled.div<ContainerProps>`
+export const Container = styled.div<IContainerProps>`
   background: #100909;
   border-radius: 10px;
   padding: 16px;

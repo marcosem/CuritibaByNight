@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FiPower } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import {
@@ -16,11 +16,11 @@ import {
   GiStoneTower,
   GiStabbedNote,
 } from 'react-icons/gi';
-import { useAuth } from '../../hooks/auth';
-import { useSocket } from '../../hooks/socket';
+import { useAuth } from '../../../hooks/auth';
+import { useSocket } from '../../../hooks/socket';
 
-import imgLogoHeader from '../../assets/logo_header.svg';
-import imgProfile from '../../assets/profile.jpg';
+import imgLogoHeader from '../../../assets/logo_header.svg';
+import imgProfile from '../../../assets/profile.jpg';
 import {
   Container,
   HeaderContent,
@@ -32,19 +32,13 @@ import {
   ToolTip,
 } from './styles';
 
-interface HeaderProps {
+interface IHeaderProps {
   page?: string;
 }
 
-const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
+const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
   const { signOut, user } = useAuth();
-  const [firstName, setFirstName] = useState<string>();
   const { isConnected } = useSocket();
-
-  useEffect(() => {
-    const userNames = user.name.split(' ');
-    setFirstName(userNames[0]);
-  }, [user]);
 
   return (
     <Container>
@@ -99,16 +93,18 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
 
         <Profile isST={user.storyteller}>
           <Link to="/profile">
+            <div>
+              <span>Bem-vindo,</span>
+              <strong>{user.name}</strong>
+            </div>
+
             <img
               src={
                 user.avatar_url || imgProfile
                 // `https://api.adorable.io/avatars/56/${user.name}@adorable.png`
               }
-              alt={firstName}
+              alt=""
             />
-            <div>
-              <strong>{firstName}</strong>
-            </div>
           </Link>
           <ConnectionStatus isConnected={isConnected} />
         </Profile>
@@ -136,7 +132,7 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
             </tr>
             <tr>
               <td>
-                <ToolTip>Locais</ToolTip>
+                <ToolTip>Locais Importantes</ToolTip>
                 {page === 'locals' ? (
                   <NavSpan>
                     <GiPositionMarker />
@@ -230,4 +226,4 @@ const HeaderMobile: React.FC<HeaderProps> = ({ page }) => {
   );
 };
 
-export default HeaderMobile;
+export default HeaderWeb;
