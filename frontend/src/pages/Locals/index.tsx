@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
+import { IconType } from 'react-icons';
 import { FiPlus, FiEdit, FiUserPlus, FiFlag } from 'react-icons/fi';
 import {
   Map,
@@ -85,6 +86,7 @@ interface ILocation {
 interface ICharacter {
   id: string | undefined;
   name: string;
+  clan: string;
   situation: string;
 }
 
@@ -115,6 +117,7 @@ const Locals: React.FC = () => {
     id: undefined,
     name: 'Narrador',
     situation: 'active',
+    clan: 'None',
   });
   const [isBusy, setBusy] = useState(true);
   const { addToast } = useToast();
@@ -164,35 +167,77 @@ const Locals: React.FC = () => {
         .then(response => {
           const res = response.data;
           let foundMyLocal = false;
-          const ownerId = selectedChar.id || char.id;
+          const currentChar = selectedChar.id ? selectedChar : char;
+          const ownerId = currentChar.id;
 
           // https://leafletjs.com/reference-1.7.1.html#divicon-option
           const newArray = res.map((location: ILocation) => {
+            let ownwership = '';
+            if (ownerId === location.responsible) {
+              ownwership = 'owner';
+            } else if (
+              location.property === 'clan' &&
+              location.clan === currentChar.clan
+            ) {
+              ownwership = 'clan';
+            }
+
+            let MyIcon: IconType;
+            if (location.elysium) {
+              MyIcon = GiGuardedTower;
+            } else {
+              switch (location.type) {
+                case 'haven':
+                  MyIcon = GiHouse;
+                  break;
+                case 'airport':
+                  MyIcon = MdLocalAirport;
+                  break;
+                case 'camp':
+                  MyIcon = GiCampingTent;
+                  break;
+                case 'castle':
+                  MyIcon = GiCastle;
+                  break;
+                case 'haunt':
+                  MyIcon = GiHaunting;
+                  break;
+                case 'holding':
+                  MyIcon = GiGreekTemple;
+                  break;
+                case 'mansion':
+                  MyIcon = GiFamilyHouse;
+                  break;
+                case 'nightclub':
+                  MyIcon = MdStore;
+                  break;
+                case 'university':
+                  MyIcon = GiBookshelf;
+                  break;
+                case 'other':
+                default:
+                  MyIcon = MdLocationOn;
+                  break;
+              }
+            }
+
             const icon = Leaflet.divIcon({
               className: 'custom-icon',
               html: ReactDomServer.renderToString(
                 <MapMaker
-                  image={location.picture_url}
-                  isOwner={ownerId === location.responsible}
+                  ownership={ownwership}
                   selected={
-                    location.id === local || ownerId === location.responsible
+                    location.id === local ||
+                    ownerId === location.responsible ||
+                    ownwership === 'clan'
                   }
-                />,
+                >
+                  <MyIcon />
+                </MapMaker>,
               ),
               iconSize: [42, 42],
               iconAnchor: [21, 42],
             });
-
-            /*
-            const icon = Leaflet.icon({
-              iconUrl: location.picture_url || imgBuilding,
-              iconSize: [48, 48],
-              shadowUrl: mapMakerIcon,
-              shadowAnchor: [28, 65],
-              iconAnchor: [24, 61],
-              tooltipAnchor: [24, -32],
-            });
-            */
 
             const newLocation = {
               id: location.id,
@@ -209,8 +254,14 @@ const Locals: React.FC = () => {
               clan: location.clan,
               creature_type: location.creature_type,
               sect: location.sect,
-              level: location.level,
-              mystical_level: location.mystical_level,
+              level:
+                ownerId === location.responsible || ownwership === 'clan'
+                  ? location.level
+                  : '?',
+              mystical_level:
+                ownerId === location.responsible || ownwership === 'clan'
+                  ? location.mystical_level
+                  : '',
               picture_url: location.picture_url || imgBuilding,
               icon,
             };
@@ -258,16 +309,7 @@ const Locals: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [
-    addToast,
-    char.id,
-    local,
-    selectedChar.id,
-    setCoordLatitude,
-    setCoordLongitude,
-    signOut,
-    user.storyteller,
-  ]);
+  }, [addToast, char, local, selectedChar, signOut, user.storyteller]);
 
   const loadTerritories = useCallback(async () => {
     setBusy(true);
@@ -392,12 +434,14 @@ const Locals: React.FC = () => {
           id: selChar.id,
           name: selChar.name,
           situation: selChar.situation,
+          clan: selChar.clan,
         };
       } else {
         selectedCharacter = {
           id: undefined,
           name: 'Narrador',
           situation: 'active',
+          clan: 'None',
         };
       }
 

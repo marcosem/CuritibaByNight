@@ -1,19 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
-// import { shade } from 'polished';
-
-/*
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-*/
 
 interface IMapMakerProps {
-  isOwner?: boolean;
+  ownership?: string;
 }
 
 const pulsate = keyframes`
@@ -39,29 +27,31 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  // top: 50%;
-  // left: 50%;
-  // border: 1px solid #fff;
 `;
 
 export const MapPin = styled.div<IMapMakerProps>`
   width: 30px;
   height: 30px;
   border-radius: 50% 50% 50% 0;
-  // position: absolute;
   transform: rotate(-45deg);
-  // left: 50%;
-  // top: 50%;
-  // margin: -15px 0 0 -15px;
 
   ${props =>
-    props.isOwner
-      ? css`
-          background: #029609;
-        `
-      : css`
-          background: #c60209;
-        `}
+    props.ownership === 'owner' &&
+    css`
+      background: #029609;
+    `};
+
+  ${props =>
+    props.ownership === 'clan' &&
+    css`
+      background: #0296e6;
+    `};
+
+  ${props =>
+    props.ownership === '' &&
+    css`
+      background: #c60209;
+    `};
 `;
 
 export const ImgContainer = styled.div`
@@ -79,13 +69,12 @@ export const ImgContainer = styled.div`
   align-items: center;
   transform: rotate(45deg);
 
-  img {
+  svg {
     width: 22px;
     height: 22px;
     border-radius: 50%;
+    color: #000;
   }
-
-  // z-index: 5;
 `;
 
 export const PinShadow = styled.div`
@@ -113,59 +102,24 @@ export const Pulsate = styled.div<IMapMakerProps>`
   opacity: 0;
 
   ${props =>
-    props.isOwner
-      ? css`
-          box-shadow: 0 0 1px 2px #02c609;
-        `
-      : css`
-          box-shadow: 0 0 1px 2px #f60209;
-        `}
+    props.ownership === 'owner' &&
+    css`
+      box-shadow: 0 0 1px 2px #02c609;
+    `};
+
+  ${props =>
+    props.ownership === 'clan' &&
+    css`
+      box-shadow: 0 0 1px 2px #00ffff;
+    `};
+
+  ${props =>
+    props.ownership === '' &&
+    css`
+      box-shadow: 0 0 1px 2px #f60209;
+    `};
 
   animation: ${pulsate} 1s ease-out infinite;
-  // animation-iteration-count: infinite;
   animation-delay: 1.1s;
   z-index: -2 !important;
 `;
-
-/*
-export const Container = styled.button`
-  background: #860209;
-  color: #d5d5d5;
-  font-weight: 500;
-  height: 56px;
-  border-radius: 10px;
-  border: 0;
-  padding: 0 16px;
-  width: 100%;
-  transition: background-color 0.2s;
-
-  -webkit-user-select: none; // Safari
-  -moz-user-select: none; // Firefox
-  -ms-user-select: none; // IE10+/Edge
-  user-select: none; // Standard
-
-  display: flex;
-  flex-direction: space-between;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: ${shade(0.2, '#860209')};
-  }
-
-  > svg {
-    width: 20px;
-    height: 20px;
-    color: #fff;
-    margin-right: auto;
-    animation: ${rotate} 2s linear infinite;
-  }
-
-  span {
-    margin-right: auto;
-    font-size: 16px !important;
-    color: #d5d5d5 !important;
-    font-weight: 500 !important;
-  }
-`;
-*/
