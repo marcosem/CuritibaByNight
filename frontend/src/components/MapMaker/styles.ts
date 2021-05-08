@@ -84,8 +84,8 @@ export const PinShadow = styled.div`
   height: 14px;
   width: 14px;
   position: absolute;
-  left: 25px;
-  top: 22px;
+  left: 26px;
+  top: 24px;
   margin: 12px 0px 0px -12px;
   transform: rotateX(55deg);
   z-index: -2 !important;
