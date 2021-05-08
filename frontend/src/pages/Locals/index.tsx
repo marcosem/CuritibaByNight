@@ -257,11 +257,15 @@ const Locals: React.FC = () => {
               creature_type: location.creature_type,
               sect: location.sect,
               level:
-                ownerId === location.responsible || ownwership === 'clan'
+                user.storyteller ||
+                ownerId === location.responsible ||
+                ownwership === 'clan'
                   ? location.level
                   : '?',
               mystical_level:
-                ownerId === location.responsible || ownwership === 'clan'
+                user.storyteller ||
+                ownerId === location.responsible ||
+                ownwership === 'clan'
                   ? location.mystical_level
                   : '',
               picture_url: location.picture_url || imgBuilding,
