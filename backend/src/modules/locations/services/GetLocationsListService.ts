@@ -47,9 +47,12 @@ class GetLocationsListService {
         throw new AppError('Character not found', 400);
       }
 
+      const filteredClan1 = char.clan.split(':');
+      const filteredClan2 = filteredClan1[0].split(' (');
+
       locationList = await this.locationsRepository.findByCharacterId(
         char_id,
-        char.clan,
+        filteredClan2[0], // char.clan,
         char.creature_type,
         char.sect,
       );

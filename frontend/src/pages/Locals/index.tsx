@@ -171,11 +171,15 @@ const Locals: React.FC = () => {
           // https://leafletjs.com/reference-1.7.1.html#divicon-option
           const newArray = res.map((location: ILocation) => {
             let ownwership = '';
+
+            const filteredClan1 = currentChar.clan.split(':');
+            const filteredClan2 = filteredClan1[0].split(' (');
+
             if (ownerId === location.responsible) {
               ownwership = 'owner';
             } else if (
               location.property === 'clan' &&
-              location.clan === currentChar.clan
+              location.clan === filteredClan2[0]
             ) {
               ownwership = 'clan';
             }
