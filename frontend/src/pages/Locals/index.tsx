@@ -166,6 +166,7 @@ const Locals: React.FC = () => {
           const res = response.data;
           let foundMyLocal = false;
           const currentChar = selectedChar.id ? selectedChar : char;
+          const stMode = !selectedChar.id;
           const ownerId = currentChar.id;
 
           // https://leafletjs.com/reference-1.7.1.html#divicon-option
@@ -257,13 +258,13 @@ const Locals: React.FC = () => {
               creature_type: location.creature_type,
               sect: location.sect,
               level:
-                user.storyteller ||
+                stMode ||
                 ownerId === location.responsible ||
                 ownwership === 'clan'
                   ? location.level
                   : '?',
               mystical_level:
-                user.storyteller ||
+                stMode ||
                 ownerId === location.responsible ||
                 ownwership === 'clan'
                   ? location.mystical_level
