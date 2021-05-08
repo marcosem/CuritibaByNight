@@ -48,8 +48,6 @@ import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useHeader } from '../../hooks/header';
 
-// import mapMakerIcon from '../../assets/mapMakerIcon.svg';
-
 import { territories } from './territories.json';
 
 import MapMaker from '../../components/MapMaker';
