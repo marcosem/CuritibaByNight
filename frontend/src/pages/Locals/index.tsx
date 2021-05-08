@@ -166,7 +166,7 @@ const Locals: React.FC = () => {
           const res = response.data;
           let foundMyLocal = false;
           const currentChar = selectedChar.id ? selectedChar : char;
-          const stMode = !selectedChar.id;
+          const stMode = user.storyteller && !selectedChar.id;
           const ownerId = currentChar.id;
 
           // https://leafletjs.com/reference-1.7.1.html#divicon-option
