@@ -327,17 +327,25 @@ export const SelectLocation = styled.select`
   color: #888;
 `;
 
-export const TableWrapper = styled.div`
-  margin: 10px auto;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+export const TableWrapper = styled.div<IContainerProps>`
+  margin: 5px auto;
+  // box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
   min-width: 320px;
-  max-width: 1012px;
   border-radius: 11px;
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
+
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 340px;
+        `
+      : css`
+          max-width: 1012px;
+        `}
 `;
 
 export const Table = styled.table<IContainerProps>`

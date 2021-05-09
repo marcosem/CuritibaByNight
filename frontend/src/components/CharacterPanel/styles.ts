@@ -250,7 +250,6 @@ export const TableWrapper = styled.div<ICharPanelProps>`
   margin: 5px auto;
   min-width: 320px;
   border-radius: 11px;
-  // padding-bottom: 16px !important;
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */

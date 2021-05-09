@@ -632,7 +632,7 @@ const LocationCharList: React.FC = () => {
                       </SelectContainer>
 
                       {locationChars !== undefined && locationChars.length > 0 && (
-                        <TableWrapper>
+                        <TableWrapper isMobile={isMobileVersion}>
                           <Table isMobile={isMobileVersion}>
                             <thead>
                               <tr>
