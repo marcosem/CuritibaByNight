@@ -340,23 +340,26 @@ export const TableWrapper = styled.div`
   user-select: none; /* Standard */
 `;
 
-export const Table = styled.table`
+export const Table = styled.table<IContainerProps>`
   border-radius: 10px;
-  font-size: 12px;
-  font-weight: normal;
   border: none;
   border-collapse: collapse;
   width: 100%;
   min-width: 320px;
-  max-width: 1012px;
-  white-space: nowrap;
   background-color: transparent;
   opacity: 0.9;
 
+  ${props =>
+    props.isMobile
+      ? css`
+          max-width: 320px;
+        `
+      : css`
+          max-width: 1012px;
+        `}
+
   td {
-    text-align: center;
     padding: 8px;
-    font-size: 12px;
     color: #000;
 
     border-left: 1px solid #ddd;
@@ -396,6 +399,7 @@ export const Table = styled.table`
       color: #fff;
       background: #560209;
       font-weight: 450;
+      font-size: 12px;
 
       &:nth-child(odd) {
         color: #fff;
@@ -500,9 +504,33 @@ export const Table = styled.table`
   }
 `;
 
-export const TableCell = styled.div`
+export const TableCell = styled.div<IContainerProps>`
   display: flex;
-  align-items: left;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  margin: 0 !important;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          span {
+            font-size: 10px !important;
+          }
+        `
+      : css`
+          span {
+            font-size: 12px !important;
+          }
+        `}
+
+  span {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    padding: 0 !important;
+    width: 100% !important;
+    text-align: left;
+    margin: auto !important;
+  }
 
   img {
     width: 30px;

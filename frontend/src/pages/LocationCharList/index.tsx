@@ -633,7 +633,7 @@ const LocationCharList: React.FC = () => {
 
                       {locationChars !== undefined && locationChars.length > 0 && (
                         <TableWrapper>
-                          <Table>
+                          <Table isMobile={isMobileVersion}>
                             <thead>
                               <tr>
                                 <th>Personagem</th>
@@ -648,8 +648,8 @@ const LocationCharList: React.FC = () => {
                                     id={locChar.character_id}
                                     onClick={handleCharacterDetails}
                                   >
-                                    <TableCell>
-                                      {locChar.characterId.name}
+                                    <TableCell isMobile={isMobileVersion}>
+                                      <span>{locChar.characterId.name}</span>
                                     </TableCell>
                                   </td>
                                   {!isMobileVersion && (
@@ -657,40 +657,42 @@ const LocationCharList: React.FC = () => {
                                       id={locChar.character_id}
                                       onClick={handleCharacterDetails}
                                     >
-                                      <TableCell>
-                                        {locChar.characterId.creature_type !==
-                                          'Vampire' &&
-                                        locChar.characterId.creature_type !==
-                                          'Mortal' ? (
-                                          // eslint-disable-next-line react/jsx-indent
-                                          <>
-                                            {locChar.characterId.clan ? (
-                                              <>
-                                                {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
-                                              </>
-                                            ) : (
-                                              <>
-                                                {
-                                                  locChar.characterId
-                                                    .creature_type
-                                                }
-                                              </>
-                                            )}
-                                          </>
-                                        ) : (
-                                          <>
-                                            {locChar.characterId.clan.indexOf(
-                                              ' (',
-                                            ) > 0
-                                              ? locChar.characterId.clan.substring(
-                                                  0,
-                                                  locChar.characterId.clan.indexOf(
-                                                    ' (',
-                                                  ),
-                                                )
-                                              : locChar.characterId.clan}
-                                          </>
-                                        )}
+                                      <TableCell isMobile={isMobileVersion}>
+                                        <span>
+                                          {locChar.characterId.creature_type !==
+                                            'Vampire' &&
+                                          locChar.characterId.creature_type !==
+                                            'Mortal' ? (
+                                            // eslint-disable-next-line react/jsx-indent
+                                            <>
+                                              {locChar.characterId.clan ? (
+                                                <>
+                                                  {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
+                                                </>
+                                              ) : (
+                                                <>
+                                                  {
+                                                    locChar.characterId
+                                                      .creature_type
+                                                  }
+                                                </>
+                                              )}
+                                            </>
+                                          ) : (
+                                            <>
+                                              {locChar.characterId.clan.indexOf(
+                                                ' (',
+                                              ) > 0
+                                                ? locChar.characterId.clan.substring(
+                                                    0,
+                                                    locChar.characterId.clan.indexOf(
+                                                      ' (',
+                                                    ),
+                                                  )
+                                                : locChar.characterId.clan}
+                                            </>
+                                          )}
+                                        </span>
                                       </TableCell>
                                     </td>
                                   )}

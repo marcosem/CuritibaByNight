@@ -280,23 +280,19 @@ export const TableWrapper = styled.div<ICharPanelProps>`
 
 export const Table = styled.table<ICharPanelProps>`
   border-radius: 10px;
-  // font-weight: normal;
   border: none;
   border-collapse: collapse;
   width: 100%;
   min-width: 320px;
-  // white-space: nowrap;
   background-color: transparent;
   opacity: 0.9;
 
   ${props =>
     props.isMobile
       ? css`
-          //font-size: 10px;
           max-width: 320px;
         `
       : css`
-          //font-size: 12px;
           max-width: 1012px;
         `}
 
@@ -436,14 +432,12 @@ export const TableCell = styled.div<ITableCellProps>`
   display: flex;
   overflow-wrap: break-word;
   word-wrap: break-word;
-  hyphens: auto;
   color: #000;
   padding: 0 !important;
 
   ${props =>
     props.centered
       ? css`
-          // justify-content: center;
           strong,
           span {
             text-align: center;
@@ -476,7 +470,6 @@ export const TableCell = styled.div<ITableCellProps>`
     width: 100% !important;
     margin: auto !important;
     font-weight: bold !important;
-    // text-align: center;
   }
 
   span {
