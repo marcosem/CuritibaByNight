@@ -31,6 +31,15 @@ const appearFromLeft = keyframes`
   }
 `;
 
+const appearFromBlur = keyframes`
+  from {
+    filter: blur(10px);
+  }
+  to {
+    filter: blur(0);
+  }
+`;
+
 export const Container = styled.div<ILocationProps>`
   width: 248px;
   height: 350px;
@@ -111,11 +120,11 @@ export const LocationImage = styled.div<IImageProps>`
   position: absolute;
   top: 30px;
   left: 44px;
-
   width: 198px;
   height: 172px;
-
   background: #888;
+
+  animation: ${appearFromBlur} 0.15s ease-in-out;
 
   input {
     display: none;
@@ -153,7 +162,7 @@ export const LocationImage = styled.div<IImageProps>`
     font-size: 16px;
     font-weight: 550;
     top: 105px;
-    left: 55px;
+    left: 45px;
 
     visibility: hidden;
 
