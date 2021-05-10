@@ -31,12 +31,15 @@ const appearFromLeft = keyframes`
   }
 `;
 
-const appearFromBlur = keyframes`
+const appear = keyframes`
   from {
     filter: blur(10px);
+    opacity: 0;
   }
+
   to {
     filter: blur(0);
+    opacity: 1;
   }
 `;
 
@@ -124,8 +127,6 @@ export const LocationImage = styled.div<IImageProps>`
   height: 172px;
   background: #888;
 
-  animation: ${appearFromBlur} 0.15s ease-in-out;
-
   input {
     display: none;
   }
@@ -137,6 +138,7 @@ export const LocationImage = styled.div<IImageProps>`
     width: 198px;
     height: 172px;
 
+    animation: ${appear} 0.2s ease-in-out;
     transition: opacity 0.2s;
   }
 
