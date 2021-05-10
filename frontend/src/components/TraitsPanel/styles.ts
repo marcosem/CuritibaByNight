@@ -6,6 +6,12 @@ interface ITraitProps {
   isMobile: boolean;
 }
 
+interface ISingleTraitProps {
+  traitColor?: string;
+  isMobile: boolean;
+  maxTraits: number;
+}
+
 interface ITypeContainer {
   borderTop?: boolean;
   borderLeft?: boolean;
@@ -252,17 +258,17 @@ export const TraitsList = styled.div`
   flex-direction: row;
 `;
 
-export const SingleTraitsList = styled.div<ITraitProps>`
+export const SingleTraitsList = styled.div<ISingleTraitProps>`
   display: flex;
   flex-direction: row;
 
   ${props =>
     props.isMobile
       ? css`
-          width: 102px;
+          width: calc(calc(14px * ${props.maxTraits}) + 4px);
         `
       : css`
-          width: 116px;
+          width: calc(calc(16px * ${props.maxTraits}) + 4px);
         `}
 `;
 

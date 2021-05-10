@@ -1082,6 +1082,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           <SingleTraitsList
                             key={`List:${trait.trait}`}
                             isMobile={isMobileVersion}
+                            maxTraits={5}
                           >
                             {trait.levelArray.map(level => (
                               <TraitButton
@@ -1143,6 +1144,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       <SingleTraitsList
                         key={`List:${trait.trait}`}
                         isMobile={isMobileVersion}
+                        maxTraits={5}
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
@@ -1278,6 +1280,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           <SingleTraitsList
                             key={`List:${trait.trait}`}
                             isMobile={isMobileVersion}
+                            maxTraits={5}
                           >
                             {trait.levelArray.map(level => (
                               <TraitButton
@@ -1340,6 +1343,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       <SingleTraitsList
                         key={`List:${trait.trait}`}
                         isMobile={isMobileVersion}
+                        maxTraits={5}
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
@@ -1419,7 +1423,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
               <h1>Habilidades:</h1>
               {traitsList.abilities.map((trait: ITrait) => (
                 <SingleTraitContainer key={trait.id} isMobile={isMobileVersion}>
-                  <SingleTraitsList isMobile={isMobileVersion}>
+                  <SingleTraitsList isMobile={isMobileVersion} maxTraits={7}>
                     {trait.levelArray.map(level => (
                       <TraitButton
                         type="button"
@@ -1459,7 +1463,10 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       key={trait.id}
                       isMobile={isMobileVersion}
                     >
-                      <SingleTraitsList isMobile={isMobileVersion}>
+                      <SingleTraitsList
+                        isMobile={isMobileVersion}
+                        maxTraits={7}
+                      >
                         {trait.levelArray.map(level => (
                           <TraitButton
                             type="button"
@@ -1497,7 +1504,10 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       key={trait.id}
                       isMobile={isMobileVersion}
                     >
-                      <SingleTraitsList isMobile={isMobileVersion}>
+                      <SingleTraitsList
+                        isMobile={isMobileVersion}
+                        maxTraits={7}
+                      >
                         {trait.levelArray.map(level => (
                           <TraitButton
                             type="button"
@@ -1538,7 +1548,10 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       key={trait.id}
                       isMobile={isMobileVersion}
                     >
-                      <SingleTraitsList isMobile={isMobileVersion}>
+                      <SingleTraitsList
+                        isMobile={isMobileVersion}
+                        maxTraits={7}
+                      >
                         {trait.levelArray.map(level => (
                           <TraitButton
                             type="button"
@@ -1576,7 +1589,10 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       key={trait.id}
                       isMobile={isMobileVersion}
                     >
-                      <SingleTraitsList isMobile={isMobileVersion}>
+                      <SingleTraitsList
+                        isMobile={isMobileVersion}
+                        maxTraits={7}
+                      >
                         {trait.levelArray.map(level => (
                           <TraitButton
                             type="button"
