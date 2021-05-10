@@ -12,6 +12,7 @@ import {
   Tooltip,
   Polyline,
   Popup,
+  ScaleControl,
 } from 'react-leaflet';
 import Leaflet from 'leaflet';
 
@@ -499,6 +500,7 @@ const Locals: React.FC = () => {
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
           />
+          <ScaleControl metric position="topleft" imperial={false} />
 
           {user.storyteller && showBorders && borders.length > 0 && (
             <>
