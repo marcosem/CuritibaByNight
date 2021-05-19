@@ -1709,7 +1709,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                 </TypeContainer>
               )}
               {typeList.indexOf('flaws') >= 0 && (
-                <TypeContainer borderTop borderLeft isMobile={isMobileVersion}>
+                <TypeContainer borderTop isMobile={isMobileVersion}>
                   <h1>Defeitos:</h1>
                   {traitsList.flaws.map((trait: ITrait) => (
                     <SingleTraitContainer
