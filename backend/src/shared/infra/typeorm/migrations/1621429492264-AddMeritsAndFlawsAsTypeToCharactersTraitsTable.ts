@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export default class AddNewTypesToCharactersTraitsTable1619184568404
+export default class AddMeritsAndFlawsAsTypeToCharactersTraitsTable1621429492264
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.changeColumn(
@@ -18,6 +18,8 @@ export default class AddNewTypesToCharactersTraitsTable1619184568404
           'influences',
           'powers',
           'health',
+          'merits',
+          'flaws',
         ],
         default: "'abilities'",
       }),
@@ -32,11 +34,14 @@ export default class AddNewTypesToCharactersTraitsTable1619184568404
         name: 'type',
         type: 'enum',
         enum: [
+          'creature',
           'virtues',
           'attributes',
           'abilities',
           'backgrounds',
           'influences',
+          'powers',
+          'health',
         ],
         default: "'abilities'",
       }),
