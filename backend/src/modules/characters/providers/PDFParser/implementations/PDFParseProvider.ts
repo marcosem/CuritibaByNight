@@ -16,6 +16,8 @@ import extractVirtuesTraits from './extractVirtuesTraits';
 import extractAbilitiesTraits from './extractAbilitiesTraits';
 import extractBackgroundsTraits from './extractBackgroundsTraits';
 import extractInfluencesTraits from './extractInfluencesTraits';
+import extractMeritsTraits from './extractMeritsTraits';
+import extractFlawsTraits from './extractFlawsTraits';
 
 class PDFParseProvider implements IPDFParserProvider {
   public async parse(
@@ -788,103 +790,99 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // TODO Merits and Flaws
+
       // Merits and Flaws
-      if (
-        char.creature_type !== 'Wraith' &&
-        influencesSectionDone &&
-        !meritsAndFlawsSectionDone
-      ) {
+      if (influencesSectionDone && !meritsAndFlawsSectionDone) {
         if (line.indexOf('Merits:') >= 0 || line.indexOf('Flaws:') >= 0) {
           meritsAndFlawsSectionStart = true;
-        }
-
-        if (meritsAndFlawsSectionStart) {
+        } else if (meritsAndFlawsSectionStart) {
           if (
-            line.indexOf('Huge Size (') >= 0 ||
-            line.indexOf('Nosferatu: Tough Hide (') >= 0
+            line.indexOf('Equipment:') >= 0 ||
+            line.indexOf('Passions:') >= 0
           ) {
-            extraBruised += 1;
-          }
-
-          if (char.creature_type === 'Vampire') {
-            if (line.indexOf('Prey Exclusion (') >= 0) {
-              // Prey Exclusion has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp = 'Prey Exclusion';
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Prey Exclusion`;
-              }
-              penaltyBlood.level_penalty += 1;
-            } else if (line.indexOf('Addiction (') >= 0) {
-              // Addiction has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp = 'Addiction|Addiction';
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Addiction|Addiction`;
-              }
-              penaltyBlood.level_penalty += 2;
-            } else if (line.indexOf('Selective Digestion (') >= 0) {
-              // Selective Digestion has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp = 'Selective Digestion';
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Selective Digestion`;
-              }
-              penaltyBlood.level_penalty += 1;
-            } else if (line.indexOf('Restricted Diet (') >= 0) {
-              // Restricted Diet has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp = 'Restricted Diet';
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Restricted Diet`;
-              }
-              penaltyBlood.level_penalty += 1;
-            } else if (line.indexOf('Thirst of Caine (') >= 0) {
-              // Thirst of Caine has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp =
-                  'Thirst of Caine|Thirst of Caine|Thirst of Caine';
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Thirst of Caine|Thirst of Caine|Thirst of Caine`;
-              }
-              penaltyBlood.level_penalty += 3;
-            } else if (line.indexOf('Selective Thirst (') >= 0) {
-              // Selective Thirst has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp = 'Selective Thirst|Selective Thirst';
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Selective Thirst|Selective Thirst`;
-              }
-              penaltyBlood.level_penalty += 2;
-            } else if (line.indexOf('Poor Digestion (') >= 0) {
-              // Poor Digestion has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp = 'Poor Digestion|Poor Digestion';
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Poor Digestion|Poor Digestion`;
-              }
-              penaltyBlood.level_penalty += 2;
-            } else if (line.indexOf("Methuselah's Thirst (") >= 0) {
-              // Methuselah's Thirst has one blood point penalty
-              if (penaltyBlood.level_penalty === 0) {
-                penaltyBlood.level_temp =
-                  "Methuselah's Thirst|Methuselah's Thirst|Methuselah's Thirst";
-              } else {
-                penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Methuselah's Thirst|Methuselah's Thirst|Methuselah's Thirst`;
-              }
-              penaltyBlood.level_penalty += 3;
-            }
-          }
-
-          if (line.indexOf('Equipment:') >= 0) {
             meritsAndFlawsSectionDone = true;
-          }
+          } else {
+            const merit = extractMeritsTraits(line, char.creature_type);
+            const flaw = extractFlawsTraits(line, char.creature_type);
 
-          if (
-            line.indexOf('Permanent Wound (') >= 0 ||
-            line.indexOf('Open Wound (4') >= 0
-          ) {
-            penaltyHealth += 5;
+            if (merit) {
+              charTraits.push(merit);
+
+              if (char.creature_type !== 'Wraith') {
+                if (
+                  merit.trait === 'Huge Size' ||
+                  merit.trait === 'Nosferatu: Tough Hide'
+                ) {
+                  extraBruised += 1;
+                }
+              }
+            }
+
+            if (flaw) {
+              charTraits.push(flaw);
+
+              if (char.creature_type !== 'Wraith') {
+                if (
+                  flaw.trait === 'Permanent Wound' ||
+                  (flaw.trait === 'Open Wound' && flaw.level === 4)
+                ) {
+                  penaltyHealth += 5;
+                }
+
+                if (char.creature_type === 'Vampire') {
+                  switch (flaw.trait) {
+                    case 'Selective Digestion':
+                    case 'Restricted Diet':
+                      // Selective Digestion has one blood point penalty
+                      if (penaltyBlood.level_penalty === 0) {
+                        penaltyBlood.level_temp = flaw.trait;
+                      } else {
+                        penaltyBlood.level_temp = `${penaltyBlood.level_temp}|${flaw.trait}`;
+                      }
+                      penaltyBlood.level_penalty += 1;
+                      break;
+                    case 'Selective Thirst':
+                    case 'Poor Digestion':
+                      // Selective Thirst has one blood point penalty
+                      if (penaltyBlood.level_penalty === 0) {
+                        penaltyBlood.level_temp = `${flaw.trait}|${flaw.trait}`;
+                      } else {
+                        penaltyBlood.level_temp = `${penaltyBlood.level_temp}|${flaw.trait}|${flaw.trait}`;
+                      }
+                      penaltyBlood.level_penalty += 2;
+                      break;
+                    case "Methuselah's Thirst":
+                      // Methuselah's Thirst has one blood point penalty
+                      if (penaltyBlood.level_penalty === 0) {
+                        penaltyBlood.level_temp = `${flaw.trait}|${flaw.trait}|${flaw.trait}`;
+                      } else {
+                        penaltyBlood.level_temp = `${penaltyBlood.level_temp}|${flaw.trait}|${flaw.trait}|${flaw.trait}`;
+                      }
+                      penaltyBlood.level_penalty += 3;
+                      break;
+                    default:
+                      if (flaw.trait.indexOf('Prey Exclusion') >= 0) {
+                        // Prey Exclusion has one blood point penalty
+                        if (penaltyBlood.level_penalty === 0) {
+                          penaltyBlood.level_temp = 'Prey Exclusion';
+                        } else {
+                          penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Prey Exclusion`;
+                        }
+                        penaltyBlood.level_penalty += 1;
+                      } else if (flaw.trait.indexOf('Addiction') >= 0) {
+                        // Addiction has one blood point penalty
+                        if (penaltyBlood.level_penalty === 0) {
+                          penaltyBlood.level_temp = 'Addiction|Addiction';
+                        } else {
+                          penaltyBlood.level_temp = `${penaltyBlood.level_temp}|Addiction|Addiction`;
+                        }
+                        penaltyBlood.level_penalty += 2;
+                      }
+                  }
+                }
+              }
+            }
           }
         }
       }

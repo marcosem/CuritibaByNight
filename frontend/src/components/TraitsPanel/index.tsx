@@ -66,6 +66,8 @@ interface ITraitsList {
   backgrounds: ITrait[];
   influences: ITrait[];
   health: ITrait[];
+  merits: ITrait[];
+  flaws: ITrait[];
 }
 
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -81,6 +83,8 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     backgrounds: [],
     influences: [],
     health: [],
+    merits: [],
+    flaws: [],
   } as ITraitsList);
   const [typeList, setTypeList] = useState<string[]>([]);
   const [domainMasquerade, setDomainMasquerade] = useState<number>(0);
@@ -148,6 +152,8 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           backgrounds: [],
           influences: [],
           health: [],
+          merits: [],
+          flaws: [],
         } as ITraitsList;
 
         const domainMasqueradeTrait: ITrait = {
@@ -369,8 +375,15 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
               }
               newTraitsList.health.push(newTrait);
               break;
-            default:
+            case 'merits':
+              newTrait.index = [-1, -1];
+              newTraitsList.merits.push(newTrait);
               break;
+            case 'flaws':
+              newTrait.index = [-1, -1];
+              newTraitsList.flaws.push(newTrait);
+              break;
+            default:
           }
         });
 
@@ -485,7 +498,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
       if (traitInfo.length !== 3) {
         addToast({
           type: 'error',
-          title: 'Trait inválido',
+          title: 'Trait Inválido',
           description:
             "Este Trait possuí um caracter inválido: '|' e deve ser corrigido na ficha original.",
         });
@@ -516,10 +529,17 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         case 'health':
           traits = traitsList.health;
           break;
+        case 'merits':
+          traits = traitsList.merits;
+          break;
+        case 'flaws':
+          traits = traitsList.flaws;
+          break;
+
         default:
           addToast({
             type: 'error',
-            title: 'Trait inválido',
+            title: 'Trait Inválido',
             description: `Trait de tipo inválido: '${traitInfo[0]}', verifique se a ficha está correta.`,
           });
           return;
@@ -532,7 +552,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
       if (!trait) {
         addToast({
           type: 'error',
-          title: 'Trait inválido',
+          title: 'Trait Inválido',
           description: `Trait inválido: '${traitInfo[1]}', verifique se a ficha está correta.`,
         });
         return;
@@ -548,8 +568,8 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
       if (levelIndex === -1 || !level) {
         addToast({
           type: 'error',
-          title: 'Trait Level inválido',
-          description: `Trait Level inválido: '${traitLevelId}', verifique se a ficha está correta.`,
+          title: 'Trait Level Inválido',
+          description: `Trait Level Inválido: '${traitLevelId}', verifique se a ficha está correta.`,
         });
         return;
       }
@@ -938,6 +958,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         case 'health':
           typeTraits = traitsList.health;
           break;
+        case 'merits':
+          typeTraits = traitsList.merits;
+          break;
+        case 'flaws':
+          typeTraits = traitsList.flaws;
+          break;
         default:
       }
 
@@ -968,6 +994,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             break;
           case 'health':
             newTraitsList.health = updatedTraits;
+            break;
+          case 'merits':
+            newTraitsList.merits = updatedTraits;
+            break;
+          case 'flaws':
+            newTraitsList.flaws = updatedTraits;
             break;
           default:
         }
@@ -1623,6 +1655,146 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                 </TypeContainer>
               )}
             </DoubleTypeContainer>
+          )}
+
+          {isMobileVersion ? (
+            <>
+              {typeList.indexOf('merits') >= 0 && (
+                <TypeContainer borderTop isMobile={isMobileVersion}>
+                  <h1>Qualidades:</h1>
+                  {traitsList.merits.map((trait: ITrait) => (
+                    <SingleTraitContainer
+                      key={trait.id}
+                      isMobile={isMobileVersion}
+                    >
+                      <strong>{`${trait.trait}`}</strong>
+                      <span>{`(${trait.level} pts)`}</span>
+                      <>
+                        {trait.trait === 'Lucky' && (
+                          <SingleTraitsList
+                            isMobile={isMobileVersion}
+                            maxTraits={3}
+                          >
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                type="button"
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `Adicionar [${trait.trait} Trait]`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
+                                traitColor="black"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  ''
+                                )}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                        )}
+                      </>
+                    </SingleTraitContainer>
+                  ))}
+                </TypeContainer>
+              )}
+              {typeList.indexOf('flaws') >= 0 && (
+                <TypeContainer borderTop borderLeft isMobile={isMobileVersion}>
+                  <h1>Defeitos:</h1>
+                  {traitsList.flaws.map((trait: ITrait) => (
+                    <SingleTraitContainer
+                      key={trait.id}
+                      isMobile={isMobileVersion}
+                    >
+                      <strong>{`${trait.trait}`}</strong>
+                      <span>{`(${trait.level} pts)`}</span>
+                    </SingleTraitContainer>
+                  ))}
+                </TypeContainer>
+              )}
+            </>
+          ) : (
+            <>
+              <DoubleTypeContainer>
+                {typeList.indexOf('merits') >= 0 && (
+                  <TypeContainer borderTop isMobile={isMobileVersion}>
+                    <h1>Qualidades:</h1>
+                    {traitsList.merits.map((trait: ITrait) => (
+                      <SingleTraitContainer
+                        key={trait.id}
+                        isMobile={isMobileVersion}
+                      >
+                        <strong>{`${trait.trait}`}</strong>
+                        <span>{`(${trait.level} pts)`}</span>
+                        <>
+                          {trait.trait === 'Lucky' && (
+                            <SingleTraitsList
+                              isMobile={isMobileVersion}
+                              maxTraits={3}
+                            >
+                              {trait.levelArray.map(level => (
+                                <TraitButton
+                                  type="button"
+                                  id={level.id}
+                                  key={level.id}
+                                  disabled={!level.enabled}
+                                  title={`${
+                                    level.enabled
+                                      ? `${
+                                          level.status === 'full'
+                                            ? `Remover [${trait.trait} Trait]`
+                                            : `Adicionar [${trait.trait} Trait]`
+                                        }`
+                                      : `${trait.trait} x${trait.levelTemp}`
+                                  }`}
+                                  traitColor="black"
+                                  isMobile={isMobileVersion}
+                                  onClick={handleTraitClick}
+                                >
+                                  {level.status === 'full' ? (
+                                    <GiPlainCircle />
+                                  ) : (
+                                    ''
+                                  )}
+                                </TraitButton>
+                              ))}
+                            </SingleTraitsList>
+                          )}
+                        </>
+                      </SingleTraitContainer>
+                    ))}
+                  </TypeContainer>
+                )}
+                {typeList.indexOf('flaws') >= 0 && (
+                  <TypeContainer
+                    borderTop
+                    borderLeft
+                    isMobile={isMobileVersion}
+                  >
+                    <h1>Defeitos:</h1>
+                    {traitsList.flaws.map((trait: ITrait) => (
+                      <SingleTraitContainer
+                        key={trait.id}
+                        isMobile={isMobileVersion}
+                      >
+                        <strong>{`${trait.trait}`}</strong>
+                        <span>{`(${trait.level} pts)`}</span>
+                      </SingleTraitContainer>
+                    ))}
+                  </TypeContainer>
+                )}
+              </DoubleTypeContainer>
+            </>
           )}
         </>
       )}
