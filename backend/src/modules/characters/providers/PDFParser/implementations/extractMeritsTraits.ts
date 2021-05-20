@@ -198,7 +198,6 @@ export default function extractMeritsTraits(
           switch (merit) {
             case 'Ability Aptitude':
             case 'Additional Discipline':
-            case 'Ventrue: Paragon':
               {
                 const startMeritDetail =
                   line.indexOf(', ', startMeritPoints) + 2;
@@ -249,6 +248,7 @@ export default function extractMeritsTraits(
         switch (merit) {
           case 'Ability Aptitude':
           case 'Additional Discipline':
+          case 'Discipline Prodigy':
           case 'Ventrue: Paragon':
             {
               const startMeritDetail = line.indexOf(', ', startMeritPoints) + 2;
