@@ -51,7 +51,6 @@ export default function extractAbilitiesTraits(
               'Visceratika',
               'Akhu',
               'Dur-An-Ki',
-              'Inceptor"',
               'Koldunic Sorcery',
               'Necromancy',
               'Sadhana',

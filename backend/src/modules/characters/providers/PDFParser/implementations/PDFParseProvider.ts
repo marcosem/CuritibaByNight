@@ -14,6 +14,7 @@ import { Readable } from 'stream';
 import extractCreatureTraits from './extractCreatureTraits';
 import extractVirtuesTraits from './extractVirtuesTraits';
 import extractAbilitiesTraits from './extractAbilitiesTraits';
+import extractVampirePowersTraits from './extractVampirePowersTraits';
 import extractBackgroundsTraits from './extractBackgroundsTraits';
 import extractInfluencesTraits from './extractInfluencesTraits';
 import extractMeritsTraits from './extractMeritsTraits';
@@ -26,6 +27,7 @@ class PDFParseProvider implements IPDFParserProvider {
   ): Promise<IPDFParseDTO | undefined> {
     const char = new Character();
     let charTraits = [] as CharacterTrait[];
+    let powerTraits = [] as CharacterTrait[];
 
     const pdfBuffer = await fs.promises.readFile(
       resolve(uploadConfig('sheet').tmpFolder, filename),
@@ -563,6 +565,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Abilities and Powers
       if (attributesSectionDone && !abilitiesSectionDone) {
         if (line.indexOf('Abilities:') >= 0) {
           abilitiesSectionStart = true;
@@ -577,6 +580,8 @@ class PDFParseProvider implements IPDFParserProvider {
 
           switch (char.creature_type) {
             case 'Vampire':
+              powerTraits = extractVampirePowersTraits(line, powerTraits);
+
               if (line.indexOf('Fortitude: Mettle') >= 0) {
                 extraHealthy += 1;
               }
@@ -587,6 +592,8 @@ class PDFParseProvider implements IPDFParserProvider {
               break;
 
             case 'Mortal':
+              powerTraits = extractVampirePowersTraits(line, powerTraits);
+
               if (line.indexOf('Disciplines: Fortitude: Mettle') >= 0) {
                 extraHealthy += 1;
               }
