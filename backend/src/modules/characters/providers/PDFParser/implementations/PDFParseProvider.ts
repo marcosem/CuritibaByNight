@@ -1113,6 +1113,10 @@ class PDFParseProvider implements IPDFParserProvider {
       charTraits = charTraits.concat(traitsHealth);
     }
 
+    if (powerTraits.length > 0) {
+      charTraits = charTraits.concat(powerTraits);
+    }
+
     if (!isParsedXP || !isParsedXPTotal || !isParsedRetainerLevel) {
       return undefined;
     }
