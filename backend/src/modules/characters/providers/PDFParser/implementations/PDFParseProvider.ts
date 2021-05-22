@@ -14,7 +14,7 @@ import { Readable } from 'stream';
 import extractCreatureTraits from './extractCreatureTraits';
 import extractVirtuesTraits from './extractVirtuesTraits';
 import extractAbilitiesTraits from './extractAbilitiesTraits';
-import extractVampirePowersTraits from './extractVampirePowersTraits';
+import extractPowersTraits from './extractPowersTraits';
 import extractBackgroundsTraits from './extractBackgroundsTraits';
 import extractInfluencesTraits from './extractInfluencesTraits';
 import extractMeritsTraits from './extractMeritsTraits';
@@ -580,7 +580,11 @@ class PDFParseProvider implements IPDFParserProvider {
 
           switch (char.creature_type) {
             case 'Vampire':
-              powerTraits = extractVampirePowersTraits(line, powerTraits);
+              powerTraits = extractPowersTraits(
+                line,
+                char.creature_type,
+                powerTraits,
+              );
 
               if (line.indexOf('Fortitude: Mettle') >= 0) {
                 extraHealthy += 1;
@@ -592,7 +596,11 @@ class PDFParseProvider implements IPDFParserProvider {
               break;
 
             case 'Mortal':
-              powerTraits = extractVampirePowersTraits(line, powerTraits);
+              powerTraits = extractPowersTraits(
+                line,
+                char.creature_type,
+                powerTraits,
+              );
 
               if (line.indexOf('Disciplines: Fortitude: Mettle') >= 0) {
                 extraHealthy += 1;
@@ -604,6 +612,12 @@ class PDFParseProvider implements IPDFParserProvider {
               break;
 
             case 'Wraith':
+              powerTraits = extractPowersTraits(
+                line,
+                char.creature_type,
+                powerTraits,
+              );
+
               if (line.indexOf('Merits:') >= 0) {
                 abilitiesSectionDone = true;
               }
@@ -616,6 +630,12 @@ class PDFParseProvider implements IPDFParserProvider {
               break;
 
             case 'Werewolf':
+              powerTraits = extractPowersTraits(
+                line,
+                char.creature_type,
+                powerTraits,
+              );
+
               if (line.indexOf('Backgrounds:') >= 0) {
                 abilitiesSectionDone = true;
               }
@@ -704,12 +724,21 @@ class PDFParseProvider implements IPDFParserProvider {
               }
               break;
             case 'Wraith':
-            case 'Mage':
               if (line.indexOf('Abilities:') >= 0) {
                 backgroundsSectionDone = true;
               }
               break;
+            case 'Mage':
+              powerTraits = extractPowersTraits(
+                line,
+                char.creature_type,
+                powerTraits,
+              );
 
+              if (line.indexOf('Abilities:') >= 0) {
+                backgroundsSectionDone = true;
+              }
+              break;
             case 'Werewolf':
               if (line.indexOf('Influences:') >= 0) {
                 backgroundsSectionDone = true;
