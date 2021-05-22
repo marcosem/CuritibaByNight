@@ -92,7 +92,6 @@ export default function extractVampirePowersTraits(
     } as CharacterTrait;
 
     currPowersList.push(myPower);
-    console.log(myPower);
 
     return currPowersList;
   }
@@ -341,7 +340,6 @@ export default function extractVampirePowersTraits(
           disc.trait === discipline ? myPower : disc,
         );
       }
-      console.log(myPower);
     }
   }
 
