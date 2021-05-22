@@ -647,7 +647,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
-      // Backgrounds
+      // Backgrounds and Spheres (Mages)
       if (attributesSectionDone && !backgroundsSectionDone) {
         if (line.indexOf('Backgrounds:') >= 0) {
           backgroundsSectionStart = true;
