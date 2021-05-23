@@ -70,6 +70,7 @@ export const TypeContainer = styled.div<ITypeContainer>`
     css`
       border-left: 1px solid #000;
       padding-left: 5px;
+      min-width: 50%;
     `}
 
   h1 {
@@ -83,6 +84,20 @@ export const TypeContainer = styled.div<ITypeContainer>`
           `
         : css`
             font-size: 16px;
+          `}
+  }
+
+  h2 {
+    text-align: center;
+    padding: 5px 0 5px 0;
+
+    ${props =>
+      props.isMobile
+        ? css`
+            font-size: 0.75rem;
+          `
+        : css`
+            font-size: 0.875rem;
           `}
   }
 `;
@@ -161,10 +176,15 @@ export const SingleTraitContainer = styled.div<ITraitContainer>`
   display: flex;
   flex-direction: row;
   padding: 1px 0;
-  height: 18px;
+  min-height: 18px;
 
   strong {
     margin-right: 5px;
+    /*
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    */
   }
 
   span {
@@ -266,9 +286,11 @@ export const SingleTraitsList = styled.div<ISingleTraitProps>`
     props.isMobile
       ? css`
           width: calc(calc(14px * ${props.maxTraits}) + 4px);
+          min-width: calc(calc(14px * ${props.maxTraits}) + 4px);
         `
       : css`
           width: calc(calc(16px * ${props.maxTraits}) + 4px);
+          min-width: calc(calc(16px * ${props.maxTraits}) + 4px);
         `}
 `;
 

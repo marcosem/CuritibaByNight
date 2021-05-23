@@ -63,6 +63,8 @@ interface ITraitsList {
   virtues: ITrait[];
   attributes: ITrait[];
   abilities: ITrait[];
+  powers: ITrait[];
+  rituals: ITrait[];
   backgrounds: ITrait[];
   influences: ITrait[];
   health: ITrait[];
@@ -80,6 +82,8 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     virtues: [],
     attributes: [],
     abilities: [],
+    powers: [],
+    rituals: [],
     backgrounds: [],
     influences: [],
     health: [],
@@ -88,9 +92,11 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   } as ITraitsList);
   const [typeList, setTypeList] = useState<string[]>([]);
   const [domainMasquerade, setDomainMasquerade] = useState<number>(0);
-  const { addToast } = useToast();
+  const [creaturePower, setCreaturePower] = useState<string>('');
+  const [creatureRituals, setCreatureRituals] = useState<string>('');
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
+  const { addToast } = useToast();
   const { user } = useAuth();
   const {
     isConnected,
@@ -149,6 +155,8 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           virtues: [],
           attributes: [],
           abilities: [],
+          powers: [],
+          rituals: [],
           backgrounds: [],
           influences: [],
           health: [],
@@ -344,6 +352,14 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
               newTrait.index = [-1, -1];
               newTraitsList.abilities.push(newTrait);
               break;
+            case 'powers':
+              newTrait.index = [-1, -1];
+              newTraitsList.powers.push(newTrait);
+              break;
+            case 'rituals':
+              newTrait.index = [-1, -1];
+              newTraitsList.rituals.push(newTrait);
+              break;
             case 'backgrounds':
               newTrait.index = [-1, -1];
               newTraitsList.backgrounds.push(newTrait);
@@ -418,6 +434,32 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             if (traitA.index[0] === traitB.index[0]) {
               if (traitA.index[1] < traitB.index[1]) return -1;
               if (traitA.index[1] > traitB.index[1]) return 1;
+            }
+
+            return 0;
+          });
+
+          if (myChar.creature_type === 'Werewolf') {
+            newTraitsList.powers.sort((traitA: ITrait, traitB: ITrait) => {
+              if (traitA.level < traitB.level) return -1;
+              if (traitA.level > traitB.level) return 1;
+
+              if (traitA.level === traitB.level) {
+                if (traitA.trait < traitB.trait) return -1;
+                if (traitA.trait > traitB.trait) return 1;
+              }
+
+              return 0;
+            });
+          }
+
+          newTraitsList.rituals.sort((traitA: ITrait, traitB: ITrait) => {
+            if (traitA.level < traitB.level) return -1;
+            if (traitA.level > traitB.level) return 1;
+
+            if (traitA.level === traitB.level) {
+              if (traitA.trait < traitB.trait) return -1;
+              if (traitA.trait > traitB.trait) return 1;
             }
 
             return 0;
@@ -519,6 +561,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           break;
         case 'abilities':
           traits = traitsList.abilities;
+          break;
+        case 'powers':
+          traits = traitsList.powers;
+          break;
+        case 'rituals':
+          traits = traitsList.rituals;
           break;
         case 'backgrounds':
           traits = traitsList.backgrounds;
@@ -1060,6 +1108,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         case 'abilities':
           typeTraits = traitsList.abilities;
           break;
+        case 'powers':
+          typeTraits = traitsList.powers;
+          break;
+        case 'rituals':
+          typeTraits = traitsList.rituals;
+          break;
         case 'backgrounds':
           typeTraits = traitsList.backgrounds;
           break;
@@ -1096,6 +1150,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             break;
           case 'abilities':
             newTraitsList.abilities = updatedTraits;
+            break;
+          case 'powers':
+            newTraitsList.powers = updatedTraits;
+            break;
+          case 'rituals':
+            newTraitsList.rituals = updatedTraits;
             break;
           case 'backgrounds':
             newTraitsList.backgrounds = updatedTraits;
@@ -1138,6 +1198,29 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   }, [clearReloadTraits, loadTraits, myChar.id, reloadCharTraits]);
 
   useEffect(() => {
+    switch (myChar.creature_type) {
+      case 'Vampire':
+        setCreaturePower('Disciplinas');
+        setCreatureRituals('Rituais');
+        break;
+      case 'Werewolf':
+        setCreaturePower('Dons');
+        setCreatureRituals('Ritos');
+        break;
+      case 'Wraith':
+        setCreaturePower('Arcanoi');
+        setCreatureRituals('');
+        break;
+      case 'Mage':
+        setCreaturePower('Esferas');
+        setCreatureRituals('Rotinas');
+        break;
+      case 'Mortal':
+      default:
+        setCreaturePower('Poderes');
+        setCreatureRituals('Rituais');
+        break;
+    }
     loadTraits();
   }, [loadTraits, myChar]);
 
@@ -1547,7 +1630,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           </TraitButton>
                         ))}
                       </SingleTraitsList>
-                      <strong>{`${trait.trait}`}</strong>
+                      <strong>{trait.trait}</strong>
                       <span>{`x${trait.level}`}</span>
                     </SingleTraitContainer>
                   ))}
@@ -1561,41 +1644,188 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
               {buildAttributesTraitsList(traitsList.attributes)}
             </TypeContainer>
           )}
-          {typeList.indexOf('abilities') >= 0 && (
-            <TypeContainer borderTop isMobile={isMobileVersion}>
-              <h1>Habilidades:</h1>
-              {traitsList.abilities.map((trait: ITrait) => (
-                <SingleTraitContainer key={trait.id} isMobile={isMobileVersion}>
-                  <SingleTraitsList isMobile={isMobileVersion} maxTraits={7}>
-                    {trait.levelArray.map(level => (
-                      <TraitButton
-                        type="button"
-                        id={level.id}
-                        key={level.id}
-                        disabled={!level.enabled}
-                        title={`${
-                          level.enabled
-                            ? `${
-                                level.status === 'full'
-                                  ? `Remover [${trait.trait} Trait]`
-                                  : `Adicionar [${trait.trait} Trait]`
-                              }`
-                            : `${trait.trait} x${trait.levelTemp}`
-                        }`}
-                        traitColor="black"
+
+          {isMobileVersion ? (
+            <>
+              {typeList.indexOf('abilities') >= 0 && (
+                <TypeContainer borderTop isMobile={isMobileVersion}>
+                  <h1>Habilidades:</h1>
+                  {traitsList.abilities.map((trait: ITrait) => (
+                    <SingleTraitContainer
+                      key={trait.id}
+                      isMobile={isMobileVersion}
+                    >
+                      <SingleTraitsList
                         isMobile={isMobileVersion}
-                        onClick={handleTraitClick}
+                        maxTraits={7}
                       >
-                        {level.status === 'full' ? <GiPlainCircle /> : ''}
-                      </TraitButton>
-                    ))}
-                  </SingleTraitsList>
-                  <strong>{`${trait.trait}`}</strong>
-                  <span>{`x${trait.level}`}</span>
-                </SingleTraitContainer>
-              ))}
-            </TypeContainer>
+                        {trait.levelArray.map(level => (
+                          <TraitButton
+                            type="button"
+                            id={level.id}
+                            key={level.id}
+                            disabled={!level.enabled}
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? `Remover [${trait.trait} Trait]`
+                                      : `Adicionar [${trait.trait} Trait]`
+                                  }`
+                                : `${trait.trait} x${trait.levelTemp}`
+                            }`}
+                            traitColor="black"
+                            isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
+                          >
+                            {level.status === 'full' ? <GiPlainCircle /> : ''}
+                          </TraitButton>
+                        ))}
+                      </SingleTraitsList>
+                      <strong>{trait.trait}</strong>
+                      <span>{`x${trait.level}`}</span>
+                    </SingleTraitContainer>
+                  ))}
+                </TypeContainer>
+              )}
+            </>
+          ) : (
+            <DoubleTypeContainer>
+              {typeList.indexOf('abilities') >= 0 && (
+                <TypeContainer borderTop isMobile={isMobileVersion}>
+                  <h1>Habilidades:</h1>
+                  {traitsList.abilities.map((trait: ITrait) => (
+                    <SingleTraitContainer
+                      key={trait.id}
+                      isMobile={isMobileVersion}
+                    >
+                      <SingleTraitsList
+                        isMobile={isMobileVersion}
+                        maxTraits={7}
+                      >
+                        {trait.levelArray.map(level => (
+                          <TraitButton
+                            type="button"
+                            id={level.id}
+                            key={level.id}
+                            disabled={!level.enabled}
+                            title={`${
+                              level.enabled
+                                ? `${
+                                    level.status === 'full'
+                                      ? `Remover [${trait.trait} Trait]`
+                                      : `Adicionar [${trait.trait} Trait]`
+                                  }`
+                                : `${trait.trait} x${trait.levelTemp}`
+                            }`}
+                            traitColor="black"
+                            isMobile={isMobileVersion}
+                            onClick={handleTraitClick}
+                          >
+                            {level.status === 'full' ? <GiPlainCircle /> : ''}
+                          </TraitButton>
+                        ))}
+                      </SingleTraitsList>
+                      <strong>{trait.trait}</strong>
+                      <span>{`x${trait.level}`}</span>
+                    </SingleTraitContainer>
+                  ))}
+                </TypeContainer>
+              )}
+
+              {typeList.indexOf('powers') >= 0 && (
+                <TypeContainer borderTop borderLeft isMobile={isMobileVersion}>
+                  <h1>{`${creaturePower}:`}</h1>
+                  {creaturePower === 'Dons' ? (
+                    <>
+                      {traitsList.powers.map(
+                        (trait: ITrait, index, traitArray: ITrait[]) => (
+                          <div key={trait.id}>
+                            {index === 0 && Number(trait.level) === 1 && (
+                              <h2>Básico</h2>
+                            )}
+
+                            {(index === 0 && Number(trait.level) === 2) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 2 &&
+                                Number(trait.level) === 2 && (
+                                  <h2>Intermediário</h2>
+                                ))}
+
+                            {(index === 0 && Number(trait.level) === 3) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 3 &&
+                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
+
+                            <SingleTraitContainer
+                              key={trait.id}
+                              isMobile={isMobileVersion}
+                            >
+                              <strong>{trait.trait}</strong>
+                            </SingleTraitContainer>
+                          </div>
+                        ),
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {traitsList.powers.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <strong>{trait.trait}</strong>
+                          {trait.level > 0 && <span>{`x${trait.level}`}</span>}
+                        </SingleTraitContainer>
+                      ))}
+                    </>
+                  )}
+                  {typeList.indexOf('rituals') >= 0 && (
+                    <>
+                      <h1>
+                        <br />
+                        {`${creatureRituals}`}
+                      </h1>
+                      {traitsList.rituals.map(
+                        (trait: ITrait, index, traitArray: ITrait[]) => (
+                          <div key={trait.id}>
+                            {index === 0 && Number(trait.level) === 1 && (
+                              <h2>Básico</h2>
+                            )}
+
+                            {(index === 0 && Number(trait.level) === 2) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 2 &&
+                                Number(trait.level) === 2 && (
+                                  <h2>Intermediário</h2>
+                                ))}
+
+                            {(index === 0 && Number(trait.level) === 3) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 3 &&
+                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
+
+                            {(index === 0 && Number(trait.level) >= 4) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 4 &&
+                                Number(trait.level) >= 4 && <h2>Ancião</h2>)}
+
+                            <SingleTraitContainer
+                              key={trait.id}
+                              isMobile={isMobileVersion}
+                            >
+                              <strong>{trait.trait}</strong>
+                            </SingleTraitContainer>
+                          </div>
+                        ),
+                      )}
+                    </>
+                  )}
+                </TypeContainer>
+              )}
+            </DoubleTypeContainer>
           )}
+
           {isMobileVersion ? (
             <>
               {typeList.indexOf('backgrounds') >= 0 && (
