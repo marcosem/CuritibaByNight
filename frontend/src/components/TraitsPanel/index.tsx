@@ -15,6 +15,9 @@ import {
   GiCancel,
   GiPrettyFangs,
 } from 'react-icons/gi';
+
+import { FiCopy } from 'react-icons/fi';
+
 import api from '../../services/api';
 
 import {
@@ -70,6 +73,7 @@ interface ITraitsList {
   health: ITrait[];
   merits: ITrait[];
   flaws: ITrait[];
+  status: ITrait[];
 }
 
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -89,6 +93,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     health: [],
     merits: [],
     flaws: [],
+    status: [],
   } as ITraitsList);
   const [typeList, setTypeList] = useState<string[]>([]);
   const [domainMasquerade, setDomainMasquerade] = useState<number>(0);
@@ -162,6 +167,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           health: [],
           merits: [],
           flaws: [],
+          status: [],
         } as ITraitsList;
 
         const domainMasqueradeTrait: ITrait = {
@@ -399,6 +405,10 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
               newTrait.index = [-1, -1];
               newTraitsList.flaws.push(newTrait);
               break;
+            case 'status':
+              newTrait.index = [-1, -1];
+              newTraitsList.status.push(newTrait);
+              break;
             default:
           }
         });
@@ -468,6 +478,18 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           newTraitsList.health.sort((traitA: ITrait, traitB: ITrait) => {
             if (traitA.index < traitB.index) return -1;
             if (traitA.index > traitB.index) return 1;
+
+            return 0;
+          });
+
+          newTraitsList.status.sort((traitA: ITrait, traitB: ITrait) => {
+            const traitALabel =
+              traitA.trait.indexOf(', Positional') >= 0 ? 'ZZZ' : traitA.trait;
+            const traitBLabel =
+              traitB.trait.indexOf(', Positional') >= 0 ? 'ZZZ' : traitB.trait;
+
+            if (traitALabel < traitBLabel) return -1;
+            if (traitALabel > traitBLabel) return 1;
 
             return 0;
           });
@@ -582,6 +604,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           break;
         case 'flaws':
           traits = traitsList.flaws;
+          break;
+        case 'status':
+          traits = traitsList.status;
           break;
 
         default:
@@ -1077,6 +1102,44 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     [handleTraitClick, isMobileVersion],
   );
 
+  const handleCopyStatusToClipboard = useCallback(() => {
+    if (traitsList.status.length === 0) {
+      return;
+    }
+
+    let statusText = `${myChar.name}\r`;
+    if (myChar.clan) {
+      statusText = `${statusText}Member of Clan ${myChar.clan}\r`;
+    }
+
+    if (myChar.title) {
+      statusText = `${statusText}${myChar.title}${
+        myChar.sect && ` of ${myChar.sect}`
+      }\r`;
+    } else if (myChar.sect) {
+      statusText = `${statusText}${myChar.sect}\r`;
+    }
+
+    traitsList.status.forEach(trait => {
+      statusText = `${statusText}\r${trait.trait}`;
+    });
+
+    const textArea = document.createElement('textarea');
+
+    textArea.value = statusText;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+
+    textArea.remove();
+
+    addToast({
+      type: 'success',
+      title: 'Texto Copiado',
+      description: 'Status Copiado para Área de Transferência!',
+    });
+  }, [addToast, myChar, traitsList.status]);
+
   useEffect(() => {
     if (updatedTrait.id) {
       const myUpdatedTrait: ITrait = JSON.parse(JSON.stringify(updatedTrait));
@@ -1129,6 +1192,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         case 'flaws':
           typeTraits = traitsList.flaws;
           break;
+        case 'status':
+          typeTraits = traitsList.status;
+          break;
         default:
       }
 
@@ -1171,6 +1237,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             break;
           case 'flaws':
             newTraitsList.flaws = updatedTraits;
+            break;
+          case 'status':
+            newTraitsList.status = updatedTraits;
             break;
           default:
         }
@@ -2230,6 +2299,23 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                 )}
               </DoubleTypeContainer>
             </>
+          )}
+          {typeList.indexOf('status') >= 0 && (
+            <TypeContainer
+              borderTop
+              isMobile={isMobileVersion}
+              statusContainer
+              title="Copiar Status"
+              onClick={handleCopyStatusToClipboard}
+            >
+              <h1>{`Status (${traitsList.status.length})`}</h1>
+              <FiCopy />
+              {traitsList.status.map((trait: ITrait) => (
+                <SingleTraitContainer key={trait.id} isMobile={isMobileVersion}>
+                  <span>{`- ${trait.trait}`}</span>
+                </SingleTraitContainer>
+              ))}
+            </TypeContainer>
           )}
         </>
       )}

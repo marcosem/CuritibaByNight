@@ -16,6 +16,7 @@ interface ITypeContainer {
   borderTop?: boolean;
   borderLeft?: boolean;
   isMobile: boolean;
+  statusContainer?: boolean;
 }
 
 interface ITraitContainer {
@@ -100,6 +101,32 @@ export const TypeContainer = styled.div<ITypeContainer>`
             font-size: 0.875rem;
           `}
   }
+
+  ${props =>
+    props.statusContainer &&
+    css`
+      position: relative;
+
+      svg {
+        padding-left: 5px;
+        width: 20px;
+        height: 20px;
+        color: #000;
+        visibility: hidden;
+
+        top: 50%;
+        right: 5px;
+
+        position: absolute;
+      }
+
+      &:hover {
+        cursor: pointer;
+        svg {
+          visibility: visible;
+        }
+      }
+    `}
 `;
 
 export const DoubleTypeContainer = styled.div`
