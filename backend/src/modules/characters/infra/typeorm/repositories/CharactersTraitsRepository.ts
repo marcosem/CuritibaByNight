@@ -84,7 +84,7 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
 
     const charTraitList = await this.ormRepository.find({
       where,
-      order: { trait: 'ASC' },
+      // order: { trait: 'ASC' },
     });
 
     // if not found, return undefined

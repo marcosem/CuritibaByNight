@@ -15,6 +15,7 @@ import extractCreatureTraits from './extractCreatureTraits';
 import extractVirtuesTraits from './extractVirtuesTraits';
 import extractAbilitiesTraits from './extractAbilitiesTraits';
 import extractPowersTraits from './extractPowersTraits';
+import extractRitualsTraits from './extractRitualsTraits';
 import extractBackgroundsTraits from './extractBackgroundsTraits';
 import extractInfluencesTraits from './extractInfluencesTraits';
 import extractMeritsTraits from './extractMeritsTraits';
@@ -64,6 +65,8 @@ class PDFParseProvider implements IPDFParserProvider {
     let attributesSectionDone = false;
     let abilitiesSectionStart = false;
     let abilitiesSectionDone = false;
+    let statusAndRitualsSectionStart = false;
+    let statusAndRitualsSectionDone = false;
     let backgroundsSectionStart = false;
     let backgroundsSectionDone = false;
     let influencesSectionStart = false;
@@ -565,7 +568,7 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
-      // Abilities and Powers
+      // Abilities, Powers, and Rotes
       if (attributesSectionDone && !abilitiesSectionDone) {
         if (line.indexOf('Abilities:') >= 0) {
           abilitiesSectionStart = true;
@@ -624,6 +627,12 @@ class PDFParseProvider implements IPDFParserProvider {
               break;
 
             case 'Mage':
+              powerTraits = extractRitualsTraits(
+                line,
+                char.creature_type,
+                powerTraits,
+              );
+
               if (line.indexOf('Reputation:') >= 0) {
                 abilitiesSectionDone = true;
               }
@@ -643,6 +652,29 @@ class PDFParseProvider implements IPDFParserProvider {
 
             default:
               abilitiesSectionDone = true;
+          }
+        }
+      }
+
+      // Status and Rituals - Vampire only
+      if (
+        char.creature_type === 'Vampire' &&
+        attributesSectionDone &&
+        !statusAndRitualsSectionDone
+      ) {
+        if (line.indexOf('Status:') >= 0) {
+          statusAndRitualsSectionStart = true;
+        }
+
+        if (statusAndRitualsSectionStart) {
+          powerTraits = extractRitualsTraits(
+            line,
+            char.creature_type,
+            powerTraits,
+          );
+
+          if (line.indexOf('Backgrounds:') >= 0) {
+            statusAndRitualsSectionDone = true;
           }
         }
       }
@@ -729,6 +761,7 @@ class PDFParseProvider implements IPDFParserProvider {
               }
               break;
             case 'Mage':
+              // Extract Mage Spheres
               powerTraits = extractPowersTraits(
                 line,
                 char.creature_type,
@@ -740,6 +773,13 @@ class PDFParseProvider implements IPDFParserProvider {
               }
               break;
             case 'Werewolf':
+              // Extract Werewolf Rites
+              powerTraits = extractRitualsTraits(
+                line,
+                char.creature_type,
+                powerTraits,
+              );
+
               if (line.indexOf('Influences:') >= 0) {
                 backgroundsSectionDone = true;
               }
@@ -825,8 +865,6 @@ class PDFParseProvider implements IPDFParserProvider {
           }
         }
       }
-
-      // TODO Merits and Flaws
 
       // Merits and Flaws
       if (influencesSectionDone && !meritsAndFlawsSectionDone) {

@@ -115,7 +115,6 @@ export default function extractPowersTraits(
           'Dementation',
           'Dominate',
           'Fortitude',
-          'Flight',
           'Melpominee',
           'Obfuscate',
           'Obtenebration',
@@ -301,10 +300,10 @@ export default function extractPowersTraits(
           "Sadhana: Rishi's Hand",
           'Sadhana: Temptations of Mara',
           'Sadhana: Yaksha-Vidya',
+          'Flight',
         ];
 
         let discipline = '';
-
         vampireDisciplines.some(disc => {
           const powerIndexAux = line.lastIndexOf(` ${disc}`);
           if (powerIndexAux >= 0) {
