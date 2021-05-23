@@ -1688,6 +1688,96 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                   ))}
                 </TypeContainer>
               )}
+              {typeList.indexOf('powers') >= 0 && (
+                <TypeContainer borderTop isMobile={isMobileVersion}>
+                  <h1>{`${creaturePower}:`}</h1>
+                  {creaturePower === 'Dons' ? (
+                    <>
+                      {traitsList.powers.map(
+                        (trait: ITrait, index, traitArray: ITrait[]) => (
+                          <div key={trait.id}>
+                            {index === 0 && Number(trait.level) === 1 && (
+                              <h2>Básico</h2>
+                            )}
+
+                            {(index === 0 && Number(trait.level) === 2) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 2 &&
+                                Number(trait.level) === 2 && (
+                                  <h2>Intermediário</h2>
+                                ))}
+
+                            {(index === 0 && Number(trait.level) === 3) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 3 &&
+                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
+
+                            <SingleTraitContainer
+                              key={trait.id}
+                              isMobile={isMobileVersion}
+                            >
+                              <strong>{trait.trait}</strong>
+                            </SingleTraitContainer>
+                          </div>
+                        ),
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {traitsList.powers.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <strong>{trait.trait}</strong>
+                          {trait.level > 0 && <span>{`x${trait.level}`}</span>}
+                        </SingleTraitContainer>
+                      ))}
+                    </>
+                  )}
+                  {typeList.indexOf('rituals') >= 0 && (
+                    <>
+                      <h1>
+                        <br />
+                        {`${creatureRituals}`}
+                      </h1>
+                      {traitsList.rituals.map(
+                        (trait: ITrait, index, traitArray: ITrait[]) => (
+                          <div key={trait.id}>
+                            {index === 0 && Number(trait.level) === 1 && (
+                              <h2>Básico</h2>
+                            )}
+
+                            {(index === 0 && Number(trait.level) === 2) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 2 &&
+                                Number(trait.level) === 2 && (
+                                  <h2>Intermediário</h2>
+                                ))}
+
+                            {(index === 0 && Number(trait.level) === 3) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 3 &&
+                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
+
+                            {(index === 0 && Number(trait.level) >= 4) ||
+                              (index > 0 &&
+                                Number(traitArray[index - 1].level) < 4 &&
+                                Number(trait.level) >= 4 && <h2>Ancião</h2>)}
+
+                            <SingleTraitContainer
+                              key={trait.id}
+                              isMobile={isMobileVersion}
+                            >
+                              <strong>{trait.trait}</strong>
+                            </SingleTraitContainer>
+                          </div>
+                        ),
+                      )}
+                    </>
+                  )}
+                </TypeContainer>
+              )}
             </>
           ) : (
             <DoubleTypeContainer>
