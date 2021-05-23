@@ -1120,8 +1120,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
       statusText = `${statusText}${myChar.sect}\r`;
     }
 
+    statusText = `${statusText}\rStatus (${traitsList.status.length})`;
     traitsList.status.forEach(trait => {
-      statusText = `${statusText}\r${trait.trait}`;
+      statusText = `${statusText}\r- ${trait.trait}`;
     });
 
     const textArea = document.createElement('textarea');
