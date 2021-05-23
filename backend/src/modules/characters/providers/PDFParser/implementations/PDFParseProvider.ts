@@ -11,15 +11,15 @@ import uploadConfig from '@config/upload';
 import readline from 'readline';
 import { once } from 'events';
 import { Readable } from 'stream';
-import extractCreatureTraits from './extractCreatureTraits';
-import extractVirtuesTraits from './extractVirtuesTraits';
-import extractAbilitiesTraits from './extractAbilitiesTraits';
-import extractPowersTraits from './extractPowersTraits';
-import extractRitualsTraits from './extractRitualsTraits';
-import extractBackgroundsTraits from './extractBackgroundsTraits';
-import extractInfluencesTraits from './extractInfluencesTraits';
-import extractMeritsTraits from './extractMeritsTraits';
-import extractFlawsTraits from './extractFlawsTraits';
+import extractCreatureTraits from './extractors/extractCreatureTraits';
+import extractVirtuesTraits from './extractors/extractVirtuesTraits';
+import extractAbilitiesTraits from './extractors/extractAbilitiesTraits';
+import extractPowersTraits from './extractors/extractPowersTraits';
+import extractRitualsTraits from './extractors/extractRitualsTraits';
+import extractBackgroundsTraits from './extractors/extractBackgroundsTraits';
+import extractInfluencesTraits from './extractors/extractInfluencesTraits';
+import extractMeritsTraits from './extractors/extractMeritsTraits';
+import extractFlawsTraits from './extractors/extractFlawsTraits';
 
 class PDFParseProvider implements IPDFParserProvider {
   public async parse(
