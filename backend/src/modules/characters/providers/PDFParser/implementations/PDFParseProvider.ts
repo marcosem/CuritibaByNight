@@ -20,6 +20,7 @@ import extractBackgroundsTraits from './extractors/extractBackgroundsTraits';
 import extractInfluencesTraits from './extractors/extractInfluencesTraits';
 import extractMeritsTraits from './extractors/extractMeritsTraits';
 import extractFlawsTraits from './extractors/extractFlawsTraits';
+import extractStatusTraits from './extractors/extractStatusTraits';
 
 class PDFParseProvider implements IPDFParserProvider {
   public async parse(
@@ -29,6 +30,7 @@ class PDFParseProvider implements IPDFParserProvider {
     const char = new Character();
     let charTraits = [] as CharacterTrait[];
     let powerTraits = [] as CharacterTrait[];
+    let statusTraits = [] as CharacterTrait[];
 
     const pdfBuffer = await fs.promises.readFile(
       resolve(uploadConfig('sheet').tmpFolder, filename),
@@ -673,6 +675,8 @@ class PDFParseProvider implements IPDFParserProvider {
             powerTraits,
           );
 
+          statusTraits = extractStatusTraits(line, statusTraits);
+
           if (line.indexOf('Backgrounds:') >= 0) {
             statusAndRitualsSectionDone = true;
           }
@@ -1182,6 +1186,10 @@ class PDFParseProvider implements IPDFParserProvider {
 
     if (powerTraits.length > 0) {
       charTraits = charTraits.concat(powerTraits);
+    }
+
+    if (statusTraits.length > 0) {
+      charTraits = charTraits.concat(statusTraits);
     }
 
     if (!isParsedXP || !isParsedXPTotal || !isParsedRetainerLevel) {
