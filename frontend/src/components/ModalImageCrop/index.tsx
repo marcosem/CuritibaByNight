@@ -52,7 +52,6 @@ const ModalImageCrop: React.FC<IImageCropDataProps> = ({
     aspect: imageCropData.width / imageCropData.height,
   });
   const [openDlg, setOpenDlg] = useState<boolean>(true);
-  const [fileName, setFileName] = useState<string>('');
   const [completedCrop, setCompletedCrop] = useState<any>(null);
   const { setImage } = imageCropData;
   const { closeImageCrop } = useImageCrop();
@@ -75,18 +74,17 @@ const ModalImageCrop: React.FC<IImageCropDataProps> = ({
       const reader = new FileReader();
       reader.addEventListener('load', () => setUpImg(reader.result as string));
       reader.readAsDataURL(e.target.files[0]);
-      setFileName(e.target.files[0].name);
     }
   }, []);
 
   const handleSaveImage = useCallback(() => {
-    previewCanvasRef.current.toBlob((blob: any) => {
+    previewCanvasRef.current.toBlob((blob: File) => {
       const newBlob = blob;
-      newBlob.name = fileName;
+      // newBlob.name = fileName;
       setImage(newBlob);
       closeDialog();
     });
-  }, [closeDialog, fileName, setImage]);
+  }, [closeDialog, setImage]);
 
   useEffect(() => {
     if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {

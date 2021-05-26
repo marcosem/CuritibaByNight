@@ -35,7 +35,12 @@ class JimpProvider implements IImageClipper {
       cutY = 0;
     }
 
-    const newFileName = `x${file}`;
+    let oldFile = file;
+    if (oldFile.indexOf('-blob') >= 0) {
+      oldFile = `${oldFile.replace('-blob', '')}.jpg`;
+    }
+
+    const newFileName = `${oldFile}`;
 
     if (newWidth > 500 || newHeight > 500) {
       imageData
