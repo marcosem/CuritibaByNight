@@ -6,6 +6,7 @@ import { SelectionProvider } from './selection';
 import { ModalBoxProvider } from './modalBox';
 import { SocketProvider } from './socket';
 import { HeaderProvider } from './header';
+import { ImageCropProvider } from './imageCrop';
 
 const AppProvider: React.FC = ({ children }) => (
   <AuthProvider>
@@ -14,7 +15,9 @@ const AppProvider: React.FC = ({ children }) => (
         <ModalBoxProvider>
           <ToastProvider>
             <SocketProvider>
-              <HeaderProvider>{children}</HeaderProvider>
+              <ImageCropProvider>
+                <HeaderProvider>{children}</HeaderProvider>
+              </ImageCropProvider>
             </SocketProvider>
           </ToastProvider>
         </ModalBoxProvider>

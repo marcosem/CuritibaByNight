@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, ChangeEvent, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { FiUser, FiMail, FiLock, FiArrowLeft, FiCamera } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
@@ -16,6 +16,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { useAuth } from '../../hooks/auth';
 import { useHeader } from '../../hooks/header';
+import { useImageCrop } from '../../hooks/imageCrop';
 import imgProfile from '../../assets/profile.jpg';
 
 interface IFormData {
@@ -34,6 +35,7 @@ const Profile: React.FC = () => {
   const history = useHistory();
 
   const { user, updateUser } = useAuth();
+  const { showImageCrop, getImage, isImageSelected } = useImageCrop();
 
   const handleSubmit = useCallback(
     async (data: IFormData) => {
@@ -115,6 +117,7 @@ const Profile: React.FC = () => {
     [user.id, user.storyteller, updateUser, history, addToast],
   );
 
+  /*
   const handleAvatarChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
@@ -134,6 +137,47 @@ const Profile: React.FC = () => {
     },
     [addToast, updateUser],
   );
+  */
+
+  const handleAvatarChange = useCallback(async () => {
+    showImageCrop(186, 186, true);
+  }, [showImageCrop]);
+
+  const setNewImage = useCallback(
+    async (newImage: File) => {
+      try {
+        const data = new FormData();
+
+        data.append('avatar', newImage);
+
+        await api.patch('/users/avatar', data).then(response => {
+          updateUser(response.data);
+
+          addToast({
+            type: 'success',
+            title: 'Avatar Atualizado!',
+          });
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro na atualização',
+          description: 'Erro ao atualizar o Avatar.',
+        });
+      }
+    },
+    [addToast, updateUser],
+  );
+
+  useEffect(() => {
+    if (isImageSelected) {
+      const newImage = getImage();
+
+      if (newImage) {
+        setNewImage(newImage);
+      }
+    }
+  }, [getImage, isImageSelected, setNewImage]);
 
   const handleGoBackClick = useCallback(() => {
     history.goBack();
@@ -171,14 +215,17 @@ const Profile: React.FC = () => {
               }
               alt=""
             />
-            <label htmlFor="avatar">
+
+            <label htmlFor="avatar" onClick={handleAvatarChange}>
               <FiCamera />
+              {/*
               <input
                 type="file"
                 name=""
                 id="avatar"
                 onChange={handleAvatarChange}
               />
+              */}
             </label>
           </AvatarInput>
 

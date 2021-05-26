@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { MdLocalAirport, MdStore, MdLocationOn } from 'react-icons/md';
 import {
   GiHouse,
@@ -30,6 +30,7 @@ import {
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
+import { useImageCrop } from '../../hooks/imageCrop';
 
 interface ILocationCardProps {
   locationId: string;
@@ -74,6 +75,7 @@ const LocationCard: React.FC<ILocationCardProps> = ({
   const [propertyTitle, setPropertyTitle] = useState<string>('');
   const { user, char } = useAuth();
   const { addToast } = useToast();
+  const { showImageCrop, getImage, isImageSelected } = useImageCrop();
   const { isMobileVersion } = useMobile();
 
   useEffect(() => {
@@ -179,6 +181,7 @@ const LocationCard: React.FC<ILocationCardProps> = ({
     }
   }, [clan, creature_type, property, responsibleName, sect]);
 
+  /*
   const handleImageChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
@@ -213,6 +216,54 @@ const LocationCard: React.FC<ILocationCardProps> = ({
     },
     [addToast, locationId, name],
   );
+  */
+
+  const handleImageChange = useCallback(async () => {
+    if (!locked) showImageCrop(198, 172);
+  }, [locked, showImageCrop]);
+
+  const setNewImage = useCallback(
+    async (newImage: File) => {
+      try {
+        const data = new FormData();
+
+        data.append('locations', newImage);
+
+        const response = await api.patch(
+          `/locations/picture/${locationId}`,
+          data,
+        );
+
+        const res = response.data;
+        if (res.picture_url) {
+          setLocationImg(res.picture_url);
+        }
+
+        addToast({
+          type: 'success',
+          title: 'Imagem Atualizada!',
+          description: `Imagem da localização: '${name}' atualizada com sucesso!`,
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro na atualização',
+          description: 'Erro ao atualizar a imagem da localização.',
+        });
+      }
+    },
+    [addToast, locationId, name],
+  );
+
+  useEffect(() => {
+    if (isImageSelected) {
+      const newImage = getImage();
+
+      if (newImage) {
+        setNewImage(newImage);
+      }
+    }
+  }, [getImage, isImageSelected, setNewImage]);
 
   return (
     <Container isMobile={isMobileVersion} locked={locked}>
@@ -222,12 +273,15 @@ const LocationCard: React.FC<ILocationCardProps> = ({
         </CardTitle>
 
         <label htmlFor={locationId}>
-          <LocationImage locked={locked}>
+          <LocationImage
+            locked={locked}
+            onClick={!locked ? handleImageChange : undefined}
+          >
             <img src={locationImg} alt="" />
 
-            {!locked && (
+            {/*! locked && (
               <input type="file" id={locationId} onChange={handleImageChange} />
-            )}
+            ) */}
             <FiCamera />
             <span>Trocar Imagem</span>
           </LocationImage>

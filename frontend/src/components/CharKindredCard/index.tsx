@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { GiFangedSkull, GiCoffin, GiRun } from 'react-icons/gi';
 import { FiClock, FiCamera } from 'react-icons/fi';
 import { IconType } from 'react-icons';
@@ -18,6 +18,7 @@ import {
 import tempProfileImg from '../../assets/avatar_placehold.png';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
+import { useImageCrop } from '../../hooks/imageCrop';
 
 interface ICharacterCardProps {
   charId: string;
@@ -57,6 +58,7 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
   const [situationIcon, setSituationIcon] = useState<IconType | null>(null);
   const [situationTitle, setSituationTitle] = useState<string>('');
   const { addToast } = useToast();
+  const { showImageCrop, getImage, isImageSelected } = useImageCrop();
   const { isMobileVersion } = useMobile();
 
   useEffect(() => {
@@ -95,6 +97,7 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
     }
   }, [situation]);
 
+  /*
   const handleAvatarChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
@@ -126,22 +129,70 @@ const CharKindredCard: React.FC<ICharacterCardProps> = ({
     },
     [addToast, charId, name],
   );
+  */
+
+  const handleAvatarChange = useCallback(async () => {
+    if (!locked) showImageCrop(192, 252, true);
+  }, [locked, showImageCrop]);
+
+  const setNewImage = useCallback(
+    async (newImage: File) => {
+      try {
+        const data = new FormData();
+
+        data.append('avatar', newImage);
+
+        const response = await api.patch(`/character/avatar/${charId}`, data);
+
+        const res = response.data;
+        if (res.avatar_url) {
+          setCharImg(res.avatar_url);
+        }
+
+        addToast({
+          type: 'success',
+          title: 'Avatar Atualizado!',
+          description: `Avatar do personagem '${name}' atualizado com sucesso!`,
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro na atualização',
+          description: 'Erro ao atualizar o avatar do personagem.',
+        });
+      }
+    },
+    [addToast, charId, name],
+  );
+
+  useEffect(() => {
+    if (isImageSelected) {
+      const newImage = getImage();
+
+      if (newImage) {
+        setNewImage(newImage);
+      }
+    }
+  }, [getImage, isImageSelected, setNewImage]);
 
   return (
     <Container isMobile={isMobileVersion}>
       <CardSquare clanImg={clanImg}>
         <span>{updatedAt}</span>
         <label htmlFor={charId === '' ? 'Empty' : charId}>
-          <ProfileImage locked={locked}>
+          <ProfileImage
+            locked={locked}
+            onClick={!locked ? handleAvatarChange : undefined}
+          >
             <img src={charImg} alt="" />
 
-            {!locked && (
+            {/*! locked && (
               <input
                 type="file"
                 id={charId === '' ? 'Empty' : charId}
                 onChange={handleAvatarChange}
               />
-            )}
+            ) */}
             <FiCamera />
             <span>Trocar Foto</span>
           </ProfileImage>
