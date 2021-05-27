@@ -97,6 +97,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   } as ITraitsList);
   const [typeList, setTypeList] = useState<string[]>([]);
   const [domainMasquerade, setDomainMasquerade] = useState<number>(0);
+  const [domainMasqueradeArray, setDomainMasqueradeArray] = useState<number[]>(
+    [],
+  );
   const [creaturePower, setCreaturePower] = useState<string>('');
   const [creatureRituals, setCreatureRituals] = useState<string>('');
   const [isBusy, setBusy] = useState(true);
@@ -122,6 +125,14 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         const res: number = response.data.masquerade_level;
 
         setDomainMasquerade(res);
+
+        if (res > 0) {
+          const domainArray = [];
+          for (let i = 1; i <= res; i += 1) {
+            domainArray.push(i);
+          }
+          setDomainMasqueradeArray(domainArray);
+        }
       });
     } catch (error) {
       if (error.response) {
@@ -716,6 +727,17 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     [addToast, traitsList, updateTraits, user.storyteller],
   );
 
+  const showTrait = useCallback(
+    (trait: string, level: number, size: number): boolean => {
+      if (trait !== 'Personal Masquerade') return true;
+
+      if (level < size - domainMasquerade) return true;
+
+      return false;
+    },
+    [domainMasquerade],
+  );
+
   const buildOrdinaryTraitsList = useCallback(
     (traits: ITrait[], type: string): JSX.Element[] => {
       if (traits.length === 0) {
@@ -812,50 +834,72 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           <>
                             {trait.levelArray && (
                               <TraitsList key={trait.levelArray[0].id}>
-                                {trait.levelArray.map(level => (
-                                  <TraitButton
-                                    type="button"
-                                    id={level.id}
-                                    key={level.id}
-                                    disabled={!level.enabled}
-                                    title={`${
-                                      level.enabled
-                                        ? `${
-                                            level.status === 'full'
-                                              ? `Remover [${trait.trait} Trait]`
-                                              : `Adicionar [${trait.trait} Trait]`
-                                          }`
-                                        : `${trait.trait} x${trait.levelTemp}`
-                                    }`}
-                                    traitColor={
-                                      trait.trait === 'Blood' ||
-                                      trait.trait === 'Personal Masquerade'
-                                        ? 'red'
-                                        : 'black'
-                                    }
-                                    isMobile={isMobileVersion}
-                                    onClick={handleTraitClick}
-                                  >
-                                    {level.status === 'full' ? (
-                                      <>
-                                        {trait.trait === 'Blood' ? (
-                                          <GiWaterDrop />
-                                        ) : (
-                                          <>
-                                            {trait.trait ===
-                                            'Personal Masquerade' ? (
-                                              <GiPrettyFangs />
-                                            ) : (
-                                              <GiPlainCircle />
-                                            )}
-                                          </>
-                                        )}
-                                      </>
-                                    ) : (
-                                      ''
-                                    )}
-                                  </TraitButton>
-                                ))}
+                                {trait.trait === 'Personal Masquerade' &&
+                                  domainMasquerade > 0 && (
+                                    <>
+                                      {domainMasqueradeArray.map(dom => (
+                                        <GiPrettyFangs
+                                          key={dom}
+                                          title={`Quebra de Máscara do Domínio: ${domainMasquerade}`}
+                                        />
+                                      ))}
+                                    </>
+                                  )}
+                                {trait.levelArray.map(
+                                  (level, myIndex, myArray) => {
+                                    return (
+                                      showTrait(
+                                        trait.trait,
+                                        myIndex,
+                                        myArray.length,
+                                      ) && (
+                                        <TraitButton
+                                          type="button"
+                                          id={level.id}
+                                          key={level.id}
+                                          disabled={!level.enabled}
+                                          title={`${
+                                            level.enabled
+                                              ? `${
+                                                  level.status === 'full'
+                                                    ? `Remover [${trait.trait} Trait]`
+                                                    : `Adicionar [${trait.trait} Trait]`
+                                                }`
+                                              : `${trait.trait} x${trait.levelTemp}`
+                                          }`}
+                                          traitColor={
+                                            trait.trait === 'Blood' ||
+                                            trait.trait ===
+                                              'Personal Masquerade'
+                                              ? 'red'
+                                              : 'black'
+                                          }
+                                          isMobile={isMobileVersion}
+                                          onClick={handleTraitClick}
+                                        >
+                                          {level.status === 'full' ? (
+                                            <>
+                                              {trait.trait === 'Blood' ? (
+                                                <GiWaterDrop />
+                                              ) : (
+                                                <>
+                                                  {trait.trait ===
+                                                  'Personal Masquerade' ? (
+                                                    <GiPrettyFangs />
+                                                  ) : (
+                                                    <GiPlainCircle />
+                                                  )}
+                                                </>
+                                              )}
+                                            </>
+                                          ) : (
+                                            ''
+                                          )}
+                                        </TraitButton>
+                                      )
+                                    );
+                                  },
+                                )}
                               </TraitsList>
                             )}
                           </>
@@ -922,50 +966,69 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       <>
                         {trait.levelArray && (
                           <TraitsList key={trait.levelArray[0].id}>
-                            {trait.levelArray.map(level => (
-                              <TraitButton
-                                type="button"
-                                id={level.id}
-                                key={level.id}
-                                disabled={!level.enabled}
-                                title={`${
-                                  level.enabled
-                                    ? `${
-                                        level.status === 'full'
-                                          ? `Remover [${trait.trait} Trait]`
-                                          : `Adicionar [${trait.trait} Trait]`
-                                      }`
-                                    : `${trait.trait} x${trait.levelTemp}`
-                                }`}
-                                traitColor={
-                                  trait.trait === 'Blood' ||
-                                  trait.trait === 'Personal Masquerade'
-                                    ? 'red'
-                                    : 'black'
-                                }
-                                isMobile={isMobileVersion}
-                                onClick={handleTraitClick}
-                              >
-                                {level.status === 'full' ? (
-                                  <>
-                                    {trait.trait === 'Blood' ? (
-                                      <GiWaterDrop />
-                                    ) : (
+                            {trait.trait === 'Personal Masquerade' &&
+                              domainMasquerade > 0 && (
+                                <>
+                                  {domainMasqueradeArray.map(dom => (
+                                    <GiPrettyFangs
+                                      key={dom}
+                                      title={`Quebra de Máscara do Domínio: ${domainMasquerade}`}
+                                    />
+                                  ))}
+                                </>
+                              )}
+                            {trait.levelArray.map((level, myIndex, myArray) => {
+                              return (
+                                showTrait(
+                                  trait.trait,
+                                  myIndex,
+                                  myArray.length,
+                                ) && (
+                                  <TraitButton
+                                    type="button"
+                                    id={level.id}
+                                    key={level.id}
+                                    disabled={!level.enabled}
+                                    title={`${
+                                      level.enabled
+                                        ? `${
+                                            level.status === 'full'
+                                              ? `Remover [${trait.trait} Trait]`
+                                              : `Adicionar [${trait.trait} Trait]`
+                                          }`
+                                        : `${trait.trait} x${trait.levelTemp}`
+                                    }`}
+                                    traitColor={
+                                      trait.trait === 'Blood' ||
+                                      trait.trait === 'Personal Masquerade'
+                                        ? 'red'
+                                        : 'black'
+                                    }
+                                    isMobile={isMobileVersion}
+                                    onClick={handleTraitClick}
+                                  >
+                                    {level.status === 'full' ? (
                                       <>
-                                        {trait.trait ===
-                                        'Personal Masquerade' ? (
-                                          <GiPrettyFangs />
+                                        {trait.trait === 'Blood' ? (
+                                          <GiWaterDrop />
                                         ) : (
-                                          <GiPlainCircle />
+                                          <>
+                                            {trait.trait ===
+                                            'Personal Masquerade' ? (
+                                              <GiPrettyFangs />
+                                            ) : (
+                                              <GiPlainCircle />
+                                            )}
+                                          </>
                                         )}
                                       </>
+                                    ) : (
+                                      ''
                                     )}
-                                  </>
-                                ) : (
-                                  ''
-                                )}
-                              </TraitButton>
-                            ))}
+                                  </TraitButton>
+                                )
+                              );
+                            })}
                           </TraitsList>
                         )}
                       </>
@@ -981,7 +1044,13 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
 
       return rows;
     },
-    [domainMasquerade, handleTraitClick, isMobileVersion],
+    [
+      domainMasquerade,
+      domainMasqueradeArray,
+      handleTraitClick,
+      isMobileVersion,
+      showTrait,
+    ],
   );
 
   const buildAttributesTraitsList = useCallback(
