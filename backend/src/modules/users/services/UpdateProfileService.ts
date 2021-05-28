@@ -14,6 +14,7 @@ interface IRequestDTO {
   password?: string;
   storyteller?: boolean;
   active?: boolean;
+  lgpd_acceptance?: boolean;
 }
 
 @injectable()
@@ -35,6 +36,7 @@ class UpdateProfileService {
     password,
     storyteller,
     active,
+    lgpd_acceptance,
   }: IRequestDTO): Promise<User> {
     const user = await this.usersRepository.findById(user_id);
     const profileID = profile_id || user_id;
@@ -105,6 +107,19 @@ class UpdateProfileService {
       }
 
       profile.password = await this.hashProvider.generateHash(password);
+    }
+
+    if (lgpd_acceptance) {
+      if (profileID !== user_id) {
+        throw new AppError(
+          'Only the user account owner can provide LGPD acceptance',
+          401,
+        );
+      }
+
+      profile.lgpd_acceptance_date = new Date();
+    } else if (lgpd_acceptance === false) {
+      profile.lgpd_acceptance_date = null;
     }
 
     await this.usersRepository.update(profile);

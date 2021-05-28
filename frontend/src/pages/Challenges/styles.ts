@@ -35,7 +35,7 @@ const bounceButton = keyframes`
     transform: scale(1) translateY(0);
   }
 
-  50% {
+  \ 50% {
     transform: scale(1.2) translateY(-40px);
   }
 
@@ -49,7 +49,7 @@ const XOpacity = keyframes`
     opacity: 1;
   }
 
-  50% {
+  \ 50% {
     opacity: 0;
   }
 

@@ -40,6 +40,9 @@ class User {
   active: boolean;
 
   @Column('timestamp with time zone')
+  lgpd_acceptance_date: Date | null;
+
+  @Column('timestamp with time zone')
   lastLogin_at: Date;
 
   // @Column('timestamp with time zone')

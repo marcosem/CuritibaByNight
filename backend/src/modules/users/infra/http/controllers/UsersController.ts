@@ -47,6 +47,7 @@ export default class UsersController {
       password,
       storyteller,
       active,
+      lgpd_acceptance,
     } = req.body;
 
     const updateProfile = container.resolve(UpdateProfileService);
@@ -61,6 +62,7 @@ export default class UsersController {
       password,
       storyteller,
       active,
+      lgpd_acceptance,
     });
 
     user.secret = '';

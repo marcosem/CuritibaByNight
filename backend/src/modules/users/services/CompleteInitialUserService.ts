@@ -12,6 +12,7 @@ interface IRequestDTO {
   phone: string;
   password: string;
   secret: string;
+  lgpd_acceptance?: boolean;
 }
 
 @injectable()
@@ -29,6 +30,7 @@ class CreateInitialUserService {
     phone,
     password,
     secret,
+    lgpd_acceptance,
   }: IRequestDTO): Promise<User> {
     if (!validate(secret)) {
       throw new AppError('Invalid Token', 401);
@@ -49,6 +51,12 @@ class CreateInitialUserService {
     userSecretExist.storyteller = false;
     userSecretExist.password = hashedPassword;
     userSecretExist.secret = '';
+
+    if (lgpd_acceptance) {
+      userSecretExist.lgpd_acceptance_date = new Date();
+    } else if (lgpd_acceptance === false) {
+      userSecretExist.lgpd_acceptance_date = null;
+    }
 
     const user = this.usersRepository.update(userSecretExist);
 

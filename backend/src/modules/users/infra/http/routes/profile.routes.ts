@@ -22,6 +22,7 @@ profileRouter.put(
       password_confirmation: Joi.string().valid(Joi.ref('password')),
       storyteller: Joi.boolean().allow(null),
       active: Joi.boolean().allow(null),
+      lgpd_acceptance: Joi.boolean().allow(null),
     },
   }),
   usersController.update,

@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { v4 } from 'uuid';
+import { isToday } from 'date-fns';
 import CreateInitialUser from '@modules/users/services/CreateInitialUserService';
 import CompleteInitialUser from '@modules/users/services/CompleteInitialUserService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
@@ -47,6 +48,69 @@ describe('CompleteInitialUser', () => {
     expect(completeUserRetrieved.id).toBe(initialUser.id);
     expect(completeUserRetrieved.secret).toBe('');
     expect(completeUserRetrieved.storyteller).toBeFalsy();
+  });
+
+  it('Should be able to complete Initial User with LGPD acceptance', async () => {
+    fakeMailProvider = new FakeMailProvider();
+    const createInitialUser = new CreateInitialUser(
+      fakeUsersRepository,
+      fakeMailProvider,
+    );
+
+    const initialUser = await createInitialUser.execute({
+      name: 'A User',
+      email: 'user@user.com',
+      phone: '12-12345-1234',
+    });
+
+    const initialUserSecret = initialUser.secret;
+
+    const completeUserRetrieved = await completeInitialUser.execute({
+      name: 'Anothe Name',
+      email: 'other@email.com',
+      phone: '21-54321-4321',
+      password: '123456',
+      secret: initialUserSecret,
+      lgpd_acceptance: true,
+    });
+
+    expect(completeUserRetrieved.id).toBe(initialUser.id);
+    expect(completeUserRetrieved.secret).toBe('');
+    expect(completeUserRetrieved.storyteller).toBeFalsy();
+    expect(completeUserRetrieved.lgpd_acceptance_date).not.toEqual(null);
+    if (completeUserRetrieved.lgpd_acceptance_date !== null) {
+      expect(isToday(completeUserRetrieved.lgpd_acceptance_date)).toBeTruthy();
+    }
+  });
+
+  it('Should be able to complete Initial User deny LGPD acceptance', async () => {
+    fakeMailProvider = new FakeMailProvider();
+    const createInitialUser = new CreateInitialUser(
+      fakeUsersRepository,
+      fakeMailProvider,
+    );
+
+    const initialUser = await createInitialUser.execute({
+      name: 'A User',
+      email: 'user@user.com',
+      phone: '12-12345-1234',
+    });
+
+    const initialUserSecret = initialUser.secret;
+
+    const completeUserRetrieved = await completeInitialUser.execute({
+      name: 'Anothe Name',
+      email: 'other@email.com',
+      phone: '21-54321-4321',
+      password: '123456',
+      secret: initialUserSecret,
+      lgpd_acceptance: false,
+    });
+
+    expect(completeUserRetrieved.id).toBe(initialUser.id);
+    expect(completeUserRetrieved.secret).toBe('');
+    expect(completeUserRetrieved.storyteller).toBeFalsy();
+    expect(completeUserRetrieved.lgpd_acceptance_date).toEqual(null);
   });
 
   it('Should return error for not existant secret', async () => {

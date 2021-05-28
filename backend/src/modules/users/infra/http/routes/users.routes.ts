@@ -60,6 +60,7 @@ usersRouter.post(
       password: Joi.string().required(),
       password_confirmation: Joi.string().valid(Joi.ref('password')),
       secret: Joi.string().uuid().required(),
+      lgpd_acceptance: Joi.boolean().allow(null),
     },
   }),
   initialUsersController.update,

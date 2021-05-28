@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { isToday } from 'date-fns';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import UpdateProfileService from '@modules/users/services/UpdateProfileService';
@@ -28,7 +29,7 @@ describe('UpdateProfile', () => {
       storyteller: false,
     });
 
-    const userRrofile = await updateUserProfile.execute({
+    const userProfile = await updateUserProfile.execute({
       user_id: user.id,
       name: 'New User Name',
       email: 'new@user.com',
@@ -37,7 +38,7 @@ describe('UpdateProfile', () => {
       storyteller: false,
     });
 
-    expect(userRrofile).toMatchObject({
+    expect(userProfile).toMatchObject({
       id: user.id,
       name: 'New User Name',
       email: 'new@user.com',
@@ -45,6 +46,40 @@ describe('UpdateProfile', () => {
       password: '123456',
       storyteller: false,
     });
+  });
+
+  it('Should be able to update LGPD acceptance', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      phone: '12-12345-1234',
+      storyteller: false,
+    });
+
+    const userProfile = await updateUserProfile.execute({
+      user_id: user.id,
+      name: 'New User Name',
+      email: 'new@user.com',
+      phone: '21-54321-4321',
+      active: false,
+      storyteller: false,
+      lgpd_acceptance: true,
+    });
+
+    expect(userProfile).toMatchObject({
+      id: user.id,
+      name: 'New User Name',
+      email: 'new@user.com',
+      phone: '21-54321-4321',
+      password: '123456',
+      storyteller: false,
+      lgpd_acceptance_date: expect.any(Date),
+    });
+
+    if (userProfile.lgpd_acceptance_date !== null) {
+      expect(isToday(userProfile.lgpd_acceptance_date)).toBeTruthy();
+    }
   });
 
   it('Should allow storyteller to update others users profile', async () => {
@@ -64,7 +99,7 @@ describe('UpdateProfile', () => {
       storyteller: false,
     });
 
-    const userRrofile = await updateUserProfile.execute({
+    const userProfile = await updateUserProfile.execute({
       user_id: stUser.id,
       profile_id: anotherUser.id,
       name: 'New User Name',
@@ -73,7 +108,7 @@ describe('UpdateProfile', () => {
       storyteller: true,
     });
 
-    expect(userRrofile).toMatchObject({
+    expect(userProfile).toMatchObject({
       id: anotherUser.id,
       name: 'New User Name',
       email: 'new@user.com',
@@ -81,6 +116,90 @@ describe('UpdateProfile', () => {
       password: '123456',
       storyteller: true,
     });
+  });
+
+  it('Should allow storyteller to reset user LGPD acceptance', async () => {
+    const stUser = await fakeUsersRepository.create({
+      name: 'I am ST',
+      email: 'user@user.com',
+      password: '123456',
+      phone: '12-12345-1234',
+      storyteller: true,
+    });
+
+    const anotherUser = await fakeUsersRepository.create({
+      name: 'I am Another User',
+      email: 'user@user.com',
+      password: '123456',
+      phone: '12-12345-1234',
+      storyteller: false,
+    });
+
+    const updatedUser = await updateUserProfile.execute({
+      user_id: anotherUser.id,
+      profile_id: anotherUser.id,
+      name: 'New User Name',
+      email: 'new@user.com',
+      phone: '21-54321-4321',
+      lgpd_acceptance: true,
+    });
+
+    expect(updatedUser.lgpd_acceptance_date).not.toEqual(null);
+    if (updatedUser.lgpd_acceptance_date !== null) {
+      expect(isToday(updatedUser.lgpd_acceptance_date)).toBeTruthy();
+    }
+
+    const userProfile = await updateUserProfile.execute({
+      user_id: stUser.id,
+      profile_id: anotherUser.id,
+      name: 'New User Name',
+      email: 'new@user.com',
+      phone: '21-54321-4321',
+      storyteller: false,
+      lgpd_acceptance: false,
+    });
+
+    expect(userProfile).toMatchObject({
+      id: anotherUser.id,
+      name: 'New User Name',
+      email: 'new@user.com',
+      phone: '21-54321-4321',
+      password: '123456',
+      storyteller: false,
+      lgpd_acceptance_date: null,
+    });
+
+    expect(userProfile.lgpd_acceptance_date).toEqual(null);
+  });
+
+  it('Should not allow storyteller to update another user LGPD acceptance', async () => {
+    const stUser = await fakeUsersRepository.create({
+      name: 'I am ST',
+      email: 'user@user.com',
+      password: '123456',
+      phone: '12-12345-1234',
+      storyteller: true,
+    });
+
+    const anotherUser = await fakeUsersRepository.create({
+      name: 'I am Another User',
+      email: 'user@user.com',
+      password: '123456',
+      phone: '12-12345-1234',
+      storyteller: false,
+    });
+
+    await expect(
+      updateUserProfile.execute({
+        user_id: stUser.id,
+        profile_id: anotherUser.id,
+        name: 'New User Name',
+        email: 'new@user.com',
+        phone: '21-54321-4321',
+        storyteller: true,
+        lgpd_acceptance: true,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it('Should not be able to change the email to an email already in use', async () => {
@@ -120,7 +239,7 @@ describe('UpdateProfile', () => {
       storyteller: false,
     });
 
-    const userRrofile = await updateUserProfile.execute({
+    const userProfile = await updateUserProfile.execute({
       user_id: user.id,
       name: 'New User Name',
       email: 'new@user.com',
@@ -129,7 +248,7 @@ describe('UpdateProfile', () => {
       password: '123123',
     });
 
-    expect(userRrofile.password).toBe('123123');
+    expect(userProfile.password).toBe('123123');
   });
 
   it('Should not allow to update the password without enter the old one', async () => {

@@ -40,7 +40,7 @@ export default class InitialUsersController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
-    const { name, email, phone, password, secret } = req.body;
+    const { name, email, phone, password, secret, lgpd_acceptance } = req.body;
 
     const createUserService = container.resolve(CompleteInitialUserService);
 
@@ -50,6 +50,7 @@ export default class InitialUsersController {
       phone,
       password,
       secret,
+      lgpd_acceptance,
     });
 
     // Do not show user password
