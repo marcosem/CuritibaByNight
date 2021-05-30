@@ -1,0 +1,64 @@
+{
+  "influences": [
+    {
+      "influence": "Bureaucracy",
+      "ability": "Bureaucracy"
+    },
+    {
+      "influence": "Church",
+      "ability": "Theology"
+    },
+    {
+      "influence": "Finance",
+      "ability": "Finance"
+    },
+    {
+      "influence": "Health",
+      "ability": "Medicine"
+    },
+    {
+      "influence": "High Society",
+      "ability": "Etiquette"
+    },
+    {
+      "influence": "Industry",
+      "ability": "Crafts:"
+    },
+    {
+      "influence": "Legal",
+      "ability": "Law"
+    },
+    {
+      "influence": "Media",
+      "ability": "Performance:"
+    },
+    {
+      "influence": "Occult",
+      "ability": "Occult"
+    },
+    {
+      "influence": "Police",
+      "ability": "Investigation"
+    },
+    {
+      "influence": "Politics",
+      "ability": "Politics"
+    },
+    {
+      "influence": "Street",
+      "ability": "Streetwise"
+    },
+    {
+      "influence": "Transportation",
+      "ability": "Drive"
+    },
+    {
+      "influence": "Underworld",
+      "ability": "Intimidation"
+    },
+    {
+      "influence": "University",
+      "ability": "Academics"
+    }
+  ]
+}

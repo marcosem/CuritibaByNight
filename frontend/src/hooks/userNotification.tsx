@@ -53,6 +53,7 @@ const UserNotificationProvider: React.FC = ({ children }) => {
           user.lgpd_acceptance_date === null) && (
           <ModalWarning warningText="LGPD" />
         )}
+      {/* For new notification add the logical here */}
     </UserNotificationContext.Provider>
   );
 };

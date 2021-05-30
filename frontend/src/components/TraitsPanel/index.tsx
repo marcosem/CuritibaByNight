@@ -37,6 +37,9 @@ import {
 
 import ICharacter from '../CharacterList/ICharacter';
 import Loading from '../Loading';
+
+import influenceAbilities from '../../pages/Influences/influencesAbilities.json';
+
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useAuth } from '../../hooks/auth';
@@ -76,6 +79,26 @@ interface ITraitsList {
   status: ITrait[];
 }
 
+interface IInfluenceDef {
+  influence: string;
+  influence_level_perm: number;
+  influence_level_temp: number;
+  ability: string;
+  ability_level: number;
+  morality: string;
+  morality_level: number;
+  total_def_passive: number;
+  total_def_active: number;
+}
+
+interface IActions {
+  morality: string;
+  morality_level: number;
+  retainers_level_perm: number;
+  retainers_level_temp: number;
+  total: number;
+}
+
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
   myChar: ICharacter;
 };
@@ -102,6 +125,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   );
   const [creaturePower, setCreaturePower] = useState<string>('');
   const [creatureRituals, setCreatureRituals] = useState<string>('');
+  const [influencesDef, setInfluencesDef] = useState<IInfluenceDef[]>([]);
+  const [actions, setActions] = useState<IActions>({} as IActions);
+
   const [isBusy, setBusy] = useState(true);
   const { isMobileVersion } = useMobile();
   const { addToast } = useToast();
@@ -1337,6 +1363,127 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   }, [clearReloadTraits, loadTraits, myChar.id, reloadCharTraits]);
 
   useEffect(() => {
+    if (traitsList.influences.length > 0) {
+      let newInfluencesDefList: IInfluenceDef[] = [];
+      traitsList.influences.forEach(inf => {
+        const influenceAbility = influenceAbilities.influences.find(
+          infAb => infAb.influence === inf.trait,
+        );
+
+        const newInfDef: IInfluenceDef = {
+          influence: inf.trait,
+          influence_level_perm: Number(inf.level),
+          influence_level_temp: Number(inf.levelTemp),
+          ability: influenceAbility ? influenceAbility.ability : '?',
+          ability_level: 0,
+        } as IInfluenceDef;
+
+        newInfluencesDefList.push(newInfDef);
+      });
+
+      let moralityLevel = 0;
+      let myMorality = '';
+      switch (myChar.creature_type) {
+        case 'Mage':
+        case 'Werewolf':
+          moralityLevel += 5;
+          myMorality = myChar.creature_type;
+          break;
+        case 'Wraith':
+          moralityLevel += 2;
+          myMorality = myChar.creature_type;
+          break;
+        default:
+          if (traitsList.virtues.length > 0) {
+            const morality = traitsList.virtues.find(
+              virt => virt.trait.indexOf('Morality') >= 0,
+            );
+
+            if (morality) {
+              myMorality = morality.trait.replace('Morality: ', '');
+              if (morality.trait.indexOf('Humanity') >= 0) {
+                moralityLevel = Number(morality.level);
+              } else {
+                moralityLevel =
+                  Number(morality.level) >= 3 ? Number(morality.level) - 2 : 1;
+              }
+            }
+          }
+      }
+
+      const newActions: IActions = {
+        morality: myMorality,
+        morality_level: moralityLevel,
+        retainers_level_perm: 0,
+        retainers_level_temp: 0,
+        total: moralityLevel,
+      } as IActions;
+
+      if (traitsList.abilities.length > 0) {
+        newInfluencesDefList = newInfluencesDefList.map(
+          (myInf: IInfluenceDef) => {
+            const newInfDef = myInf;
+            newInfDef.morality = myMorality;
+            newInfDef.morality_level = moralityLevel;
+
+            const myAbilities = traitsList.abilities.filter(
+              myAbi => myAbi.trait.indexOf(myInf.ability) === 0,
+            );
+
+            if (myAbilities.length > 0) {
+              if (myAbilities.length > 1) {
+                myAbilities.sort((traitA: ITrait, traitB: ITrait) => {
+                  if (traitA.level > traitB.level) return -1;
+                  if (traitA.level < traitB.level) return 1;
+                  return 0;
+                });
+              }
+
+              newInfDef.ability = myAbilities[0].trait;
+              newInfDef.ability_level = Number(myAbilities[0].level);
+            } else {
+              newInfDef.ability = myInf.ability.replace(':', '');
+            }
+
+            newInfDef.total_def_passive =
+              newInfDef.influence_level_temp +
+              newInfDef.ability_level +
+              newInfDef.morality_level;
+            newInfDef.total_def_active =
+              newInfDef.influence_level_temp * 2 +
+              newInfDef.ability_level +
+              newInfDef.morality_level;
+
+            return newInfDef;
+          },
+        );
+      }
+
+      if (traitsList.backgrounds.length > 0) {
+        const retainers = traitsList.backgrounds.find(
+          trait => trait.trait === 'Retainers',
+        );
+
+        if (retainers) {
+          newActions.retainers_level_perm = Number(retainers.level);
+          newActions.retainers_level_temp = Number(retainers.levelTemp);
+          newActions.total =
+            newActions.morality_level + newActions.retainers_level_temp;
+        }
+      }
+
+      setActions(newActions);
+      setInfluencesDef(newInfluencesDefList);
+    }
+  }, [
+    myChar.creature_type,
+    traitsList.abilities,
+    traitsList.backgrounds,
+    traitsList.influences,
+    traitsList.virtues,
+  ]);
+
+  useEffect(() => {
     switch (myChar.creature_type) {
       case 'Vampire':
         setCreaturePower('Disciplinas');
@@ -2386,6 +2533,84 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                 </SingleTraitContainer>
               ))}
             </TypeContainer>
+          )}
+          {typeList.indexOf('influences') >= 0 && (
+            <>
+              {isMobileVersion ? (
+                <TypeContainer borderTop isMobile={isMobileVersion}>
+                  <h1>Informações para Influências</h1>
+                  <SingleTraitContainer
+                    isMobile={isMobileVersion}
+                    title={`(${actions.morality} x${actions.morality_level} + Temporary Retainers x${actions.retainers_level_temp})`}
+                  >
+                    <strong>{`Número do Ações: ${actions.total}`}</strong>
+                  </SingleTraitContainer>
+                  <h2>Defesas Passivas</h2>
+                  {influencesDef.map((infDef: IInfluenceDef) => (
+                    <SingleTraitContainer
+                      key={infDef.influence}
+                      isMobile={isMobileVersion}
+                      title={`(Temporary ${infDef.influence} x${infDef.influence_level_temp} + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
+                    >
+                      <strong>{`${infDef.influence}: ${infDef.total_def_passive}`}</strong>
+                    </SingleTraitContainer>
+                  ))}
+                  <h2>Defesas Ativas</h2>
+                  {influencesDef.map((infDef: IInfluenceDef) => (
+                    <SingleTraitContainer
+                      key={infDef.influence}
+                      isMobile={isMobileVersion}
+                      title={`([Temporary ${infDef.influence} x${infDef.influence_level_temp}]x2 + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
+                    >
+                      <strong>{`${infDef.influence}: ${infDef.total_def_active}`}</strong>
+                    </SingleTraitContainer>
+                  ))}
+                </TypeContainer>
+              ) : (
+                <>
+                  <TypeContainer borderTop isMobile={isMobileVersion}>
+                    <h1>Informações para Influências</h1>
+                    <SingleTraitContainer
+                      isMobile={isMobileVersion}
+                      title={`(${actions.morality} x${actions.morality_level} + Temporary Retainers x${actions.retainers_level_temp})`}
+                    >
+                      <strong>{`Número do Ações: ${actions.total}`}</strong>
+                    </SingleTraitContainer>
+                  </TypeContainer>
+
+                  <DoubleTypeContainer>
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h2>Defesas Passivas</h2>
+                      {influencesDef.map((infDef: IInfluenceDef) => (
+                        <SingleTraitContainer
+                          key={infDef.influence}
+                          isMobile={isMobileVersion}
+                          title={`(Temporary ${infDef.influence} x${infDef.influence_level_temp} + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
+                        >
+                          <strong>{`${infDef.influence}: ${infDef.total_def_passive}`}</strong>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                    <TypeContainer
+                      borderTop
+                      borderLeft
+                      isMobile={isMobileVersion}
+                    >
+                      <h2>Defesas Ativas</h2>
+                      {influencesDef.map((infDef: IInfluenceDef) => (
+                        <SingleTraitContainer
+                          key={infDef.influence}
+                          isMobile={isMobileVersion}
+                          title={`([Temporary ${infDef.influence} x${infDef.influence_level_temp}]x2 + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
+                        >
+                          <strong>{`${infDef.influence}: ${infDef.total_def_active}`}</strong>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  </DoubleTypeContainer>
+                </>
+              )}
+            </>
           )}
         </>
       )}
