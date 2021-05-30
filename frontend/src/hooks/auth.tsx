@@ -18,6 +18,7 @@ interface IUser {
   phone: string;
   storyteller: boolean;
   avatar_url: string;
+  lgpd_acceptance_date: Date | null;
 }
 
 interface ICharacter {
