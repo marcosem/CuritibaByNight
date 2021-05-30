@@ -108,15 +108,16 @@ const LGPDWarning: React.FC<ILGPDWarning> = ({ setOpenDlg }: ILGPDWarning) => {
         apresenta o seguinte contrato, onde define como seus dados serão
         utilizados e guardados pelo projeto. <br />
         Para que o jogador possa participar desta ferramenta é importante o
-        aceite, somente assim, poderá desfrutar de suas funcionalidadesa. <br />
-        Caso opite por não aceitar o contrato, isto não o impedirá de participar
+        aceite, somente assim, poderá desfrutar de suas funcionalidades. <br />
+        Caso opte por não aceitar o contrato, isto não o impedirá de participar
         dos jogos, mas não teremos ferramentas para disponibilizar as
         informações ao jogador, tais como fichas de personagens, localizações
         conhecidas, e outras informações pertinentes ao jogo, e ficará a
         critério do jogador decidir continuar a jogar desta maneira ou não.
       </p>
       <p>
-        Leia o documento até o final onde haverá um botão para concordar ou não.
+        Leia o documento até o final onde haverá um caixa de checagem para
+        concordar ou não.
       </p>
 
       <p>
