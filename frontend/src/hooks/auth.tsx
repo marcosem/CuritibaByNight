@@ -80,8 +80,18 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const { token, user, refresh_token } = response.data;
 
+    const rawUser: IUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      storyteller: user.storyteller,
+      avatar_url: user.avatar_url,
+      lgpd_acceptance_date: user.lgpd_acceptance_date,
+    };
+
     localStorage.setItem('@CuritibaByNight:token', token);
-    localStorage.setItem('@CuritibaByNight:user', JSON.stringify(user));
+    localStorage.setItem('@CuritibaByNight:user', JSON.stringify(rawUser));
     Cookies.set('@CuritibaByNight:refreshToken', refresh_token, {
       expires: 60,
       secure: true,
@@ -109,7 +119,17 @@ const AuthProvider: React.FC = ({ children }) => {
         user,
       });
 
-      localStorage.setItem('@CuritibaByNight:user', JSON.stringify(user));
+      const rawUser: IUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        storyteller: user.storyteller,
+        avatar_url: user.avatar_url,
+        lgpd_acceptance_date: user.lgpd_acceptance_date,
+      };
+
+      localStorage.setItem('@CuritibaByNight:user', JSON.stringify(rawUser));
     },
     [data.token],
   );

@@ -8,6 +8,7 @@ import React, {
 import ModalWarning from '../components/ModalWarning';
 
 import { useAuth } from './auth';
+import api from '../services/api';
 
 interface IUserNotificationContextData {
   resetNotifications(): void;
@@ -21,6 +22,26 @@ const UserNotificationContext = createContext<IUserNotificationContextData>(
 const UserNotificationProvider: React.FC = ({ children }) => {
   const [warningUser, setWarningUser] = useState<boolean>(true);
   const { user } = useAuth();
+  const [lgpdDate, setLGPDDate] = useState<Date | null>(
+    // eslint-disable-next-line camelcase
+    user?.lgpd_acceptance_date === undefined ? null : user.lgpd_acceptance_date,
+  );
+
+  const loadUserLGPD = useCallback(async () => {
+    if (user === undefined || lgpdDate !== null) {
+      return;
+    }
+
+    try {
+      await api.post('/profile', { profile_id: user.id }).then(response => {
+        const res = response.data;
+
+        setLGPDDate(res.lgpd_acceptance_date);
+      });
+    } catch (error) {
+      setLGPDDate(null);
+    }
+  }, [lgpdDate, user]);
 
   const closeWarning = useCallback(() => {
     if (!warningUser) {
@@ -36,8 +57,11 @@ const UserNotificationProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (user === undefined) {
       resetNotifications();
+      setLGPDDate(null);
     }
-  }, [resetNotifications, user]);
+
+    loadUserLGPD();
+  }, [loadUserLGPD, resetNotifications, user]);
 
   return (
     <UserNotificationContext.Provider
@@ -49,8 +73,7 @@ const UserNotificationProvider: React.FC = ({ children }) => {
       {children}
       {warningUser &&
         user !== undefined &&
-        (user.lgpd_acceptance_date === undefined ||
-          user.lgpd_acceptance_date === null) && (
+        (lgpdDate === undefined || lgpdDate === null) && (
           <ModalWarning warningText="LGPD" />
         )}
       {/* For new notification add the logical here */}
