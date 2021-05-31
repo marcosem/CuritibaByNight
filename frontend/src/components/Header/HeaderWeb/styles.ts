@@ -1,7 +1,17 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { lighten, shade } from 'polished';
 import bgImg from '../../../assets/header_bg.png';
 import navBgImg from '../../../assets/nav_bg.png';
+
+const showBorder = keyframes`
+  from {
+    border-bottom: 2px #333 solid;
+  }
+
+  to {
+    border-bottom: 2px #fff solid;
+  }
+`;
 
 interface IProfileProps {
   isST: boolean;
@@ -280,6 +290,8 @@ export const NavSpan = styled.span`
   display: flex;
   justify-content: center;
   width: 100%;
+
+  animation: ${showBorder} 0.2s ease-in-out 1;
   border-bottom: 2px #fff solid;
 
   svg {
