@@ -44,6 +44,7 @@ interface IPlayer {
   lgpd_denial_date: Date;
   lastLoginFormated: string;
   lgpd: string;
+  lgpdFormatedDate: string;
   isOnLine: boolean;
 }
 
@@ -68,12 +69,23 @@ const Players: React.FC = () => {
         const res = response.data;
         const newArray = res.map((user: IPlayer) => {
           let lgpd: string;
+          let lgpdFormatedDate: string;
+
           if (user.lgpd_acceptance_date !== null) {
             lgpd = 'Aceito';
+            lgpdFormatedDate = format(
+              new Date(user.lgpd_acceptance_date),
+              'dd/MM/yyyy HH:mm:ss',
+            );
           } else if (user.lgpd_denial_date !== null) {
             lgpd = 'Negado';
+            lgpdFormatedDate = format(
+              new Date(user.lgpd_denial_date),
+              'dd/MM/yyyy HH:mm:ss',
+            );
           } else {
             lgpd = 'Pendente';
+            lgpdFormatedDate = '';
           }
 
           const newUser = {
@@ -90,6 +102,7 @@ const Players: React.FC = () => {
                 ? format(new Date(user.lastLogin_at), 'dd/MM/yyyy HH:mm:ss')
                 : '',
             lgpd,
+            lgpdFormatedDate,
             isOnLine: false,
           };
           return newUser;
@@ -211,7 +224,10 @@ const Players: React.FC = () => {
                             <TableColumn minWidth={130}>
                               {playerOn.lastLoginFormated}
                             </TableColumn>
-                            <TableColumn minWidth={70}>
+                            <TableColumn
+                              minWidth={70}
+                              title={playerOn.lgpdFormatedDate}
+                            >
                               {playerOn.lgpd}
                             </TableColumn>
                           </>
@@ -280,7 +296,10 @@ const Players: React.FC = () => {
                             <TableColumn minWidth={130}>
                               {playerOff.lastLoginFormated}
                             </TableColumn>
-                            <TableColumn minWidth={70}>
+                            <TableColumn
+                              minWidth={70}
+                              title={playerOff.lgpdFormatedDate}
+                            >
                               {playerOff.lgpd}
                             </TableColumn>
                           </>
