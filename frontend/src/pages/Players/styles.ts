@@ -5,6 +5,10 @@ interface IContainerProps {
   isMobile: boolean;
 }
 
+interface ITableColumnProps {
+  minWidth?: number;
+}
+
 interface IAvatarCellProps {
   isSt: boolean;
 }
@@ -44,34 +48,6 @@ export const Table = styled.table`
   background-color: transparent;
   opacity: 0.9;
 
-  td {
-    text-align: center;
-    padding: 8px;
-    font-size: 12px;
-    color: #000;
-
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-
-    &:first-child {
-      border-left: 0;
-    }
-
-    &:last-child {
-      border-right: 0;
-    }
-
-    svg {
-      width: 12px;
-      height: 12px;
-    }
-  }
-
-  th {
-    text-align: center;
-    padding: 8px;
-  }
-
   thead {
     display: table;
     width: 100%;
@@ -83,27 +59,6 @@ export const Table = styled.table`
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
-
-    th {
-      color: #fff;
-      background: #560209;
-      font-weight: 450;
-
-      &:nth-child(odd) {
-        color: #fff;
-        background: #0d0d0d;
-      }
-
-      &:first-child {
-        width: 60px;
-        border-radius: 10px 0 0 0;
-      }
-
-      &:last-child {
-        width: 80px;
-        border-radius: 0 10px 0 0;
-      }
-    }
   }
 
   tr {
@@ -165,16 +120,6 @@ export const Table = styled.table`
       background-color: #555;
     }
 
-    td {
-      &:first-child {
-        width: 60px;
-      }
-
-      &:last-child {
-        width: 70px;
-      }
-    }
-
     tr {
       display: table;
       width: 100%;
@@ -189,6 +134,83 @@ export const Table = styled.table`
         }
       }
     }
+  }
+`;
+
+export const TableColumn = styled.td<ITableColumnProps>`
+  text-align: center;
+  padding: 8px;
+  font-size: 12px;
+  color: #000;
+
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+
+  ${props =>
+    props.minWidth
+      ? css`
+          width: ${props.minWidth}px;
+        `
+      : css`
+          &:first-child {
+            width: 60px;
+          }
+
+          &:last-child {
+            width: 70px;
+          }
+        `}
+
+  &:first-child {
+    border-left: 0;
+  }
+
+  &:last-child {
+    border-right: 0;
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+`;
+
+export const TableColumnHeader = styled.th<ITableColumnProps>`
+  text-align: center;
+  padding: 8px;
+
+  color: #fff;
+  background: #560209;
+  font-weight: 450;
+
+  &:nth-child(odd) {
+    color: #fff;
+    background: #0d0d0d;
+  }
+
+  ${props =>
+    props.minWidth
+      ? css`
+          width: ${props.minWidth}px;
+        `
+      : css`
+          &:first-child {
+            width: 60px;
+          }
+
+          &:last-child {
+            width: 80px;
+          }
+        `}
+
+  &:first-child {
+    width: 60px;
+    border-radius: 10px 0 0 0;
+  }
+
+  &:last-child {
+    width: 80px;
+    border-radius: 0 10px 0 0;
   }
 `;
 
@@ -241,6 +263,10 @@ export const ConnectionStatus = styled.div<IConnectionProps>`
 export const TableCell = styled.div`
   display: flex;
   align-items: left;
+
+  white-space: pre-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const AddLink = styled.div`

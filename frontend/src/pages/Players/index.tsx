@@ -1,8 +1,13 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
+import {
+  FaCheckCircle,
+  FaMinusCircle,
+  FaExclamationCircle,
+} from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
+import { format } from 'date-fns';
 import api from '../../services/api';
 
 import Loading from '../../components/Loading';
@@ -11,6 +16,8 @@ import {
   Container,
   TableWrapper,
   Table,
+  TableColumn,
+  TableColumnHeader,
   AvatarCell,
   Avatar,
   ConnectionStatus,
@@ -33,6 +40,10 @@ interface IPlayer {
   storyteller: boolean;
   avatar_url: string;
   lastLogin_at: string;
+  lgpd_acceptance_date: Date;
+  lgpd_denial_date: Date;
+  lastLoginFormated: string;
+  lgpd: string;
   isOnLine: boolean;
 }
 
@@ -56,6 +67,15 @@ const Players: React.FC = () => {
       await api.get('users/list').then(response => {
         const res = response.data;
         const newArray = res.map((user: IPlayer) => {
+          let lgpd: string;
+          if (user.lgpd_acceptance_date !== null) {
+            lgpd = 'Aceito';
+          } else if (user.lgpd_denial_date !== null) {
+            lgpd = 'Negado';
+          } else {
+            lgpd = 'Pendente';
+          }
+
           const newUser = {
             id: user.id,
             name: user.name,
@@ -65,6 +85,11 @@ const Players: React.FC = () => {
             storyteller: user.storyteller,
             avatar_url: user.avatar_url,
             lastLogin_at: user.lastLogin_at,
+            lastLoginFormated: format(
+              new Date(user.lastLogin_at),
+              'dd/MM/yyyy HH:mm:ss',
+            ),
+            lgpd,
             isOnLine: false,
           };
           return newUser;
@@ -120,15 +145,21 @@ const Players: React.FC = () => {
             <Table>
               <thead>
                 <tr>
-                  <th>Avatar</th>
-                  <th>Jogador</th>
+                  <TableColumnHeader>Avatar</TableColumnHeader>
+                  <TableColumnHeader>Jogador</TableColumnHeader>
                   {!isMobileVersion && (
                     <>
-                      <th>E-mail</th>
-                      <th>Telefone</th>
+                      <TableColumnHeader>E-mail</TableColumnHeader>
+                      <TableColumnHeader minWidth={130}>
+                        Telefone
+                      </TableColumnHeader>
+                      <TableColumnHeader minWidth={130}>
+                        Último Acesso
+                      </TableColumnHeader>
+                      <TableColumnHeader minWidth={70}>LGPD</TableColumnHeader>
                     </>
                   )}
-                  <th>Situação</th>
+                  <TableColumnHeader>Situação</TableColumnHeader>
                 </tr>
               </thead>
               <tbody>
@@ -145,7 +176,7 @@ const Players: React.FC = () => {
                         key={playerOn.id}
                         onClick={() => handleProfile(playerOn)}
                       >
-                        <td>
+                        <TableColumn>
                           <AvatarCell>
                             <Avatar
                               src={
@@ -165,26 +196,40 @@ const Players: React.FC = () => {
                               }
                             />
                           </AvatarCell>
-                        </td>
-                        <td>
+                        </TableColumn>
+                        <TableColumn>
                           <TableCell>{playerOn.name}</TableCell>
-                        </td>
+                        </TableColumn>
                         {!isMobileVersion && (
                           <>
-                            <td>
+                            <TableColumn>
                               <TableCell>{playerOn.email}</TableCell>
-                            </td>
-                            <td>{playerOn.phone}</td>
+                            </TableColumn>
+                            <TableColumn minWidth={130}>
+                              {playerOn.phone}
+                            </TableColumn>
+                            <TableColumn minWidth={130}>
+                              {playerOn.lastLoginFormated}
+                            </TableColumn>
+                            <TableColumn minWidth={70}>
+                              {playerOn.lgpd}
+                            </TableColumn>
                           </>
                         )}
 
-                        <td>
+                        <TableColumn>
                           {playerOn.active ? (
-                            <FaCheckCircle color="green" />
+                            <>
+                              {playerOn.lgpd === 'Negado' ? (
+                                <FaExclamationCircle color="red" />
+                              ) : (
+                                <FaCheckCircle color="green" />
+                              )}
+                            </>
                           ) : (
                             <FaMinusCircle color="red" />
                           )}
-                        </td>
+                        </TableColumn>
                       </tr>
                     ))}
 
@@ -200,7 +245,7 @@ const Players: React.FC = () => {
                         key={playerOff.id}
                         onClick={() => handleProfile(playerOff)}
                       >
-                        <td>
+                        <TableColumn>
                           <AvatarCell>
                             <Avatar
                               src={
@@ -220,26 +265,40 @@ const Players: React.FC = () => {
                               }
                             />
                           </AvatarCell>
-                        </td>
-                        <td>
+                        </TableColumn>
+                        <TableColumn>
                           <TableCell>{playerOff.name}</TableCell>
-                        </td>
+                        </TableColumn>
                         {!isMobileVersion && (
                           <>
-                            <td>
+                            <TableColumn>
                               <TableCell>{playerOff.email}</TableCell>
-                            </td>
-                            <td>{playerOff.phone}</td>
+                            </TableColumn>
+                            <TableColumn minWidth={130}>
+                              {playerOff.phone}
+                            </TableColumn>
+                            <TableColumn minWidth={130}>
+                              {playerOff.lastLoginFormated}
+                            </TableColumn>
+                            <TableColumn minWidth={70}>
+                              {playerOff.lgpd}
+                            </TableColumn>
                           </>
                         )}
 
-                        <td>
+                        <TableColumn>
                           {playerOff.active ? (
-                            <FaCheckCircle color="green" />
+                            <>
+                              {playerOff.lgpd === 'Negado' ? (
+                                <FaExclamationCircle color="red" />
+                              ) : (
+                                <FaCheckCircle color="green" />
+                              )}
+                            </>
                           ) : (
                             <FaMinusCircle color="red" />
                           )}
-                        </td>
+                        </TableColumn>
                       </tr>
                     ))}
                 </>
