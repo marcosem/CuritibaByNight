@@ -85,10 +85,10 @@ const Players: React.FC = () => {
             storyteller: user.storyteller,
             avatar_url: user.avatar_url,
             lastLogin_at: user.lastLogin_at,
-            lastLoginFormated: format(
-              new Date(user.lastLogin_at),
-              'dd/MM/yyyy HH:mm:ss',
-            ),
+            lastLoginFormated:
+              user.lastLogin_at !== null
+                ? format(new Date(user.lastLogin_at), 'dd/MM/yyyy HH:mm:ss')
+                : '',
             lgpd,
             isOnLine: false,
           };
