@@ -54,7 +54,9 @@ class CreateInitialUserService {
 
     if (lgpd_acceptance) {
       userSecretExist.lgpd_acceptance_date = new Date();
+      userSecretExist.lgpd_denial_date = null;
     } else if (lgpd_acceptance === false) {
+      userSecretExist.lgpd_denial_date = new Date();
       userSecretExist.lgpd_acceptance_date = null;
     }
 

@@ -118,7 +118,9 @@ class UpdateProfileService {
       }
 
       profile.lgpd_acceptance_date = new Date();
+      profile.lgpd_denial_date = null;
     } else if (lgpd_acceptance === false) {
+      profile.lgpd_denial_date = new Date();
       profile.lgpd_acceptance_date = null;
     }
 

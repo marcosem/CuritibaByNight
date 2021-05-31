@@ -75,8 +75,10 @@ describe('UpdateProfile', () => {
       password: '123456',
       storyteller: false,
       lgpd_acceptance_date: expect.any(Date),
+      lgpd_denial_date: null,
     });
 
+    expect(userProfile.lgpd_denial_date).toEqual(null);
     if (userProfile.lgpd_acceptance_date !== null) {
       expect(isToday(userProfile.lgpd_acceptance_date)).toBeTruthy();
     }
@@ -144,6 +146,7 @@ describe('UpdateProfile', () => {
       lgpd_acceptance: true,
     });
 
+    expect(updatedUser.lgpd_denial_date).toEqual(null);
     expect(updatedUser.lgpd_acceptance_date).not.toEqual(null);
     if (updatedUser.lgpd_acceptance_date !== null) {
       expect(isToday(updatedUser.lgpd_acceptance_date)).toBeTruthy();
@@ -167,9 +170,14 @@ describe('UpdateProfile', () => {
       password: '123456',
       storyteller: false,
       lgpd_acceptance_date: null,
+      lgpd_denial_date: expect.any(Date),
     });
 
     expect(userProfile.lgpd_acceptance_date).toEqual(null);
+    expect(userProfile.lgpd_denial_date).not.toEqual(null);
+    if (userProfile.lgpd_denial_date !== null) {
+      expect(isToday(userProfile.lgpd_denial_date)).toBeTruthy();
+    }
   });
 
   it('Should not allow storyteller to update another user LGPD acceptance', async () => {

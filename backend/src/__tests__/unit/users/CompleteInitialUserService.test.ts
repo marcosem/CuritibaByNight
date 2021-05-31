@@ -77,6 +77,7 @@ describe('CompleteInitialUser', () => {
     expect(completeUserRetrieved.id).toBe(initialUser.id);
     expect(completeUserRetrieved.secret).toBe('');
     expect(completeUserRetrieved.storyteller).toBeFalsy();
+    expect(completeUserRetrieved.lgpd_denial_date).toEqual(null);
     expect(completeUserRetrieved.lgpd_acceptance_date).not.toEqual(null);
     if (completeUserRetrieved.lgpd_acceptance_date !== null) {
       expect(isToday(completeUserRetrieved.lgpd_acceptance_date)).toBeTruthy();
@@ -111,6 +112,10 @@ describe('CompleteInitialUser', () => {
     expect(completeUserRetrieved.secret).toBe('');
     expect(completeUserRetrieved.storyteller).toBeFalsy();
     expect(completeUserRetrieved.lgpd_acceptance_date).toEqual(null);
+    expect(completeUserRetrieved.lgpd_denial_date).not.toEqual(null);
+    if (completeUserRetrieved.lgpd_denial_date !== null) {
+      expect(isToday(completeUserRetrieved.lgpd_denial_date)).toBeTruthy();
+    }
   });
 
   it('Should return error for not existant secret', async () => {

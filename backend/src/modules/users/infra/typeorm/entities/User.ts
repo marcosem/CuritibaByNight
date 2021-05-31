@@ -43,6 +43,9 @@ class User {
   lgpd_acceptance_date: Date | null;
 
   @Column('timestamp with time zone')
+  lgpd_denial_date: Date | null;
+
+  @Column('timestamp with time zone')
   lastLogin_at: Date;
 
   // @Column('timestamp with time zone')
