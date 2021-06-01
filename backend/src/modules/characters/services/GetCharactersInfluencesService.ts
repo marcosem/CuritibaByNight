@@ -253,8 +253,28 @@ class GetCharactersInfluencesService {
     });
 
     charInfList.sort((charA, charB) => {
-      if (charA.character.name < charB.character.name) return -1;
-      if (charA.character.name > charB.character.name) return 1;
+      const nameA = charA.character.name
+        .toUpperCase()
+        .replace(/[ÁÀÃÂ]/gi, 'A')
+        .replace(/[ÉÊ]/gi, 'E')
+        .replace(/[Í]/gi, 'I')
+        .replace(/[ÓÔÕ]/gi, 'O')
+        .replace(/[Ú]/gi, 'U');
+      const nameB = charB.character.name
+        .toUpperCase()
+        .replace(/[ÁÀÃÂ]/gi, 'A')
+        .replace(/[ÉÊ]/gi, 'E')
+        .replace(/[Í]/gi, 'I')
+        .replace(/[ÓÔÕ]/gi, 'O')
+        .replace(/[Ú]/gi, 'U');
+
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+
       return 0;
     });
 
