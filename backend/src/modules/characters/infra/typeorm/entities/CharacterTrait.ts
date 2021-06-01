@@ -25,7 +25,7 @@ class CharacterTrait {
   level: number;
 
   @Column()
-  level_temp?: string | null;
+  level_temp?: string;
 
   @Column()
   type: string;

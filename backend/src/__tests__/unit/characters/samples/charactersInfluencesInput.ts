@@ -17,7 +17,7 @@ const characterList = [
       {
         trait: 'Retainers',
         level: 5,
-        level_temp: null,
+        level_temp: undefined,
         type: 'backgrounds',
       },
       {
@@ -54,7 +54,7 @@ const characterList = [
       {
         trait: 'Police',
         level: 3,
-        level_temp: null,
+        level_temp: undefined,
         type: 'influences',
       },
     ],
@@ -103,7 +103,7 @@ const characterList = [
       {
         trait: 'Occult',
         level: 4,
-        level_temp: null,
+        level_temp: undefined,
         type: 'influences',
       },
       {
@@ -132,7 +132,7 @@ const characterList = [
       {
         trait: 'Retainers',
         level: 5,
-        level_temp: null,
+        level_temp: undefined,
         type: 'backgrounds',
       },
       {
@@ -169,7 +169,7 @@ const characterList = [
       {
         trait: 'Police',
         level: 3,
-        level_temp: null,
+        level_temp: undefined,
         type: 'influences',
       },
     ],
@@ -305,7 +305,7 @@ const characterList = [
       {
         trait: 'Police',
         level: 6,
-        level_temp: null,
+        level_temp: undefined,
         type: 'influences',
       },
     ],
@@ -348,7 +348,7 @@ const characterList = [
       {
         trait: 'Street',
         level: 3,
-        level_temp: null,
+        level_temp: undefined,
         type: 'influences',
       },
     ],
@@ -424,7 +424,7 @@ const characterList = [
       {
         trait: 'Church',
         level: 1,
-        level_temp: null,
+        level_temp: undefined,
         type: 'influences',
       },
     ],
@@ -477,7 +477,7 @@ const characterList = [
       {
         trait: 'Industry',
         level: 4,
-        level_temp: null,
+        level_temp: undefined,
         type: 'influences',
       },
       {

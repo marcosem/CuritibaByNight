@@ -100,8 +100,7 @@ describe('GetCharactersInfluences', () => {
             trait: trait.trait,
             character_id: newChar.id,
             level: trait.level,
-            level_temp:
-              trait.level_temp === undefined ? null : trait.level_temp,
+            level_temp: trait.level_temp,
             type: trait.type,
           };
           return newTrait;
