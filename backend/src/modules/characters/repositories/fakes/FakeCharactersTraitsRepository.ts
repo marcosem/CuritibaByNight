@@ -18,7 +18,7 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
         trait: data.trait,
         character_id: data.character_id,
         level: data.level,
-        level_temp: data.level_temp ? data.level_temp : undefined,
+        level_temp: data.level_temp,
         type: data.type,
       });
 
