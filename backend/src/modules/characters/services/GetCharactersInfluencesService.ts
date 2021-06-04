@@ -141,9 +141,10 @@ class GetCharactersInfluencesService {
         );
 
         let attributes = 0;
-        attributesTraits.forEach(att => {
+        for (let i = 0; i < attributesTraits.length; i += 1) {
+          const att = attributesTraits[i];
           attributes += Number(att.level);
-        });
+        }
 
         newCharInfluence.character.attributes = attributes;
 
@@ -162,7 +163,10 @@ class GetCharactersInfluencesService {
 
         if (influenceTraits.length > 0) {
           const infCharList: IInfluenceCharDTO[] = [];
-          influenceTraits.forEach(async inf => {
+
+          for (let i = 0; i < influenceTraits.length; i += 1) {
+            const inf = influenceTraits[i];
+
             let ability = getInfluenceAbility(inf.trait);
             let abilityLevel = 0;
             const abilitiesTraits = charTraits.filter(
@@ -205,6 +209,7 @@ class GetCharactersInfluencesService {
             };
 
             let infCap = infCapList.find(infC => infC.name === newInfChar.name);
+
             if (infCap === undefined) {
               infCap = {
                 name: newInfChar.name,
@@ -235,14 +240,19 @@ class GetCharactersInfluencesService {
             }
 
             infCharList.push(newInfChar);
-          });
+          }
 
           newCharInfluence.influences = infCharList;
         }
 
         charInfList.push(newCharInfluence);
 
-        if (index === myArray.length - 1) resolve();
+        if (index === myArray.length - 1) {
+          // Add a small delay just to ensure everything is processed
+          setTimeout(() => {
+            resolve();
+          }, 50);
+        }
       });
     });
 
