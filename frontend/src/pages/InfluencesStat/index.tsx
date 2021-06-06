@@ -1,5 +1,11 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback, useEffect, MouseEvent } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  MouseEvent,
+  useRef,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiAlertTriangle } from 'react-icons/fi';
 import { FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa';
@@ -92,10 +98,14 @@ const InfluencesStat: React.FC = () => {
     column: 'level',
     orderAZ: true,
   });
+  const [isScrollOn, setIsScrollOn] = useState<boolean>(false);
   const [isBusy, setBusy] = useState(false);
   const { addToast } = useToast();
   const { signOut } = useAuth();
   const { isMobileVersion } = useMobile();
+
+  const tableRowRef = useRef<HTMLTableRowElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const getInfluencePortuguese = useCallback((influence): string => {
     const infAbility = influencesAbilities.influences.find(
@@ -338,6 +348,18 @@ const InfluencesStat: React.FC = () => {
   );
 
   useEffect(() => {
+    if (tableRowRef.current && tableBodyRef.current) {
+      if (
+        tableRowRef.current.offsetWidth === tableBodyRef.current.offsetWidth
+      ) {
+        setIsScrollOn(false);
+      } else {
+        setIsScrollOn(true);
+      }
+    }
+  }, [selInfluence]);
+
+  useEffect(() => {
     loadInfluencesStat();
   }, [loadInfluencesStat]);
 
@@ -496,12 +518,12 @@ const InfluencesStat: React.FC = () => {
                       </TableColumnHeader>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody ref={tableBodyRef}>
                     {influenceDetails.length > 0 &&
-                      influenceDetails.map(infDet => (
+                      influenceDetails.map((infDet, rowIndex) => (
                         <tr
                           key={infDet.character.id}
-                          // onClick={() => handleShowDetails(infCap.name)}
+                          ref={rowIndex === 0 ? tableRowRef : undefined}
                         >
                           <TableColumn mySize="short">
                             <TableCell mySize="short">
@@ -544,7 +566,7 @@ const InfluencesStat: React.FC = () => {
                               </span>
                             </TableCell>
                           </TableColumn>
-                          <TableColumn mySize="short">
+                          <TableColumn mySize="short" isScrollOn={isScrollOn}>
                             <TableCell mySize="short">
                               <span>
                                 {infDet.character.clan.indexOf('Ghoul') >= 0 ||
@@ -585,56 +607,60 @@ const InfluencesStat: React.FC = () => {
                       </TableColumnHeader>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody ref={tableBodyRef}>
                     {influencesStat.influence_capacity &&
-                      influencesStat.influence_capacity.map(infCap => (
-                        <tr
-                          key={infCap.name}
-                          onClick={() => handleShowDetails(infCap.name)}
-                        >
-                          <TableColumn>
-                            <TableCell>
-                              <strong>
-                                {getInfluencePortuguese(infCap.name)}
-                              </strong>
-                            </TableCell>
-                          </TableColumn>
-                          <TableColumn mySize="short">
-                            <TableCell
-                              mySize="short"
-                              highlight={
-                                infCap.total >= influencesStat.domain_capacity
-                              }
-                            >
-                              <span
-                                title={
-                                  infCap.total > influencesStat.domain_capacity
-                                    ? 'Acima da Capacidade do Domínio'
-                                    : ''
+                      influencesStat.influence_capacity.map(
+                        (infCap, rowIndex) => (
+                          <tr
+                            key={infCap.name}
+                            onClick={() => handleShowDetails(infCap.name)}
+                            ref={rowIndex === 0 ? tableRowRef : undefined}
+                          >
+                            <TableColumn>
+                              <TableCell>
+                                <strong>
+                                  {getInfluencePortuguese(infCap.name)}
+                                </strong>
+                              </TableCell>
+                            </TableColumn>
+                            <TableColumn mySize="short">
+                              <TableCell
+                                mySize="short"
+                                highlight={
+                                  infCap.total >= influencesStat.domain_capacity
                                 }
                               >
-                                {infCap.total}
-                                {infCap.total >
-                                  influencesStat.domain_capacity && (
-                                  <FiAlertTriangle />
-                                )}
-                              </span>
-                            </TableCell>
-                          </TableColumn>
-                          <TableColumn>
-                            <TableCell>
-                              {infCap.leaders.map(leader => (
-                                <span key={leader.id}>{leader.name}</span>
-                              ))}
-                            </TableCell>
-                          </TableColumn>
-                          <TableColumn mySize="short">
-                            <TableCell mySize="short">
-                              <strong>{infCap.leader_level}</strong>
-                            </TableCell>
-                          </TableColumn>
-                        </tr>
-                      ))}
+                                <span
+                                  title={
+                                    infCap.total >
+                                    influencesStat.domain_capacity
+                                      ? 'Acima da Capacidade do Domínio'
+                                      : ''
+                                  }
+                                >
+                                  {infCap.total}
+                                  {infCap.total >
+                                    influencesStat.domain_capacity && (
+                                    <FiAlertTriangle />
+                                  )}
+                                </span>
+                              </TableCell>
+                            </TableColumn>
+                            <TableColumn>
+                              <TableCell>
+                                {infCap.leaders.map(leader => (
+                                  <span key={leader.id}>{leader.name}</span>
+                                ))}
+                              </TableCell>
+                            </TableColumn>
+                            <TableColumn mySize="short" isScrollOn={isScrollOn}>
+                              <TableCell mySize="short">
+                                <strong>{infCap.leader_level}</strong>
+                              </TableCell>
+                            </TableColumn>
+                          </tr>
+                        ),
+                      )}
                   </tbody>
                 </Table>
               </TableWrapper>

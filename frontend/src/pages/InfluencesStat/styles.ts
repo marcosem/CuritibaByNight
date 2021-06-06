@@ -12,6 +12,7 @@ interface ITableProps {
 interface IColumnProps {
   mySize?: string;
   highlight?: boolean;
+  isScrollOn?: boolean;
 }
 
 export const Container = styled.div<IContainerProps>`
@@ -293,13 +294,25 @@ export const TableColumn = styled.td<IColumnProps>`
   ${props =>
     props.mySize === 'short' &&
     css`
-      width: 80px;
+      ${props.isScrollOn
+        ? css`
+            width: 70px;
+          `
+        : css`
+            width: 80px;
+          `}
     `}
 
   ${props =>
     props.mySize === 'intermediate' &&
     css`
-      width: 110px;
+      ${props.isScrollOn
+        ? css`
+            width: 100px;
+          `
+        : css`
+            width: 110px;
+          `}
     `}
 `;
 
