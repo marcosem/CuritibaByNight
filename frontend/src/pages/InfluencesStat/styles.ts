@@ -5,6 +5,15 @@ interface IContainerProps {
   isMobile: boolean;
 }
 
+interface ITableProps {
+  detailedTable?: boolean;
+}
+
+interface IColumnProps {
+  mySize?: string;
+  highlight?: boolean;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -87,12 +96,20 @@ export const InfluenceCardContainer = styled.div<IContainerProps>`
         `}
 `;
 
-export const TableWrapper = styled.div`
+export const TableWrapper = styled.div<ITableProps>`
   margin: 10px auto;
   min-width: 320px;
-  max-width: 700px;
   border-radius: 11px;
   padding-bottom: 16px;
+
+  ${props =>
+    props.detailedTable
+      ? css`
+          max-width: 900px;
+        `
+      : css`
+          max-width: 700px;
+        `}
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
@@ -100,41 +117,28 @@ export const TableWrapper = styled.div`
   user-select: none; /* Standard */
 `;
 
-export const Table = styled.table`
+export const Table = styled.table<ITableProps>`
   border-radius: 10px;
   font-weight: normal;
   border: none;
   border-collapse: collapse;
   width: 100%;
   min-width: 320px;
-  max-width: 700px;
+
+  ${props =>
+    props.detailedTable
+      ? css`
+          max-width: 900px;
+        `
+      : css`
+          max-width: 700px;
+        `}
 
   font-size: 12px;
   background-color: transparent;
   opacity: 0.9;
 
   margin: 0 0 0 auto;
-
-  td {
-    padding: 8px;
-    color: #000;
-
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-
-    &:first-child {
-      border-left: 0;
-    }
-
-    &:last-child {
-      border-right: 0;
-    }
-  }
-
-  th {
-    text-align: center;
-    padding: 8px;
-  }
 
   thead {
     display: table;
@@ -143,26 +147,6 @@ export const Table = styled.table`
     table-layout: fixed;
     border-radius: 10px 10px 0 0;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-
-    th {
-      color: #fff;
-      background: #560209;
-      font-weight: 450;
-
-      &:nth-child(odd) {
-        color: #fff;
-        background: #0d0d0d;
-      }
-
-      &:first-child {
-        width: 100px;
-        border-radius: 10px 0 0 0;
-      }
-
-      &:last-child {
-        border-radius: 0 10px 0 0;
-      }
-    }
   }
 
   tr {
@@ -224,12 +208,6 @@ export const Table = styled.table`
       background-color: #555;
     }
 
-    td {
-      &:first-child {
-        width: 100px;
-      }
-    }
-
     tr {
       display: table;
       width: 100%;
@@ -247,14 +225,171 @@ export const Table = styled.table`
   }
 `;
 
-export const TableCell = styled.div`
-  display: flex;
-  justify-content: left;
+export const TableColumnHeader = styled.th<IColumnProps>`
+  text-align: center;
+  padding: 8px;
 
+  color: #fff;
+  background: #560209;
+  font-weight: 450;
+
+  &:nth-child(odd) {
+    color: #fff;
+    background: #0d0d0d;
+  }
+
+  &:first-child {
+    border-radius: 10px 0 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 10px 0 0;
+  }
+
+  ${props =>
+    !props.mySize &&
+    css`
+      &:first-child {
+        width: 100px;
+      }
+    `}
+
+  ${props =>
+    props.mySize === 'short' &&
+    css`
+      width: 80px;
+    `}
+
+  ${props =>
+    props.mySize === 'intermediate' &&
+    css`
+      width: 110px;
+    `}
+`;
+
+export const TableColumn = styled.td<IColumnProps>`
+  padding: 8px;
+  color: #000;
+
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+
+  &:first-child {
+    border-left: 0;
+  }
+
+  &:last-child {
+    border-right: 0;
+  }
+
+  ${props =>
+    !props.mySize &&
+    css`
+      &:first-child {
+        width: 100px;
+      }
+    `}
+
+  ${props =>
+    props.mySize === 'short' &&
+    css`
+      width: 80px;
+    `}
+
+  ${props =>
+    props.mySize === 'intermediate' &&
+    css`
+      width: 110px;
+    `}
+`;
+
+export const TableCellHeader = styled.div<IColumnProps>`
+  display: flex;
+  flex-direction: row;
+  color: #fff;
+
+  span {
+    font-size: 12px;
+    font-weight: 500;
+    margin: auto;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    margin-left: auto;
+
+    ${props =>
+      !props.highlight &&
+      css`
+        opacity: 0;
+      `}
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const TableCell = styled.div<IColumnProps>`
+  display: flex;
+  flex-direction: column;
   overflow-wrap: break-word;
   word-wrap: break-word;
-  //hyphens: auto;
-  color: #000;
+
+  ${props =>
+    props.highlight
+      ? css`
+          color: #560209;
+
+          span {
+            font-weight: 500;
+          }
+        `
+      : css`
+          color: #000;
+
+          span {
+            font-weight: 400;
+          }
+        `}
+
+  ${props =>
+    props.mySize === 'short' || props.mySize === 'intermediate'
+      ? css`
+          text-align: center;
+
+          span {
+            font-size: 12px;
+          }
+
+          strong {
+            font-size: 15px;
+          }
+        `
+      : css`
+          font-size: 12px;
+          text-align: left;
+        `}
+
+  strong {
+    font-weight: 500;
+  }
+
+  svg {
+    color: #560209;
+    width: 12px;
+    height: 12px;
+    margin-left: 3px !important;
+  }
+
+  span {
+    &:not(:first-child) {
+      margin-top: 3px;
+      padding-top: 3px;
+      border-top: 1px #ddd solid;
+    }
+  }
 `;
 
 export const TableLevelsWrapper = styled.div`
@@ -290,180 +425,6 @@ export const TableLevelsWrapper = styled.div`
   }
 `;
 
-export const TableLevels = styled.table`
-  border-radius: 10px;
-  font-weight: normal;
-  border: none;
-  border-collapse: collapse;
-  width: 100%;
-  min-width: 320px;
-  background-color: transparent;
-  opacity: 0.9;
-  font-size: 12px;
-
-  td {
-    padding: 8px;
-    color: #000;
-
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-
-    &:first-child {
-      border-left: 0;
-    }
-
-    &:last-child {
-      border-right: 0;
-    }
-  }
-
-  th {
-    text-align: center;
-    padding: 8px;
-  }
-
-  thead {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    border-radius: 10px 10px 0 0;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-
-    th {
-      color: #fff;
-      background: #560209;
-      font-weight: 450;
-
-      &:nth-child(odd) {
-        color: #fff;
-        background: #0d0d0d;
-      }
-
-      &:first-child {
-        width: 50px;
-        border-radius: 10px 0 0 0;
-      }
-
-      &:last-child {
-        border-radius: 0 10px 0 0;
-      }
-    }
-  }
-
-  tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-
-    &:nth-child(even) {
-      td {
-        background: #e8e7e7;
-      }
-    }
-
-    &:nth-child(odd) {
-      td {
-        background: white;
-      }
-    }
-
-    &:last-child {
-      td {
-        &:first-child {
-          border-radius: 0 0 0 10px;
-        }
-
-        &:last-child {
-          border-radius: 0 0 10px 0;
-        }
-      }
-    }
-  }
-
-  tbody {
-    display: block;
-    max-height: 75vh;
-    overflow-x: hidden;
-    border-radius: 0 0 10px 10px;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-
-    scrollbar-width: thin;
-    scrollbar-color: #555;
-    scrollbar-track-color: #f5f5f5;
-    scroll-behavior: smooth;
-
-    &::-webkit-scrollbar {
-      width: 8px;
-      background-color: #f5f5f5;
-    }
-
-    &::-webkit-scrollbar-track {
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-      background-color: #f5f5f5;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      border-radius: 8px;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-      background-color: #555;
-    }
-
-    td {
-      &:first-child {
-        width: 50px;
-      }
-    }
-
-    tr {
-      &:hover {
-        cursor: pointer;
-
-        td {
-          background-color: #aaa;
-          color: #fff;
-        }
-      }
-    }
-  }
-`;
-
-export const TableLevelsCell = styled.div`
-  display: flex;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  // hyphens: auto;
-  color: #000;
-
-  strong {
-    font-size: 16px;
-    width: 100%;
-    margin: auto;
-    font-weight: bold;
-    text-align: center;
-  }
-
-  span {
-    font-size: 12px;
-  }
-
-  svg {
-    padding-left: 5px;
-    width: 20px;
-    height: 20px;
-    margin: auto;
-    color: #000;
-
-    visibility: hidden;
-  }
-
-  &:hover {
-    svg {
-      visibility: visible;
-    }
-  }
-`;
-
 export const GoBackButton = styled.button`
   position: fixed;
   bottom: 40px;
@@ -493,18 +454,18 @@ export const GoBackButton = styled.button`
   }
 `;
 
-export const StatisticsLink = styled.div`
+export const ReturnButton = styled.div`
   position: fixed;
   right: 40px;
   bottom: 40px;
 
-  background: #090266;
+  background: #860209;
   border-radius: 20px;
 
   transition: background-color 0.2s;
 
   &:hover {
-    background: ${shade(0.2, '#090266')};
+    background: ${shade(0.2, '#860209')};
   }
 
   a {

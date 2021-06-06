@@ -2,62 +2,77 @@
   "influences": [
     {
       "influence": "Bureaucracy",
+      "influence_PT": "Burocracia",
       "ability": "Bureaucracy"
     },
     {
       "influence": "Church",
+      "influence_PT": "Igreja",
       "ability": "Theology"
     },
     {
       "influence": "Finance",
+      "influence_PT": "Finanças",
       "ability": "Finance"
     },
     {
       "influence": "Health",
+      "influence_PT": "Saúde",
       "ability": "Medicine"
     },
     {
       "influence": "High Society",
+      "influence_PT": "Alta Sociedade",
       "ability": "Etiquette"
     },
     {
       "influence": "Industry",
+      "influence_PT": "Indústria",
       "ability": "Crafts:"
     },
     {
       "influence": "Legal",
+      "influence_PT": "Legal",
       "ability": "Law"
     },
     {
       "influence": "Media",
+      "influence_PT": "Mídia",
       "ability": "Performance:"
     },
     {
       "influence": "Occult",
+      "influence_PT": "Ocultismo",
       "ability": "Occult"
     },
     {
       "influence": "Police",
+      "influence_PT": "Polícia",
       "ability": "Investigation"
     },
     {
       "influence": "Politics",
+      "influence_PT": "Política",
       "ability": "Politics"
     },
     {
       "influence": "Street",
+      "influence_PT": "Ruas",
       "ability": "Streetwise"
     },
     {
       "influence": "Transportation",
+      "influence_PT": "Transporte",
       "ability": "Drive"
     },
     {
       "influence": "Underworld",
+      "influence_PT": "Submundo",
       "ability": "Intimidation"
     },
     {
       "influence": "University",
+      "influence_PT": "Universidade",
       "ability": "Academics"
     }
   ]

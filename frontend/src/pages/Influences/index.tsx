@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FiCopy, FiArrowLeft } from 'react-icons/fi';
+import { FaRegChartBar } from 'react-icons/fa';
 import InfluenceCard from '../../components/InfluenceCard';
 
 import { influences } from './influences.json';
@@ -17,7 +19,9 @@ import {
   TableLevels,
   TableLevelsCell,
   GoBackButton,
+  StatisticsLink,
 } from './styles';
+import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
 import { useHeader } from '../../hooks/header';
@@ -34,6 +38,7 @@ const Influences: React.FC = () => {
   const [influencesList, setInfluencesList] = useState<IInfluence[]>([]);
   const [selInfluence, setSelInfluence] = useState<IInfluence>();
   const { addToast } = useToast();
+  const { user } = useAuth();
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
 
@@ -180,34 +185,43 @@ const Influences: React.FC = () => {
           </GoBackButton>
         </InfluenceContainer>
       ) : (
-        <TableWrapper>
-          <Table>
-            <thead>
-              <tr>
-                <th>Influência</th>
-                <th>Descrição</th>
-              </tr>
-            </thead>
-            <tbody>
-              {influencesList.map(influence => (
-                <tr
-                  key={influence.influence}
-                  onClick={() => handleShowDetails(influence)}
-                >
-                  <td>
-                    <TableCell>
-                      <strong>{influence.influence}</strong>
-                    </TableCell>
-                  </td>
-
-                  <td>
-                    <TableCell>{influence.description}</TableCell>
-                  </td>
+        <>
+          <TableWrapper>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Influência</th>
+                  <th>Descrição</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableWrapper>
+              </thead>
+              <tbody>
+                {influencesList.map(influence => (
+                  <tr
+                    key={influence.influence}
+                    onClick={() => handleShowDetails(influence)}
+                  >
+                    <td>
+                      <TableCell>
+                        <strong>{influence.influence}</strong>
+                      </TableCell>
+                    </td>
+
+                    <td>
+                      <TableCell>{influence.description}</TableCell>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrapper>
+          {user.storyteller && (
+            <StatisticsLink>
+              <Link to="/influences/stat" title="Estatísticas das Influências">
+                <FaRegChartBar />
+              </Link>
+            </StatisticsLink>
+          )}
+        </>
       )}
     </Container>
   );
