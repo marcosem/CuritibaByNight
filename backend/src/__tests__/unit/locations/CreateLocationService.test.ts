@@ -3,6 +3,7 @@ import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeL
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import CreateLocationService from '@modules/locations/services/CreateLocationService';
 import AppError from '@shared/errors/AppError';
 
@@ -10,6 +11,7 @@ let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeMailProvider: FakeMailProvider;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let createLocation: CreateLocationService;
 
 describe('CreateLocation', () => {
@@ -18,16 +20,20 @@ describe('CreateLocation', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeMailProvider = new FakeMailProvider();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     createLocation = new CreateLocationService(
       fakeLocationsRepository,
       fakeUsersRepository,
       fakeCharactersRepository,
       fakeMailProvider,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to create a location', async () => {
+    const removeResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -56,6 +62,7 @@ describe('CreateLocation', () => {
       mystical_level: 0,
       property: 'private',
     });
+    expect(removeResult).toHaveBeenCalledWith('LocationList:*');
   });
 
   it('Should not allow invalid user to create location', async () => {

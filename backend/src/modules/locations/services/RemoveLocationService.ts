@@ -3,6 +3,7 @@ import AppError from '@shared/errors/AppError';
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -18,6 +19,8 @@ class RemoveLocationService {
     private usersRepository: IUsersRepository,
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({ user_id, location_id }: IRequestDTO): Promise<void> {
@@ -44,6 +47,9 @@ class RemoveLocationService {
     if (location.picture) {
       this.storageProvider.deleteFile(location.picture, 'locations');
     }
+
+    // Remove all LocationList routes
+    await this.saveRouteResult.remove('LocationList:*');
 
     await this.locationsRepository.delete(location.id);
   }

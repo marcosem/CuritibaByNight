@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import RemoveLocationService from '@modules/locations/services/RemoveLocationService';
 import AppError from '@shared/errors/AppError';
 
 let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let removeLocation: RemoveLocationService;
 
 describe('RemoveLocation', () => {
@@ -15,15 +17,19 @@ describe('RemoveLocation', () => {
     fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeStorageProvider = new FakeStorageProvider();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     removeLocation = new RemoveLocationService(
       fakeLocationsRepository,
       fakeUsersRepository,
       fakeStorageProvider,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to remove a location', async () => {
+    const removeResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -50,6 +56,7 @@ describe('RemoveLocation', () => {
 
     expect(finalListSize.length).toEqual(initialListSize.length - 1);
     expect(findLocation).toBeUndefined();
+    expect(removeResult).toHaveBeenCalledWith('LocationList:*');
   });
 
   it('Should delete the picture when removing location', async () => {

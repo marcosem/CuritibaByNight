@@ -45,12 +45,20 @@ class FakeSaveRouteResultProvider implements ISaveRouteResultProvider {
     return true;
   }
 
-  public remove(route: string): boolean {
-    this.savedRoutesResults = this.savedRoutesResults.filter(
-      myResult => myResult.route !== route,
-    );
+  public remove(route: string): Promise<boolean> {
+    if (route.indexOf('*') >= 0) {
+      const newRoute = route.replace(/[*]/gi, '');
 
-    return true;
+      this.savedRoutesResults = this.savedRoutesResults.filter(
+        myResult => myResult.route.indexOf(newRoute) === -1,
+      );
+    } else {
+      this.savedRoutesResults = this.savedRoutesResults.filter(
+        myResult => myResult.route !== route,
+      );
+    }
+
+    return Promise.resolve(true);
   }
 }
 

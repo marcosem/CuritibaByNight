@@ -31,8 +31,27 @@ class FakeSaveRouteResultProvider implements ISaveRouteResultProvider {
     return this.redisClient.set(route, result);
   }
 
-  public remove(route: string): boolean {
-    return this.redisClient.del(route);
+  public async remove(route: string): Promise<boolean> {
+    let removeResult: boolean;
+
+    if (route.indexOf('*') >= 0) {
+      const getRouteKeys = util
+        .promisify(this.redisClient.keys)
+        .bind(this.redisClient);
+
+      const redisKeys: string[] | undefined = await getRouteKeys(route);
+
+      removeResult = true;
+      if (redisKeys) {
+        redisKeys.forEach(key => {
+          removeResult = removeResult && this.redisClient.del(key);
+        });
+      }
+    } else {
+      removeResult = this.redisClient.del(route);
+    }
+
+    return removeResult;
   }
 }
 

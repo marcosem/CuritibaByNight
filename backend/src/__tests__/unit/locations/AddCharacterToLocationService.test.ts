@@ -4,6 +4,7 @@ import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeL
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import AddCharacterToLocationService from '@modules/locations/services/AddCharacterToLocationService';
 import AppError from '@shared/errors/AppError';
 
@@ -12,6 +13,7 @@ let fakeLocationsRepository: FakeLocationsRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeMailProvider: FakeMailProvider;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let addCharacterToLocation: AddCharacterToLocationService;
 
 describe('AddCharacterToLocation', () => {
@@ -21,6 +23,7 @@ describe('AddCharacterToLocation', () => {
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeMailProvider = new FakeMailProvider();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     addCharacterToLocation = new AddCharacterToLocationService(
       fakeLocationsCharactersRepository,
@@ -28,11 +31,13 @@ describe('AddCharacterToLocation', () => {
       fakeLocationsRepository,
       fakeCharactersRepository,
       fakeMailProvider,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to add a character to a location', async () => {
     const sendMail = jest.spyOn(fakeMailProvider, 'sendMail');
+    const removeResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
 
     const user = await fakeUsersRepository.create({
       name: 'A User',
@@ -71,6 +76,7 @@ describe('AddCharacterToLocation', () => {
       location_id: location.id,
     });
     expect(sendMail).toHaveBeenCalled();
+    expect(removeResult).toHaveBeenCalledWith('LocationList:*');
   });
 
   it('Should be able to add a NPC character to a location', async () => {

@@ -5,6 +5,7 @@ import ILocationsRepository from '@modules/locations/repositories/ILocationsRepo
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 import User from '@modules/users/infra/typeorm/entities/User';
 import { resolve } from 'path';
 
@@ -37,6 +38,8 @@ class CreateLocationService {
     private charactersRepository: ICharactersRepository,
     @inject('MailProvider')
     private mailProvider: IMailProvider,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -87,6 +90,9 @@ class CreateLocationService {
       if (char.user_id)
         player = await this.usersRepository.findById(char.user_id);
     }
+
+    // Remove all LocationList routes
+    await this.saveRouteResult.remove('LocationList:*');
 
     const location = await this.locationsRepository.create({
       name,

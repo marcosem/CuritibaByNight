@@ -5,6 +5,7 @@ import ILocationsRepository from '@modules/locations/repositories/ILocationsRepo
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import ILocationsCharactersRepository from '@modules/locations/repositories/ILocationsCharactersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -22,6 +23,8 @@ class GetLocationsListService {
     private charactersRepository: ICharactersRepository,
     @inject('LocationsCharactersRepository')
     private locationsCharactersRepository: ILocationsCharactersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({ user_id, char_id }: IRequestDTO): Promise<Location[]> {
@@ -39,7 +42,18 @@ class GetLocationsListService {
     let locationList: Location[];
 
     if (!char_id) {
-      locationList = await this.locationsRepository.listAll();
+      const savedLocationList = await this.saveRouteResult.get(
+        'LocationList:All',
+      );
+      if (savedLocationList !== '') {
+        locationList = JSON.parse(savedLocationList);
+      } else {
+        locationList = await this.locationsRepository.listAll();
+        this.saveRouteResult.set(
+          'LocationList:All',
+          JSON.stringify(locationList),
+        );
+      }
     } else {
       const char = await this.charactersRepository.findById(char_id);
 
@@ -47,29 +61,44 @@ class GetLocationsListService {
         throw new AppError('Character not found', 400);
       }
 
-      const filteredClan1 = char.clan.split(':');
-      const filteredClan2 = filteredClan1[0].split(' (');
-
-      locationList = await this.locationsRepository.findByCharacterId(
-        char_id,
-        filteredClan2[0], // char.clan,
-        char.creature_type,
-        char.sect,
+      const savedLocationList = await this.saveRouteResult.get(
+        `LocationList:${char.id}`,
       );
 
-      const awareList = await this.locationsCharactersRepository.listLocationsByCharacter(
-        char_id,
-      );
+      if (savedLocationList !== '') {
+        locationList = JSON.parse(savedLocationList);
+      } else {
+        const filteredClan1 = char.clan.split(':');
+        const filteredClan2 = filteredClan1[0].split(' (');
 
-      // eslint-disable-next-line no-restricted-syntax
-      for (const locationId of awareList) {
-        // eslint-disable-next-line no-await-in-loop
-        const resLocation = await this.locationsRepository.findById(locationId);
+        locationList = await this.locationsRepository.findByCharacterId(
+          char_id,
+          filteredClan2[0], // char.clan,
+          char.creature_type,
+          char.sect,
+        );
 
-        if (resLocation !== undefined) {
-          const location: Location = resLocation;
-          locationList.push(location);
+        const awareList = await this.locationsCharactersRepository.listLocationsByCharacter(
+          char_id,
+        );
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const locationId of awareList) {
+          // eslint-disable-next-line no-await-in-loop
+          const resLocation = await this.locationsRepository.findById(
+            locationId,
+          );
+
+          if (resLocation !== undefined) {
+            const location: Location = resLocation;
+            locationList.push(location);
+          }
         }
+
+        this.saveRouteResult.set(
+          `LocationList:${char.id}`,
+          JSON.stringify(locationList),
+        );
       }
     }
 

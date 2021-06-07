@@ -51,17 +51,17 @@ class GetCharacterLocationService {
       throw new AppError('Location not found', 400);
     }
 
-    const locChar = await this.locationsCharactersRepository.find(
-      char_id,
-      location_id,
-    );
-
     if (!user.storyteller && char.user_id !== user_id) {
       throw new AppError(
         'Only authenticated Storytellers can get character-location for others chracters',
         401,
       );
     }
+
+    const locChar = await this.locationsCharactersRepository.find(
+      char_id,
+      location_id,
+    );
 
     if (!locChar) {
       throw new AppError('Character-location not found', 400);
