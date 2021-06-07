@@ -878,7 +878,13 @@ const InfluencesStat: React.FC = () => {
       <PieChartContainer>
         {statByCreature.pieStats?.length > 0 && (
           <>
-            <h1>{`Criaturas (${statByCreature.total})`}</h1>
+            <h1>
+              {`${
+                selInfluence === ''
+                  ? 'Influêcias/'
+                  : `Influências em ${getInfluencePortuguese(selInfluence)}/`
+              }Criaturas (${statByCreature.total})`}
+            </h1>
             <PieChart
               data={statByCreature.pieStats}
               totalValue={statByCreature.total}
@@ -896,7 +902,13 @@ const InfluencesStat: React.FC = () => {
 
         {statByVampSect.pieStats?.length > 0 && (
           <>
-            <h1>{`Sectos de Vampiros (${statByVampSect.total})`}</h1>
+            <h1>
+              {`${
+                selInfluence === ''
+                  ? 'Influêcias/'
+                  : `Influências em ${getInfluencePortuguese(selInfluence)}/`
+              }Sectos de Vampiros (${statByVampSect.total})`}
+            </h1>
             <PieChart
               data={statByVampSect.pieStats}
               totalValue={statByVampSect.total}
@@ -911,7 +923,13 @@ const InfluencesStat: React.FC = () => {
 
         {statByVampClan.pieStats?.length > 0 && (
           <>
-            <h1>{`Clãs de Vampiros (${statByVampClan.total})`}</h1>
+            <h1>
+              {`${
+                selInfluence === ''
+                  ? 'Influêcias/'
+                  : `Influências em ${getInfluencePortuguese(selInfluence)}/`
+              }Clãs de Vampiros (${statByVampClan.total})`}
+            </h1>
             <PieChart
               data={statByVampClan.pieStats}
               totalValue={statByVampClan.total}
@@ -924,7 +942,13 @@ const InfluencesStat: React.FC = () => {
 
         {statByVampRetainers.pieStats?.length > 0 && (
           <>
-            <h1>{`Vampiros x Lacaios (${statByVampRetainers.total})`}</h1>
+            <h1>
+              {`${
+                selInfluence === ''
+                  ? 'Influêcias/'
+                  : `Influências em ${getInfluencePortuguese(selInfluence)}/`
+              }Vampiros x Lacaios (${statByVampRetainers.total})`}
+            </h1>
             <PieChart
               data={statByVampRetainers.pieStats}
               totalValue={statByVampRetainers.total}
@@ -939,7 +963,13 @@ const InfluencesStat: React.FC = () => {
 
         {statByMembers.pieStats?.length > 0 && (
           <>
-            <h1>{`Membros (${statByMembers.total})`}</h1>
+            <h1>
+              {`${
+                selInfluence === ''
+                  ? 'Influêcias/'
+                  : `Influências em ${getInfluencePortuguese(selInfluence)}/`
+              }Membros (${statByMembers.total})`}
+            </h1>
             <PieChart
               data={statByMembers.pieStats}
               totalValue={statByMembers.total}
