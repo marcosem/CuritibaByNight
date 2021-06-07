@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { FiMessageSquare, FiUpload } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { format } from 'date-fns';
@@ -116,6 +116,12 @@ const CharacterUpdate: React.FC = () => {
           const selChar = filteredList.find(myChar => myChar.id === charId);
           if (selChar) {
             setSelectedChar(selChar);
+            if (selChar.regnant_char) {
+              const selReg = regList.find(
+                reg => reg.id === selChar.regnant_char?.id,
+              );
+              setSelectedRegnant(selReg);
+            }
           }
         }
       });
