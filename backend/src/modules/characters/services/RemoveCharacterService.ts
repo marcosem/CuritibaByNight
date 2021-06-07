@@ -2,6 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 import AppError from '@shared/errors/AppError';
 
 interface IRequestDTO {
@@ -18,6 +19,8 @@ class RemoveCharacterService {
     private usersRepository: IUsersRepository,
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({ user_id, character_id }: IRequestDTO): Promise<void> {
@@ -40,6 +43,9 @@ class RemoveCharacterService {
     if (!char) {
       throw new AppError('Character not found', 400);
     }
+
+    // Remove saved route results when remove a character
+    this.saveRouteResult.remove('CharactersInfluences');
 
     this.storageProvider.deleteFile(char.file, 'sheet');
 

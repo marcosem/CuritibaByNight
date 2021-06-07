@@ -3,6 +3,7 @@ import AppError from '@shared/errors/AppError';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -19,6 +20,8 @@ class ResetCharacterTraitsService {
     private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -45,6 +48,9 @@ class ResetCharacterTraitsService {
     if (!char) {
       throw new AppError('Character not found', 400);
     }
+
+    // Remove route result when reset a character traits
+    this.saveRouteResult.remove('CharactersInfluences');
 
     await this.charactersTraitsRepository.resetTraitsLevel(
       char_id,

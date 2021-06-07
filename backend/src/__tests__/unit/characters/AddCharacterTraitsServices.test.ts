@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import AddCharacterTraitsService from '@modules/characters/services/AddCharacterTraitsService';
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 import AppError from '@shared/errors/AppError';
@@ -9,6 +10,7 @@ import AppError from '@shared/errors/AppError';
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let addCharacterTraits: AddCharacterTraitsService;
 
 describe('AddCharacterTraits', () => {
@@ -16,15 +18,19 @@ describe('AddCharacterTraits', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     addCharacterTraits = new AddCharacterTraitsService(
       fakeCharactersTraitsRepository,
       fakeCharactersRepository,
       fakeUsersRepository,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able get add a list of traits for a character', async () => {
+    const removeSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -69,6 +75,7 @@ describe('AddCharacterTraits', () => {
     expect(personalMasqueradeTrait?.level_temp).toEqual(
       'empty|empty|empty|empty|empty|empty|empty|empty|empty|empty',
     );
+    expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
   });
 
   it('Should be able get add a list of traits for a characters removing the old one, except Personal Masquerade', async () => {

@@ -4,6 +4,7 @@ import CharacterTrait from '@modules/characters/infra/typeorm/entities/Character
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -24,6 +25,8 @@ class UpdateCharacterTraitService {
     private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -60,6 +63,9 @@ class UpdateCharacterTraitService {
     if (!trait) {
       throw new AppError('Character Trait not found', 400);
     }
+
+    // Remove route result when changed any trait
+    this.saveRouteResult.remove('CharactersInfluences');
 
     trait.trait = trait_name;
     trait.type = trait_type;

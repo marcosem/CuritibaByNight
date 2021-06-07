@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import RemoveCharacterService from '@modules/characters/services/RemoveCharacterService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeStorageProvider: FakeStorageProvider;
 let fakeCharactersRepository: FakeCharactersRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let removeCharacter: RemoveCharacterService;
 
 describe('RemoveCharacter', () => {
@@ -15,15 +17,19 @@ describe('RemoveCharacter', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeStorageProvider = new FakeStorageProvider();
     fakeCharactersRepository = new FakeCharactersRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     removeCharacter = new RemoveCharacterService(
       fakeCharactersRepository,
       fakeUsersRepository,
       fakeStorageProvider,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to remove a character', async () => {
+    const removeSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const stUser = await fakeUsersRepository.create({
       name: 'St User',
       email: 'stUser@user.com',
@@ -50,6 +56,7 @@ describe('RemoveCharacter', () => {
     const findChar = await fakeCharactersRepository.findById(char.id);
     expect(finalListSize.length).toEqual(initialListSize.length - 1);
     expect(findChar).toBeUndefined();
+    expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
   });
 
   it('Should delete avatar when removing character', async () => {

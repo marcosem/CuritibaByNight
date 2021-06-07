@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import GetCharactersInfluencesService from '@modules/characters/services/GetCharactersInfluencesService';
 
 import characterList from './samples/charactersInfluencesInput';
@@ -10,6 +11,7 @@ import charListOutput from './samples/charactersInfluencesOutput';
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let getCharacterInfluences: GetCharactersInfluencesService;
 
 const outputTemplate = {
@@ -65,15 +67,19 @@ describe('GetCharactersInfluences', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     getCharacterInfluences = new GetCharactersInfluencesService(
       fakeCharactersTraitsRepository,
       fakeCharactersRepository,
       fakeUsersRepository,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able get a list of characters influences', async () => {
+    const saveResult = jest.spyOn(fakeSaveRouteResultProvider, 'set');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -117,7 +123,65 @@ describe('GetCharactersInfluences', () => {
 
     expect(charInfList).toMatchObject(outputTemplate);
     expect(charInfList).toMatchObject(charListOutput);
+
+    expect(saveResult).toHaveBeenCalledWith(
+      'CharactersInfluences',
+      JSON.stringify(charInfList),
+    );
   });
+});
+
+it('Should be able get a list of characters influences from redis', async () => {
+  const getSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'get');
+
+  const user = await fakeUsersRepository.create({
+    name: 'A User',
+    email: 'user@user.com',
+    password: '123456',
+    storyteller: true,
+  });
+
+  const newCharacterList = [];
+  await new Promise<void>((resolve, _) => {
+    characterList.forEach(async (char, index, myArray) => {
+      const newChar = await fakeCharactersRepository.create({
+        name: char.name,
+        experience: char.experience,
+        file: char.file,
+        clan: char.clan,
+        creature_type: char.creature_type,
+        sect: char.sect,
+        situation: char.situation,
+        npc: char.npc,
+      });
+
+      const newTraitList = char.traits.map(trait => {
+        const newTrait = {
+          trait: trait.trait,
+          character_id: newChar.id,
+          level: trait.level,
+          level_temp: trait.level_temp,
+          type: trait.type,
+        };
+        return newTrait;
+      });
+
+      await fakeCharactersTraitsRepository.createList(newTraitList);
+      newCharacterList.push(newChar);
+
+      if (index === myArray.length - 1) resolve();
+    });
+  });
+
+  // Call it first time, so its result will be saved
+  await getCharacterInfluences.execute(user.id);
+
+  // Call second time, it should get the saved result instead of calculate it
+  const charInfList = await getCharacterInfluences.execute(user.id);
+
+  expect(charInfList).toMatchObject(outputTemplate);
+  expect(charInfList).toMatchObject(charListOutput);
+  expect(getSavedResult).toHaveBeenCalledWith('CharactersInfluences');
 });
 
 it('Should not allow invalid users to get list of characters influences', async () => {

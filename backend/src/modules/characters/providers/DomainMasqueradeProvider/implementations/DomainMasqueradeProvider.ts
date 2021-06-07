@@ -1,5 +1,6 @@
 import IDomainMasqueradeProvider from '@modules/characters/providers/DomainMasqueradeProvider/models/IDomainMasqueradeProvider';
 import redis from 'redis';
+import redisConnection from '@config/redisConnection';
 import util from 'util';
 
 class DomainMasqueradeProvider implements IDomainMasqueradeProvider {
@@ -8,12 +9,7 @@ class DomainMasqueradeProvider implements IDomainMasqueradeProvider {
   private domainMasquerade: number;
 
   constructor() {
-    this.redisClient = redis.createClient({
-      host: process.env.REDIS_HOST,
-      port: Number(process.env.REDIS_PORT),
-      password: process.env.REDIS_PASS || undefined,
-    });
-
+    this.redisClient = redisConnection;
     this.domainMasquerade = 0;
   }
 

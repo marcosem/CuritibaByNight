@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import ResetCharacterTraitsService from '@modules/characters/services/ResetCharacterTraitsService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let resetCharacterTraits: ResetCharacterTraitsService;
 
 describe('ResetCharactersTraits', () => {
@@ -15,15 +17,19 @@ describe('ResetCharactersTraits', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     resetCharacterTraits = new ResetCharacterTraitsService(
       fakeCharactersTraitsRepository,
       fakeCharactersRepository,
       fakeUsersRepository,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to reset traits of character', async () => {
+    const removeSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -79,6 +85,7 @@ describe('ResetCharactersTraits', () => {
     expect(newTraitsList[2].level_temp).toEqual(
       'empty|empty|empty|empty|empty|empty|empty|empty|empty|empty',
     );
+    expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
   });
 
   it('Should be able to reset traits of character keeping Personal Masquerade', async () => {

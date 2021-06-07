@@ -1,25 +1,31 @@
 import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeDomainMasqueradeProvider from '@modules/characters/providers/DomainMasqueradeProvider/fakes/FakeDomainMasqueradeProvider';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import SetDomainMasqueradeService from '@modules/characters/services/SetDomainMasqueradeService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeDomainMasqueradeProvider: FakeDomainMasqueradeProvider;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let setDomainMasquerade: SetDomainMasqueradeService;
 
 describe('SetDomainMasquerade', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeDomainMasqueradeProvider = new FakeDomainMasqueradeProvider();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     setDomainMasquerade = new SetDomainMasqueradeService(
       fakeUsersRepository,
       fakeDomainMasqueradeProvider,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to set the domain masquerade', async () => {
+    const removeSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -38,6 +44,7 @@ describe('SetDomainMasquerade', () => {
 
     expect(initialLevel).not.toEqual(updatedLevel);
     expect(updatedLevel).toEqual(3);
+    expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
   });
 
   it('Should not allow to set negative domain masquerade', async () => {

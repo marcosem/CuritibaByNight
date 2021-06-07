@@ -4,6 +4,7 @@ import CharacterTrait from '@modules/characters/infra/typeorm/entities/Character
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -20,6 +21,8 @@ class AddCharacterTraitsService {
     private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -50,6 +53,9 @@ class AddCharacterTraitsService {
     if (char_traits.length === 0) {
       throw new AppError('No characters traits to be added', 400);
     }
+
+    // Remove routes results when adding new traits
+    this.saveRouteResult.remove('CharactersInfluences');
 
     // Save Personal Masquerade if exist
     const masqueradeTrait = await this.charactersTraitsRepository.findTraitByCharId(

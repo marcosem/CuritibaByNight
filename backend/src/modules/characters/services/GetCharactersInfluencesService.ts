@@ -3,6 +3,7 @@ import AppError from '@shared/errors/AppError';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 import {
   IInfluenceCapacityDTO,
   IInfluenceCharDTO,
@@ -20,6 +21,8 @@ class GetCharactersInfluencesService {
     private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute(user_id: string): Promise<ICharactersInfluencesDTO> {
@@ -35,6 +38,15 @@ class GetCharactersInfluencesService {
         'Only authenticated Storytellers can get characters influences list',
         401,
       );
+    }
+
+    const routeResult = await this.saveRouteResult.get('CharactersInfluences');
+    if (routeResult !== '') {
+      const myResult: ICharactersInfluencesDTO = JSON.parse(
+        routeResult,
+      ) as ICharactersInfluencesDTO;
+
+      return myResult;
     }
 
     // Get characters List
@@ -293,6 +305,8 @@ class GetCharactersInfluencesService {
       influence_capacity: infCapList,
       list: charInfList,
     };
+
+    this.saveRouteResult.set('CharactersInfluences', JSON.stringify(result));
 
     return result;
   }

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import UpdateCharacterTraitService from '@modules/characters/services/UpdateCharacterTraitService';
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 import AppError from '@shared/errors/AppError';
@@ -9,6 +10,7 @@ import AppError from '@shared/errors/AppError';
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let updateCharacterTrait: UpdateCharacterTraitService;
 
 describe('UpdateCharacterTrait', () => {
@@ -16,15 +18,19 @@ describe('UpdateCharacterTrait', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     updateCharacterTrait = new UpdateCharacterTraitService(
       fakeCharactersTraitsRepository,
       fakeCharactersRepository,
       fakeUsersRepository,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to update a trait for a character', async () => {
+    const removeSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -99,6 +105,7 @@ describe('UpdateCharacterTrait', () => {
     if (updatedBloodTrait) {
       expect(updatedTrait).toMatchObject(updatedBloodTrait);
     }
+    expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
   });
 
   it('Should not be able to update a invalid trait', async () => {

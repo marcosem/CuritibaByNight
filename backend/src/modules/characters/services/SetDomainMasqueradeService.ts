@@ -2,6 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IDomainMasqueradeProvider from '@modules/characters/providers/DomainMasqueradeProvider/models/IDomainMasqueradeProvider';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -15,6 +16,8 @@ class SetDomainMasqueradeService {
     private usersRepository: IUsersRepository,
     @inject('DomainMasqueradeProvider')
     private domainMasqueradeProvider: IDomainMasqueradeProvider,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -34,6 +37,9 @@ class SetDomainMasqueradeService {
         401,
       );
     }
+
+    // Remove this saved route when changing domain masquerade
+    this.saveRouteResult.remove('CharactersInfluences');
 
     const result = this.domainMasqueradeProvider.set(masquerade_level);
 
