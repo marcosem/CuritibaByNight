@@ -21,7 +21,7 @@ interface IOnLineUser {
 
 interface IUserConn {
   user_id: string;
-  timer: number | null;
+  timer: NodeJS.Timeout | null;
 }
 
 interface ILevel {
@@ -111,8 +111,8 @@ const SocketProvider: React.FC = ({ children }) => {
 
   const userConnList = useRef<IUserConn[]>([]);
   const socket = useRef<WebSocket>();
-  const serverPing = useRef<number>(0);
-  const serverGetUsers = useRef<number>(0);
+  const serverPing = useRef<NodeJS.Timeout | null>(null);
+  const serverGetUsers = useRef<NodeJS.Timeout | null>(null);
   const token = useRef<string>('');
   const blockDuplicatedMessage = useRef<string[]>([]);
 
@@ -126,21 +126,21 @@ const SocketProvider: React.FC = ({ children }) => {
   );
 
   const startPing = useCallback(() => {
-    if (serverPing.current !== 0) return;
+    if (serverPing.current !== null) return;
 
     serverPing.current = setTimeout(() => {
       sendSocketMessage({ type: 'ping' });
-      serverPing.current = 0;
+      serverPing.current = null;
       startPing();
     }, 10000);
   }, [sendSocketMessage]);
 
   const updateOnLineUsersList = useCallback(() => {
-    if (serverGetUsers.current !== 0) return;
+    if (serverGetUsers.current !== null) return;
 
     serverGetUsers.current = setTimeout(() => {
       sendSocketMessage({ type: 'connection:connectedusers' });
-      serverGetUsers.current = 0;
+      serverGetUsers.current = null;
       updateOnLineUsersList();
     }, 10000);
   }, [sendSocketMessage]);
