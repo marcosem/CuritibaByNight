@@ -328,9 +328,10 @@ const SocketProvider: React.FC = ({ children }) => {
             return;
           blockDuplicatedMessage.current.push(myMsg.message);
           setTimeout(() => {
-            blockDuplicatedMessage.current = blockDuplicatedMessage.current.filter(
-              msgFilter => msgFilter !== myMsg.message,
-            );
+            blockDuplicatedMessage.current =
+              blockDuplicatedMessage.current.filter(
+                msgFilter => msgFilter !== myMsg.message,
+              );
           }, 500);
 
           switch (myMsg.message) {
