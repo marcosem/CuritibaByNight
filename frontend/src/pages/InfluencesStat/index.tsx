@@ -881,7 +881,7 @@ const InfluencesStat: React.FC = () => {
             <h1>
               {`${
                 selInfluence === ''
-                  ? 'Influêcias/'
+                  ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
               }Criaturas (${statByCreature.total})`}
             </h1>
@@ -905,7 +905,7 @@ const InfluencesStat: React.FC = () => {
             <h1>
               {`${
                 selInfluence === ''
-                  ? 'Influêcias/'
+                  ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
               }Sectos de Vampiros (${statByVampSect.total})`}
             </h1>
@@ -926,7 +926,7 @@ const InfluencesStat: React.FC = () => {
             <h1>
               {`${
                 selInfluence === ''
-                  ? 'Influêcias/'
+                  ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
               }Clãs de Vampiros (${statByVampClan.total})`}
             </h1>
@@ -945,7 +945,7 @@ const InfluencesStat: React.FC = () => {
             <h1>
               {`${
                 selInfluence === ''
-                  ? 'Influêcias/'
+                  ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
               }Vampiros x Lacaios (${statByVampRetainers.total})`}
             </h1>
@@ -966,7 +966,7 @@ const InfluencesStat: React.FC = () => {
             <h1>
               {`${
                 selInfluence === ''
-                  ? 'Influêcias/'
+                  ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
               }Membros (${statByMembers.total})`}
             </h1>
