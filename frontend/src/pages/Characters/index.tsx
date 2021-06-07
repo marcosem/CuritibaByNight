@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import { useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { FiPlus, FiUpload } from 'react-icons/fi';
 
 import api from '../../services/api';

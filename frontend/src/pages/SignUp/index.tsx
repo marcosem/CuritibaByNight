@@ -1,11 +1,10 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { useParams } from 'react-router';
 import { FiUser, FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
 import { useHeader } from '../../hooks/header';
 import api from '../../services/api';

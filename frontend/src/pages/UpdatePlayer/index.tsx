@@ -6,13 +6,12 @@ import React, {
   useState,
   ChangeEvent,
 } from 'react';
-import { useParams } from 'react-router';
 import { FiUser, FiMail, FiArrowLeft, FiTrash2 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
 import { useAuth } from '../../hooks/auth';
 import { useModalBox } from '../../hooks/modalBox';

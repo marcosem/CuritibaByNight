@@ -1,8 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import ReactDomServer from 'react-dom/server';
-import { useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { IconType } from 'react-icons';
 import { FiPlus, FiEdit, FiUserPlus, FiFlag } from 'react-icons/fi';
 import {

@@ -1,8 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useCallback, useState } from 'react';
 import { format } from 'date-fns';
-import { useParams } from 'react-router';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import api from '../../services/api';
 import { Container } from './styles';
 
