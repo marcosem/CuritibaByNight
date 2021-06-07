@@ -245,9 +245,49 @@ const InfluencesStat: React.FC = () => {
             colALayer2 = infA.character.name;
             colBLayer2 = infB.character.name;
             break;
+
+          case 'creature_type':
+            if (
+              infA.character.creature_type === 'Mortal' &&
+              infA.character.clan.indexOf('Ghoul') >= 0
+            ) {
+              colA = 'Ghoul';
+            } else {
+              colA = infA.character.creature_type;
+            }
+
+            if (
+              infB.character.creature_type === 'Mortal' &&
+              infB.character.clan.indexOf('Ghoul') >= 0
+            ) {
+              colB = 'Ghoul';
+            } else {
+              colB = infB.character.creature_type;
+            }
+
+            colALayer2 = infA.character.name;
+            colBLayer2 = infB.character.name;
+            break;
+
           case 'morality':
-            colA = infA.character.morality === 'Humanity' ? 'A' : 'Z';
-            colB = infB.character.morality === 'Humanity' ? 'A' : 'Z';
+            if (
+              infA.character.creature_type === 'Werewolf' ||
+              infA.character.creature_type === 'Mage'
+            ) {
+              colA = 'A';
+            } else {
+              colA = infA.character.morality === 'Humanity' ? 'A' : 'Z';
+            }
+
+            if (
+              infB.character.creature_type === 'Werewolf' ||
+              infB.character.creature_type === 'Mage'
+            ) {
+              colB = 'A';
+            } else {
+              colB = infB.character.morality === 'Humanity' ? 'A' : 'Z';
+            }
+
             colALayer2 = infA.character.name;
             colBLayer2 = infB.character.name;
             break;
@@ -625,6 +665,28 @@ const InfluencesStat: React.FC = () => {
                       </TableColumnHeader>
                       <TableColumnHeader
                         mySize="intermediate"
+                        id="creature_type"
+                        onClick={handleSortColumn}
+                      >
+                        <TableCellHeader
+                          highlight={sortOrder.column === 'creature_type'}
+                        >
+                          <span>Tipo</span>
+                          {sortOrder.column === 'creature_type' ? (
+                            <>
+                              {sortOrder.orderAZ ? (
+                                <FaSortAlphaDown />
+                              ) : (
+                                <FaSortAlphaUpAlt />
+                              )}
+                            </>
+                          ) : (
+                            <FaSortAlphaDown />
+                          )}
+                        </TableCellHeader>
+                      </TableColumnHeader>
+                      <TableColumnHeader
+                        mySize="intermediate"
                         id="defense_passive"
                         onClick={handleSortColumn}
                       >
@@ -741,6 +803,20 @@ const InfluencesStat: React.FC = () => {
                               <span>{infDet.character.name}</span>
                             </TableCell>
                           </TableColumn>
+
+                          <TableColumn mySize="intermediate">
+                            <TableCell mySize="intermediate">
+                              <span>
+                                {`${
+                                  infDet.character.creature_type === 'Mortal' &&
+                                  infDet.character.clan.indexOf('Ghoul') >= 0
+                                    ? 'Ghoul'
+                                    : infDet.character.creature_type
+                                }`}
+                              </span>
+                            </TableCell>
+                          </TableColumn>
+
                           <TableColumn mySize="intermediate">
                             <TableCell mySize="intermediate">
                               <strong>
@@ -764,7 +840,13 @@ const InfluencesStat: React.FC = () => {
                               <span>
                                 {infDet.character.morality === 'Humanity'
                                   ? ''
-                                  : 'Não'}
+                                  : `${
+                                      infDet.character.creature_type ===
+                                        'Werewolf' ||
+                                      infDet.character.creature_type === 'Mage'
+                                        ? ''
+                                        : 'Não'
+                                    }`}
                               </span>
                             </TableCell>
                           </TableColumn>
