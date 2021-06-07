@@ -32,6 +32,7 @@ import Loading from '../../components/Loading';
 
 import { useToast } from '../../hooks/toast';
 import { useAuth } from '../../hooks/auth';
+import { useHeader } from '../../hooks/header';
 
 import influencesAbilities from '../Influences/influencesAbilities.json';
 
@@ -121,6 +122,7 @@ const InfluencesStat: React.FC = () => {
   );
   const { addToast } = useToast();
   const { signOut } = useAuth();
+  const { setCurrentPage } = useHeader();
   const tableRowRef = useRef<HTMLTableRowElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -595,8 +597,9 @@ const InfluencesStat: React.FC = () => {
   }, [selInfluence]);
 
   useEffect(() => {
+    setCurrentPage('influences');
     loadInfluencesStat();
-  }, [loadInfluencesStat]);
+  }, [loadInfluencesStat, setCurrentPage]);
 
   return (
     <Container>
