@@ -887,6 +887,9 @@ const InfluencesStat: React.FC = () => {
               }
               labelStyle={() => ({ fontSize: '5px' })}
               animate
+              // segmentsShift={0.5} space between segments
+              // lineWidth={20} hole in the middle
+              // radius={50} size of the circle - 50 = 100%
             />
           </>
         )}
