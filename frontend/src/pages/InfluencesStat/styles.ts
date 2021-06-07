@@ -1,10 +1,6 @@
 import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
-interface IContainerProps {
-  isMobile: boolean;
-}
-
 interface ITableProps {
   detailedTable?: boolean;
 }
@@ -15,15 +11,8 @@ interface IColumnProps {
   isScrollOn?: boolean;
 }
 
-export const Container = styled.div<IContainerProps>`
-  ${props =>
-    props.isMobile
-      ? css`
-          height: calc(100vh - 110px);
-        `
-      : css`
-          height: calc(100vh - 140px);
-        `}
+export const Container = styled.div`
+  height: calc(100vh - 140px);
 `;
 
 export const TitleBox = styled.div`
@@ -51,50 +40,27 @@ export const TitleBox = styled.div`
   }
 `;
 
-export const InfluenceContainer = styled.div<IContainerProps>`
+export const InfluenceContainer = styled.div`
   min-width: 340px;
   max-width: 1012px;
   display: flex;
   margin: auto;
-
-  ${props =>
-    props.isMobile
-      ? css`
-          flex-direction: column;
-        `
-      : css`
-          flex-direction: row;
-        `}
+  flex-direction: row;
 `;
 
-export const InfluenceCardContainer = styled.div<IContainerProps>`
+export const InfluenceCardContainer = styled.div`
   display: flex;
   flex-direction: column;
 
   strong {
     padding-bottom: 10px;
-    //padding: 0 0 10px 0;
     font-size: 16px;
     font-weight: 500;
   }
 
-  ${props =>
-    props.isMobile
-      ? css`
-          padding-bottom: 16px;
-          > div {
-            margin: auto;
-          }
-
-          strong {
-            margin: auto;
-          }
-        `
-      : css`
-          strong {
-            margin-right: auto;
-          }
-        `}
+  strong {
+    margin-right: auto;
+  }
 `;
 
 export const TableWrapper = styled.div<ITableProps>`
@@ -494,5 +460,26 @@ export const ReturnButton = styled.div`
       height: 32px;
       color: #ccc;
     }
+  }
+`;
+
+export const PieChartContainer = styled.div`
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  margin: 15px auto;
+
+  h1 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    border-top: 1px solid #888;
+    padding-top: 5px;
+  }
+
+  svg {
+    margin: 15px auto;
+    width: 340px;
   }
 `;

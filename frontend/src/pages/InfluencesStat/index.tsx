@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable camelcase */
 import React, {
   useState,
@@ -6,10 +7,11 @@ import React, {
   MouseEvent,
   useRef,
 } from 'react';
+import { PieChart } from 'react-minimal-pie-chart';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiAlertTriangle } from 'react-icons/fi';
 import { FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa';
-// import InfluenceCard from '../../components/InfluenceCard';
+import colorSet from './colorSet';
 import api from '../../services/api';
 
 import {
@@ -23,13 +25,13 @@ import {
   TableCell,
   GoBackButton,
   ReturnButton,
+  PieChartContainer,
 } from './styles';
 
 import Loading from '../../components/Loading';
 
 import { useToast } from '../../hooks/toast';
 import { useAuth } from '../../hooks/auth';
-import { useMobile } from '../../hooks/mobile';
 
 import influencesAbilities from '../Influences/influencesAbilities.json';
 
@@ -86,10 +88,20 @@ interface ISortOrder {
   orderAZ: boolean;
 }
 
+interface IStatsPie {
+  title: string;
+  value: number;
+  color: string;
+}
+
+interface IStats {
+  total: number;
+  pieStats: IStatsPie[];
+}
+
 const InfluencesStat: React.FC = () => {
-  const [influencesStat, setInfluencesStats] = useState<
-    ICharactersInfluencesDTO
-  >({} as ICharactersInfluencesDTO);
+  const [influencesStat, setInfluencesStats] =
+    useState<ICharactersInfluencesDTO>({} as ICharactersInfluencesDTO);
   const [selInfluence, setSelInfluence] = useState<string>('');
   const [influenceDetails, setInfluenceDetails] = useState<ICharInfluenceDTO[]>(
     [],
@@ -100,10 +112,15 @@ const InfluencesStat: React.FC = () => {
   });
   const [isScrollOn, setIsScrollOn] = useState<boolean>(false);
   const [isBusy, setBusy] = useState(false);
+  const [statByCreature, setStatByCreature] = useState<IStats>({} as IStats);
+  const [statByVampSect, setStatByVampSect] = useState<IStats>({} as IStats);
+  const [statByVampClan, setStatByVampClan] = useState<IStats>({} as IStats);
+  const [statByMembers, setStatByMembers] = useState<IStats>({} as IStats);
+  const [statByVampRetainers, setStatByVampRetainers] = useState<IStats>(
+    {} as IStats,
+  );
   const { addToast } = useToast();
   const { signOut } = useAuth();
-  const { isMobileVersion } = useMobile();
-
   const tableRowRef = useRef<HTMLTableRowElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -140,6 +157,18 @@ const InfluencesStat: React.FC = () => {
             return 0;
           },
         );
+
+        res.list = res.list.map(charInf => {
+          const newCharInf = charInf;
+
+          if (newCharInf.character.clan) {
+            const filteredClan = newCharInf.character.clan.split(' (');
+            // eslint-disable-next-line prefer-destructuring
+            newCharInf.character.clan = filteredClan[0];
+          }
+
+          return newCharInf;
+        });
 
         res.influence_capacity = infCap;
 
@@ -292,6 +321,168 @@ const InfluencesStat: React.FC = () => {
     [],
   );
 
+  const generateStatistics = useCallback(() => {
+    if (influencesStat?.list === undefined) {
+      return;
+    }
+
+    const sourceList: ICharInfluenceDTO[] =
+      selInfluence === '' ? influencesStat.list : influenceDetails;
+
+    let newStatByCreature: IStatsPie[] = [];
+    let totalStatByCreature = 0;
+    let newStatByVampSect: IStatsPie[] = [];
+    let totalStatByVampSect = 0;
+    let newStatByVampClan: IStatsPie[] = [];
+    let totalStatByVampClan = 0;
+    const newStatByMembers: IStatsPie[] = [];
+    let totalStatByMembers = 0;
+    let newStatByVampRetainers: IStatsPie[] = [];
+    let totalStatByVampRetainers = 0;
+
+    let colorSetIndex = 0;
+    sourceList.forEach((charInf: ICharInfluenceDTO) => {
+      if (charInf.influences) {
+        const color = colorSet[colorSetIndex];
+
+        let value = 0;
+        charInf.influences.forEach(inf => {
+          value += inf.level_perm;
+        });
+
+        newStatByMembers.push({
+          title: charInf.character.name,
+          value,
+          color,
+        } as IStatsPie);
+        totalStatByMembers += value;
+
+        let creatureStat: IStatsPie | undefined = newStatByCreature.find(
+          creat => creat.title === charInf.character.creature_type,
+        );
+
+        if (creatureStat === undefined) {
+          creatureStat = {
+            title: charInf.character.creature_type,
+            value,
+            color,
+          } as IStatsPie;
+
+          newStatByCreature.push(creatureStat);
+        } else {
+          creatureStat.value += value;
+
+          newStatByCreature = newStatByCreature.map(creat =>
+            creat.title === creatureStat?.title ? creatureStat : creat,
+          );
+        }
+        totalStatByCreature += value;
+
+        let creatureType = '';
+        if (charInf.character.creature_type === 'Vampire') {
+          creatureType = 'Vampire';
+
+          let sectStat: IStatsPie | undefined = newStatByVampSect.find(
+            sect => sect.title === charInf.character.sect,
+          );
+
+          if (sectStat === undefined) {
+            sectStat = {
+              title: charInf.character.sect,
+              value,
+              color,
+            } as IStatsPie;
+
+            newStatByVampSect.push(sectStat);
+          } else {
+            sectStat.value += value;
+
+            newStatByVampSect = newStatByVampSect.map(sect =>
+              sect.title === sectStat?.title ? sectStat : sect,
+            );
+          }
+
+          totalStatByVampSect += value;
+
+          let clanStat: IStatsPie | undefined = newStatByVampClan.find(
+            sect => sect.title === charInf.character.clan,
+          );
+
+          if (clanStat === undefined) {
+            clanStat = {
+              title: charInf.character.clan,
+              value,
+              color,
+            } as IStatsPie;
+
+            newStatByVampClan.push(clanStat);
+          } else {
+            clanStat.value += value;
+
+            newStatByVampClan = newStatByVampClan.map(clan =>
+              clan.title === clanStat?.title ? clanStat : clan,
+            );
+          }
+
+          totalStatByVampClan += value;
+        } else if (
+          charInf.character.clan.indexOf('Ghoul') >= 0 ||
+          charInf.character.clan.indexOf('Mortal Retainer') >= 0
+        ) {
+          creatureType = 'Retainer';
+        }
+
+        if (creatureType !== '') {
+          let vampRetStat: IStatsPie | undefined = newStatByVampRetainers.find(
+            sect => sect.title === creatureType,
+          );
+
+          if (vampRetStat === undefined) {
+            vampRetStat = {
+              title: creatureType,
+              value,
+              color,
+            } as IStatsPie;
+
+            newStatByVampRetainers.push(vampRetStat);
+          } else {
+            vampRetStat.value += value;
+
+            newStatByVampRetainers = newStatByVampRetainers.map(creat =>
+              creat.title === vampRetStat?.title ? vampRetStat : creat,
+            );
+          }
+
+          totalStatByVampRetainers += value;
+        }
+
+        colorSetIndex =
+          colorSet.length === colorSetIndex + 1 ? 0 : colorSetIndex + 1;
+      }
+    });
+
+    setStatByMembers({
+      total: totalStatByMembers,
+      pieStats: newStatByMembers,
+    });
+    setStatByCreature({
+      total: totalStatByCreature,
+      pieStats: newStatByCreature,
+    });
+    setStatByVampSect({
+      total: totalStatByVampSect,
+      pieStats: newStatByVampSect,
+    });
+    setStatByVampClan({
+      total: totalStatByVampClan,
+      pieStats: newStatByVampClan,
+    });
+    setStatByVampRetainers({
+      total: totalStatByVampRetainers,
+      pieStats: newStatByVampRetainers,
+    });
+  }, [influenceDetails, influencesStat, selInfluence]);
+
   const handleSortColumn = useCallback(
     (e: MouseEvent<HTMLTableHeaderCellElement>) => {
       const columnId = e.currentTarget.id;
@@ -348,6 +539,10 @@ const InfluencesStat: React.FC = () => {
   );
 
   useEffect(() => {
+    generateStatistics();
+  }, [generateStatistics, influenceDetails, influencesStat.list]);
+
+  useEffect(() => {
     if (tableRowRef.current && tableBodyRef.current) {
       if (
         tableRowRef.current.offsetWidth === tableBodyRef.current.offsetWidth
@@ -364,7 +559,7 @@ const InfluencesStat: React.FC = () => {
   }, [loadInfluencesStat]);
 
   return (
-    <Container isMobile={isMobileVersion}>
+    <Container>
       {isBusy ? (
         <Loading />
       ) : (
@@ -523,6 +718,13 @@ const InfluencesStat: React.FC = () => {
                       influenceDetails.map((infDet, rowIndex) => (
                         <tr
                           key={infDet.character.id}
+                          title={`${infDet.character.name} - ${
+                            infDet.character.creature_type
+                          }${
+                            infDet.character.clan !== ''
+                              ? ` - ${infDet.character.clan}`
+                              : ''
+                          }`}
                           ref={rowIndex === 0 ? tableRowRef : undefined}
                         >
                           <TableColumn mySize="short">
@@ -673,6 +875,78 @@ const InfluencesStat: React.FC = () => {
           )}
         </>
       )}
+      <PieChartContainer>
+        {statByCreature.pieStats?.length > 0 && (
+          <>
+            <h1>{`Criaturas (${statByCreature.total})`}</h1>
+            <PieChart
+              data={statByCreature.pieStats}
+              totalValue={statByCreature.total}
+              label={({ dataEntry }) =>
+                `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
+              }
+              labelStyle={() => ({ fontSize: '5px' })}
+              animate
+            />
+          </>
+        )}
+
+        {statByVampSect.pieStats?.length > 0 && (
+          <>
+            <h1>{`Sectos de Vampiros (${statByVampSect.total})`}</h1>
+            <PieChart
+              data={statByVampSect.pieStats}
+              totalValue={statByVampSect.total}
+              label={({ dataEntry }) =>
+                `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
+              }
+              labelStyle={() => ({ fontSize: '5px' })}
+              animate
+            />
+          </>
+        )}
+
+        {statByVampClan.pieStats?.length > 0 && (
+          <>
+            <h1>{`Clãs de Vampiros (${statByVampClan.total})`}</h1>
+            <PieChart
+              data={statByVampClan.pieStats}
+              totalValue={statByVampClan.total}
+              label={({ dataEntry }) => `${Math.round(dataEntry.percentage)}%`}
+              labelStyle={() => ({ fontSize: '5px' })}
+              animate
+            />
+          </>
+        )}
+
+        {statByVampRetainers.pieStats?.length > 0 && (
+          <>
+            <h1>{`Vampiros x Lacaios (${statByVampRetainers.total})`}</h1>
+            <PieChart
+              data={statByVampRetainers.pieStats}
+              totalValue={statByVampRetainers.total}
+              label={({ dataEntry }) =>
+                `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
+              }
+              labelStyle={() => ({ fontSize: '5px' })}
+              animate
+            />
+          </>
+        )}
+
+        {statByMembers.pieStats?.length > 0 && (
+          <>
+            <h1>{`Membros (${statByMembers.total})`}</h1>
+            <PieChart
+              data={statByMembers.pieStats}
+              totalValue={statByMembers.total}
+              label={({ dataEntry }) => `${Math.round(dataEntry.percentage)}%`}
+              labelStyle={() => ({ fontSize: '5px' })}
+              animate
+            />
+          </>
+        )}
+      </PieChartContainer>
     </Container>
   );
 };

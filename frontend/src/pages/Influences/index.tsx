@@ -214,7 +214,7 @@ const Influences: React.FC = () => {
               </tbody>
             </Table>
           </TableWrapper>
-          {user.storyteller && (
+          {user.storyteller && !isMobileVersion && (
             <StatisticsLink>
               <Link to="/influences/stat" title="Estatísticas das Influências">
                 <FaRegChartBar />
