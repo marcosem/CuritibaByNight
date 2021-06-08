@@ -2,14 +2,12 @@ import 'reflect-metadata';
 import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
-import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import UpdateLocationService from '@modules/locations/services/UpdateLocationService';
 import AppError from '@shared/errors/AppError';
 
 let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
-let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let updateLocation: UpdateLocationService;
 
 describe('UpdateLocation', () => {
@@ -17,19 +15,15 @@ describe('UpdateLocation', () => {
     fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
-    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     updateLocation = new UpdateLocationService(
       fakeLocationsRepository,
       fakeCharactersRepository,
       fakeUsersRepository,
-      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to update a location', async () => {
-    const removeResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
-
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -80,7 +74,6 @@ describe('UpdateLocation', () => {
     });
 
     expect(updatedLocation).toMatchObject(newLocation);
-    expect(removeResult).toHaveBeenCalledWith('LocationList:*');
   });
 
   it('Should be able to remove the owner of a location', async () => {

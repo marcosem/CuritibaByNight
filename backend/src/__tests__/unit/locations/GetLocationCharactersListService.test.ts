@@ -3,7 +3,6 @@ import FakeLocationsCharactersRepository from '@modules/locations/repositories/f
 import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-
 import GetLocationCharactersListService from '@modules/locations/services/GetLocationCharactersListService';
 
 import AppError from '@shared/errors/AppError';

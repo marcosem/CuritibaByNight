@@ -3,7 +3,6 @@ import FakeLocationsCharactersRepository from '@modules/locations/repositories/f
 import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
-import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import RemoveCharacterFromLocationService from '@modules/locations/services/RemoveCharacterFromLocationService';
 import AppError from '@shared/errors/AppError';
 
@@ -11,7 +10,6 @@ let fakeLocationsCharactersRepository: FakeLocationsCharactersRepository;
 let fakeLocationsRepository: FakeLocationsRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeUsersRepository: FakeUsersRepository;
-let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let removeCharacterFromLocation: RemoveCharacterFromLocationService;
 
 describe('RemoveCharacterFromLocation', () => {
@@ -20,18 +18,14 @@ describe('RemoveCharacterFromLocation', () => {
     fakeLocationsRepository = new FakeLocationsRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeUsersRepository = new FakeUsersRepository();
-    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     removeCharacterFromLocation = new RemoveCharacterFromLocationService(
       fakeLocationsCharactersRepository,
       fakeUsersRepository,
-      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to remove a character from a location', async () => {
-    const removeResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
-
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -79,7 +73,6 @@ describe('RemoveCharacterFromLocation', () => {
 
     expect(finalListSize.length).toEqual(initialListSize.length - 1);
     expect(findLocChar).toBeUndefined();
-    expect(removeResult).toHaveBeenCalledWith('LocationList:*');
   });
 
   it('Should not allow invalid user to remove character from a location', async () => {

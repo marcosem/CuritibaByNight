@@ -2,7 +2,6 @@ import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import ILocationsCharactersRepository from '@modules/locations/repositories/ILocationsCharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
-import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -17,8 +16,6 @@ class RemoveCharacterFromLocationService {
     private locationsCharactersRepository: ILocationsCharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
-    @inject('SaveRouteResultProvider')
-    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -48,9 +45,6 @@ class RemoveCharacterFromLocationService {
     if (!locChar) {
       throw new AppError('The character is not aware of this location', 400);
     }
-
-    // Remove all LocationList routes
-    await this.saveRouteResult.remove('LocationList:*');
 
     await this.locationsCharactersRepository.delete(char_id, location_id);
   }

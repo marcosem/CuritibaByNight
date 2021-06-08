@@ -6,7 +6,6 @@ import ILocationsRepository from '@modules/locations/repositories/ILocationsRepo
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
-import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 import { resolve } from 'path';
 
 interface IRequestDTO {
@@ -28,8 +27,6 @@ class AddCharacterToLocationService {
     private charactersRepository: ICharactersRepository,
     @inject('MailProvider')
     private mailProvider: IMailProvider,
-    @inject('SaveRouteResultProvider')
-    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -83,9 +80,6 @@ class AddCharacterToLocationService {
         400,
       );
     }
-
-    // Remove all LocationList routes
-    await this.saveRouteResult.remove('LocationList:*');
 
     const locationCharacter = await this.locationsCharactersRepository.addCharToLocation(
       char_id,

@@ -4,7 +4,6 @@ import Location from '@modules/locations/infra/typeorm/entities/Location';
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
-import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -34,8 +33,6 @@ class UpdateLocationService {
     private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
-    @inject('SaveRouteResultProvider')
-    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -103,9 +100,6 @@ class UpdateLocationService {
     if (clan) location.clan = clan;
     if (creature_type) location.creature_type = creature_type;
     if (sect) location.sect = sect;
-
-    // Remove all LocationList routes
-    await this.saveRouteResult.remove('LocationList:*');
 
     await this.locationsRepository.update(location);
 
