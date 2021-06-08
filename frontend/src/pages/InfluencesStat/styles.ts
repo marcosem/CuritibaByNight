@@ -11,6 +11,10 @@ interface IColumnProps {
   isScrollOn?: boolean;
 }
 
+interface ILegendProps {
+  legendColor: string;
+}
+
 export const Container = styled.div`
   height: calc(100vh - 140px);
 `;
@@ -463,8 +467,8 @@ export const ReturnButton = styled.div`
   }
 `;
 
-export const PieChartContainer = styled.div`
-  width: 500px;
+export const ChartContainer = styled.div`
+  width: 900px;
   display: flex;
   flex-direction: column;
   margin: 15px auto;
@@ -477,9 +481,94 @@ export const PieChartContainer = styled.div`
     border-top: 1px solid #888;
     padding-top: 5px;
   }
+`;
+
+export const PieChartContainer = styled.div`
+  width: 900px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 15px auto;
 
   svg {
-    margin: 15px auto;
-    width: 340px;
+    width: 374px;
+  }
+`;
+
+export const ChartLegendContainer = styled.div`
+  width: 435px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #888;
+  padding: 5px;
+  margin-left: auto;
+  max-height: 374px;
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #555;
+  scrollbar-track-color: #f5f5f5;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #555;
+  }
+
+  h2 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    text-align: left;
+    // margin-left: 10px;
+    padding: 0 0 10px 10px;
+  }
+`;
+
+export const ChartLegend = styled.div<ILegendProps>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transition: background-color 0.2s;
+
+  svg {
+    padding: 0;
+    width: 13px;
+    height: 13px;
+
+    ${props => css`
+      color: ${props.legendColor};
+    `}
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: 400px;
+    color: #fff;
+    margin-left: 8px;
+    padding: 1px 0;
+  }
+
+  &:hover {
+    cursor: pointer;
+    background-color: #555;
   }
 `;

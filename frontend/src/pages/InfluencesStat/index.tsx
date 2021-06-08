@@ -10,7 +10,7 @@ import React, {
 import { PieChart } from 'react-minimal-pie-chart';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiAlertTriangle } from 'react-icons/fi';
-import { FaSortAlphaDown, FaSortAlphaUpAlt } from 'react-icons/fa';
+import { FaSortAlphaDown, FaSortAlphaUpAlt, FaSquare } from 'react-icons/fa';
 import colorSet from './colorSet';
 import api from '../../services/api';
 
@@ -25,7 +25,10 @@ import {
   TableCell,
   GoBackButton,
   ReturnButton,
+  ChartContainer,
   PieChartContainer,
+  ChartLegendContainer,
+  ChartLegend,
 } from './styles';
 
 import Loading from '../../components/Loading';
@@ -93,12 +96,16 @@ interface IStatsPie {
   title: string;
   value: number;
   color: string;
+  light: boolean;
+  selected: boolean;
 }
 
+/*
 interface IStats {
   total: number;
   pieStats: IStatsPie[];
 }
+*/
 
 const InfluencesStat: React.FC = () => {
   const [influencesStat, setInfluencesStats] =
@@ -113,13 +120,19 @@ const InfluencesStat: React.FC = () => {
   });
   const [isScrollOn, setIsScrollOn] = useState<boolean>(false);
   const [isBusy, setBusy] = useState(false);
-  const [statByCreature, setStatByCreature] = useState<IStats>({} as IStats);
-  const [statByVampSect, setStatByVampSect] = useState<IStats>({} as IStats);
-  const [statByVampClan, setStatByVampClan] = useState<IStats>({} as IStats);
-  const [statByMembers, setStatByMembers] = useState<IStats>({} as IStats);
-  const [statByVampRetainers, setStatByVampRetainers] = useState<IStats>(
-    {} as IStats,
+  const [statByCreature, setStatByCreature] = useState<IStatsPie[]>([]);
+  const [totalStatByCreature, setTotalStatByCreature] = useState<number>(0);
+  const [statByVampSect, setStatByVampSect] = useState<IStatsPie[]>([]);
+  const [totalStatByVampSect, setTotalStatByVampSect] = useState<number>(0);
+  const [statByVampClan, setStatByVampClan] = useState<IStatsPie[]>([]);
+  const [totalStatByVampClan, setTotalStatByVampClan] = useState<number>(0);
+  const [statByMembers, setStatByMembers] = useState<IStatsPie[]>([]);
+  const [totalStatByMembers, setTotalStatByMembers] = useState<number>(0);
+  const [statByVampRetainers, setStatByVampRetainers] = useState<IStatsPie[]>(
+    [],
   );
+  const [totalStatByVampRetainers, setTotalStatByVampRetainers] =
+    useState<number>(0);
   const { addToast } = useToast();
   const { signOut } = useAuth();
   const { setCurrentPage } = useHeader();
@@ -363,6 +376,21 @@ const InfluencesStat: React.FC = () => {
     [],
   );
 
+  const sortStatList = useCallback((list: IStatsPie[]): IStatsPie[] => {
+    const newList = list;
+    newList.sort((statA: IStatsPie, statB: IStatsPie) => {
+      const titleA = statA.title;
+      const titleB = statB.title;
+
+      if (titleA < titleB) return -1;
+      if (titleA > titleB) return 1;
+
+      return 0;
+    });
+
+    return newList;
+  }, []);
+
   const generateStatistics = useCallback(() => {
     if (influencesStat?.list === undefined) {
       return;
@@ -372,20 +400,20 @@ const InfluencesStat: React.FC = () => {
       selInfluence === '' ? influencesStat.list : influenceDetails;
 
     let newStatByCreature: IStatsPie[] = [];
-    let totalStatByCreature = 0;
+    let newTotalStatByCreature = 0;
     let newStatByVampSect: IStatsPie[] = [];
-    let totalStatByVampSect = 0;
+    let newTotalStatByVampSect = 0;
     let newStatByVampClan: IStatsPie[] = [];
-    let totalStatByVampClan = 0;
+    let newTotalStatByVampClan = 0;
     const newStatByMembers: IStatsPie[] = [];
-    let totalStatByMembers = 0;
+    let newTotalStatByMembers = 0;
     let newStatByVampRetainers: IStatsPie[] = [];
-    let totalStatByVampRetainers = 0;
+    let newTotalStatByVampRetainers = 0;
 
-    let colorSetIndex = 0;
+    // let colorSetIndex = 0;
     sourceList.forEach((charInf: ICharInfluenceDTO) => {
       if (charInf.influences) {
-        const color = colorSet[colorSetIndex];
+        // const myColorSet = colorSet[colorSetIndex];
 
         let value = 0;
         charInf.influences.forEach(inf => {
@@ -395,9 +423,11 @@ const InfluencesStat: React.FC = () => {
         newStatByMembers.push({
           title: charInf.character.name,
           value,
-          color,
+          color: colorSet[newStatByMembers.length % colorSet.length].color,
+          light: colorSet[newStatByMembers.length % colorSet.length].light,
+          selected: false,
         } as IStatsPie);
-        totalStatByMembers += value;
+        newTotalStatByMembers += value;
 
         let creatureStat: IStatsPie | undefined = newStatByCreature.find(
           creat => creat.title === charInf.character.creature_type,
@@ -407,7 +437,9 @@ const InfluencesStat: React.FC = () => {
           creatureStat = {
             title: charInf.character.creature_type,
             value,
-            color,
+            color: colorSet[newStatByCreature.length % colorSet.length].color,
+            light: colorSet[newStatByCreature.length % colorSet.length].light,
+            selected: false,
           } as IStatsPie;
 
           newStatByCreature.push(creatureStat);
@@ -418,7 +450,7 @@ const InfluencesStat: React.FC = () => {
             creat.title === creatureStat?.title ? creatureStat : creat,
           );
         }
-        totalStatByCreature += value;
+        newTotalStatByCreature += value;
 
         let creatureType = '';
         if (charInf.character.creature_type === 'Vampire') {
@@ -432,7 +464,9 @@ const InfluencesStat: React.FC = () => {
             sectStat = {
               title: charInf.character.sect,
               value,
-              color,
+              color: colorSet[newStatByVampSect.length % colorSet.length].color,
+              light: colorSet[newStatByVampSect.length % colorSet.length].light,
+              selected: false,
             } as IStatsPie;
 
             newStatByVampSect.push(sectStat);
@@ -444,7 +478,7 @@ const InfluencesStat: React.FC = () => {
             );
           }
 
-          totalStatByVampSect += value;
+          newTotalStatByVampSect += value;
 
           let clanStat: IStatsPie | undefined = newStatByVampClan.find(
             sect => sect.title === charInf.character.clan,
@@ -454,7 +488,9 @@ const InfluencesStat: React.FC = () => {
             clanStat = {
               title: charInf.character.clan,
               value,
-              color,
+              color: colorSet[newStatByVampClan.length % colorSet.length].color,
+              light: colorSet[newStatByVampClan.length % colorSet.length].light,
+              selected: false,
             } as IStatsPie;
 
             newStatByVampClan.push(clanStat);
@@ -466,7 +502,7 @@ const InfluencesStat: React.FC = () => {
             );
           }
 
-          totalStatByVampClan += value;
+          newTotalStatByVampClan += value;
         } else if (
           charInf.character.clan.indexOf('Ghoul') >= 0 ||
           charInf.character.clan.indexOf('Mortal Retainer') >= 0
@@ -483,7 +519,11 @@ const InfluencesStat: React.FC = () => {
             vampRetStat = {
               title: creatureType,
               value,
-              color,
+              color:
+                colorSet[newStatByVampRetainers.length % colorSet.length].color,
+              light:
+                colorSet[newStatByVampRetainers.length % colorSet.length].light,
+              selected: false,
             } as IStatsPie;
 
             newStatByVampRetainers.push(vampRetStat);
@@ -495,35 +535,26 @@ const InfluencesStat: React.FC = () => {
             );
           }
 
-          totalStatByVampRetainers += value;
+          newTotalStatByVampRetainers += value;
         }
-
-        colorSetIndex =
-          colorSet.length === colorSetIndex + 1 ? 0 : colorSetIndex + 1;
       }
     });
 
-    setStatByMembers({
-      total: totalStatByMembers,
-      pieStats: newStatByMembers,
-    });
-    setStatByCreature({
-      total: totalStatByCreature,
-      pieStats: newStatByCreature,
-    });
-    setStatByVampSect({
-      total: totalStatByVampSect,
-      pieStats: newStatByVampSect,
-    });
-    setStatByVampClan({
-      total: totalStatByVampClan,
-      pieStats: newStatByVampClan,
-    });
-    setStatByVampRetainers({
-      total: totalStatByVampRetainers,
-      pieStats: newStatByVampRetainers,
-    });
-  }, [influenceDetails, influencesStat, selInfluence]);
+    setTotalStatByMembers(newTotalStatByMembers);
+    setStatByMembers(sortStatList(newStatByMembers));
+
+    setTotalStatByCreature(newTotalStatByCreature);
+    setStatByCreature(sortStatList(newStatByCreature));
+
+    setTotalStatByVampSect(newTotalStatByVampSect);
+    setStatByVampSect(sortStatList(newStatByVampSect));
+
+    setTotalStatByVampClan(newTotalStatByVampClan);
+    setStatByVampClan(sortStatList(newStatByVampClan));
+
+    setTotalStatByVampRetainers(newTotalStatByVampRetainers);
+    setStatByVampRetainers(sortStatList(newStatByVampRetainers));
+  }, [influenceDetails, influencesStat, selInfluence, sortStatList]);
 
   const handleSortColumn = useCallback(
     (e: MouseEvent<HTMLTableHeaderCellElement>) => {
@@ -578,6 +609,68 @@ const InfluencesStat: React.FC = () => {
       setSelInfluence(newInfluence);
     },
     [influencesStat.list, sortList],
+  );
+
+  const handleStatSelection = useCallback(
+    (list: string, index: number) => {
+      let stats: IStatsPie[];
+
+      switch (list) {
+        case 'byCreature':
+          stats = statByCreature.map((stat, statIndex) => {
+            const newStat = stat;
+            newStat.selected = index === statIndex ? !newStat.selected : false;
+            return newStat;
+          });
+
+          setStatByCreature(stats);
+          break;
+        case 'byVampSect':
+          stats = statByVampSect.map((stat, statIndex) => {
+            const newStat = stat;
+            newStat.selected = index === statIndex ? !newStat.selected : false;
+            return newStat;
+          });
+
+          setStatByVampSect(stats);
+          break;
+        case 'byVampClan':
+          stats = statByVampClan.map((stat, statIndex) => {
+            const newStat = stat;
+            newStat.selected = index === statIndex ? !newStat.selected : false;
+            return newStat;
+          });
+
+          setStatByVampClan(stats);
+          break;
+        case 'byVampRetainers':
+          stats = statByVampRetainers.map((stat, statIndex) => {
+            const newStat = stat;
+            newStat.selected = index === statIndex ? !newStat.selected : false;
+            return newStat;
+          });
+
+          setStatByVampRetainers(stats);
+          break;
+        case 'byMembers':
+          stats = statByMembers.map((stat, statIndex) => {
+            const newStat = stat;
+            newStat.selected = index === statIndex ? !newStat.selected : false;
+            return newStat;
+          });
+
+          setStatByMembers(stats);
+          break;
+        default:
+      }
+    },
+    [
+      statByCreature,
+      statByMembers,
+      statByVampClan,
+      statByVampRetainers,
+      statByVampSect,
+    ],
   );
 
   useEffect(() => {
@@ -960,111 +1053,223 @@ const InfluencesStat: React.FC = () => {
           )}
         </>
       )}
-      <PieChartContainer>
-        {statByCreature.pieStats?.length > 0 && (
+      <ChartContainer>
+        {statByCreature.length > 0 && (
           <>
             <h1>
               {`${
                 selInfluence === ''
                   ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
-              }Criaturas (${statByCreature.total})`}
+              }Criaturas (${totalStatByCreature})`}
             </h1>
-            <PieChart
-              data={statByCreature.pieStats}
-              totalValue={statByCreature.total}
-              label={({ dataEntry }) =>
-                `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
-              }
-              labelStyle={() => ({ fontSize: '5px' })}
-              animate
-              // segmentsShift={0.5} space between segments
-              // lineWidth={20} hole in the middle
-              // radius={50} size of the circle - 50 = 100%
-            />
+            <PieChartContainer>
+              <PieChart
+                data={statByCreature}
+                totalValue={totalStatByCreature}
+                label={({ dataEntry }) =>
+                  `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
+                }
+                labelStyle={index => ({
+                  fontSize: '5px',
+                  fill: `${statByCreature[index].light ? '#fff' : '#000'}`,
+                })}
+                segmentsShift={index =>
+                  statByCreature[index].selected ? 5 : 0
+                }
+                animate
+                radius={45}
+              />
+              <ChartLegendContainer>
+                <h2>Legenda</h2>
+                {statByCreature.map((stat, index) => (
+                  <ChartLegend
+                    key={stat.title}
+                    legendColor={stat.color}
+                    onClick={() => handleStatSelection('byCreature', index)}
+                  >
+                    <FaSquare />
+                    <span>{`${stat.title} (${stat.value})`}</span>
+                  </ChartLegend>
+                ))}
+              </ChartLegendContainer>
+            </PieChartContainer>
           </>
         )}
 
-        {statByVampSect.pieStats?.length > 0 && (
+        {statByVampSect.length > 0 && (
           <>
             <h1>
               {`${
                 selInfluence === ''
                   ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
-              }Sectos de Vampiros (${statByVampSect.total})`}
+              }Sectos de Vampiros (${totalStatByVampSect})`}
             </h1>
-            <PieChart
-              data={statByVampSect.pieStats}
-              totalValue={statByVampSect.total}
-              label={({ dataEntry }) =>
-                `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
-              }
-              labelStyle={() => ({ fontSize: '5px' })}
-              animate
-            />
+            <PieChartContainer>
+              <PieChart
+                data={statByVampSect}
+                totalValue={totalStatByVampSect}
+                label={({ dataEntry }) =>
+                  `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
+                }
+                labelStyle={index => ({
+                  fontSize: '5px',
+                  fill: `${statByVampSect[index].light ? '#fff' : '#000'}`,
+                })}
+                segmentsShift={index =>
+                  statByVampSect[index].selected ? 5 : 0
+                }
+                animate
+                radius={45}
+              />
+
+              <ChartLegendContainer>
+                <h2>Legenda</h2>
+                {statByVampSect.map((stat, index) => (
+                  <ChartLegend
+                    key={stat.title}
+                    legendColor={stat.color}
+                    onClick={() => handleStatSelection('byVampSect', index)}
+                  >
+                    <FaSquare />
+                    <span>{`${stat.title} (${stat.value})`}</span>
+                  </ChartLegend>
+                ))}
+              </ChartLegendContainer>
+            </PieChartContainer>
           </>
         )}
 
-        {statByVampClan.pieStats?.length > 0 && (
+        {statByVampClan.length > 0 && (
           <>
             <h1>
               {`${
                 selInfluence === ''
                   ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
-              }Clãs de Vampiros (${statByVampClan.total})`}
+              }Clãs de Vampiros (${totalStatByVampClan})`}
             </h1>
-            <PieChart
-              data={statByVampClan.pieStats}
-              totalValue={statByVampClan.total}
-              label={({ dataEntry }) => `${Math.round(dataEntry.percentage)}%`}
-              labelStyle={() => ({ fontSize: '5px' })}
-              animate
-            />
+            <PieChartContainer>
+              <PieChart
+                data={statByVampClan}
+                totalValue={totalStatByVampClan}
+                label={({ dataEntry }) =>
+                  `${Math.round(dataEntry.percentage)}%`
+                }
+                labelStyle={index => ({
+                  fontSize: '5px',
+                  fill: `${statByVampClan[index].light ? '#fff' : '#000'}`,
+                })}
+                segmentsShift={index =>
+                  statByVampClan[index].selected ? 5 : 0
+                }
+                animate
+                radius={45}
+              />
+              <ChartLegendContainer>
+                <h2>Legenda</h2>
+                {statByVampClan.map((stat, index) => (
+                  <ChartLegend
+                    key={stat.title}
+                    legendColor={stat.color}
+                    onClick={() => handleStatSelection('byVampClan', index)}
+                  >
+                    <FaSquare />
+                    <span>{`${stat.title} (${stat.value})`}</span>
+                  </ChartLegend>
+                ))}
+              </ChartLegendContainer>
+            </PieChartContainer>
           </>
         )}
 
-        {statByVampRetainers.pieStats?.length > 0 && (
+        {statByVampRetainers.length > 0 && (
           <>
             <h1>
               {`${
                 selInfluence === ''
                   ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
-              }Vampiros x Lacaios (${statByVampRetainers.total})`}
+              }Vampiros x Lacaios (${totalStatByVampRetainers})`}
             </h1>
-            <PieChart
-              data={statByVampRetainers.pieStats}
-              totalValue={statByVampRetainers.total}
-              label={({ dataEntry }) =>
-                `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
-              }
-              labelStyle={() => ({ fontSize: '5px' })}
-              animate
-            />
+            <PieChartContainer>
+              <PieChart
+                data={statByVampRetainers}
+                totalValue={totalStatByVampRetainers}
+                label={({ dataEntry }) =>
+                  `${dataEntry.title} (${Math.round(dataEntry.percentage)}%)`
+                }
+                labelStyle={index => ({
+                  fontSize: '5px',
+                  fill: `${statByVampRetainers[index].light ? '#fff' : '#000'}`,
+                })}
+                segmentsShift={index =>
+                  statByVampRetainers[index].selected ? 5 : 0
+                }
+                animate
+                radius={45}
+              />
+              <ChartLegendContainer>
+                <h2>Legenda</h2>
+                {statByVampRetainers.map((stat, index) => (
+                  <ChartLegend
+                    key={stat.title}
+                    legendColor={stat.color}
+                    onClick={() =>
+                      handleStatSelection('byVampRetainers', index)
+                    }
+                  >
+                    <FaSquare />
+                    <span>{`${stat.title} (${stat.value})`}</span>
+                  </ChartLegend>
+                ))}
+              </ChartLegendContainer>
+            </PieChartContainer>
           </>
         )}
 
-        {statByMembers.pieStats?.length > 0 && (
+        {statByMembers.length > 0 && (
           <>
             <h1>
               {`${
                 selInfluence === ''
                   ? 'Influências/'
                   : `Influências em ${getInfluencePortuguese(selInfluence)}/`
-              }Membros (${statByMembers.total})`}
+              }Membros (${totalStatByMembers})`}
             </h1>
-            <PieChart
-              data={statByMembers.pieStats}
-              totalValue={statByMembers.total}
-              label={({ dataEntry }) => `${Math.round(dataEntry.percentage)}%`}
-              labelStyle={() => ({ fontSize: '5px' })}
-              animate
-            />
+            <PieChartContainer>
+              <PieChart
+                data={statByMembers}
+                totalValue={totalStatByMembers}
+                label={({ dataEntry }) =>
+                  `${Math.round(dataEntry.percentage)}%`
+                }
+                labelStyle={index => ({
+                  fontSize: '5px',
+                  fill: `${statByMembers[index].light ? '#fff' : '#000'}`,
+                })}
+                segmentsShift={index => (statByMembers[index].selected ? 5 : 0)}
+                animate
+                radius={45}
+              />
+              <ChartLegendContainer>
+                <h2>Legenda</h2>
+                {statByMembers.map((stat, index) => (
+                  <ChartLegend
+                    key={stat.title}
+                    legendColor={stat.color}
+                    onClick={() => handleStatSelection('byMembers', index)}
+                  >
+                    <FaSquare />
+                    <span>{`${stat.title} (${stat.value})`}</span>
+                  </ChartLegend>
+                ))}
+              </ChartLegendContainer>
+            </PieChartContainer>
           </>
         )}
-      </PieChartContainer>
+      </ChartContainer>
     </Container>
   );
 };
