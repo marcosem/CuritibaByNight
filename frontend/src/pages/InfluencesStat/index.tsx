@@ -719,6 +719,7 @@ const InfluencesStat: React.FC = () => {
                       <TableColumnHeader
                         mySize="short"
                         id="level"
+                        title="Nível da Influência"
                         onClick={handleSortColumn}
                       >
                         <TableCellHeader
@@ -762,6 +763,7 @@ const InfluencesStat: React.FC = () => {
                       <TableColumnHeader
                         mySize="intermediate"
                         id="creature_type"
+                        title="Tipo de Criatura"
                         onClick={handleSortColumn}
                       >
                         <TableCellHeader
@@ -784,6 +786,7 @@ const InfluencesStat: React.FC = () => {
                       <TableColumnHeader
                         mySize="intermediate"
                         id="defense_passive"
+                        title="Defesa Passiva (Nível Temporário + Moralidade + Habilidade)"
                         onClick={handleSortColumn}
                       >
                         <TableCellHeader
@@ -806,6 +809,7 @@ const InfluencesStat: React.FC = () => {
                       <TableColumnHeader
                         mySize="intermediate"
                         id="defense_active"
+                        title="Defesa Passiva ([Nível Temporário x2] + Moralidade + Habilidade)"
                         onClick={handleSortColumn}
                       >
                         <TableCellHeader
@@ -828,6 +832,7 @@ const InfluencesStat: React.FC = () => {
                       <TableColumnHeader
                         mySize="intermediate"
                         id="morality"
+                        title="O Personagem segue Humanidade?"
                         onClick={handleSortColumn}
                       >
                         <TableCellHeader
@@ -850,6 +855,7 @@ const InfluencesStat: React.FC = () => {
                       <TableColumnHeader
                         mySize="short"
                         id="retainer"
+                        title="O Personagem é Lacaio?"
                         onClick={handleSortColumn}
                       >
                         <TableCellHeader
@@ -978,10 +984,15 @@ const InfluencesStat: React.FC = () => {
                   <thead>
                     <tr>
                       <TableColumnHeader>Influência</TableColumnHeader>
-                      <TableColumnHeader mySize="short">
+                      <TableColumnHeader
+                        mySize="short"
+                        title="Capacidade Total da Influência"
+                      >
                         Capacidade
                       </TableColumnHeader>
-                      <TableColumnHeader>Líderes</TableColumnHeader>
+                      <TableColumnHeader title="Líderes desta Influência">
+                        Líderes
+                      </TableColumnHeader>
                       <TableColumnHeader mySize="short">
                         Nível
                       </TableColumnHeader>
