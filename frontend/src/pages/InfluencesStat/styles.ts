@@ -491,8 +491,9 @@ export const PieChartContainer = styled.div`
   justify-content: center;
   margin: 15px auto;
 
-  svg {
+  > svg {
     width: 374px;
+    margin: auto;
   }
 `;
 
