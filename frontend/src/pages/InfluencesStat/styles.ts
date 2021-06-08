@@ -13,6 +13,7 @@ interface IColumnProps {
 
 interface ILegendProps {
   legendColor: string;
+  selected: boolean;
 }
 
 export const Container = styled.div`
@@ -566,6 +567,12 @@ export const ChartLegend = styled.div<ILegendProps>`
     margin-left: 8px;
     padding: 1px 0;
   }
+
+  ${props =>
+    props.selected &&
+    css`
+      background-color: #444;
+    `}
 
   &:hover {
     cursor: pointer;

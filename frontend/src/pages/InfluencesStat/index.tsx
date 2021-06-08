@@ -1079,6 +1079,7 @@ const InfluencesStat: React.FC = () => {
                 }
                 animate
                 radius={45}
+                onClick={(_, index) => handleStatSelection('byCreature', index)}
               />
               <ChartLegendContainer>
                 <h2>Legenda</h2>
@@ -1086,6 +1087,7 @@ const InfluencesStat: React.FC = () => {
                   <ChartLegend
                     key={stat.title}
                     legendColor={stat.color}
+                    selected={stat.selected}
                     onClick={() => handleStatSelection('byCreature', index)}
                   >
                     <FaSquare />
@@ -1122,6 +1124,7 @@ const InfluencesStat: React.FC = () => {
                 }
                 animate
                 radius={45}
+                onClick={(_, index) => handleStatSelection('byVampSect', index)}
               />
 
               <ChartLegendContainer>
@@ -1130,6 +1133,7 @@ const InfluencesStat: React.FC = () => {
                   <ChartLegend
                     key={stat.title}
                     legendColor={stat.color}
+                    selected={stat.selected}
                     onClick={() => handleStatSelection('byVampSect', index)}
                   >
                     <FaSquare />
@@ -1166,6 +1170,7 @@ const InfluencesStat: React.FC = () => {
                 }
                 animate
                 radius={45}
+                onClick={(_, index) => handleStatSelection('byVampClan', index)}
               />
               <ChartLegendContainer>
                 <h2>Legenda</h2>
@@ -1173,6 +1178,7 @@ const InfluencesStat: React.FC = () => {
                   <ChartLegend
                     key={stat.title}
                     legendColor={stat.color}
+                    selected={stat.selected}
                     onClick={() => handleStatSelection('byVampClan', index)}
                   >
                     <FaSquare />
@@ -1209,6 +1215,9 @@ const InfluencesStat: React.FC = () => {
                 }
                 animate
                 radius={45}
+                onClick={(_, index) =>
+                  handleStatSelection('byVampRetainers', index)
+                }
               />
               <ChartLegendContainer>
                 <h2>Legenda</h2>
@@ -1216,6 +1225,7 @@ const InfluencesStat: React.FC = () => {
                   <ChartLegend
                     key={stat.title}
                     legendColor={stat.color}
+                    selected={stat.selected}
                     onClick={() =>
                       handleStatSelection('byVampRetainers', index)
                     }
@@ -1252,6 +1262,7 @@ const InfluencesStat: React.FC = () => {
                 segmentsShift={index => (statByMembers[index].selected ? 5 : 0)}
                 animate
                 radius={45}
+                onClick={(_, index) => handleStatSelection('byMembers', index)}
               />
               <ChartLegendContainer>
                 <h2>Legenda</h2>
@@ -1259,6 +1270,7 @@ const InfluencesStat: React.FC = () => {
                   <ChartLegend
                     key={stat.title}
                     legendColor={stat.color}
+                    selected={stat.selected}
                     onClick={() => handleStatSelection('byMembers', index)}
                   >
                     <FaSquare />
