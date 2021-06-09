@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { FiPlus, FiUpload } from 'react-icons/fi';
+import { FiPlus, FiUpload, FiUsers } from 'react-icons/fi';
 
 import api from '../../services/api';
 import Loading from '../../components/Loading';
@@ -188,6 +188,15 @@ const Characters: React.FC = () => {
 
           {!isMobileVersion && (
             <Functions>
+              <FunctionLink>
+                <Link
+                  to={`/updatemultichars/${filter}`}
+                  title="Atualizar Multiplos Personagens"
+                >
+                  <FiUsers />
+                </Link>
+              </FunctionLink>
+
               <FunctionLink>
                 <Link to={`/updatechar/${filter}`} title="Atualizar Personagem">
                   <FiUpload />

@@ -15,6 +15,7 @@ import Territories from '../pages/Territories';
 import CreatePlayer from '../pages/CreatePlayer';
 import UpdatePlayer from '../pages/UpdatePlayer';
 import CharacterUpdate from '../pages/CharacterUpdate';
+import CharacterUpdateMulti from '../pages/CharacterUpdateMulti';
 import AddCharacter from '../pages/AddCharacter';
 import AddLocation from '../pages/AddLocation';
 import LocationUpdate from '../pages/LocationUpdate';
@@ -68,6 +69,12 @@ const Routes: React.FC = () => (
     <Route
       path="/updatechar/:filter"
       component={CharacterUpdate}
+      isPrivate
+      isStoryteller
+    />
+    <Route
+      path="/updatemultichars/:filter"
+      component={CharacterUpdateMulti}
       isPrivate
       isStoryteller
     />
