@@ -114,7 +114,7 @@ const CharacterUpdateMulti: React.FC = () => {
             const newCharFile: ICharacterFile = {
               character: {
                 id: `Invalid[${i}]`,
-                name: 'Arquivo Inválido',
+                name: 'Arquivo Inválida',
               } as ICharacter,
               filename: myFilename,
             };
@@ -167,13 +167,13 @@ const CharacterUpdateMulti: React.FC = () => {
             type: 'success',
             title: 'Personagens Encontrados',
             description:
-              'Todos os arquivos encontraram seus personagens correspondentes!',
+              'Todos as fichas encontraram seus personagens correspondentes!',
           });
         } else if (numCharsFound > 0) {
           addToast({
             type: 'error',
             title: 'Alguns Personagens não Encontrados',
-            description: `Você selecionou ${files.length}, mas somente ${numCharsFound} encontraram correspondência!`,
+            description: `Você selecionou ${files.length} fichas, mas somente ${numCharsFound} encontraram correspondência!`,
           });
         } else {
           addToast({
@@ -199,7 +199,9 @@ const CharacterUpdateMulti: React.FC = () => {
     [updateFilesList],
   );
 
-  const handleConfirm = useCallback(() => {}, []);
+  const handleConfirm = useCallback(() => {
+    // Todo
+  }, []);
 
   useEffect(() => {
     if (tableRowRef.current && tableBodyRef.current) {
@@ -277,7 +279,7 @@ const CharacterUpdateMulti: React.FC = () => {
                 <tr>
                   <th>#</th>
                   <th>Personagem</th>
-                  <th>Arquivo</th>
+                  <th>Ficha</th>
                   <th title="Remover Correspondência?">Remover?</th>
                 </tr>
               </thead>
@@ -294,7 +296,7 @@ const CharacterUpdateMulti: React.FC = () => {
                           <TableCell
                             centered
                             invalid={
-                              selChar.character.name === 'Arquivo Inválido' ||
+                              selChar.character.name === 'Ficha Inválida' ||
                               selChar.character.name === 'Não Encontrado'
                             }
                           >
@@ -304,7 +306,7 @@ const CharacterUpdateMulti: React.FC = () => {
                         <td>
                           <TableCell
                             invalid={
-                              selChar.character.name === 'Arquivo Inválido' ||
+                              selChar.character.name === 'Ficha Inválida' ||
                               selChar.character.name === 'Não Encontrado'
                             }
                           >
@@ -314,7 +316,7 @@ const CharacterUpdateMulti: React.FC = () => {
                         <td>
                           <TableCell
                             invalid={
-                              selChar.character.name === 'Arquivo Inválido' ||
+                              selChar.character.name === 'Ficha Inválida' ||
                               selChar.character.name === 'Não Encontrado'
                             }
                           >
@@ -322,7 +324,7 @@ const CharacterUpdateMulti: React.FC = () => {
                           </TableCell>
                         </td>
                         <td>
-                          {selChar.character.name !== 'Arquivo Inválido' &&
+                          {selChar.character.name !== 'Ficha Inválida' &&
                             selChar.character.name !== 'Não Encontrado' && (
                               <RemoveButton
                                 id={selChar.character.id}
@@ -345,14 +347,10 @@ const CharacterUpdateMulti: React.FC = () => {
                         <strong>0</strong>
                       </TableCell>
                     </td>
+
                     <td>
                       <TableCell centered invalid>
-                        <strong>Nenhum Arquivo Selecionado</strong>
-                      </TableCell>
-                    </td>
-                    <td>
-                      <TableCell centered invalid>
-                        <strong>Nenhum Arquivo Selecionado</strong>
+                        <strong>Nenhuma Ficha Selecionada</strong>
                       </TableCell>
                     </td>
                     <td />
@@ -367,7 +365,7 @@ const CharacterUpdateMulti: React.FC = () => {
               <Button
                 type="submit"
                 // loading={uploading}
-                loadingMessage="Enviando Arquivo..."
+                loadingMessage="Enviando Arquivos..."
               >
                 Confirmar Alterações
               </Button>
