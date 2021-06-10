@@ -10,6 +10,30 @@ const rotate = keyframes`
   }
 `;
 
+const openDialog = keyframes`
+  from {
+    transform: scale(0.2);
+    opacity: 0.2;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
+const closeDialog = keyframes`
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(0.2);
+    opacity: 0.2;
+  }
+`;
+
 interface ITableType {
   empty?: boolean;
   isScrollOn?: boolean;
@@ -17,6 +41,14 @@ interface ITableType {
 
 interface ITableCell {
   centered?: boolean;
+  invalid?: boolean;
+}
+
+interface IModalProps {
+  openClose: boolean;
+}
+
+interface IModalLabelProps {
   invalid?: boolean;
 }
 
@@ -141,7 +173,7 @@ export const Table = styled.table<ITableType>`
   margin: 0 0 0 auto;
 
   td {
-    padding: 8px;
+    padding: 4px;
     color: #000;
 
     border-left: 1px solid #ddd;
@@ -221,6 +253,7 @@ export const Table = styled.table<ITableType>`
     display: table;
     width: 100%;
     table-layout: fixed;
+    height: 32px;
 
     &:nth-child(even) {
       td {
@@ -333,6 +366,12 @@ export const TableCell = styled.div<ITableCell>`
       : css`
           justify-content: left;
         `}
+
+  svg {
+    color: #049c10;
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 export const ButtonBox = styled.div`
@@ -370,5 +409,109 @@ export const RemoveButton = styled.button`
       css`
         animation: ${rotate} 2s linear infinite;
       `}
+  }
+`;
+
+export const ModalOverlay = styled.div`
+  background: transparent;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+`;
+
+export const ModalContainer = styled.div<IModalProps>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+  max-height: 400px;
+  max-width: 400px;
+  border-radius: 5px;
+  position: relative;
+
+  background: #eee;
+  box-shadow: 4px 4px 64px rgba(0, 0, 0, 0.5);
+
+  ${props =>
+    props.openClose
+      ? css`
+          animation: ${openDialog} 0.2s ease-in-out 1;
+        `
+      : css`
+          animation: ${closeDialog} 0.2s ease-in-out 1;
+        `}
+`;
+
+export const CloseModalButton = styled.button`
+  position: absolute;
+  background: transparent;
+  right: 0.3rem;
+  top: 0.3rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 0;
+  font-size: 0px;
+  cursor: pointer;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  svg {
+    color: #000;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &:hover {
+    background-color: #bbb;
+  }
+`;
+
+export const ModalLabelContainer = styled.div<IModalLabelProps>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 390px;
+
+  height: 60px;
+  margin: 10px;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  strong,
+  span {
+    max-width: 390px;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    font-size: 14px;
+
+    ${props =>
+      props.invalid
+        ? css`
+            color: #560209 !important;
+          `
+        : css`
+            color: #e38627 !important;
+          `}
   }
 `;

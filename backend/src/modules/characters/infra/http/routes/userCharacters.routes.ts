@@ -108,7 +108,7 @@ userCharactersRouter.post(
   userCharactersController.index,
 );
 
-// Show user character retainers XP
+// Update user character retainers XP
 userCharactersRouter.patch(
   '/updateretainers',
   ensureAuthenticated,
