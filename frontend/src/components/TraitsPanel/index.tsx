@@ -1446,13 +1446,17 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             }
 
             newInfDef.total_def_passive =
-              newInfDef.influence_level_temp +
-              newInfDef.ability_level +
-              newInfDef.morality_level;
+              myChar.situation === 'active'
+                ? newInfDef.influence_level_temp +
+                  newInfDef.ability_level +
+                  newInfDef.morality_level
+                : newInfDef.influence_level_temp;
             newInfDef.total_def_active =
-              newInfDef.influence_level_temp * 2 +
-              newInfDef.ability_level +
-              newInfDef.morality_level;
+              myChar.situation === 'active'
+                ? newInfDef.influence_level_temp * 2 +
+                  newInfDef.ability_level +
+                  newInfDef.morality_level
+                : newInfDef.influence_level_temp;
 
             return newInfDef;
           },
@@ -1477,6 +1481,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
     }
   }, [
     myChar.creature_type,
+    myChar.situation,
     traitsList.abilities,
     traitsList.backgrounds,
     traitsList.influences,

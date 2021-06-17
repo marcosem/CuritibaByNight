@@ -216,8 +216,14 @@ class GetCharactersInfluencesService {
               level_temp: levelTemp,
               ability,
               ability_level: abilityLevel,
-              defense_passive: levelTemp + abilityLevel + moralityLevel,
-              defense_active: levelTemp * 2 + abilityLevel + moralityLevel,
+              defense_passive:
+                char.situation === 'active'
+                  ? levelTemp + abilityLevel + moralityLevel
+                  : levelTemp,
+              defense_active:
+                char.situation === 'active'
+                  ? levelTemp * 2 + abilityLevel + moralityLevel
+                  : levelTemp,
             };
 
             let infCap = infCapList.find(infC => infC.name === newInfChar.name);
