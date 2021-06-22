@@ -103,7 +103,9 @@ class FakeCharactersRepository implements ICharactersRepository {
     situation = 'active',
   ): Promise<Character[]> {
     const charList: Character[] = this.chars.filter(
-      char => char.regnant === character_id && char.situation === situation,
+      char =>
+        char.regnant === character_id &&
+        (situation === 'all' || char.situation === situation),
     );
 
     return charList;

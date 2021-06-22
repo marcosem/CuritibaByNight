@@ -93,7 +93,10 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
     try {
       await api
-        .post('/character/retainerslist', { character_id: myChar.id })
+        .post('/character/retainerslist', {
+          character_id: myChar.id,
+          situation: myChar.situation === 'active' ? myChar.situation : 'all',
+        })
         .then(response => {
           const res: ICharacter[] = response.data;
 
