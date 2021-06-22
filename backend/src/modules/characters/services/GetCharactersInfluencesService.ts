@@ -64,6 +64,17 @@ class GetCharactersInfluencesService {
           return;
         }
 
+        // Inactive Retainer should not count
+        if (
+          char.npc &&
+          char.creature_type === 'Mortal' &&
+          char.situation !== 'active' &&
+          (char.clan.indexOf('Ghoul') >= 0 ||
+            char.clan.indexOf('Retainer') >= 0)
+        ) {
+          return;
+        }
+
         // Initialize Character
         const newCharInfluence: ICharInfluenceDTO = {
           character: {
