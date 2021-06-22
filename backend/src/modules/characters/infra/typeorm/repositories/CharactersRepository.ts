@@ -123,8 +123,6 @@ class CharactersRepository implements ICharactersRepository {
     character_id: string,
     situation = 'active',
   ): Promise<Character[]> {
-    console.log(situation);
-
     const where =
       situation === 'all'
         ? {
@@ -134,8 +132,6 @@ class CharactersRepository implements ICharactersRepository {
             regnant: character_id,
             situation,
           };
-
-    console.log(where);
 
     const charList = await this.ormRepository.find({
       where,
