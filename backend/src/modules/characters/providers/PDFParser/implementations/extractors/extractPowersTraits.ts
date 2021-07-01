@@ -19,6 +19,7 @@ export default function extractPowersTraits(
           'Baali',
           'Brujah',
           'Cappadocian',
+          'Daughters of Cacophony',
           'Gargoyle Powers',
           'Giovanni',
           'Lasombra',

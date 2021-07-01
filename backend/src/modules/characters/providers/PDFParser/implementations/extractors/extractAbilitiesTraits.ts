@@ -60,6 +60,7 @@ export default function extractAbilitiesTraits(
               'Baali',
               'Brujah',
               'Cappadocian',
+              'Daughters of Cacophony',
               // 'Followers of Set',
               // 'Gangrel',
               'Giovanni',
