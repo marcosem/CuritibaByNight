@@ -31,13 +31,13 @@ export default class CreateAddonsTable1626636345875
           },
           {
             name: 'defense',
-            type: 'boolean',
-            default: false,
+            type: 'numeric',
+            default: 0,
           },
           {
             name: 'surveillance',
-            type: 'boolean',
-            default: false,
+            type: 'numeric',
+            default: 0,
           },
           {
             name: 'req_background',
