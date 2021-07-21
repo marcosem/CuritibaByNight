@@ -15,6 +15,21 @@ interface IContainerProps {
   isMobile: boolean;
 }
 
+interface ITableWrapperProps {
+  isMobile: boolean;
+  isVisible: boolean;
+}
+
+interface ITableProps {
+  isMobile: boolean;
+  isScrollOn: boolean;
+}
+
+interface ITableCellProps {
+  isMobile: boolean;
+  centered?: boolean;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -327,11 +342,20 @@ export const SelectLocation = styled.select`
   color: #888;
 `;
 
-export const TableWrapper = styled.div<IContainerProps>`
+export const TableWrapper = styled.div<ITableWrapperProps>`
   margin: 5px auto;
   // box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
   min-width: 320px;
   border-radius: 11px;
+
+  ${props =>
+    props.isVisible
+      ? css`
+          visibility: visible;
+        `
+      : css`
+          visibility: hidden;
+        `}
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
@@ -348,7 +372,7 @@ export const TableWrapper = styled.div<IContainerProps>`
         `}
 `;
 
-export const Table = styled.table<IContainerProps>`
+export const Table = styled.table<ITableProps>`
   border-radius: 10px;
   border: none;
   border-collapse: collapse;
@@ -415,12 +439,12 @@ export const Table = styled.table<IContainerProps>`
       }
 
       &:first-child {
-        width: 65%;
+        width: 50%;
         border-radius: 10px 0 0 0;
       }
 
       &:last-child {
-        width: 80px;
+        width: 85px;
         border-radius: 0 10px 0 0;
       }
     }
@@ -487,11 +511,18 @@ export const Table = styled.table<IContainerProps>`
 
     td {
       &:first-child {
-        width: 65%;
+        width: 50%;
       }
 
       &:last-child {
-        width: 75px;
+        ${props =>
+          props.isScrollOn
+            ? css`
+                width: 75px;
+              `
+            : css`
+                width: 85px;
+              `}
       }
     }
 
@@ -512,7 +543,7 @@ export const Table = styled.table<IContainerProps>`
   }
 `;
 
-export const TableCell = styled.div<IContainerProps>`
+export const TableCell = styled.div<ITableCellProps>`
   display: flex;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -536,8 +567,16 @@ export const TableCell = styled.div<IContainerProps>`
     word-wrap: break-word;
     padding: 0 !important;
     width: 100% !important;
-    text-align: left;
     margin: auto !important;
+
+    ${props =>
+      props.centered
+        ? css`
+            text-align: center;
+          `
+        : css`
+            text-align: left;
+          `}
   }
 
   img {

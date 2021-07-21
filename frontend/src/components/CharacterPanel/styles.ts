@@ -335,7 +335,7 @@ export const Table = styled.table<ICharPanelProps>`
       }
 
       &:first-child {
-        width: 50%;
+        width: 40%;
         border-radius: 10px 0 0 0;
       }
 
@@ -406,7 +406,7 @@ export const Table = styled.table<ICharPanelProps>`
 
     td {
       &:first-child {
-        width: 50%;
+        width: 40%;
       }
     }
 

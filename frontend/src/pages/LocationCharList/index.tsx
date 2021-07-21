@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ChangeEvent,
   MouseEvent,
+  useRef,
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
@@ -63,6 +64,7 @@ interface ILocationChar {
   location_id: string;
   character_id: string;
   characterId: ICharacter;
+  shared: boolean;
 }
 
 const LocationCharList: React.FC = () => {
@@ -99,6 +101,10 @@ const LocationCharList: React.FC = () => {
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
   const history = useHistory();
+
+  const [isScrollOn, setIsScrollOn] = useState<boolean>(true);
+  const tableRowRef = useRef<HTMLTableRowElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -456,6 +462,20 @@ const LocationCharList: React.FC = () => {
   );
 
   useEffect(() => {
+    setTimeout(() => {
+      if (tableRowRef.current && tableBodyRef.current) {
+        if (
+          tableRowRef.current.offsetWidth === tableBodyRef.current.offsetWidth
+        ) {
+          setIsScrollOn(false);
+        } else {
+          setIsScrollOn(true);
+        }
+      }
+    }, 50);
+  }, [locationChars]);
+
+  useEffect(() => {
     setCurrentPage('localchars');
     loadCharacters();
     loadLocations();
@@ -631,89 +651,118 @@ const LocationCharList: React.FC = () => {
                         </div>
                       </SelectContainer>
 
-                      {locationChars !== undefined && locationChars.length > 0 && (
-                        <TableWrapper isMobile={isMobileVersion}>
-                          <Table isMobile={isMobileVersion}>
-                            <thead>
-                              <tr>
-                                <th>Personagem</th>
-                                {!isMobileVersion && <th>Clã</th>}
-                                <th>Remover?</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {locationChars.map(locChar => (
-                                <tr key={locChar.character_id}>
-                                  <td
-                                    id={locChar.character_id}
-                                    onClick={handleCharacterDetails}
+                      <TableWrapper
+                        isMobile={isMobileVersion}
+                        isVisible={
+                          locationChars !== undefined &&
+                          locationChars.length > 0
+                        }
+                      >
+                        <Table
+                          isMobile={isMobileVersion}
+                          isScrollOn={isScrollOn}
+                        >
+                          <thead>
+                            <tr>
+                              <th>Personagem</th>
+                              {!isMobileVersion && <th>Clã</th>}
+                              <th>Compartilhado?</th>
+                              <th>Remover?</th>
+                            </tr>
+                          </thead>
+                          <tbody ref={tableBodyRef}>
+                            {locationChars !== undefined ? (
+                              <>
+                                {locationChars.map((locChar, index) => (
+                                  <tr
+                                    key={locChar.character_id}
+                                    ref={index === 0 ? tableRowRef : undefined}
                                   >
-                                    <TableCell isMobile={isMobileVersion}>
-                                      <span>{locChar.characterId.name}</span>
-                                    </TableCell>
-                                  </td>
-                                  {!isMobileVersion && (
                                     <td
                                       id={locChar.character_id}
                                       onClick={handleCharacterDetails}
                                     >
                                       <TableCell isMobile={isMobileVersion}>
+                                        <span>{locChar.characterId.name}</span>
+                                      </TableCell>
+                                    </td>
+                                    {!isMobileVersion && (
+                                      <td
+                                        id={locChar.character_id}
+                                        onClick={handleCharacterDetails}
+                                      >
+                                        <TableCell isMobile={isMobileVersion}>
+                                          <span>
+                                            {locChar.characterId
+                                              .creature_type !== 'Vampire' &&
+                                            locChar.characterId
+                                              .creature_type !== 'Mortal' ? (
+                                              // eslint-disable-next-line react/jsx-indent
+                                              <>
+                                                {locChar.characterId.clan ? (
+                                                  <>
+                                                    {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
+                                                  </>
+                                                ) : (
+                                                  <>
+                                                    {
+                                                      locChar.characterId
+                                                        .creature_type
+                                                    }
+                                                  </>
+                                                )}
+                                              </>
+                                            ) : (
+                                              <>
+                                                {locChar.characterId.clan.indexOf(
+                                                  ' (',
+                                                ) > 0
+                                                  ? locChar.characterId.clan.substring(
+                                                      0,
+                                                      locChar.characterId.clan.indexOf(
+                                                        ' (',
+                                                      ),
+                                                    )
+                                                  : locChar.characterId.clan}
+                                              </>
+                                            )}
+                                          </span>
+                                        </TableCell>
+                                      </td>
+                                    )}
+                                    <td>
+                                      <TableCell
+                                        isMobile={isMobileVersion}
+                                        centered
+                                      >
                                         <span>
-                                          {locChar.characterId.creature_type !==
-                                            'Vampire' &&
-                                          locChar.characterId.creature_type !==
-                                            'Mortal' ? (
-                                            // eslint-disable-next-line react/jsx-indent
-                                            <>
-                                              {locChar.characterId.clan ? (
-                                                <>
-                                                  {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
-                                                </>
-                                              ) : (
-                                                <>
-                                                  {
-                                                    locChar.characterId
-                                                      .creature_type
-                                                  }
-                                                </>
-                                              )}
-                                            </>
-                                          ) : (
-                                            <>
-                                              {locChar.characterId.clan.indexOf(
-                                                ' (',
-                                              ) > 0
-                                                ? locChar.characterId.clan.substring(
-                                                    0,
-                                                    locChar.characterId.clan.indexOf(
-                                                      ' (',
-                                                    ),
-                                                  )
-                                                : locChar.characterId.clan}
-                                            </>
-                                          )}
+                                          {locChar.shared ? 'Sim' : 'Não'}
                                         </span>
                                       </TableCell>
                                     </td>
-                                  )}
 
-                                  <td>
-                                    <RemoveButton
-                                      id={locChar.character_id}
-                                      type="button"
-                                      onClick={handleRemoveButton}
-                                      disabled={saving}
-                                      title="Remover"
-                                    >
-                                      {saving ? <FaSpinner /> : <FiTrash2 />}
-                                    </RemoveButton>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </Table>
-                        </TableWrapper>
-                      )}
+                                    <td>
+                                      <RemoveButton
+                                        id={locChar.character_id}
+                                        type="button"
+                                        onClick={handleRemoveButton}
+                                        disabled={saving}
+                                        title="Remover"
+                                      >
+                                        {saving ? <FaSpinner /> : <FiTrash2 />}
+                                      </RemoveButton>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </>
+                            ) : (
+                              <tr>
+                                <td>Nenhum</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </Table>
+                      </TableWrapper>
                     </>
                   )}
                 </>
