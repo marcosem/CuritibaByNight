@@ -9,7 +9,7 @@ import { classToClass } from 'class-transformer';
 
 export default class LocationsController {
   public async create(req: Request, res: Response): Promise<Response> {
-    const { char_id, location_id } = req.body;
+    const { char_id, location_id, shared } = req.body;
 
     const addCharacterToLocationService = container.resolve(
       AddCharacterToLocationService,
@@ -19,6 +19,7 @@ export default class LocationsController {
       user_id: req.user.id,
       char_id,
       location_id,
+      shared,
     };
 
     const locChar = await addCharacterToLocationService.execute(inputData);

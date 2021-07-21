@@ -12,6 +12,7 @@ interface IRequestDTO {
   user_id: string;
   char_id: string;
   location_id: string;
+  shared: boolean;
 }
 
 @injectable()
@@ -33,6 +34,7 @@ class AddCharacterToLocationService {
     user_id,
     char_id,
     location_id,
+    shared,
   }: IRequestDTO): Promise<LocationCharacter> {
     const user = await this.usersRepository.findById(user_id);
 
@@ -84,6 +86,7 @@ class AddCharacterToLocationService {
     const locationCharacter = await this.locationsCharactersRepository.addCharToLocation(
       char_id,
       location_id,
+      shared,
     );
 
     const player = char.user_id

@@ -10,6 +10,7 @@ class FakeLocationsCharactersRepository
   public async addCharToLocation(
     char_id: string,
     location_id: string,
+    shared: boolean,
   ): Promise<LocationCharacter> {
     const locationCharacter = new LocationCharacter();
 
@@ -17,6 +18,7 @@ class FakeLocationsCharactersRepository
       id: v4(),
       character_id: char_id,
       location_id,
+      shared,
     });
 
     this.locationsCharacters.push(locationCharacter);

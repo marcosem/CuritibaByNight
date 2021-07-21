@@ -16,6 +16,7 @@ locationsCharactersRouter.post(
     [Segments.BODY]: {
       char_id: Joi.string().uuid().required(),
       location_id: Joi.string().uuid().required(),
+      shared: Joi.boolean().default(false).optional(),
     },
   }),
   locationCharacterController.create,

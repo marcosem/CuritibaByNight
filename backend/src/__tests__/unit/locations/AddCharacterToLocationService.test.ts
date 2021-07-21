@@ -63,12 +63,14 @@ describe('AddCharacterToLocation', () => {
       user_id: user.id,
       char_id: char.id,
       location_id: location.id,
+      shared: true,
     });
 
     expect(locChar).toHaveProperty('id');
     expect(locChar).toMatchObject({
       character_id: char.id,
       location_id: location.id,
+      shared: true,
     });
     expect(sendMail).toHaveBeenCalled();
   });
@@ -105,12 +107,14 @@ describe('AddCharacterToLocation', () => {
       user_id: user.id,
       char_id: char.id,
       location_id: location.id,
+      shared: false,
     });
 
     expect(locChar).toHaveProperty('id');
     expect(locChar).toMatchObject({
       character_id: char.id,
       location_id: location.id,
+      shared: false,
     });
     expect(sendMail).not.toHaveBeenCalled();
   });
@@ -121,6 +125,7 @@ describe('AddCharacterToLocation', () => {
         user_id: 'I am invalid',
         char_id: 'Does not matter',
         location_id: 'Does not matter',
+        shared: false,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
@@ -137,6 +142,7 @@ describe('AddCharacterToLocation', () => {
         user_id: noStUser.id,
         char_id: 'Does not matter',
         location_id: 'Does not matter',
+        shared: false,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
@@ -154,6 +160,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: 'I do not exist',
         location_id: 'Does not matter',
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -179,6 +186,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: char.id,
         location_id: 'I do not exist',
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -213,6 +221,7 @@ describe('AddCharacterToLocation', () => {
       user_id: user.id,
       char_id: char.id,
       location_id: location.id,
+      shared: false,
     });
 
     await expect(
@@ -220,6 +229,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: char.id,
         location_id: location.id,
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -254,6 +264,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: char.id,
         location_id: location.id,
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -288,6 +299,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: char.id,
         location_id: location.id,
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -322,6 +334,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: char.id,
         location_id: location.id,
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -357,6 +370,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: char.id,
         location_id: location.id,
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -393,6 +407,7 @@ describe('AddCharacterToLocation', () => {
         user_id: user.id,
         char_id: char.id,
         location_id: location.id,
+        shared: false,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -435,6 +450,7 @@ describe('AddCharacterToLocation', () => {
       user_id: user.id,
       char_id: char.id,
       location_id: location.id,
+      shared: false,
     });
 
     expect(sendMail).not.toHaveBeenCalled();

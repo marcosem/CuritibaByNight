@@ -171,6 +171,7 @@ describe('GetLocationsList', () => {
     await fakeLocationsCharactersRepository.addCharToLocation(
       char.id,
       secretLocation.id,
+      true,
     );
 
     const locationsList = await getLocationsList.execute({
@@ -214,6 +215,7 @@ describe('GetLocationsList', () => {
     await fakeLocationsCharactersRepository.addCharToLocation(
       char.id,
       secretLocation.id,
+      false,
     );
 
     jest

@@ -4,6 +4,7 @@ export default interface ILocationsCharacters {
   addCharToLocation(
     char_id: string,
     location_id: string,
+    shared: boolean,
   ): Promise<LocationCharacter>;
   delete(char_id: string, location_id: string): Promise<void>;
   find(

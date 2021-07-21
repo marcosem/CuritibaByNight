@@ -13,10 +13,12 @@ class LocationsCharactersRepository implements ILocationsCharactersRepository {
   public async addCharToLocation(
     char_id: string,
     location_id: string,
+    shared: boolean,
   ): Promise<LocationCharacter> {
     const locChar = this.ormRepository.create({
       character_id: char_id,
       location_id,
+      shared,
     });
 
     await this.ormRepository.save(locChar);

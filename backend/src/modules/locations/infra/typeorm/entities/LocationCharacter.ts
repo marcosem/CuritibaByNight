@@ -30,6 +30,9 @@ class LocationCharacter {
   @JoinColumn({ name: 'character_id' })
   characterId?: Character;
 
+  @Column()
+  shared: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 
