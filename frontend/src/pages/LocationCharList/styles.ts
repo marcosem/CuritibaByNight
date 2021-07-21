@@ -30,6 +30,10 @@ interface ITableCellProps {
   centered?: boolean;
 }
 
+interface IFunctionButtonProps {
+  green?: boolean;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -284,7 +288,7 @@ export const AddButton = styled.button`
   }
 `;
 
-export const RemoveButton = styled.button`
+export const FunctionButton = styled.button<IFunctionButtonProps>`
   width: 24px;
   height: 24px;
 
@@ -297,12 +301,22 @@ export const RemoveButton = styled.button`
 
   border: 0;
   border-radius: 6px;
-  background: #860209;
   transition: background-color 0.2s;
 
-  &:hover {
-    background: ${shade(0.2, '#860209')};
-  }
+  ${props =>
+    props.green
+      ? css`
+          background: #028609;
+          &:hover {
+            background: ${shade(0.2, '#028609')};
+          }
+        `
+      : css`
+          background: #860209;
+          &:hover {
+            background: ${shade(0.2, '#860209')};
+          }
+        `}
 
   svg {
     color: #fff;
@@ -403,15 +417,6 @@ export const Table = styled.table<ITableProps>`
 
     &:last-child {
       border-right: 0;
-    }
-
-    img {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: #888;
-
-      border: 2px solid #860209;
     }
   }
 

@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from 'react';
 import { useHistory } from 'react-router-dom';
-import { FiPlus, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiX, FiCheck } from 'react-icons/fi';
 import { FaSpinner } from 'react-icons/fa';
 import api from '../../services/api';
 
@@ -25,7 +25,7 @@ import {
   TableWrapper,
   Table,
   TableCell,
-  RemoveButton,
+  FunctionButton,
   ButtonBox,
 } from './styles';
 
@@ -666,7 +666,7 @@ const LocationCharList: React.FC = () => {
                             <tr>
                               <th>Personagem</th>
                               {!isMobileVersion && <th>Clã</th>}
-                              <th>Compartilhado?</th>
+                              <th>Co-Proprietário?</th>
                               <th>Remover?</th>
                             </tr>
                           </thead>
@@ -736,13 +736,34 @@ const LocationCharList: React.FC = () => {
                                         centered
                                       >
                                         <span>
-                                          {locChar.shared ? 'Sim' : 'Não'}
+                                          <FunctionButton
+                                            id={locChar.character_id}
+                                            type="button"
+                                            // onClick={handleRemoveButton}
+                                            disabled={saving}
+                                            title={
+                                              locChar.shared ? 'Sim' : 'Não'
+                                            }
+                                            green={locChar.shared}
+                                          >
+                                            {saving ? (
+                                              <FaSpinner />
+                                            ) : (
+                                              <>
+                                                {locChar.shared ? (
+                                                  <FiCheck />
+                                                ) : (
+                                                  <FiX />
+                                                )}
+                                              </>
+                                            )}
+                                          </FunctionButton>
                                         </span>
                                       </TableCell>
                                     </td>
 
                                     <td>
-                                      <RemoveButton
+                                      <FunctionButton
                                         id={locChar.character_id}
                                         type="button"
                                         onClick={handleRemoveButton}
@@ -750,7 +771,7 @@ const LocationCharList: React.FC = () => {
                                         title="Remover"
                                       >
                                         {saving ? <FaSpinner /> : <FiTrash2 />}
-                                      </RemoveButton>
+                                      </FunctionButton>
                                     </td>
                                   </tr>
                                 ))}
