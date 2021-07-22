@@ -54,6 +54,7 @@ interface ILocation {
   elysium: string;
   property: string;
   responsible: string;
+  shared: boolean;
 }
 
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
@@ -169,6 +170,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
               elysium: location.elysium,
               property: location.property,
               responsible: location.responsible,
+              shared: location.shared,
             };
 
             return newLocation;
@@ -620,7 +622,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                                 id={local.id}
                                 onClick={handleLocationJump}
                               >
-                                {local.responsible === myChar.id ? (
+                                {local.responsible === myChar.id ||
+                                local.shared ? (
                                   <>
                                     <td>
                                       <TableCell isMobile={isMobileVersion}>
