@@ -31,6 +31,7 @@ import {
 
 import Button from '../../components/Button';
 import Loading from '../../components/Loading';
+import Checkbox from '../../components/Checkbox';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useSelection } from '../../hooks/selection';
@@ -94,6 +95,7 @@ const LocationCharList: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [charList, setCharList] = useState<ICharacter[]>([]);
   const [selectedChar, setSelectedChar] = useState<ICharacter>();
+  const [sharedLocation, setSharedLocation] = useState<boolean>(false);
   const [locationChars, setLocationChars] = useState<ILocationChar[]>();
   const { addToast } = useToast();
   const { signOut } = useAuth();
@@ -285,6 +287,7 @@ const LocationCharList: React.FC = () => {
       }
 
       setSelectedLocation(newSelectedLocation);
+      setSharedLocation(false);
     },
     [locationList],
   );
@@ -300,6 +303,7 @@ const LocationCharList: React.FC = () => {
         .post('/locchar/add', {
           location_id: selectedLocation.id,
           char_id: selectedChar.id,
+          shared: sharedLocation,
         })
         .then(response => {
           const res: ILocationChar = response.data;
@@ -389,7 +393,139 @@ const LocationCharList: React.FC = () => {
       }
     }
     setSaving(false);
-  }, [addToast, locationChars, selectedChar, selectedLocation, signOut]);
+  }, [
+    addToast,
+    locationChars,
+    selectedChar,
+    selectedLocation,
+    sharedLocation,
+    signOut,
+  ]);
+
+  const handleUpdateCharLocation = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      const charData = e.currentTarget.id.split(':');
+
+      if (charData === undefined) {
+        return;
+      }
+
+      if (charData.length !== 2) {
+        return;
+      }
+
+      const charId = charData[0];
+
+      if (charId === undefined || selectedLocation === undefined) {
+        return;
+      }
+
+      const shared: boolean = charData[1] === 'true';
+
+      setSaving(true);
+      try {
+        await api
+          .patch('/locchar/update', {
+            location_id: selectedLocation.id,
+            char_id: charId,
+            shared: !shared,
+          })
+          .then(response => {
+            const errorMsg = response.data.message;
+
+            if (
+              errorMsg ===
+              'The character was removed from Location, he is only aware of it now'
+            ) {
+              const newLocationChars = locationChars?.filter(
+                (locChar: ILocationChar) => {
+                  if (
+                    locChar.character_id === charId &&
+                    locChar.location_id === selectedLocation.id
+                  ) {
+                    return false;
+                  }
+                  return true;
+                },
+              );
+
+              setLocationChars(newLocationChars);
+            } else {
+              const res: ILocationChar = response.data;
+
+              if (
+                res.location_id === selectedLocation.id &&
+                res.character_id === charId
+              ) {
+                let newLocationChars: ILocationChar[];
+                const newLocChar = res;
+
+                let filteredClan: string[];
+                if (newLocChar.characterId.clan) {
+                  filteredClan = newLocChar.characterId.clan.split(' (');
+                  filteredClan = filteredClan[0].split(':');
+                } else {
+                  filteredClan = [''];
+                }
+
+                const clanIndex = 0;
+                newLocChar.characterId.clan = filteredClan[clanIndex];
+
+                if (locationChars !== undefined) {
+                  newLocationChars = locationChars.map(
+                    (locChar: ILocationChar) => {
+                      let updatedLocChar: ILocationChar;
+                      if (
+                        locChar.character_id === newLocChar.character_id &&
+                        locChar.location_id === newLocChar.location_id
+                      ) {
+                        updatedLocChar = newLocChar;
+                      } else {
+                        updatedLocChar = locChar;
+                      }
+
+                      return updatedLocChar;
+                    },
+                  );
+
+                  setLocationChars(newLocationChars);
+                }
+              }
+            }
+          });
+
+        addToast({
+          type: 'success',
+          title: 'Atualizado situação do Personagem no Local',
+          description:
+            'Situação do Personagem atualizado ao Local com sucesso!',
+        });
+      } catch (error) {
+        if (error.response) {
+          const { message } = error.response.data;
+
+          if (message?.indexOf('token') > 0 && error.response.status === 401) {
+            addToast({
+              type: 'error',
+              title: 'Sessão Expirada',
+              description:
+                'Sessão de usuário expirada, faça o login novamente!',
+            });
+
+            signOut();
+          } else {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar adicionar atualizar o personagem no local',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+      setSaving(false);
+    },
+    [addToast, locationChars, selectedLocation, signOut],
+  );
 
   const handleRemoveButton = useCallback(
     async (e: MouseEvent<HTMLButtonElement>) => {
@@ -460,6 +596,10 @@ const LocationCharList: React.FC = () => {
     },
     [charList, history, setChar],
   );
+
+  const handleSharedLocation = useCallback(() => {
+    setSharedLocation(!sharedLocation);
+  }, [sharedLocation]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -640,13 +780,26 @@ const LocationCharList: React.FC = () => {
                             ))}
                           </Select>
                           {selectedChar && (
-                            <AddButton
-                              type="button"
-                              onClick={handleAddCharToLocation}
-                              disabled={saving}
-                            >
-                              {saving ? <FaSpinner /> : <FiPlus />}
-                            </AddButton>
+                            <>
+                              {!isMobileVersion && (
+                                <Checkbox
+                                  name="sharedLocation"
+                                  id="sharedLocation"
+                                  checked={sharedLocation}
+                                  titlebar
+                                  onChange={handleSharedLocation}
+                                >
+                                  Co-Proprietário?
+                                </Checkbox>
+                              )}
+                              <AddButton
+                                type="button"
+                                onClick={handleAddCharToLocation}
+                                disabled={saving}
+                              >
+                                {saving ? <FaSpinner /> : <FiPlus />}
+                              </AddButton>
+                            </>
                           )}
                         </div>
                       </SelectContainer>
@@ -666,7 +819,11 @@ const LocationCharList: React.FC = () => {
                             <tr>
                               <th>Personagem</th>
                               {!isMobileVersion && <th>Clã</th>}
-                              <th>Co-Proprietário?</th>
+                              <th>
+                                {isMobileVersion
+                                  ? 'Co-Prop.?'
+                                  : 'Co-Proprietário?'}
+                              </th>
                               <th>Remover?</th>
                             </tr>
                           </thead>
@@ -737,9 +894,9 @@ const LocationCharList: React.FC = () => {
                                       >
                                         <span>
                                           <FunctionButton
-                                            id={locChar.character_id}
+                                            id={`${locChar.character_id}:${locChar.shared}`}
                                             type="button"
-                                            // onClick={handleRemoveButton}
+                                            onClick={handleUpdateCharLocation}
                                             disabled={saving}
                                             title={
                                               locChar.shared ? 'Sim' : 'Não'

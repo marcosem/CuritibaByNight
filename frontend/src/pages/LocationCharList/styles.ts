@@ -136,7 +136,7 @@ export const LocationCharsContainer = styled.div<IContainerProps>`
       color: #333;
     }
 
-    span {
+    > span {
       font-weight: 400;
       color: #333;
     }
@@ -154,7 +154,7 @@ export const LocationCharsContainer = styled.div<IContainerProps>`
               font-size: 12px;
             }
 
-            span {
+            > span {
               font-size: 12px;
               margin-left: 5px;
             }
@@ -170,7 +170,7 @@ export const LocationCharsContainer = styled.div<IContainerProps>`
               font-size: 18px;
             }
 
-            span {
+            > span {
               font-size: 18px;
               margin-left: 10px;
             }
@@ -185,13 +185,12 @@ export const SelectContainer = styled.div<IContainerProps>`
   height: 29px;
   width: 100%;
 
-  strong {
+  > strong {
     font-weight: 500;
     color: #333;
   }
 
-  div {
-    width: 284px;
+  > div {
     display: flex;
     height: 24px;
     flex-direction: row;
@@ -206,7 +205,11 @@ export const SelectContainer = styled.div<IContainerProps>`
           flex-direction: column;
           margin-bottom: 16px !important;
 
-          strong {
+          > div {
+            width: 284px;
+          }
+
+          > strong {
             font-size: 12px;
             margin-bottom: 3px;
           }
@@ -215,11 +218,26 @@ export const SelectContainer = styled.div<IContainerProps>`
           padding: 16px 0;
           flex-direction: row;
 
-          strong {
+          > div {
+            width: 425px;
+          }
+
+          > strong {
             font-size: 18px;
             margin-right: 10px;
           }
         `}
+
+  label {
+    width: auto;
+    margin-left: 10px;
+    justify-content: left;
+
+    span {
+      margin-left: 0;
+      color: #333;
+    }
+  }
 `;
 
 export const Select = styled.select<IContainerProps>`
