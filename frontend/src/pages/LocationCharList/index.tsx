@@ -303,7 +303,7 @@ const LocationCharList: React.FC = () => {
         .post('/locchar/add', {
           location_id: selectedLocation.id,
           char_id: selectedChar.id,
-          shared: sharedLocation,
+          shared: sharedLocation || selectedLocation.property === 'public',
         })
         .then(response => {
           const res: ILocationChar = response.data;
@@ -747,202 +747,183 @@ const LocationCharList: React.FC = () => {
                 </div>
               )}
 
-              {selectedLocation.property === 'public' ? (
-                <div>
-                  <strong>
-                    <b>
-                      <br />
-                      <br />
-                      Este local é de conhecimento de todos por Localização
-                      Pública.
-                    </b>
-                  </strong>
-                </div>
-              ) : (
+              {selectedLocation.id && (
                 <>
-                  {selectedLocation.id && (
-                    <>
-                      <SelectContainer isMobile={isMobileVersion}>
-                        <strong>Adicionar Personagem:</strong>
-                        <div>
-                          <Select
-                            name="responsible"
-                            id="responsible"
-                            value={selectedChar ? selectedChar.id : ''}
-                            onChange={handleSelectedCharCharge}
-                            isMobile={isMobileVersion}
-                          >
-                            <option value="">Personagem:</option>
-                            {charList.map(char => (
-                              <option key={char.id} value={char.id}>
-                                {char.name}
-                              </option>
-                            ))}
-                          </Select>
-                          {selectedChar && (
-                            <>
-                              {!isMobileVersion && (
-                                <Checkbox
-                                  name="sharedLocation"
-                                  id="sharedLocation"
-                                  checked={sharedLocation}
-                                  titlebar
-                                  onChange={handleSharedLocation}
-                                >
-                                  Co-Proprietário?
-                                </Checkbox>
-                              )}
-                              <AddButton
-                                type="button"
-                                onClick={handleAddCharToLocation}
-                                disabled={saving}
-                              >
-                                {saving ? <FaSpinner /> : <FiPlus />}
-                              </AddButton>
-                            </>
-                          )}
-                        </div>
-                      </SelectContainer>
-
-                      <TableWrapper
+                  <SelectContainer isMobile={isMobileVersion}>
+                    <strong>Adicionar Personagem:</strong>
+                    <div>
+                      <Select
+                        name="responsible"
+                        id="responsible"
+                        value={selectedChar ? selectedChar.id : ''}
+                        onChange={handleSelectedCharCharge}
                         isMobile={isMobileVersion}
-                        isVisible={
-                          locationChars !== undefined &&
-                          locationChars.length > 0
-                        }
                       >
-                        <Table
-                          isMobile={isMobileVersion}
-                          isScrollOn={isScrollOn}
-                        >
-                          <thead>
-                            <tr>
-                              <th>Personagem</th>
-                              {!isMobileVersion && <th>Clã</th>}
-                              <th>
-                                {isMobileVersion
-                                  ? 'Co-Prop.?'
-                                  : 'Co-Proprietário?'}
-                              </th>
-                              <th>Remover?</th>
-                            </tr>
-                          </thead>
-                          <tbody ref={tableBodyRef}>
-                            {locationChars !== undefined ? (
-                              <>
-                                {locationChars.map((locChar, index) => (
-                                  <tr
-                                    key={locChar.character_id}
-                                    ref={index === 0 ? tableRowRef : undefined}
-                                  >
-                                    <td
-                                      id={locChar.character_id}
-                                      onClick={handleCharacterDetails}
-                                    >
-                                      <TableCell isMobile={isMobileVersion}>
-                                        <span>{locChar.characterId.name}</span>
-                                      </TableCell>
-                                    </td>
-                                    {!isMobileVersion && (
-                                      <td
-                                        id={locChar.character_id}
-                                        onClick={handleCharacterDetails}
-                                      >
-                                        <TableCell isMobile={isMobileVersion}>
-                                          <span>
-                                            {locChar.characterId
-                                              .creature_type !== 'Vampire' &&
-                                            locChar.characterId
-                                              .creature_type !== 'Mortal' ? (
-                                              // eslint-disable-next-line react/jsx-indent
-                                              <>
-                                                {locChar.characterId.clan ? (
-                                                  <>
-                                                    {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    {
-                                                      locChar.characterId
-                                                        .creature_type
-                                                    }
-                                                  </>
-                                                )}
-                                              </>
-                                            ) : (
-                                              <>
-                                                {locChar.characterId.clan.indexOf(
-                                                  ' (',
-                                                ) > 0
-                                                  ? locChar.characterId.clan.substring(
-                                                      0,
-                                                      locChar.characterId.clan.indexOf(
-                                                        ' (',
-                                                      ),
-                                                    )
-                                                  : locChar.characterId.clan}
-                                              </>
-                                            )}
-                                          </span>
-                                        </TableCell>
-                                      </td>
-                                    )}
-                                    <td>
-                                      <TableCell
-                                        isMobile={isMobileVersion}
-                                        centered
-                                      >
-                                        <span>
-                                          <FunctionButton
-                                            id={`${locChar.character_id}:${locChar.shared}`}
-                                            type="button"
-                                            onClick={handleUpdateCharLocation}
-                                            disabled={saving}
-                                            title={
-                                              locChar.shared ? 'Sim' : 'Não'
-                                            }
-                                            green={locChar.shared}
-                                          >
-                                            {saving ? (
-                                              <FaSpinner />
-                                            ) : (
-                                              <>
-                                                {locChar.shared ? (
-                                                  <FiCheck />
-                                                ) : (
-                                                  <FiX />
-                                                )}
-                                              </>
-                                            )}
-                                          </FunctionButton>
-                                        </span>
-                                      </TableCell>
-                                    </td>
+                        <option value="">Personagem:</option>
+                        {charList.map(char => (
+                          <option key={char.id} value={char.id}>
+                            {char.name}
+                          </option>
+                        ))}
+                      </Select>
+                      {selectedChar && (
+                        <>
+                          {!isMobileVersion && (
+                            <Checkbox
+                              name="sharedLocation"
+                              id="sharedLocation"
+                              checked={
+                                sharedLocation ||
+                                selectedLocation.property === 'public'
+                              }
+                              titlebar
+                              onChange={handleSharedLocation}
+                              disabled={selectedLocation.property === 'public'}
+                            >
+                              Co-Proprietário?
+                            </Checkbox>
+                          )}
+                          <AddButton
+                            type="button"
+                            onClick={handleAddCharToLocation}
+                            disabled={saving}
+                          >
+                            {saving ? <FaSpinner /> : <FiPlus />}
+                          </AddButton>
+                        </>
+                      )}
+                    </div>
+                  </SelectContainer>
 
-                                    <td>
+                  <TableWrapper
+                    isMobile={isMobileVersion}
+                    isVisible={
+                      locationChars !== undefined && locationChars.length > 0
+                    }
+                  >
+                    <Table isMobile={isMobileVersion} isScrollOn={isScrollOn}>
+                      <thead>
+                        <tr>
+                          <th>Personagem</th>
+                          {!isMobileVersion && <th>Clã</th>}
+                          <th>
+                            {isMobileVersion ? 'Co-Prop.?' : 'Co-Proprietário?'}
+                          </th>
+                          <th>Remover?</th>
+                        </tr>
+                      </thead>
+                      <tbody ref={tableBodyRef}>
+                        {locationChars !== undefined ? (
+                          <>
+                            {locationChars.map((locChar, index) => (
+                              <tr
+                                key={locChar.character_id}
+                                ref={index === 0 ? tableRowRef : undefined}
+                              >
+                                <td
+                                  id={locChar.character_id}
+                                  onClick={handleCharacterDetails}
+                                >
+                                  <TableCell isMobile={isMobileVersion}>
+                                    <span>{locChar.characterId.name}</span>
+                                  </TableCell>
+                                </td>
+                                {!isMobileVersion && (
+                                  <td
+                                    id={locChar.character_id}
+                                    onClick={handleCharacterDetails}
+                                  >
+                                    <TableCell isMobile={isMobileVersion}>
+                                      <span>
+                                        {locChar.characterId.creature_type !==
+                                          'Vampire' &&
+                                        locChar.characterId.creature_type !==
+                                          'Mortal' ? (
+                                          // eslint-disable-next-line react/jsx-indent
+                                          <>
+                                            {locChar.characterId.clan ? (
+                                              <>
+                                                {`${locChar.characterId.creature_type}: ${locChar.characterId.clan}`}
+                                              </>
+                                            ) : (
+                                              <>
+                                                {
+                                                  locChar.characterId
+                                                    .creature_type
+                                                }
+                                              </>
+                                            )}
+                                          </>
+                                        ) : (
+                                          <>
+                                            {locChar.characterId.clan.indexOf(
+                                              ' (',
+                                            ) > 0
+                                              ? locChar.characterId.clan.substring(
+                                                  0,
+                                                  locChar.characterId.clan.indexOf(
+                                                    ' (',
+                                                  ),
+                                                )
+                                              : locChar.characterId.clan}
+                                          </>
+                                        )}
+                                      </span>
+                                    </TableCell>
+                                  </td>
+                                )}
+                                <td>
+                                  <TableCell
+                                    isMobile={isMobileVersion}
+                                    centered
+                                  >
+                                    <span>
                                       <FunctionButton
-                                        id={locChar.character_id}
+                                        id={`${locChar.character_id}:${locChar.shared}`}
                                         type="button"
-                                        onClick={handleRemoveButton}
+                                        onClick={handleUpdateCharLocation}
                                         disabled={saving}
-                                        title="Remover"
+                                        title={locChar.shared ? 'Sim' : 'Não'}
+                                        green={locChar.shared}
                                       >
-                                        {saving ? <FaSpinner /> : <FiTrash2 />}
+                                        {saving ? (
+                                          <FaSpinner />
+                                        ) : (
+                                          <>
+                                            {locChar.shared ? (
+                                              <FiCheck />
+                                            ) : (
+                                              <FiX />
+                                            )}
+                                          </>
+                                        )}
                                       </FunctionButton>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </>
-                            ) : (
-                              <tr>
-                                <td>Nenhum</td>
+                                    </span>
+                                  </TableCell>
+                                </td>
+
+                                <td>
+                                  <FunctionButton
+                                    id={locChar.character_id}
+                                    type="button"
+                                    onClick={handleRemoveButton}
+                                    disabled={saving}
+                                    title="Remover"
+                                  >
+                                    {saving ? <FaSpinner /> : <FiTrash2 />}
+                                  </FunctionButton>
+                                </td>
                               </tr>
-                            )}
-                          </tbody>
-                        </Table>
-                      </TableWrapper>
-                    </>
-                  )}
+                            ))}
+                          </>
+                        ) : (
+                          <tr>
+                            <td>Nenhum</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </Table>
+                  </TableWrapper>
                 </>
               )}
 
