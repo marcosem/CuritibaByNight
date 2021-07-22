@@ -122,7 +122,7 @@ export const Pulsate = styled.div<IMapMakerProps>`
   ${props =>
     props.ownership === 'shared' &&
     css`
-      box-shadow: 0 0 1px 2px #993399;
+      box-shadow: 0 0 1px 2px #cc44cc;
     `};
 
   ${props =>
