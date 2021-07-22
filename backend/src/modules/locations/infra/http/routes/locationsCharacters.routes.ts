@@ -22,6 +22,20 @@ locationsCharactersRouter.post(
   locationCharacterController.create,
 );
 
+// Locations-Characters routes
+locationsCharactersRouter.patch(
+  '/update',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      char_id: Joi.string().uuid().required(),
+      location_id: Joi.string().uuid().required(),
+      shared: Joi.boolean().required(),
+    },
+  }),
+  locationCharacterController.update,
+);
+
 locationsCharactersRouter.delete(
   '/remove',
   ensureSTAuthenticated,

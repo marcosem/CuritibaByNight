@@ -26,6 +26,29 @@ class FakeLocationsCharactersRepository
     return locationCharacter;
   }
 
+  public async updateCharLocation(
+    char_id: string,
+    location_id: string,
+    shared: boolean,
+  ): Promise<LocationCharacter> {
+    let updatedLocation: LocationCharacter = {} as LocationCharacter;
+
+    this.locationsCharacters = this.locationsCharacters.map(oldLocChar => {
+      const newLocChar = oldLocChar;
+      if (
+        oldLocChar.character_id === char_id &&
+        oldLocChar.location_id === location_id
+      ) {
+        newLocChar.shared = shared;
+        updatedLocation = newLocChar;
+      }
+
+      return updatedLocation;
+    });
+
+    return updatedLocation;
+  }
+
   public async delete(char_id: string, location_id: string): Promise<void> {
     const listWithRemovedElements = this.locationsCharacters.filter(
       locChar =>

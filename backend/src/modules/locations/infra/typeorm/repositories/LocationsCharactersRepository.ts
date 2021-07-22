@@ -31,6 +31,29 @@ class LocationsCharactersRepository implements ILocationsCharactersRepository {
     return savedLocChar;
   }
 
+  public async updateCharLocation(
+    char_id: string,
+    location_id: string,
+    shared: boolean,
+  ): Promise<LocationCharacter> {
+    let locChar = await this.find(char_id, location_id);
+
+    if (locChar) {
+      if (shared !== locChar.shared) {
+        locChar.shared = shared;
+        await this.ormRepository.save(locChar);
+      }
+    } else {
+      locChar = {
+        character_id: char_id,
+        location_id,
+        shared,
+      } as LocationCharacter;
+    }
+
+    return locChar;
+  }
+
   public async delete(char_id: string, location_id: string): Promise<void> {
     const locChar = await this.ormRepository.findOne({
       where: { character_id: char_id, location_id },

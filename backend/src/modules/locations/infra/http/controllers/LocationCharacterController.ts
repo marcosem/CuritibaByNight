@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import AddCharacterToLocationService from '@modules/locations/services/AddCharacterToLocationService';
 import GetCharacterLocationService from '@modules/locations/services/GetCharacterLocationService';
 import GetLocationCharactersListService from '@modules/locations/services/GetLocationCharactersListService';
+import UpdateCharacterLocationService from '@modules/locations/services/UpdateCharacterLocationService';
 import RemoveCharacterFromLocationService from '@modules/locations/services/RemoveCharacterFromLocationService';
 
 import { container } from 'tsyringe';
@@ -61,6 +62,25 @@ export default class LocationsController {
     });
 
     return res.json(locCharListUpdated);
+  }
+
+  public async update(req: Request, res: Response): Promise<Response> {
+    const { char_id, location_id, shared } = req.body;
+
+    const updateCharacterLocationService = container.resolve(
+      UpdateCharacterLocationService,
+    );
+
+    const inputData = {
+      user_id: req.user.id,
+      char_id,
+      location_id,
+      shared,
+    };
+
+    const locChar = await updateCharacterLocationService.execute(inputData);
+
+    return res.json(classToClass(locChar));
   }
 
   public async delete(req: Request, res: Response): Promise<Response> {

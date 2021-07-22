@@ -6,6 +6,11 @@ export default interface ILocationsCharacters {
     location_id: string,
     shared: boolean,
   ): Promise<LocationCharacter>;
+  updateCharLocation(
+    char_id: string,
+    location_id: string,
+    shared: boolean,
+  ): Promise<LocationCharacter>;
   delete(char_id: string, location_id: string): Promise<void>;
   find(
     char_id: string,

@@ -5,8 +5,6 @@ import ILocationsCharactersRepository from '@modules/locations/repositories/ILoc
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
-import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
-import { resolve } from 'path';
 
 interface IRequestDTO {
   user_id: string;
@@ -16,7 +14,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class AddCharacterToLocationService {
+class UpdateCharacterLocationService {
   constructor(
     @inject('LocationsCharactersRepository')
     private locationsCharactersRepository: ILocationsCharactersRepository,
@@ -26,8 +24,6 @@ class AddCharacterToLocationService {
     private locationsRepository: ILocationsRepository,
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
-    @inject('MailProvider')
-    private mailProvider: IMailProvider,
   ) {}
 
   public async execute({
@@ -67,65 +63,34 @@ class AddCharacterToLocationService {
       location_id,
     );
 
+    if (!locChar) {
+      throw new AppError('Character-Location not found', 400);
+    }
+
     if (
       !shared &&
-      (locChar ||
-        location.responsible === char_id ||
+      (location.responsible === char_id ||
         location.property === 'public' ||
         (location.clan !== null && location.clan === char.clan) ||
         (location.creature_type !== null &&
           location.creature_type === char.creature_type) ||
         (location.sect !== null && location.sect === char.sect))
     ) {
+      await this.locationsCharactersRepository.delete(char_id, location_id);
       throw new AppError(
-        'The character is already aware of this location',
-        400,
+        'The character was removed from Location, he is only aware of it now',
+        200,
       );
     }
 
-    const locationCharacter = await this.locationsCharactersRepository.addCharToLocation(
+    const locationCharacter = await this.locationsCharactersRepository.updateCharLocation(
       char_id,
       location_id,
       shared,
     );
 
-    const player = char.user_id
-      ? await this.usersRepository.findById(char.user_id)
-      : undefined;
-
-    if (player && char.situation === 'active') {
-      const locationUpdateTemplate = resolve(
-        __dirname,
-        '..',
-        'views',
-        'character_location_add.hbs',
-      );
-
-      const userNames = player.name.split(' ');
-
-      await this.mailProvider.sendMail({
-        to: {
-          name: player.name,
-          email: player.email,
-        },
-        subject: `[Curitiba By Night] Localização atualizada para o Personagem '${char.name}' no mapa do sistema`,
-        templateData: {
-          file: locationUpdateTemplate,
-          variables: {
-            name: userNames[0],
-            loc_name: location.name,
-            loc_desc: location.description,
-            char_name: char.name,
-            link: `${process.env.APP_WEB_URL}/locals/${location.id}`,
-            imgLogo: 'curitibabynight.png',
-            imgMap: 'curitiba_old_map.jpg',
-          },
-        },
-      });
-    }
-
     return locationCharacter;
   }
 }
 
-export default AddCharacterToLocationService;
+export default UpdateCharacterLocationService;
