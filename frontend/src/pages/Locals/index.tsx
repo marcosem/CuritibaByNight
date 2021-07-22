@@ -235,7 +235,8 @@ const Locals: React.FC = () => {
                   selected={
                     location.id === local ||
                     ownerId === location.responsible ||
-                    ownership === 'clan'
+                    ownership === 'clan' ||
+                    location.shared
                   }
                 >
                   <MyIcon />
@@ -263,13 +264,15 @@ const Locals: React.FC = () => {
               level:
                 stMode ||
                 ownerId === location.responsible ||
-                ownership === 'clan'
+                ownership === 'clan' ||
+                location.shared
                   ? location.level
                   : '?',
               mystical_level:
                 stMode ||
                 ownerId === location.responsible ||
-                ownership === 'clan'
+                ownership === 'clan' ||
+                location.shared
                   ? location.mystical_level
                   : '',
               picture_url: location.picture_url || imgBuilding,

@@ -94,7 +94,7 @@ export const PinShadow = styled.div`
   top: 24px;
   margin: 12px 0px 0px -12px;
   transform: rotateX(55deg);
-  z-index: -2 !important;
+  z-index: -3 !important;
 `;
 
 export const Pulsate = styled.div<IMapMakerProps>`
