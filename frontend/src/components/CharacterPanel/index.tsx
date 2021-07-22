@@ -621,6 +621,15 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                                 key={local.id}
                                 id={local.id}
                                 onClick={handleLocationJump}
+                                title={`${
+                                  local.responsible === myChar.id
+                                    ? 'Proprietário'
+                                    : `${
+                                        local.shared
+                                          ? 'Co-Proprietário'
+                                          : 'Conhece o Local'
+                                      }`
+                                }`}
                               >
                                 {local.responsible === myChar.id ||
                                 local.shared ? (
