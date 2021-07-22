@@ -110,25 +110,25 @@ export const Pulsate = styled.div<IMapMakerProps>`
   ${props =>
     props.ownership === 'owner' &&
     css`
-      box-shadow: 0 0 1px 2px #02c609;
+      box-shadow: 0 0 1px 6px #02c609;
     `};
 
   ${props =>
     props.ownership === 'clan' &&
     css`
-      box-shadow: 0 0 1px 2px #00ffff;
+      box-shadow: 0 0 1px 6px #00ffff;
     `};
 
   ${props =>
     props.ownership === 'shared' &&
     css`
-      box-shadow: 0 0 1px 2px #cc44cc;
+      box-shadow: 0 0 1px 6px #cc44cc;
     `};
 
   ${props =>
     props.ownership === '' &&
     css`
-      box-shadow: 0 0 1px 2px #f60209;
+      box-shadow: 0 0 1px 6px #f60209;
     `};
 
   animation: ${pulsate} 1s ease-out infinite;
