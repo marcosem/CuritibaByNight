@@ -48,6 +48,12 @@ export const MapPin = styled.div<IMapMakerProps>`
     `};
 
   ${props =>
+    props.ownership === 'shared' &&
+    css`
+      background: #993399;
+    `};
+
+  ${props =>
     props.ownership === '' &&
     css`
       background: #c60209;
@@ -111,6 +117,12 @@ export const Pulsate = styled.div<IMapMakerProps>`
     props.ownership === 'clan' &&
     css`
       box-shadow: 0 0 1px 2px #00ffff;
+    `};
+
+  ${props =>
+    props.ownership === 'shared' &&
+    css`
+      box-shadow: 0 0 1px 2px #993399;
     `};
 
   ${props =>

@@ -79,6 +79,7 @@ interface ILocation {
   mystical_level: number;
   picture_url: string;
   icon: Leaflet.Icon<Leaflet.IconOptions>;
+  shared?: boolean;
 }
 
 interface ICharacter {
@@ -171,18 +172,20 @@ const Locals: React.FC = () => {
 
           // https://leafletjs.com/reference-1.7.1.html#divicon-option
           const newArray = res.map((location: ILocation) => {
-            let ownwership = '';
+            let ownership = '';
 
             const filteredClan1 = currentChar.clan.split(':');
             const filteredClan2 = filteredClan1[0].split(' (');
 
             if (ownerId === location.responsible) {
-              ownwership = 'owner';
+              ownership = 'owner';
             } else if (
               location.property === 'clan' &&
               location.clan === filteredClan2[0]
             ) {
-              ownwership = 'clan';
+              ownership = 'clan';
+            } else if (location.shared) {
+              ownership = 'shared';
             }
 
             let MyIcon: IconType;
@@ -228,11 +231,11 @@ const Locals: React.FC = () => {
               className: 'custom-icon',
               html: ReactDomServer.renderToString(
                 <MapMaker
-                  ownership={ownwership}
+                  ownership={ownership}
                   selected={
                     location.id === local ||
                     ownerId === location.responsible ||
-                    ownwership === 'clan'
+                    ownership === 'clan'
                   }
                 >
                   <MyIcon />
@@ -260,13 +263,13 @@ const Locals: React.FC = () => {
               level:
                 stMode ||
                 ownerId === location.responsible ||
-                ownwership === 'clan'
+                ownership === 'clan'
                   ? location.level
                   : '?',
               mystical_level:
                 stMode ||
                 ownerId === location.responsible ||
-                ownwership === 'clan'
+                ownership === 'clan'
                   ? location.mystical_level
                   : '',
               picture_url: location.picture_url || imgBuilding,
