@@ -76,14 +76,16 @@ class LocationsCharactersRepository implements ILocationsCharactersRepository {
     return locChar;
   }
 
-  public async listLocationsByCharacter(char_id: string): Promise<string[]> {
-    const resultList: string[] = [];
+  public async listLocationsByCharacter(
+    char_id: string,
+  ): Promise<LocationCharacter[]> {
+    const resultList: LocationCharacter[] = [];
 
     const locCharList = await this.ormRepository.find({
       where: { character_id: char_id },
     });
 
-    locCharList.forEach(locChar => resultList.push(locChar.location_id));
+    locCharList.forEach(locChar => resultList.push(locChar));
 
     return resultList;
   }

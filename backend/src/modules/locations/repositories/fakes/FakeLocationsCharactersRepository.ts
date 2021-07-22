@@ -70,12 +70,13 @@ class FakeLocationsCharactersRepository
     return findLocationChar;
   }
 
-  public async listLocationsByCharacter(char_id: string): Promise<string[]> {
-    const resultList: string[] = [];
+  public async listLocationsByCharacter(
+    char_id: string,
+  ): Promise<LocationCharacter[]> {
+    const resultList: LocationCharacter[] = [];
 
     this.locationsCharacters.forEach(locChar => {
-      if (locChar.character_id === char_id)
-        resultList.push(locChar.location_id);
+      if (locChar.character_id === char_id) resultList.push(locChar);
     });
 
     return resultList;

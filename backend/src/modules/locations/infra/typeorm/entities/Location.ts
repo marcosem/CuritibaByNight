@@ -90,6 +90,9 @@ class Location {
         return null;
     }
   }
+
+  // Column not present in DB.
+  shared?: boolean;
 }
 
 export default Location;

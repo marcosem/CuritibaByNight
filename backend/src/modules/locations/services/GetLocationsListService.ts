@@ -62,12 +62,15 @@ class GetLocationsListService {
       );
 
       // eslint-disable-next-line no-restricted-syntax
-      for (const locationId of awareList) {
+      for (const charLocation of awareList) {
         // eslint-disable-next-line no-await-in-loop
-        const resLocation = await this.locationsRepository.findById(locationId);
+        const resLocation = await this.locationsRepository.findById(
+          charLocation.location_id,
+        );
 
         if (resLocation !== undefined) {
           const location: Location = resLocation;
+          location.shared = charLocation.shared;
           locationList.push(location);
         }
       }
