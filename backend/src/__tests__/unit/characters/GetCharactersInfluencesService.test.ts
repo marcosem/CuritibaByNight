@@ -87,7 +87,7 @@ describe('GetCharactersInfluences', () => {
       storyteller: true,
     });
 
-    const newCharacterList = [];
+    // const newCharacterList = [];
     await new Promise<void>((resolve, _) => {
       characterList.forEach(async (char, index, myArray) => {
         const newChar = await fakeCharactersRepository.create({
@@ -113,9 +113,11 @@ describe('GetCharactersInfluences', () => {
         });
 
         await fakeCharactersTraitsRepository.createList(newTraitList);
-        newCharacterList.push(newChar);
+        // newCharacterList.push(newChar);
 
-        if (index === myArray.length - 1) resolve();
+        if (index === myArray.length - 1) {
+          resolve();
+        }
       });
     });
 
@@ -141,7 +143,7 @@ it('Should be able get a list of characters influences from redis', async () => 
     storyteller: true,
   });
 
-  const newCharacterList = [];
+  // const newCharacterList = [];
   await new Promise<void>((resolve, _) => {
     characterList.forEach(async (char, index, myArray) => {
       const newChar = await fakeCharactersRepository.create({
@@ -167,7 +169,7 @@ it('Should be able get a list of characters influences from redis', async () => 
       });
 
       await fakeCharactersTraitsRepository.createList(newTraitList);
-      newCharacterList.push(newChar);
+      // newCharacterList.push(newChar);
 
       if (index === myArray.length - 1) resolve();
     });

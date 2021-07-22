@@ -41,6 +41,7 @@ class GetCharactersInfluencesService {
     }
 
     const routeResult = await this.saveRouteResult.get('CharactersInfluences');
+
     if (routeResult !== '') {
       const myResult: ICharactersInfluencesDTO = JSON.parse(
         routeResult,
@@ -56,12 +57,14 @@ class GetCharactersInfluencesService {
 
     await new Promise<void>((resolve, _) => {
       charList.forEach(async (char, index, myArray) => {
+        let skipChar = false;
+
         if (
           char.situation === 'transfered' ||
           char.situation === 'dead' ||
           char.situation === 'destroyed'
         ) {
-          return;
+          skipChar = true;
         }
 
         // Inactive Retainer should not count
@@ -72,209 +75,213 @@ class GetCharactersInfluencesService {
           (char.clan.indexOf('Ghoul') >= 0 ||
             char.clan.indexOf('Retainer') >= 0)
         ) {
-          return;
+          skipChar = true;
         }
 
-        // Initialize Character
-        const newCharInfluence: ICharInfluenceDTO = {
-          character: {
-            id: char.id,
-            name: char.name,
-            creature_type: char.creature_type,
-            clan: char.clan,
-            sect: char.sect,
-            npc: char.npc,
-            situation: char.situation,
-            retainers_level_perm: 0,
-            retainers_level_temp: 0,
-          },
-        } as ICharInfluenceDTO;
+        if (!skipChar) {
+          // Initialize Character
+          const newCharInfluence: ICharInfluenceDTO = {
+            character: {
+              id: char.id,
+              name: char.name,
+              creature_type: char.creature_type,
+              clan: char.clan,
+              sect: char.sect,
+              npc: char.npc,
+              situation: char.situation,
+              retainers_level_perm: 0,
+              retainers_level_temp: 0,
+            },
+          } as ICharInfluenceDTO;
 
-        const charTraits = await this.charactersTraitsRepository.findByCharId(
-          char.id,
-          'all',
-        );
-
-        // Get Morality
-        let moralityTrait: string;
-        let moralityLevel: number;
-        switch (char.creature_type) {
-          case 'Werewolf':
-          case 'Mage':
-            moralityTrait = char.creature_type;
-            moralityLevel = 5;
-            break;
-          case 'Wraith':
-            moralityTrait = char.creature_type;
-            moralityLevel = 2;
-            break;
-          default: {
-            const charMorality = charTraits.find(
-              virt => virt.trait.indexOf('Morality: ') === 0,
-            );
-
-            if (charMorality) {
-              moralityTrait = charMorality.trait.replace('Morality: ', '');
-
-              if (moralityTrait === 'Humanity') {
-                moralityLevel = Number(charMorality.level);
-              } else {
-                moralityLevel =
-                  Number(charMorality.level) > 3
-                    ? Number(charMorality.level) - 2
-                    : 1;
-              }
-            } else {
-              moralityTrait = 'Humanity';
-              moralityLevel = 0;
-            }
-          }
-        }
-
-        newCharInfluence.character.morality = moralityTrait;
-        newCharInfluence.character.morality_level = moralityLevel;
-
-        // Get Retainers
-        const retainerTrait = charTraits.find(
-          ret => ret.trait === 'Retainers' && ret.type === 'backgrounds',
-        );
-
-        if (retainerTrait) {
-          let levelTemp: number;
-
-          if (!retainerTrait.level_temp) {
-            levelTemp = Number(retainerTrait.level);
-          } else {
-            const levelTempRetainerArray = retainerTrait.level_temp
-              .split('|')
-              .filter(elem => elem === 'full');
-
-            levelTemp = levelTempRetainerArray.length;
-          }
-
-          newCharInfluence.character.retainers_level_perm = Number(
-            retainerTrait.level,
+          const charTraits = await this.charactersTraitsRepository.findByCharId(
+            char.id,
+            'all',
           );
-          newCharInfluence.character.retainers_level_temp = levelTemp;
-        }
 
-        // Get Attributes
-        const attributesTraits = charTraits.filter(
-          att => att.type === 'attributes',
-        );
+          // Get Morality
+          let moralityTrait: string;
+          let moralityLevel: number;
+          switch (char.creature_type) {
+            case 'Werewolf':
+            case 'Mage':
+              moralityTrait = char.creature_type;
+              moralityLevel = 5;
+              break;
+            case 'Wraith':
+              moralityTrait = char.creature_type;
+              moralityLevel = 2;
+              break;
+            default: {
+              const charMorality = charTraits.find(
+                virt => virt.trait.indexOf('Morality: ') === 0,
+              );
 
-        let attributes = 0;
-        for (let i = 0; i < attributesTraits.length; i += 1) {
-          const att = attributesTraits[i];
-          attributes += Number(att.level);
-        }
+              if (charMorality) {
+                moralityTrait = charMorality.trait.replace('Morality: ', '');
 
-        newCharInfluence.character.attributes = attributes;
-
-        // Influence Capacity is Attributes + Retainers Permanent
-        newCharInfluence.character.influence_capacity =
-          attributes + newCharInfluence.character.retainers_level_perm;
-
-        // Actions is Morality Level + Retainers Temporaty
-        newCharInfluence.character.actions =
-          moralityLevel + newCharInfluence.character.retainers_level_temp;
-
-        // Get Character influences
-        const influenceTraits = charTraits.filter(
-          inf => inf.type === 'influences',
-        );
-
-        if (influenceTraits.length > 0) {
-          const infCharList: IInfluenceCharDTO[] = [];
-
-          for (let i = 0; i < influenceTraits.length; i += 1) {
-            const inf = influenceTraits[i];
-
-            let ability = getInfluenceAbility(inf.trait);
-            let abilityLevel = 0;
-            const abilitiesTraits = charTraits.filter(
-              abi =>
-                abi.trait.indexOf(ability) === 0 && abi.type === 'abilities',
-            );
-
-            if (abilitiesTraits.length > 0) {
-              abilitiesTraits.sort((traitA, traitB) => {
-                if (traitA.level > traitB.level) return -1;
-                if (traitA.level < traitB.level) return 1;
-                return 0;
-              });
-
-              ability = abilitiesTraits[0].trait;
-              abilityLevel = Number(abilitiesTraits[0].level);
+                if (moralityTrait === 'Humanity') {
+                  moralityLevel = Number(charMorality.level);
+                } else {
+                  moralityLevel =
+                    Number(charMorality.level) > 3
+                      ? Number(charMorality.level) - 2
+                      : 1;
+                }
+              } else {
+                moralityTrait = 'Humanity';
+                moralityLevel = 0;
+              }
             }
+          }
 
-            let infLevelTemp: number;
-            if (!inf.level_temp) {
-              infLevelTemp = Number(inf.level);
+          newCharInfluence.character.morality = moralityTrait;
+          newCharInfluence.character.morality_level = moralityLevel;
+
+          // Get Retainers
+          const retainerTrait = charTraits.find(
+            ret => ret.trait === 'Retainers' && ret.type === 'backgrounds',
+          );
+
+          if (retainerTrait) {
+            let levelTemp: number;
+
+            if (!retainerTrait.level_temp) {
+              levelTemp = Number(retainerTrait.level);
             } else {
-              const levelTempArray = inf.level_temp
+              const levelTempRetainerArray = retainerTrait.level_temp
                 .split('|')
                 .filter(elem => elem === 'full');
 
-              infLevelTemp = levelTempArray.length;
+              levelTemp = levelTempRetainerArray.length;
             }
 
-            const levelTemp = infLevelTemp;
-
-            const newInfChar: IInfluenceCharDTO = {
-              name: inf.trait,
-              level_perm: Number(inf.level),
-              level_temp: levelTemp,
-              ability,
-              ability_level: abilityLevel,
-              defense_passive:
-                char.situation === 'active'
-                  ? levelTemp + abilityLevel + moralityLevel
-                  : levelTemp,
-              defense_active:
-                char.situation === 'active'
-                  ? levelTemp * 2 + abilityLevel + moralityLevel
-                  : levelTemp,
-            };
-
-            let infCap = infCapList.find(infC => infC.name === newInfChar.name);
-
-            if (infCap === undefined) {
-              infCap = {
-                name: newInfChar.name,
-                total: Number(newInfChar.level_perm),
-                leader_level: Number(newInfChar.level_perm),
-                leaders: [
-                  {
-                    id: char.id,
-                    name: char.name,
-                  },
-                ],
-              };
-
-              infCapList.push(infCap);
-            } else {
-              infCap.total += Number(newInfChar.level_perm);
-              if (newInfChar.level_perm > infCap.leader_level) {
-                infCap.leader_level = newInfChar.level_perm;
-                infCap.leaders = [{ id: char.id, name: char.name }];
-              } else if (newInfChar.level_perm === infCap.leader_level) {
-                infCap.leaders.push({ id: char.id, name: char.name });
-              }
-
-              const newInfCap: IInfluenceCapacityDTO = infCap;
-              infCapList = infCapList.map(infC =>
-                infC.name === newInfCap.name ? newInfCap : infC,
-              );
-            }
-
-            infCharList.push(newInfChar);
+            newCharInfluence.character.retainers_level_perm = Number(
+              retainerTrait.level,
+            );
+            newCharInfluence.character.retainers_level_temp = levelTemp;
           }
 
-          newCharInfluence.influences = infCharList;
-        }
+          // Get Attributes
+          const attributesTraits = charTraits.filter(
+            att => att.type === 'attributes',
+          );
 
-        charInfList.push(newCharInfluence);
+          let attributes = 0;
+          for (let i = 0; i < attributesTraits.length; i += 1) {
+            const att = attributesTraits[i];
+            attributes += Number(att.level);
+          }
+
+          newCharInfluence.character.attributes = attributes;
+
+          // Influence Capacity is Attributes + Retainers Permanent
+          newCharInfluence.character.influence_capacity =
+            attributes + newCharInfluence.character.retainers_level_perm;
+
+          // Actions is Morality Level + Retainers Temporaty
+          newCharInfluence.character.actions =
+            moralityLevel + newCharInfluence.character.retainers_level_temp;
+
+          // Get Character influences
+          const influenceTraits = charTraits.filter(
+            inf => inf.type === 'influences',
+          );
+
+          if (influenceTraits.length > 0) {
+            const infCharList: IInfluenceCharDTO[] = [];
+
+            for (let i = 0; i < influenceTraits.length; i += 1) {
+              const inf = influenceTraits[i];
+
+              let ability = getInfluenceAbility(inf.trait);
+              let abilityLevel = 0;
+              const abilitiesTraits = charTraits.filter(
+                abi =>
+                  abi.trait.indexOf(ability) === 0 && abi.type === 'abilities',
+              );
+
+              if (abilitiesTraits.length > 0) {
+                abilitiesTraits.sort((traitA, traitB) => {
+                  if (traitA.level > traitB.level) return -1;
+                  if (traitA.level < traitB.level) return 1;
+                  return 0;
+                });
+
+                ability = abilitiesTraits[0].trait;
+                abilityLevel = Number(abilitiesTraits[0].level);
+              }
+
+              let infLevelTemp: number;
+              if (!inf.level_temp) {
+                infLevelTemp = Number(inf.level);
+              } else {
+                const levelTempArray = inf.level_temp
+                  .split('|')
+                  .filter(elem => elem === 'full');
+
+                infLevelTemp = levelTempArray.length;
+              }
+
+              const levelTemp = infLevelTemp;
+
+              const newInfChar: IInfluenceCharDTO = {
+                name: inf.trait,
+                level_perm: Number(inf.level),
+                level_temp: levelTemp,
+                ability,
+                ability_level: abilityLevel,
+                defense_passive:
+                  char.situation === 'active'
+                    ? levelTemp + abilityLevel + moralityLevel
+                    : levelTemp,
+                defense_active:
+                  char.situation === 'active'
+                    ? levelTemp * 2 + abilityLevel + moralityLevel
+                    : levelTemp,
+              };
+
+              let infCap = infCapList.find(
+                infC => infC.name === newInfChar.name,
+              );
+
+              if (infCap === undefined) {
+                infCap = {
+                  name: newInfChar.name,
+                  total: Number(newInfChar.level_perm),
+                  leader_level: Number(newInfChar.level_perm),
+                  leaders: [
+                    {
+                      id: char.id,
+                      name: char.name,
+                    },
+                  ],
+                };
+
+                infCapList.push(infCap);
+              } else {
+                infCap.total += Number(newInfChar.level_perm);
+                if (newInfChar.level_perm > infCap.leader_level) {
+                  infCap.leader_level = newInfChar.level_perm;
+                  infCap.leaders = [{ id: char.id, name: char.name }];
+                } else if (newInfChar.level_perm === infCap.leader_level) {
+                  infCap.leaders.push({ id: char.id, name: char.name });
+                }
+
+                const newInfCap: IInfluenceCapacityDTO = infCap;
+                infCapList = infCapList.map(infC =>
+                  infC.name === newInfCap.name ? newInfCap : infC,
+                );
+              }
+
+              infCharList.push(newInfChar);
+            }
+
+            newCharInfluence.influences = infCharList;
+          }
+
+          charInfList.push(newCharInfluence);
+        }
 
         if (index === myArray.length - 1) {
           // Add a small delay just to ensure everything is processed

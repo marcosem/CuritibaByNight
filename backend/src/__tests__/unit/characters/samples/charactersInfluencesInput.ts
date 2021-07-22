@@ -487,6 +487,72 @@ const characterList = [
       },
     ],
   },
+  {
+    name: 'Inactive Ghoul',
+    experience: 666,
+    file: 'inative_ghoul.pdf',
+    clan: 'Ghoul: Ventrue',
+    creature_type: 'Mortal',
+    sect: '',
+    situation: 'inactive',
+    npc: true,
+    traits: [
+      {
+        trait: 'Physical',
+        level: 7,
+        type: 'attributes',
+      },
+      {
+        trait: 'Social',
+        level: 7,
+        type: 'attributes',
+      },
+      {
+        trait: 'Mental',
+        level: 7,
+        type: 'attributes',
+      },
+      {
+        trait: 'Legal',
+        level: 3,
+        level_temp: undefined,
+        type: 'influences',
+      },
+    ],
+  },
+  {
+    name: 'Inactive Retainer',
+    experience: 666,
+    file: 'inative_retainer.pdf',
+    clan: 'Mortal Retainer',
+    creature_type: 'Mortal',
+    sect: '',
+    situation: 'inactive',
+    npc: true,
+    traits: [
+      {
+        trait: 'Physical',
+        level: 7,
+        type: 'attributes',
+      },
+      {
+        trait: 'Social',
+        level: 7,
+        type: 'attributes',
+      },
+      {
+        trait: 'Mental',
+        level: 7,
+        type: 'attributes',
+      },
+      {
+        trait: 'University',
+        level: 3,
+        level_temp: undefined,
+        type: 'influences',
+      },
+    ],
+  },
 ];
 
 export default characterList;
