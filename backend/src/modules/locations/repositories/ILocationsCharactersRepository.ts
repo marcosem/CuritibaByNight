@@ -16,6 +16,6 @@ export default interface ILocationsCharacters {
     char_id: string,
     location_id: string,
   ): Promise<LocationCharacter | undefined>;
-  listLocationsByCharacter(char_id: string): Promise<string[]>;
+  listLocationsByCharacter(char_id: string): Promise<LocationCharacter[]>;
   listCharactersByLocation(location_id: string): Promise<LocationCharacter[]>;
 }

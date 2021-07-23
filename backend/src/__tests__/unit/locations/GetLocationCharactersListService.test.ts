@@ -63,11 +63,13 @@ describe('GetLocationCharactersList', () => {
     await fakeLocationsCharactersRepository.addCharToLocation(
       char1.id,
       location.id,
+      false,
     );
 
     await fakeLocationsCharactersRepository.addCharToLocation(
       char2.id,
       location.id,
+      false,
     );
 
     const locationCharsList = await getLocationCharactersList.execute({

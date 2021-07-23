@@ -51,6 +51,7 @@ describe('RemoveCharacterFromLocation', () => {
     await fakeLocationsCharactersRepository.addCharToLocation(
       char.id,
       location.id,
+      false,
     );
 
     const initialListSize = await fakeLocationsCharactersRepository.listCharactersByLocation(
