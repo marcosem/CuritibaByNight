@@ -119,6 +119,42 @@ describe('AddCharacterToLocation', () => {
     expect(sendMail).not.toHaveBeenCalled();
   });
 
+  it('Should not allow to add the character responsible to his own location', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char = await fakeCharactersRepository.create({
+      name: 'Dracula',
+      clan: 'Tzimisce',
+      experience: 666,
+      file: 'dracula.pdf',
+      creature_type: 'Vampire',
+      npc: true,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      creature_type: 'Mortal',
+      responsible: char.id,
+    });
+
+    await expect(
+      addCharacterToLocation.execute({
+        user_id: user.id,
+        char_id: char.id,
+        location_id: location.id,
+        shared: false,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
   it('Should not allow invalid user to add character to a location', async () => {
     await expect(
       addCharacterToLocation.execute({

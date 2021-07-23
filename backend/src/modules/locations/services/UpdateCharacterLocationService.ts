@@ -69,8 +69,7 @@ class UpdateCharacterLocationService {
 
     if (
       !shared &&
-      (location.responsible === char_id ||
-        location.property === 'public' ||
+      (location.property === 'public' ||
         (location.clan !== null && location.clan === char.clan) ||
         (location.creature_type !== null &&
           location.creature_type === char.creature_type) ||
