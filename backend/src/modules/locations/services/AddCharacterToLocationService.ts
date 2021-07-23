@@ -70,6 +70,9 @@ class AddCharacterToLocationService {
     if (
       locChar ||
       location.responsible === char_id ||
+      (location.property === 'clan' &&
+        location.clan !== null &&
+        location.clan === char.clan) ||
       (!shared &&
         (location.property === 'public' ||
           (location.clan !== null && location.clan === char.clan) ||
