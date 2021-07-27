@@ -361,6 +361,7 @@ describe('AddCharacterToLocation', () => {
       name: 'Prefeitura de Curitiba',
       description: 'Prefeitura Municipal de Curitiba',
       latitude: -25.4166496,
+      property: 'clan',
       longitude: -49.2713069,
       clan: 'Tzimisce',
     });
