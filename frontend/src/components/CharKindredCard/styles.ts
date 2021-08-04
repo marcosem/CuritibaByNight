@@ -200,6 +200,10 @@ export const CharInfo = styled.div`
     text-decoration: none;
     text-align: center;
     color: #000;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
   }
 
   span {

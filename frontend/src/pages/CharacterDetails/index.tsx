@@ -2,8 +2,9 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { format } from 'date-fns';
 import { useHistory, useParams } from 'react-router-dom';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import api from '../../services/api';
-import { Container } from './styles';
+import { Container, NavigateButton } from './styles';
 
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -21,12 +22,21 @@ interface IRouteParams {
 const CharacterDetails: React.FC = () => {
   const { charId } = useParams<IRouteParams>();
   const { addToast } = useToast();
-  const { signOut } = useAuth();
-  const { char } = useSelection();
+  const { signOut, user } = useAuth();
+  const {
+    char,
+    charInfoList,
+    getNextCharInfo,
+    getPreviewsCharInfo,
+    initializeCharInfoList,
+  } = useSelection();
   const { setCurrentPage } = useHeader();
   const { isMobileVersion } = useMobile();
   const history = useHistory();
   const [myChar, setMyChar] = useState<ICharacter>();
+  const [nextCharId, setNextCharId] = useState<string>('');
+  const [previewsCharId, setPreviewsCharId] = useState<string>('');
+
   const [isBusy, setBusy] = useState(false);
 
   const loadCharacter = useCallback(async () => {
@@ -88,6 +98,28 @@ const CharacterDetails: React.FC = () => {
     }
   }, [addToast, charId, history, signOut]);
 
+  const handleMoveToPreviewsCharacter = useCallback(() => {
+    history.push(`/character/${previewsCharId}`);
+  }, [history, previewsCharId]);
+
+  const handleMoveToNextCharacter = useCallback(() => {
+    history.push(`/character/${nextCharId}`);
+  }, [history, nextCharId]);
+
+  useEffect(() => {
+    if (user.storyteller) {
+      initializeCharInfoList();
+      setNextCharId(getNextCharInfo(charId));
+      setPreviewsCharId(getPreviewsCharInfo(charId));
+    }
+  }, [
+    charId,
+    getNextCharInfo,
+    getPreviewsCharInfo,
+    initializeCharInfoList,
+    user,
+  ]);
+
   useEffect(() => {
     setCurrentPage('character');
 
@@ -102,7 +134,41 @@ const CharacterDetails: React.FC = () => {
 
   return (
     <Container isMobile={isMobileVersion}>
-      {isBusy ? <Loading /> : myChar && <CharacterPanel myChar={myChar} />}
+      {isBusy ? (
+        <Loading />
+      ) : (
+        myChar && (
+          <>
+            {user.storyteller &&
+              charInfoList.length > 0 &&
+              previewsCharId !== charId && (
+                <NavigateButton
+                  type="button"
+                  onClick={handleMoveToPreviewsCharacter}
+                  title="Personagem Anterior"
+                  position="left"
+                >
+                  <FiChevronLeft />
+                </NavigateButton>
+              )}
+
+            <CharacterPanel myChar={myChar} />
+
+            {user.storyteller &&
+              charInfoList.length > 0 &&
+              nextCharId !== charId && (
+                <NavigateButton
+                  type="button"
+                  onClick={handleMoveToNextCharacter}
+                  title="Próximo Personagem"
+                  position="right"
+                >
+                  <FiChevronRight />
+                </NavigateButton>
+              )}
+          </>
+        )
+      )}
     </Container>
   );
 };

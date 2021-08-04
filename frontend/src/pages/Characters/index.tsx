@@ -22,6 +22,7 @@ import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useHeader } from '../../hooks/header';
+import { useSelection } from '../../hooks/selection';
 
 interface IRouteParams {
   filter: string;
@@ -38,6 +39,7 @@ const Characters: React.FC = () => {
   const { addToast } = useToast();
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
+  const { initializeCharInfoList } = useSelection();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -102,7 +104,8 @@ const Characters: React.FC = () => {
   useEffect(() => {
     setCurrentPage(filter === 'npc' ? 'npcs' : 'characters');
     loadCharacters();
-  }, [filter, loadCharacters, setCurrentPage]);
+    initializeCharInfoList();
+  }, [filter, initializeCharInfoList, loadCharacters, setCurrentPage]);
 
   useEffect(() => {
     setSelectedClan('');
