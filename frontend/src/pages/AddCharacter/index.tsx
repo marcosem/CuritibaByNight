@@ -20,6 +20,7 @@ import {
 import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import { useAuth } from '../../hooks/auth';
+import { useSelection } from '../../hooks/selection';
 import { useToast } from '../../hooks/toast';
 import { useHeader } from '../../hooks/header';
 import { useMobile } from '../../hooks/mobile';
@@ -60,6 +61,7 @@ const AddCharacter: React.FC = () => {
   });
   const [charSheet, setCharSheet] = useState<File>();
   const { addToast } = useToast();
+  const { initializeCharInfoList } = useSelection();
   const { signOut } = useAuth();
   const { setCurrentPage } = useHeader();
   const { isMobileVersion } = useMobile();
@@ -209,6 +211,9 @@ const AddCharacter: React.FC = () => {
         setSavedChar(justSavedChar);
       });
 
+      // Update Character Info List
+      initializeCharInfoList(true);
+
       addToast({
         type: 'success',
         title: `${characterType} Adicionado!`,
@@ -224,7 +229,14 @@ const AddCharacter: React.FC = () => {
       });
     }
     setUploading(false);
-  }, [filter, charSheet, selectedPlayer, selectedRegnant, addToast]);
+  }, [
+    filter,
+    charSheet,
+    selectedPlayer,
+    selectedRegnant,
+    initializeCharInfoList,
+    addToast,
+  ]);
 
   const handlePlayerChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
