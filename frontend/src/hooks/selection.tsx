@@ -46,13 +46,16 @@ const SelectionProvider: React.FC = ({ children }) => {
 
       const filteredList = charList.filter(
         myChar =>
-          myChar.npc === filteredChar[0].npc && myChar.situation === 'active',
+          myChar.npc === filteredChar[0].npc &&
+          ((filteredChar[0].situation === 'active' &&
+            myChar.situation === 'active') ||
+            filteredChar[0].situation !== 'active'),
       );
       const charIndex = filteredList
         .map(myChar => myChar.char_id)
         .indexOf(char_id);
 
-      if (charIndex + 1 === filteredList.length) {
+      if (charIndex + 1 === filteredList.length || charIndex === -1) {
         return char_id;
       }
 
@@ -75,13 +78,16 @@ const SelectionProvider: React.FC = ({ children }) => {
 
       const filteredList = charList.filter(
         myChar =>
-          myChar.npc === filteredChar[0].npc && myChar.situation === 'active',
+          myChar.npc === filteredChar[0].npc &&
+          ((filteredChar[0].situation === 'active' &&
+            myChar.situation === 'active') ||
+            filteredChar[0].situation !== 'active'),
       );
       const charIndex = filteredList
         .map(myChar => myChar.char_id)
         .indexOf(char_id);
 
-      if (charIndex === 0) {
+      if (charIndex <= 0) {
         return char_id;
       }
 
