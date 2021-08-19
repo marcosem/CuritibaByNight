@@ -60,7 +60,7 @@ const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
           </div>
           <div>
             <a
-              href="https://discord.com/channels/708080543043944448/708080543618564099"
+              href="https://discord.gg/fzfmJ2V"
               target="_blank"
               rel="noopener noreferrer"
             >
