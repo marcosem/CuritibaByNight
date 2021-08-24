@@ -10,7 +10,15 @@ const rotate = keyframes`
   }
 `;
 
-export const Container = styled.button`
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
+export const Container = styled.button.attrs<IButtonProps>(
+  (props: IButtonProps) => ({
+    type: props.type || 'button',
+  }),
+)`
   background: #860209;
   color: #d5d5d5;
   font-weight: 500;

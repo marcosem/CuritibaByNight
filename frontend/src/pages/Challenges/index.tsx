@@ -875,7 +875,6 @@ const Challenges: React.FC = () => {
                     <>
                       <JanKenPoButton
                         isMobile={isMobileVersion}
-                        type="button"
                         title="Pedra"
                         onClick={() => HandleSelectPo('rock')}
                         victory={myPo === 'rock' ? 1 : -5}
@@ -885,7 +884,6 @@ const Challenges: React.FC = () => {
                       </JanKenPoButton>
                       <JanKenPoButton
                         isMobile={isMobileVersion}
-                        type="button"
                         title="Papel"
                         onClick={() => HandleSelectPo('paper')}
                         victory={myPo === 'paper' ? 1 : -5}
@@ -895,7 +893,6 @@ const Challenges: React.FC = () => {
                       </JanKenPoButton>
                       <JanKenPoButton
                         isMobile={isMobileVersion}
-                        type="button"
                         title="Tesoura"
                         onClick={() => HandleSelectPo('scissors')}
                         victory={myPo === 'scissors' ? 1 : -5}
@@ -905,7 +902,6 @@ const Challenges: React.FC = () => {
                       </JanKenPoButton>
                       <JanKenPoButton
                         isMobile={isMobileVersion}
-                        type="button"
                         title="Bomba"
                         onClick={() => HandleSelectPo('bomb')}
                         disabled={mode !== 'battle'}
@@ -925,7 +921,6 @@ const Challenges: React.FC = () => {
                 {selectedPo !== '' && (
                   <JanKenPoButton
                     isMobile={isMobileVersion}
-                    type="button"
                     title="Confirmar jogada!"
                     onClick={HandleSendPo}
                     disabled={mode !== 'battle'}
@@ -943,7 +938,6 @@ const Challenges: React.FC = () => {
                 {selOpponentPo !== '' && (
                   <JanKenPoButton
                     isMobile={isMobileVersion}
-                    type="button"
                     title="Confirmar jogada!"
                     onClick={undefined}
                     disabled
@@ -1056,25 +1050,23 @@ const Challenges: React.FC = () => {
               myChar?.id !== '' &&
               opponentChar?.id !== '' && (
                 <ButtonBox isMobile={isMobileVersion}>
-                  <Button type="button" onClick={handleInitChallangeButton}>
+                  <Button onClick={handleInitChallangeButton}>
                     Iniciar Desafio
                   </Button>
                 </ButtonBox>
               )}
             {mode === 'battle' && user.storyteller && (
               <ButtonBox isMobile={isMobileVersion}>
-                <Button type="button" onClick={handleCancelChallangeButton}>
+                <Button onClick={handleCancelChallangeButton}>
                   Cancelar Desafio
                 </Button>
               </ButtonBox>
             )}
             {mode !== 'initial' && mode !== 'battle' && user.storyteller && (
               <ButtonBox isMobile={isMobileVersion}>
-                <Button type="button" onClick={handleRetestButton}>
-                  Retestar
-                </Button>
+                <Button onClick={handleRetestButton}>Retestar</Button>
 
-                <Button type="button" onClick={handleCancelChallangeButton}>
+                <Button onClick={handleCancelChallangeButton}>
                   Reiniciar Desafio
                 </Button>
               </ButtonBox>
@@ -1224,7 +1216,6 @@ const Challenges: React.FC = () => {
                         <>
                           <JanKenPoButton
                             isMobile={isMobileVersion}
-                            type="button"
                             title="Pedra"
                             onClick={() => HandleSelectPo('rock')}
                             victory={myPo === 'rock' ? 1 : -5}
@@ -1234,7 +1225,6 @@ const Challenges: React.FC = () => {
                           </JanKenPoButton>
                           <JanKenPoButton
                             isMobile={isMobileVersion}
-                            type="button"
                             title="Papel"
                             onClick={() => HandleSelectPo('paper')}
                             victory={myPo === 'paper' ? 1 : -5}
@@ -1244,7 +1234,6 @@ const Challenges: React.FC = () => {
                           </JanKenPoButton>
                           <JanKenPoButton
                             isMobile={isMobileVersion}
-                            type="button"
                             title="Tesoura"
                             onClick={() => HandleSelectPo('scissors')}
                             victory={myPo === 'scissors' ? 1 : -5}
@@ -1254,7 +1243,6 @@ const Challenges: React.FC = () => {
                           </JanKenPoButton>
                           <JanKenPoButton
                             isMobile={isMobileVersion}
-                            type="button"
                             title="Bomba"
                             onClick={() => HandleSelectPo('bomb')}
                             disabled={mode !== 'battle'}
@@ -1269,7 +1257,6 @@ const Challenges: React.FC = () => {
                       {selectedPo !== '' && (
                         <JanKenPoButton
                           isMobile={isMobileVersion}
-                          type="button"
                           title="Confirmar jogada!"
                           onClick={HandleSendPo}
                           disabled={mode !== 'battle'}
@@ -1287,7 +1274,6 @@ const Challenges: React.FC = () => {
                       {selOpponentPo !== '' && (
                         <JanKenPoButton
                           isMobile={isMobileVersion}
-                          type="button"
                           title="Confirmar jogada!"
                           onClick={undefined}
                           disabled
@@ -1357,25 +1343,23 @@ const Challenges: React.FC = () => {
                 myChar.id !== '' &&
                 opponentChar.id !== '' && (
                   <ButtonBox isMobile={isMobileVersion}>
-                    <Button type="button" onClick={handleInitChallangeButton}>
+                    <Button onClick={handleInitChallangeButton}>
                       Iniciar Desafio
                     </Button>
                   </ButtonBox>
                 )}
               {mode === 'battle' && user.storyteller && (
                 <ButtonBox isMobile={isMobileVersion}>
-                  <Button type="button" onClick={handleCancelChallangeButton}>
+                  <Button onClick={handleCancelChallangeButton}>
                     Cancelar Desafio
                   </Button>
                 </ButtonBox>
               )}
               {mode !== 'initial' && mode !== 'battle' && user.storyteller && (
                 <ButtonBox isMobile={isMobileVersion}>
-                  <Button type="button" onClick={handleRetestButton}>
-                    Retestar
-                  </Button>
+                  <Button onClick={handleRetestButton}>Retestar</Button>
 
-                  <Button type="button" onClick={handleCancelChallangeButton}>
+                  <Button onClick={handleCancelChallangeButton}>
                     Reiniciar Desafio
                   </Button>
                 </ButtonBox>

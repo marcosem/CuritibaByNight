@@ -17,6 +17,10 @@ interface IFunctionButtonProps {
   middle?: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 const divFadeIn = keyframes`
   from {
     opacity: 0;
@@ -503,40 +507,9 @@ export const ButtonBox = styled.div<ICharPanelProps>`
         `}
 `;
 
-export const PlayButton = styled.button`
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-
-  width: 64px;
-  height: 64px;
-  border: 0;
-
-  background: #025609;
-  border-radius: 20px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: background-color 0.2s;
-
-  svg {
-    width: 32px;
-    height: 32px;
-    color: #ccc;
-    transition: color 0.2s;
-  }
-
-  &:hover {
-    background: ${lighten(0.2, '#025609')};
-    svg {
-      color: ${lighten(0.2, '#ccc')};
-    }
-  }
-`;
-
-export const FunctionButton = styled.button<IFunctionButtonProps>`
+export const FunctionButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<IFunctionButtonProps>`
   width: 64px;
   height: 64px;
   border: 0;

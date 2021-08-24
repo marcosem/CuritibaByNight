@@ -421,9 +421,7 @@ const AddCharacter: React.FC = () => {
                       Confirmar Inclusão
                     </Button>
                   ) : (
-                    <Button type="button" onClick={handleGoBack}>
-                      Voltar
-                    </Button>
+                    <Button onClick={handleGoBack}>Voltar</Button>
                   )}
                 </ButtonBox>
               </Form>

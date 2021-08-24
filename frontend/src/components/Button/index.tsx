@@ -13,7 +13,7 @@ const Button: React.FC<ButtonProps> = ({
   loadingMessage = 'Carregando...',
   ...rest
 }) => (
-  <Container type="button" {...rest}>
+  <Container {...rest}>
     {loading ? (
       <>
         <FaSpinner />

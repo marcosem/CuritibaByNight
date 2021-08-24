@@ -537,7 +537,6 @@ const CharacterUpdateMulti: React.FC = () => {
                             !selChar.uploaded && (
                               <RemoveButton
                                 id={selChar.character.id}
-                                type="button"
                                 onClick={handleRemoveMatch}
                                 disabled={uploading}
                                 title="Remover Correspondência"

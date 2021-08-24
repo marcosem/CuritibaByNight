@@ -784,7 +784,6 @@ const LocationCharList: React.FC = () => {
                             </Checkbox>
                           )}
                           <AddButton
-                            type="button"
                             onClick={handleAddCharToLocation}
                             disabled={saving}
                           >
@@ -880,7 +879,6 @@ const LocationCharList: React.FC = () => {
                                     <span>
                                       <FunctionButton
                                         id={`${locChar.character_id}:${locChar.shared}`}
-                                        type="button"
                                         onClick={handleUpdateCharLocation}
                                         disabled={saving}
                                         title={locChar.shared ? 'Sim' : 'Não'}
@@ -905,7 +903,6 @@ const LocationCharList: React.FC = () => {
                                 <td>
                                   <FunctionButton
                                     id={locChar.character_id}
-                                    type="button"
                                     onClick={handleRemoveButton}
                                     disabled={saving}
                                     title="Remover"
@@ -928,9 +925,7 @@ const LocationCharList: React.FC = () => {
               )}
 
               <ButtonBox>
-                <Button type="button" onClick={handleGoBack}>
-                  Retornar
-                </Button>
+                <Button onClick={handleGoBack}>Retornar</Button>
               </ButtonBox>
             </LocationCharsContainer>
           </>

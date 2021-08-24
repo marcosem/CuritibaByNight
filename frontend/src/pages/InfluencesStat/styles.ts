@@ -16,6 +16,10 @@ interface ILegendProps {
   selected: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 export const Container = styled.div`
   height: calc(100vh - 140px);
 `;
@@ -409,7 +413,9 @@ export const TableLevelsWrapper = styled.div`
   }
 `;
 
-export const GoBackButton = styled.button`
+export const GoBackButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
   position: fixed;
   bottom: 40px;
   right: 40px;

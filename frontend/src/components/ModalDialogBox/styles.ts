@@ -38,6 +38,10 @@ interface IButtonText {
   text?: string;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 export const Overlay = styled.div`
   background: transparent;
   position: fixed;
@@ -217,7 +221,9 @@ export const ButtonsContainer = styled.div`
   padding-top: 1rem;
 `;
 
-export const FunctionButton = styled.button<IButtonText>`
+export const FunctionButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<IButtonText>`
   display: flex;
   flex-direction: space-between;
   justify-content: center;

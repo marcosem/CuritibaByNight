@@ -25,6 +25,10 @@ interface IActionButton {
   editMode?: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 interface IContainerProps {
   isMobile: boolean;
 }
@@ -468,7 +472,9 @@ export const ActionsContainer = styled.div`
   align-items: center;
 `;
 
-export const ActionButton = styled.button<IActionButton>`
+export const ActionButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<IActionButton>`
   width: 24px;
   height: 24px;
 

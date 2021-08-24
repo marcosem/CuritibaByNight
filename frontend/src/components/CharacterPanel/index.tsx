@@ -669,16 +669,13 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
                   {!dashboard && (
                     <ButtonBox isMobile={isMobileVersion}>
-                      <Button type="button" onClick={handleGoBack}>
-                        Retornar
-                      </Button>
+                      <Button onClick={handleGoBack}>Retornar</Button>
                     </ButtonBox>
                   )}
 
                   <FunctionsContainer>
                     {dashboard && (
                       <FunctionButton
-                        type="button"
                         onClick={handleChallenges}
                         title="Rolar Jan-Ken-Po"
                         isGreen
@@ -689,7 +686,6 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
                     {user.storyteller && showTraits && (
                       <FunctionButton
-                        type="button"
                         onClick={handleConfirmResetTraits}
                         title="Resetar Traits"
                       >
@@ -712,7 +708,6 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                           </FunctionLink>
                         )}
                         <FunctionButton
-                          type="button"
                           onClick={handleConfirmRemove}
                           title="Excluir Personagem"
                         >

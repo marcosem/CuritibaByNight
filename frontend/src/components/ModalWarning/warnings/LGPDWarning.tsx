@@ -236,11 +236,7 @@ const LGPDWarning: React.FC<ILGPDWarning> = ({ setOpenDlg }: ILGPDWarning) => {
           Eu, {user.name} concordo e aceito os termos acima.
         </Checkbox>
         <ButtonBox>
-          <Button
-            type="button"
-            title="Fechar"
-            onClick={handleConfirmAcceptance}
-          >
+          <Button title="Fechar" onClick={handleConfirmAcceptance}>
             Fechar
           </Button>
         </ButtonBox>

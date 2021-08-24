@@ -143,7 +143,6 @@ const CharacterDetails: React.FC = () => {
               charInfoList.length > 0 &&
               previewsCharId !== charId && (
                 <NavigateButton
-                  type="button"
                   onClick={handleMoveToPreviewsCharacter}
                   title="Personagem Anterior"
                   position="left"
@@ -158,7 +157,6 @@ const CharacterDetails: React.FC = () => {
               charInfoList.length > 0 &&
               nextCharId !== charId && (
                 <NavigateButton
-                  type="button"
                   onClick={handleMoveToNextCharacter}
                   title="Próximo Personagem"
                   position="right"

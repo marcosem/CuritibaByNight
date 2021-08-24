@@ -7,10 +7,14 @@ interface ICardContainerProps {
   position?: string;
 }
 
-interface IButtonProps {
+interface IJanKenPoButtonProps {
   readyToPlay?: boolean;
   victory?: number;
   isMobile?: boolean;
+}
+
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
 
 interface IContainerProps {
@@ -244,7 +248,9 @@ export const JanKenPoContainer = styled.div<IIconProps>`
   }
 `;
 
-export const JanKenPoButton = styled.button<IButtonProps>`
+export const JanKenPoButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<IJanKenPoButtonProps>`
   border: 0;
   margin: auto;
   background: #333;

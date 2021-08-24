@@ -6,6 +6,10 @@ interface IContainerProps {
   isMobile: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -145,7 +149,9 @@ export const ButtonBox = styled.div`
   max-width: 340px;
 `;
 
-export const RemoveButton = styled.button`
+export const RemoveButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
   position: fixed;
   bottom: 40px;
   right: 40px;

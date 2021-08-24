@@ -847,9 +847,7 @@ const AddLocation: React.FC = () => {
 
                 <ButtonBox>
                   {saved ? (
-                    <Button type="button" onClick={handleGoBack}>
-                      Retornar
-                    </Button>
+                    <Button onClick={handleGoBack}>Retornar</Button>
                   ) : (
                     <Button
                       type="submit"

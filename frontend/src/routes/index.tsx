@@ -25,6 +25,7 @@ import Challenges from '../pages/Challenges';
 import Influences from '../pages/Influences';
 import InfluencesStat from '../pages/InfluencesStat';
 import Rules from '../pages/Rules';
+import Page404 from '../pages/Page404';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -105,6 +106,7 @@ const Routes: React.FC = () => (
     />
     <Route path="/character/:charId" component={CharacterDetails} isPrivate />
     <Route path="/challenges" component={Challenges} isPrivate />
+    <Route path="/404" component={Page404} isPrivate />
   </Switch>
 );
 

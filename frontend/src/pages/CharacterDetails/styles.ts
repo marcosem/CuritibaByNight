@@ -9,6 +9,10 @@ interface INavigateButtonProps {
   position: string;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 const bumpToRight = keyframes`
   from {
     transform: translateX(0);
@@ -44,7 +48,9 @@ export const Container = styled.div<IContainerProps>`
         `}
 `;
 
-export const NavigateButton = styled.button<INavigateButtonProps>`
+export const NavigateButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<INavigateButtonProps>`
   position: fixed;
   bottom: calc(50% - 24px);
   display: flex;

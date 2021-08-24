@@ -970,7 +970,6 @@ const InfluencesStat: React.FC = () => {
                 </Table>
               </TableWrapper>
               <GoBackButton
-                type="button"
                 onClick={() => handleShowDetails('')}
                 title="Voltar às Estatísticas Gerais"
               >

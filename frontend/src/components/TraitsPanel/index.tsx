@@ -901,7 +901,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                         myArray.length,
                                       ) && (
                                         <TraitButton
-                                          type="button"
                                           id={level.id}
                                           key={level.id}
                                           disabled={!level.enabled}
@@ -1032,7 +1031,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                                   myArray.length,
                                 ) && (
                                   <TraitButton
-                                    type="button"
                                     id={level.id}
                                     key={level.id}
                                     disabled={!level.enabled}
@@ -1170,7 +1168,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                         >
                           {levelBlock.map((level: ILevel) => (
                             <TraitButton
-                              type="button"
                               id={level.id}
                               key={level.id}
                               disabled={!level.enabled}
@@ -1575,7 +1572,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             <TraitsList key={`List:${trait.trait}`}>
                               {trait.levelArray.map(level => (
                                 <TraitButton
-                                  type="button"
                                   id={level.id}
                                   key={level.id}
                                   disabled={!level.enabled}
@@ -1624,7 +1620,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           >
                             {trait.levelArray.map(level => (
                               <TraitButton
-                                type="button"
                                 id={level.id}
                                 key={level.id}
                                 disabled={!level.enabled}
@@ -1686,7 +1681,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -1773,7 +1767,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             <TraitsList key={`List:${trait.trait}`}>
                               {trait.levelArray.map(level => (
                                 <TraitButton
-                                  type="button"
                                   id={level.id}
                                   key={level.id}
                                   disabled={!level.enabled}
@@ -1822,7 +1815,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           >
                             {trait.levelArray.map(level => (
                               <TraitButton
-                                type="button"
                                 id={level.id}
                                 key={level.id}
                                 disabled={!level.enabled}
@@ -1885,7 +1877,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -1973,7 +1964,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -2107,7 +2097,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -2244,7 +2233,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -2285,7 +2273,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -2329,7 +2316,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -2374,7 +2360,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                       >
                         {trait.levelArray.map(level => (
                           <TraitButton
-                            type="button"
                             id={level.id}
                             key={level.id}
                             disabled={!level.enabled}
@@ -2424,7 +2409,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           >
                             {trait.levelArray.map(level => (
                               <TraitButton
-                                type="button"
                                 id={level.id}
                                 key={level.id}
                                 disabled={!level.enabled}
@@ -2491,7 +2475,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                             >
                               {trait.levelArray.map(level => (
                                 <TraitButton
-                                  type="button"
                                   id={level.id}
                                   key={level.id}
                                   disabled={!level.enabled}

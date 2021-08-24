@@ -1080,7 +1080,6 @@ const LocationUpdate: React.FC = () => {
               </Form>
               {selectedLocation.id && (
                 <RemoveButton
-                  type="button"
                   onClick={handleConfirmRemove}
                   title="Excluir Localização"
                 >

@@ -6,6 +6,10 @@ interface ITraitProps {
   isMobile: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 interface ISingleTraitProps {
   traitColor?: string;
   isMobile: boolean;
@@ -208,11 +212,6 @@ export const SingleTraitContainer = styled.div<ITraitContainer>`
 
   strong {
     margin-right: 5px;
-    /*
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    */
   }
 
   span {
@@ -322,7 +321,10 @@ export const SingleTraitsList = styled.div<ISingleTraitProps>`
         `}
 `;
 
-export const TraitButton = styled.button<ITraitProps>`
+// export const TraitButton = styled.button.attrs<ITraitProps, IButtonProps>(
+export const TraitButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<ITraitProps>`
   display: flex;
   align-items: center;
   justify-content: center;

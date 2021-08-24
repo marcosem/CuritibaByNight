@@ -613,7 +613,6 @@ const Influences: React.FC = () => {
 
           <ActionButton
             id="addNew"
-            type="button"
             title="Diminuir Quebra de Máscara"
             editMode
             disabled={domainMasquerade === 0 || loadingMasquerade}
@@ -624,7 +623,6 @@ const Influences: React.FC = () => {
           <strong>{loadingMasquerade ? '..' : domainMasquerade}</strong>
           <ActionButton
             id="addNew"
-            type="button"
             title="Aumentar Quebra de Máscara"
             editMode={false}
             disabled={domainMasquerade === 10 || loadingMasquerade}
@@ -646,7 +644,6 @@ const Influences: React.FC = () => {
                     <TableHeaderCell>
                       <ActionButton
                         id="addNew"
-                        type="button"
                         title="Adicionar Novo"
                         editMode
                         onClick={handleAddTerritory}
@@ -722,7 +719,6 @@ const Influences: React.FC = () => {
                           <>
                             <ActionButton
                               id={`save:${terr.id}`}
-                              type="button"
                               title="Salvar"
                               editMode
                               onClick={handleConfirmSaveTerritory}
@@ -731,7 +727,6 @@ const Influences: React.FC = () => {
                             </ActionButton>
                             <ActionButton
                               id={`cancel:${terr.id}`}
-                              type="button"
                               title="Cancelar"
                               onClick={handleCancelEditTerritory}
                             >
@@ -742,7 +737,6 @@ const Influences: React.FC = () => {
                           <>
                             <ActionButton
                               id={`edit:${terr.id}`}
-                              type="button"
                               title="Editar"
                               onClick={handleEditTerritory}
                             >
@@ -750,7 +744,6 @@ const Influences: React.FC = () => {
                             </ActionButton>
                             <ActionButton
                               id={`delete:${terr.id}`}
-                              type="button"
                               title="Remover"
                               onClick={handleConfirmRemoveTerritory}
                             >

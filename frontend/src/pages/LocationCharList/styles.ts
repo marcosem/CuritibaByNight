@@ -34,6 +34,10 @@ interface IFunctionButtonProps {
   green?: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -271,7 +275,9 @@ export const Select = styled.select<IContainerProps>`
   -moz-text-align-last: center;
 `;
 
-export const AddButton = styled.button`
+export const AddButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
   width: 24px;
   height: 24px;
 
@@ -306,7 +312,9 @@ export const AddButton = styled.button`
   }
 `;
 
-export const FunctionButton = styled.button<IFunctionButtonProps>`
+export const FunctionButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<IFunctionButtonProps>`
   width: 24px;
   height: 24px;
 

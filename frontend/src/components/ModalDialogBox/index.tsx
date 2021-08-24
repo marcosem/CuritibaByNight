@@ -155,29 +155,17 @@ const ModalDialogBox: React.FC<IModalDialogBoxProps> = ({
 
         <ButtonsContainer>
           {btn1Title && btn1Function && (
-            <FunctionButton
-              type="button"
-              onClick={handleButtonOne}
-              text={btn1Title}
-            >
+            <FunctionButton onClick={handleButtonOne} text={btn1Title}>
               <span>{btn1Title}</span>
             </FunctionButton>
           )}
           {btn2Title && btn2Function && (
-            <FunctionButton
-              type="button"
-              onClick={handleButtonTwo}
-              text={btn2Title}
-            >
+            <FunctionButton onClick={handleButtonTwo} text={btn2Title}>
               <span>{btn2Title}</span>
             </FunctionButton>
           )}
           {btn3Title && btn3Function && (
-            <FunctionButton
-              type="button"
-              onClick={handleButtonThree}
-              text={btn3Title}
-            >
+            <FunctionButton onClick={handleButtonThree} text={btn3Title}>
               <span>{btn3Title}</span>
             </FunctionButton>
           )}

@@ -5,6 +5,10 @@ interface IContainerProps {
   isMobile: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -464,7 +468,9 @@ export const TableLevelsCell = styled.div`
   }
 `;
 
-export const GoBackButton = styled.button`
+export const GoBackButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
   position: fixed;
   bottom: 40px;
   right: 40px;

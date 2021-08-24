@@ -180,7 +180,7 @@ const Influences: React.FC = () => {
               <span>{`*** ${selInfluence.notes} ***`}</span>
             )}
           </TableLevelsWrapper>
-          <GoBackButton type="button" onClick={handleGoBack} title="Retornar">
+          <GoBackButton onClick={handleGoBack} title="Retornar">
             <FiArrowLeft />
           </GoBackButton>
         </InfluenceContainer>

@@ -52,6 +52,10 @@ interface IModalLabelProps {
   invalid?: boolean;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 export const Container = styled.div`
   height: calc(100vh - 140px);
 `;
@@ -379,7 +383,9 @@ export const ButtonBox = styled.div`
   max-width: 340px;
 `;
 
-export const RemoveButton = styled.button`
+export const RemoveButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
   width: 24px;
   height: 24px;
 

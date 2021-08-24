@@ -192,9 +192,7 @@ const ModalImageCrop: React.FC<IImageCropDataProps> = ({
 
         {upImg && (
           <ButtonBox isMobile={isMobileVersion}>
-            <Button type="button" onClick={handleSaveImage}>
-              Salvar Imagem
-            </Button>
+            <Button onClick={handleSaveImage}>Salvar Imagem</Button>
           </ButtonBox>
         )}
       </Container>
