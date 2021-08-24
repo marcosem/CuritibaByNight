@@ -30,7 +30,9 @@ import Checkbox from '../../components/Checkbox';
 import imgProfile from '../../assets/profile.jpg';
 
 interface IFormData {
+  name: string;
   email: string;
+  phone: string;
 }
 
 interface IPlayer {
@@ -124,9 +126,9 @@ const UpdatePlayer: React.FC = () => {
 
         const formData = {
           profile_id: player.id,
-          name: player.name,
+          name: data.name,
           email: data.email.toLowerCase(),
-          phone: player.phone,
+          phone: data.phone,
           storyteller: st,
           active,
         };
@@ -384,7 +386,7 @@ const UpdatePlayer: React.FC = () => {
           >
             Atualizar Perfil
           </Button>
-          <RemoveButton type="button" onClick={handleConfirmRemove}>
+          <RemoveButton onClick={handleConfirmRemove}>
             <FiTrash2 />
           </RemoveButton>
         </Form>

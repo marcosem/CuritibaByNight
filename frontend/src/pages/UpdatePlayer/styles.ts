@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import { shade } from 'polished';
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 export const Container = styled.div`
   height: 100vh;
   align-items: stretch;
@@ -162,7 +166,9 @@ export const Avatar = styled.div`
   }
 `;
 
-export const RemoveButton = styled.button`
+export const RemoveButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
   position: fixed;
   bottom: 40px;
   right: 40px;
