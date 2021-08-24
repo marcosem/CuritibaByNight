@@ -106,7 +106,7 @@ const Routes: React.FC = () => (
     />
     <Route path="/character/:charId" component={CharacterDetails} isPrivate />
     <Route path="/challenges" component={Challenges} isPrivate />
-    <Route path="/404" component={Page404} isPrivate />
+    <Route path="*" isPrivate component={Page404} />
   </Switch>
 );
 
