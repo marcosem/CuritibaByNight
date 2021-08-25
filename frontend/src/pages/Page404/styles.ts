@@ -52,6 +52,11 @@ export const Content = styled.div<IContentProps>`
   ${props =>
     props.isMobile &&
     css`
+      > div {
+        width: 100%;
+      }
+
+      white-space: nowrap;
       transform: scale(0.4);
     `}
 
