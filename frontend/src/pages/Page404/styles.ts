@@ -22,6 +22,10 @@ const bloodDrop = keyframes`
   }
 `;
 
+interface IContentProps {
+  isMobile: boolean;
+}
+
 interface IEyeProps {
   eyePos: 'left' | 'right';
 }
@@ -39,12 +43,17 @@ export const Container = styled.main`
   height: 100vh;
 `;
 
-export const Content = styled.div`
-  width: 100%;
+export const Content = styled.div<IContentProps>`
   height: auto;
   margin: auto;
   text-align: center;
   margin-bottom: 0;
+
+  ${props =>
+    props.isMobile &&
+    css`
+      transform: scale(0.4);
+    `}
 
   p {
     height: 100%;
@@ -203,7 +212,16 @@ export const TextContainer = styled.div`
   }
 `;
 
-export const ButtonBox = styled.div`
-  margin: 20px auto 16px auto;
+export const ButtonBox = styled.div<IContentProps>`
   max-width: 340px;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          margin: 60px auto 16px auto;
+          transform: scale(2.5);
+        `
+      : css`
+          margin: 20px auto 16px auto;
+        `}
 `;

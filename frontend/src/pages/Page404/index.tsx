@@ -18,9 +18,11 @@ import {
 import Button from '../../components/Button';
 
 import { useHeader } from '../../hooks/header';
+import { useMobile } from '../../hooks/mobile';
 
 const Page404: React.FC = () => {
   const { setCurrentPage } = useHeader();
+  const { isMobileVersion } = useMobile();
   const history = useHistory();
 
   const handleReturn = useCallback(() => {
@@ -33,7 +35,7 @@ const Page404: React.FC = () => {
 
   return (
     <Container>
-      <Content>
+      <Content isMobile={isMobileVersion}>
         <div>
           <p>4</p>
           <Vampire>
@@ -55,7 +57,7 @@ const Page404: React.FC = () => {
           <p>Opa! Parece que a página que você procura foi diablerizada!</p>
         </TextContainer>
 
-        <ButtonBox>
+        <ButtonBox isMobile={isMobileVersion}>
           <Button title="Retornar" onClick={handleReturn}>
             Retornar
           </Button>
