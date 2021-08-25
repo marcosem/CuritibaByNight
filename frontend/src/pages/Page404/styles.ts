@@ -53,7 +53,12 @@ export const Content = styled.div<IContentProps>`
     props.isMobile &&
     css`
       > div {
+        margin-left: 0;
+        margin-right: 0;
         width: 100%;
+
+        display: flex;
+        justify-content: center;
       }
 
       white-space: nowrap;
@@ -76,7 +81,6 @@ export const Vampire = styled.span`
   height: 300px;
   display: inline-block;
   margin: auto;
-  // overflow-x: hidden;
 `;
 
 export const VampFace = styled.div`
@@ -223,7 +227,7 @@ export const ButtonBox = styled.div<IContentProps>`
   ${props =>
     props.isMobile
       ? css`
-          margin: 60px auto 16px auto;
+          margin: 60px auto 16px auto !important;
           transform: scale(2.5);
         `
       : css`
