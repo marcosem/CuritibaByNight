@@ -296,7 +296,7 @@ const SocketProvider: React.FC = ({ children }) => {
   );
 
   const connect = useCallback(() => {
-    if (user === undefined) return;
+    if (user === undefined || user.id === '') return;
 
     socket.current = getSocket();
     if (socket.current) {
@@ -454,11 +454,13 @@ const SocketProvider: React.FC = ({ children }) => {
 
             case 'error':
               if (myMsg.error) {
-                addToast({
-                  type: 'error',
-                  title: 'Erro de comunicação com servidor',
-                  description: `Erro: ${myMsg.error}`,
-                });
+                if (myMsg.error !== 'Invalid JWT token') {
+                  addToast({
+                    type: 'error',
+                    title: 'Erro de comunicação com servidor',
+                    description: `Erro: ${myMsg.error}`,
+                  });
+                }
               }
 
               break;

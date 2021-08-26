@@ -72,6 +72,25 @@ const AuthProvider: React.FC = ({ children }) => {
   });
   const [isTokenValidated, setIsTokenValidated] = useState<boolean>(false);
 
+  const resetData = useCallback(() => {
+    setData({
+      token: '',
+      user: {
+        name: '',
+        email: '',
+        avatar_url: '',
+        id: '',
+        lgpd_acceptance_date: null,
+        phone: '',
+        storyteller: false,
+      },
+    });
+    setCharacter({
+      clan: '',
+      id: '',
+    });
+  }, []);
+
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post('sessions', {
       email,
@@ -108,9 +127,8 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.removeItem('@CuritibaByNight:character');
     Cookies.remove('@CuritibaByNight:refreshToken', { secure: true });
 
-    setData({} as IAuthState);
-    setCharacter({} as ICharacter);
-  }, []);
+    resetData();
+  }, [resetData]);
 
   const updateUser = useCallback(
     (user: IUser) => {
