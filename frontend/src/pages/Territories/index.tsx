@@ -67,11 +67,13 @@ const Influences: React.FC = () => {
 
         setDomainMasquerade(res);
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title:
@@ -166,11 +168,13 @@ const Influences: React.FC = () => {
           setSelTerritoryList(formattedTerritories);
           setTerritoryList(formattedTerritories);
         });
-      } catch (error: any) {
-        if (error.response) {
-          const { message } = error.response.data;
+      } catch (error) {
+        const parsedError: any = error;
 
-          if (error.response.status !== 401) {
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (parsedError.response.status !== 401) {
             addToast({
               type: 'error',
               title: 'Erro ao tentar listar os territórios',
@@ -256,8 +260,10 @@ const Influences: React.FC = () => {
           title: 'Território adicionado!',
           description: 'Território adicionado com sucesso!',
         });
-      } catch (error: any) {
-        if (error.response) {
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar adicionar o território',
@@ -323,8 +329,10 @@ const Influences: React.FC = () => {
           title: 'Território atualizado!',
           description: 'Território atualizado com sucesso!',
         });
-      } catch (error: any) {
-        if (error.response) {
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar atualizar o território',
@@ -451,11 +459,16 @@ const Influences: React.FC = () => {
           title: 'Território excluído',
           description: 'Território excluído com sucesso!',
         });
-      } catch (error: any) {
-        if (error.response) {
-          const { message } = error.response.data;
+      } catch (error) {
+        const parsedError: any = error;
 
-          if (message?.indexOf('token') > 0 && error.response.status === 401) {
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (
+            message?.indexOf('token') > 0 &&
+            parsedError.response.status === 401
+          ) {
             addToast({
               type: 'error',
               title: 'Sessão Expirada',
@@ -544,11 +557,13 @@ const Influences: React.FC = () => {
           .then(() => {
             setDomainMasquerade(newLevel);
           });
-      } catch (error: any) {
-        if (error.response) {
-          const { message } = error.response.data;
+      } catch (error) {
+        const parsedError: any = error;
 
-          if (error.response.status !== 401) {
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (parsedError.response.status !== 401) {
             addToast({
               type: 'error',
               title:

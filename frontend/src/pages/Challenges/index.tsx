@@ -155,11 +155,16 @@ const Challenges: React.FC = () => {
         setOpponentList(filteredPCs);
         charListRef.current = filteredList;
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -207,11 +212,16 @@ const Challenges: React.FC = () => {
         setMyChar(loadedChar);
         char1Id.current = loadedChar.id;
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',

@@ -96,11 +96,16 @@ const CharacterUpdateMulti: React.FC = () => {
 
         setCharList(filteredList);
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -308,12 +313,14 @@ const CharacterUpdateMulti: React.FC = () => {
           });
 
           setSelChars(newSelChars);
-        } catch (err: any) {
+        } catch (error) {
+          const parsedError: any = error;
+
           addToast({
             type: 'error',
             title: 'Erro na atualização',
-            description: err.response.data.message
-              ? err.response.data.message
+            description: parsedError.response.data.message
+              ? parsedError.response.data.message
               : `Erro ao atualizar o persongem ${myChar.character.name}, tente novamente.`,
           });
         }

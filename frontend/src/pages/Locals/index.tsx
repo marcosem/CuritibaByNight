@@ -139,11 +139,13 @@ const Locals: React.FC = () => {
 
         setCharList(filteredList);
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar personagens',
@@ -300,11 +302,16 @@ const Locals: React.FC = () => {
             });
           }
         });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -395,11 +402,13 @@ const Locals: React.FC = () => {
         );
         setBorders(territoriesList);
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar os territórios',

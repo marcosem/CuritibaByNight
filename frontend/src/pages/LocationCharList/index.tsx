@@ -117,11 +117,13 @@ const LocationCharList: React.FC = () => {
 
         setCharList(res);
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar personagens',
@@ -165,11 +167,16 @@ const LocationCharList: React.FC = () => {
 
         setLocationList(newArray);
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -220,11 +227,13 @@ const LocationCharList: React.FC = () => {
 
           setLocationChars(newArray);
         });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar os personagens deste local',
@@ -371,11 +380,16 @@ const LocationCharList: React.FC = () => {
         title: 'Personagem adicionado ao Local',
         description: 'Personagem adicionado ao Local com sucesso!',
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -500,11 +514,16 @@ const LocationCharList: React.FC = () => {
           description:
             'Situação do Personagem atualizado ao Local com sucesso!',
         });
-      } catch (error: any) {
-        if (error.response) {
-          const { message } = error.response.data;
+      } catch (error) {
+        const parsedError: any = error;
 
-          if (message?.indexOf('token') > 0 && error.response.status === 401) {
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (
+            message?.indexOf('token') > 0 &&
+            parsedError.response.status === 401
+          ) {
             addToast({
               type: 'error',
               title: 'Sessão Expirada',
@@ -557,11 +576,16 @@ const LocationCharList: React.FC = () => {
           title: 'Personagem removido do Local',
           description: 'Personagem removido do Local com sucesso!',
         });
-      } catch (error: any) {
-        if (error.response) {
-          const { message } = error.response.data;
+      } catch (error) {
+        const parsedError: any = error;
 
-          if (message?.indexOf('token') > 0 && error.response.status === 401) {
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (
+            message?.indexOf('token') > 0 &&
+            parsedError.response.status === 401
+          ) {
             addToast({
               type: 'error',
               title: 'Sessão Expirada',

@@ -189,10 +189,15 @@ const InfluencesStat: React.FC = () => {
 
         setInfluencesStats(res);
       });
-    } catch (error: any) {
-      const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-      if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      const { message } = parsedError.response.data;
+
+      if (
+        message?.indexOf('token') > 0 &&
+        parsedError.response.status === 401
+      ) {
         addToast({
           type: 'error',
           title: 'Sessão Expirada',

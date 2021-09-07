@@ -131,11 +131,13 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
           setRetainerList(retList);
         });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar lacaios do personagens',
@@ -208,11 +210,16 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
           setLocationsList(newArray);
         });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -262,11 +269,16 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       });
 
       resetTraits(myChar.id);
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',
@@ -318,11 +330,16 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       });
 
       history.goBack();
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (message?.indexOf('token') > 0 && error.response.status === 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (
+          message?.indexOf('token') > 0 &&
+          parsedError.response.status === 401
+        ) {
           addToast({
             type: 'error',
             title: 'Sessão Expirada',

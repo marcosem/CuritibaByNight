@@ -160,11 +160,13 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           setDomainMasqueradeArray(domainArray);
         }
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title:
@@ -556,11 +558,13 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           setTraitsList(newTraitsList);
         }
       });
-    } catch (error: any) {
-      if (error.response) {
-        const { message } = error.response.data;
+    } catch (error) {
+      const parsedError: any = error;
 
-        if (error.response.status !== 401) {
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
             title: 'Erro ao tentar listar traits do personagens',
@@ -597,12 +601,14 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         if (isConnected) {
           notifyTraitUpdate(trait);
         }
-      } catch (error: any) {
+      } catch (error) {
+        const parsedError: any = error;
+
         addToast({
           type: 'error',
           title: 'Erro ao tentar atualizar Trait de personagens',
-          description: error.response.data.message
-            ? `Erro: ${error.response.data.message}`
+          description: parsedError.response.data.message
+            ? `Erro: ${parsedError.response.data.message}`
             : 'Erro ao tentat atualizar Trait de personagem, tente novamente.',
         });
       }
