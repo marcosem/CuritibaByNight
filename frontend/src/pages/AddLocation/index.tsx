@@ -229,7 +229,7 @@ const AddLocation: React.FC = () => {
         setSectList(filteredSect);
         setCharList(res);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

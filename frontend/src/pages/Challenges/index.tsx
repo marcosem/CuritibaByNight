@@ -155,7 +155,7 @@ const Challenges: React.FC = () => {
         setOpponentList(filteredPCs);
         charListRef.current = filteredList;
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -207,7 +207,7 @@ const Challenges: React.FC = () => {
         setMyChar(loadedChar);
         char1Id.current = loadedChar.id;
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

@@ -110,7 +110,7 @@ const Players: React.FC = () => {
 
         setPlayerList(newArray);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

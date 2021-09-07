@@ -240,7 +240,7 @@ const LocationUpdate: React.FC = () => {
         setSectList(filteredSect);
         setCharList(res);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -288,7 +288,7 @@ const LocationUpdate: React.FC = () => {
 
         setLocationList(newArray);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -749,7 +749,7 @@ const LocationUpdate: React.FC = () => {
       });
 
       loadLocations();
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

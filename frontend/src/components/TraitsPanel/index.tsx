@@ -160,7 +160,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           setDomainMasqueradeArray(domainArray);
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -556,7 +556,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           setTraitsList(newTraitsList);
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -597,7 +597,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
         if (isConnected) {
           notifyTraitUpdate(trait);
         }
-      } catch (error) {
+      } catch (error: any) {
         addToast({
           type: 'error',
           title: 'Erro ao tentar atualizar Trait de personagens',

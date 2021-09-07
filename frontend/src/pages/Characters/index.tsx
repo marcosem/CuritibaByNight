@@ -77,7 +77,7 @@ const Characters: React.FC = () => {
         setFilterList(filteredClanList);
         setCharList(res);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

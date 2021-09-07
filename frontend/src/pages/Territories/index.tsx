@@ -67,7 +67,7 @@ const Influences: React.FC = () => {
 
         setDomainMasquerade(res);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -166,7 +166,7 @@ const Influences: React.FC = () => {
           setSelTerritoryList(formattedTerritories);
           setTerritoryList(formattedTerritories);
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           const { message } = error.response.data;
 
@@ -256,7 +256,7 @@ const Influences: React.FC = () => {
           title: 'Território adicionado!',
           description: 'Território adicionado com sucesso!',
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           addToast({
             type: 'error',
@@ -323,7 +323,7 @@ const Influences: React.FC = () => {
           title: 'Território atualizado!',
           description: 'Território atualizado com sucesso!',
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           addToast({
             type: 'error',
@@ -451,7 +451,7 @@ const Influences: React.FC = () => {
           title: 'Território excluído',
           description: 'Território excluído com sucesso!',
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           const { message } = error.response.data;
 
@@ -544,7 +544,7 @@ const Influences: React.FC = () => {
           .then(() => {
             setDomainMasquerade(newLevel);
           });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           const { message } = error.response.data;
 

@@ -75,7 +75,7 @@ const UpdatePlayer: React.FC = () => {
 
         setPlayer(res);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -183,7 +183,7 @@ const UpdatePlayer: React.FC = () => {
       });
 
       history.goBack();
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -254,7 +254,7 @@ const UpdatePlayer: React.FC = () => {
       if (charQty > 0) {
         return;
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

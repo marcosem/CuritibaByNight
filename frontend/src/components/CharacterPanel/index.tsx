@@ -131,7 +131,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
           setRetainerList(retList);
         });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -208,7 +208,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
           setLocationsList(newArray);
         });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -262,7 +262,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       });
 
       resetTraits(myChar.id);
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -318,7 +318,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
       });
 
       history.goBack();
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

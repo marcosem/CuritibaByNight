@@ -139,7 +139,7 @@ const Locals: React.FC = () => {
 
         setCharList(filteredList);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -300,7 +300,7 @@ const Locals: React.FC = () => {
             });
           }
         });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -395,7 +395,7 @@ const Locals: React.FC = () => {
         );
         setBorders(territoriesList);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

@@ -125,7 +125,7 @@ const CharacterUpdate: React.FC = () => {
           }
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -231,7 +231,7 @@ const CharacterUpdate: React.FC = () => {
           title: `${characterType} Atualizado!`,
           description: `${characterType} atualizado com sucesso!`,
         });
-      } catch (err) {
+      } catch (err: any) {
         addToast({
           type: 'error',
           title: 'Erro na atualização',

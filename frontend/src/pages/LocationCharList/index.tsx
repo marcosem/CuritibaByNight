@@ -117,7 +117,7 @@ const LocationCharList: React.FC = () => {
 
         setCharList(res);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -165,7 +165,7 @@ const LocationCharList: React.FC = () => {
 
         setLocationList(newArray);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -220,7 +220,7 @@ const LocationCharList: React.FC = () => {
 
           setLocationChars(newArray);
         });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -371,7 +371,7 @@ const LocationCharList: React.FC = () => {
         title: 'Personagem adicionado ao Local',
         description: 'Personagem adicionado ao Local com sucesso!',
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -500,7 +500,7 @@ const LocationCharList: React.FC = () => {
           description:
             'Situação do Personagem atualizado ao Local com sucesso!',
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           const { message } = error.response.data;
 
@@ -557,7 +557,7 @@ const LocationCharList: React.FC = () => {
           title: 'Personagem removido do Local',
           description: 'Personagem removido do Local com sucesso!',
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           const { message } = error.response.data;
 

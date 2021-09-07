@@ -64,7 +64,7 @@ const CharacterDetails: React.FC = () => {
         setMyChar(resChar);
       });
       setBusy(false);
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

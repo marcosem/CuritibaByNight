@@ -96,7 +96,7 @@ const CharacterUpdateMulti: React.FC = () => {
 
         setCharList(filteredList);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -308,7 +308,7 @@ const CharacterUpdateMulti: React.FC = () => {
           });
 
           setSelChars(newSelChars);
-        } catch (err) {
+        } catch (err: any) {
           addToast({
             type: 'error',
             title: 'Erro na atualização',

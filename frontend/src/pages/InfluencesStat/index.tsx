@@ -189,7 +189,7 @@ const InfluencesStat: React.FC = () => {
 
         setInfluencesStats(res);
       });
-    } catch (error) {
+    } catch (error: any) {
       const { message } = error.response.data;
 
       if (message?.indexOf('token') > 0 && error.response.status === 401) {

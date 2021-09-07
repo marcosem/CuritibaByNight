@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
           setMyChar(char);
           setChar(char);
         });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 

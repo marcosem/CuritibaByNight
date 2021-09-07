@@ -87,7 +87,7 @@ const AddCharacter: React.FC = () => {
 
         setPlayerList(newArray);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -123,7 +123,7 @@ const AddCharacter: React.FC = () => {
 
         setRegnatList(regList);
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
 
@@ -219,7 +219,7 @@ const AddCharacter: React.FC = () => {
         title: `${characterType} Adicionado!`,
         description: `${characterType} adicionado com sucesso!`,
       });
-    } catch (err) {
+    } catch (err: any) {
       addToast({
         type: 'error',
         title: 'Erro na atualização',
