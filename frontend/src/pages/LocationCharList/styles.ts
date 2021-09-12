@@ -270,7 +270,7 @@ export const Select = styled.select<IContainerProps>`
   padding: 0 8px;
   font-weight: 500;
   color: #ccc;
-  text-align: center;
+  text-align: left;
   text-align-last: center;
   -moz-text-align-last: center;
 `;
