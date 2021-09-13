@@ -6,7 +6,7 @@ interface IContainerProps {
 }
 
 interface ISelectProps {
-  left?: boolean;
+  center?: boolean;
 }
 
 export const Container = styled.div<IContainerProps>`
@@ -146,12 +146,12 @@ export const Select = styled.select<ISelectProps>`
   -moz-text-align-last: center;
 
   ${props =>
-    props.left
+    props.center
       ? css`
-          text-align: left;
+          text-align: center;
         `
       : css`
-          text-align: center;
+          text-align: left;
         `}
 `;
 

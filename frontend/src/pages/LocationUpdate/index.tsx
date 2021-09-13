@@ -940,7 +940,6 @@ const LocationUpdate: React.FC = () => {
                       id="type"
                       value={locType ? locType.titleEn : 'other'}
                       onChange={handleLocTypeChange}
-                      left
                     >
                       <option value="">Tipo:</option>
                       {typeList.map(locationType => (
@@ -961,7 +960,6 @@ const LocationUpdate: React.FC = () => {
                       id="property"
                       value={locProperty ? locProperty.titleEn : 'private'}
                       onChange={handleLocPropertyChange}
-                      left
                     >
                       <option value="">Propriedade:</option>
                       {propertyList.map(property => (
@@ -981,7 +979,6 @@ const LocationUpdate: React.FC = () => {
                       id="creature"
                       value={selectedCreature || ''}
                       onChange={handleLocCreatureChange}
-                      left
                     >
                       <option value="">Criatura:</option>
                       {creatureTypeList.map(creat => (
@@ -998,7 +995,6 @@ const LocationUpdate: React.FC = () => {
                       id="sect"
                       value={selectedSect || ''}
                       onChange={handleLocSectChange}
-                      left
                     >
                       <option value="">Secto:</option>
                       {sectList.map(sect => (
@@ -1018,7 +1014,6 @@ const LocationUpdate: React.FC = () => {
                       id="responsible"
                       value={selectedChar ? selectedChar.id : ''}
                       onChange={handleLocResponsibleChange}
-                      left
                     >
                       <option value="">Personagem:</option>
                       {charList.map(char => (
@@ -1035,7 +1030,6 @@ const LocationUpdate: React.FC = () => {
                       id="clan"
                       value={selectedClan || ''}
                       onChange={handleLocClanChange}
-                      left
                     >
                       <option value="">Clã:</option>
                       {clanList.map(clan => (
@@ -1055,6 +1049,7 @@ const LocationUpdate: React.FC = () => {
                       id="level"
                       value={locLevel}
                       onChange={handleLocLevelChange}
+                      center
                     >
                       <option value="">Nível:</option>
                       {levelList.map(level => (
@@ -1071,6 +1066,7 @@ const LocationUpdate: React.FC = () => {
                       id="mysticalLevel"
                       value={locMysticalLevel}
                       onChange={handleLocMysticalLevelChange}
+                      center
                     >
                       <option value="">Nível Místico:</option>
                       {levelList.map(level => (
