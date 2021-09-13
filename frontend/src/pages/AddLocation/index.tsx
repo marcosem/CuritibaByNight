@@ -710,6 +710,7 @@ const AddLocation: React.FC = () => {
                       id="type"
                       value={locType ? locType.titleEn : 'other'}
                       onChange={handleLocTypeChange}
+                      left
                     >
                       <option value="">Tipo:</option>
                       {typeList.map(locationType => (
@@ -730,6 +731,7 @@ const AddLocation: React.FC = () => {
                       id="property"
                       value={locProperty ? locProperty.titleEn : 'private'}
                       onChange={handleLocPropertyChange}
+                      left
                     >
                       <option value="">Propriedade:</option>
                       {propertyList.map(property => (
@@ -748,8 +750,8 @@ const AddLocation: React.FC = () => {
                       name="creature"
                       id="creature"
                       value={selectedCreature || ''}
-                      // defaultValue=""
                       onChange={handleLocCreatureChange}
+                      left
                     >
                       <option value="">Criatura:</option>
                       {creatureTypeList.map(creat => (
@@ -765,8 +767,8 @@ const AddLocation: React.FC = () => {
                       name="sect"
                       id="sect"
                       value={selectedSect || ''}
-                      // defaultValue=""
                       onChange={handleLocSectChange}
+                      left
                     >
                       <option value="">Secto:</option>
                       {sectList.map(sect => (
@@ -787,6 +789,7 @@ const AddLocation: React.FC = () => {
                       value={selectedChar ? selectedChar.id : undefined}
                       defaultValue=""
                       onChange={handleLocResponsibleChange}
+                      left
                     >
                       <option value="">Personagem:</option>
                       {charList.map(char => (
@@ -804,6 +807,7 @@ const AddLocation: React.FC = () => {
                       value={selectedClan || undefined}
                       defaultValue=""
                       onChange={handleLocClanChange}
+                      left
                     >
                       <option value="">Clã:</option>
                       {clanList.map(clan => (

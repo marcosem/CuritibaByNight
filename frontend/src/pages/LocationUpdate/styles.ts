@@ -10,6 +10,10 @@ interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
 
+interface ISelectProps {
+  left?: boolean;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -122,7 +126,7 @@ export const SelectContainer = styled.div`
   }
 `;
 
-export const Select = styled.select`
+export const Select = styled.select<ISelectProps>`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -139,9 +143,17 @@ export const Select = styled.select`
   font-size: 14px;
   font-weight: 500;
   color: #ccc;
-  text-align: left;
   text-align-last: center;
   -moz-text-align-last: center;
+
+  ${props =>
+    props.left
+      ? css`
+          text-align: left;
+        `
+      : css`
+          text-align: center;
+        `}
 `;
 
 export const ButtonBox = styled.div`

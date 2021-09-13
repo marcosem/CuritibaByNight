@@ -940,6 +940,7 @@ const LocationUpdate: React.FC = () => {
                       id="type"
                       value={locType ? locType.titleEn : 'other'}
                       onChange={handleLocTypeChange}
+                      left
                     >
                       <option value="">Tipo:</option>
                       {typeList.map(locationType => (
@@ -960,6 +961,7 @@ const LocationUpdate: React.FC = () => {
                       id="property"
                       value={locProperty ? locProperty.titleEn : 'private'}
                       onChange={handleLocPropertyChange}
+                      left
                     >
                       <option value="">Propriedade:</option>
                       {propertyList.map(property => (
@@ -978,8 +980,8 @@ const LocationUpdate: React.FC = () => {
                       name="creature"
                       id="creature"
                       value={selectedCreature || ''}
-                      // defaultValue=""
                       onChange={handleLocCreatureChange}
+                      left
                     >
                       <option value="">Criatura:</option>
                       {creatureTypeList.map(creat => (
@@ -995,8 +997,8 @@ const LocationUpdate: React.FC = () => {
                       name="sect"
                       id="sect"
                       value={selectedSect || ''}
-                      // defaultValue=""
                       onChange={handleLocSectChange}
+                      left
                     >
                       <option value="">Secto:</option>
                       {sectList.map(sect => (
@@ -1015,8 +1017,8 @@ const LocationUpdate: React.FC = () => {
                       name="responsible"
                       id="responsible"
                       value={selectedChar ? selectedChar.id : ''}
-                      // defaultValue=""
                       onChange={handleLocResponsibleChange}
+                      left
                     >
                       <option value="">Personagem:</option>
                       {charList.map(char => (
@@ -1032,8 +1034,8 @@ const LocationUpdate: React.FC = () => {
                       name="clan"
                       id="clan"
                       value={selectedClan || ''}
-                      // defaultValue=""
                       onChange={handleLocClanChange}
+                      left
                     >
                       <option value="">Clã:</option>
                       {clanList.map(clan => (
