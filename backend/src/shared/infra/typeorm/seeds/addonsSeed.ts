@@ -1435,7 +1435,7 @@ const addonsSeed = [
     influence: 'Industry',
     influence_qty: 10,
     time_qty: 1,
-    time_type: 'month',
+    time_type: 'months',
   },
   {
     name: 'Design Artístico',
