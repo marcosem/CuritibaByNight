@@ -57,6 +57,7 @@ class LocationsAddonsRepository implements ILocationsAddonsRepository {
   ): Promise<LocationAddon | undefined> {
     const locAddonFound = await this.ormRepository.findOne({
       where: { id: location_addon_id },
+      relations: ['locationId', 'currentAddon', 'nextAddon'],
     });
 
     // if not found, return undefined
@@ -69,6 +70,7 @@ class LocationsAddonsRepository implements ILocationsAddonsRepository {
   ): Promise<LocationAddon | undefined> {
     const locAddonFound = await this.ormRepository.findOne({
       where: { location_id, addon_name },
+      relations: ['locationId', 'currentAddon', 'nextAddon'],
     });
 
     // if not found, return undefined
@@ -81,6 +83,7 @@ class LocationsAddonsRepository implements ILocationsAddonsRepository {
     const locAddons = await this.ormRepository.find({
       where: { location_id },
       order: { addon_name: 'ASC' },
+      relations: ['locationId', 'currentAddon', 'nextAddon'],
     });
 
     return locAddons;
