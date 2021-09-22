@@ -1,6 +1,6 @@
 import LocationCharacter from '@modules/locations/infra/typeorm/entities/LocationCharacter';
 
-export default interface ILocationsCharacters {
+export default interface ILocationsCharactersRepository {
   addCharToLocation(
     char_id: string,
     location_id: string,

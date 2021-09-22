@@ -24,7 +24,7 @@ class LocationCharacter {
 
   @ManyToOne(() => Location)
   @JoinColumn({ name: 'location_id' })
-  locationId?: Character;
+  locationId?: Location;
 
   @ManyToOne(() => Character)
   @JoinColumn({ name: 'character_id' })

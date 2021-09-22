@@ -57,11 +57,11 @@ class FakeTerritoriesRepository implements ITerritoriesRepository {
   }
 
   public async delete(territory_id: string): Promise<void> {
-    const listWithRemovedTerritories = this.territories.filter(
+    const listWithRemovedTerritory = this.territories.filter(
       territory => territory.id !== territory_id,
     );
 
-    this.territories = listWithRemovedTerritories;
+    this.territories = listWithRemovedTerritory;
   }
 }
 
