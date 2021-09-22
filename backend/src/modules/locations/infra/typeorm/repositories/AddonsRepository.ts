@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Not } from 'typeorm';
 import Addon from '@modules/locations/infra/typeorm/entities/Addon';
 import ICreateAddonDTO from '@modules/locations/dtos/ICreateAddonDTO';
 import IAddonsRepository from '@modules/locations/repositories/IAddonsRepository';
@@ -84,29 +84,65 @@ class AddonsRepository implements IAddonsRepository {
   public async findByNameLevel(
     addon_name: string,
     addon_level: number,
+    warrens = false,
   ): Promise<Addon | undefined> {
-    const addonFound = await this.ormRepository.findOne({
-      where: { name: addon_name, level: addon_level },
-    });
+    let addonFound: Addon | undefined;
+
+    if (warrens) {
+      const addons = await this.ormRepository.find({
+        where: { name: addon_name, level: addon_level },
+      });
+
+      if (addons.length > 0) {
+        if (addons.length === 1) {
+          [addonFound] = addons;
+        } else {
+          addonFound = addons.find(
+            addon => addon.req_other === 'Warrens Nosferatu',
+          );
+        }
+      }
+    } else {
+      addonFound = await this.ormRepository.findOne({
+        where: {
+          name: addon_name,
+          level: addon_level,
+          req_other: Not('Warrens Nosferatu'),
+        },
+      });
+    }
 
     // if not found, return undefined
     return addonFound;
   }
 
-  public async findFirstByName(addon_name: string): Promise<Addon | undefined> {
-    return this.findByNameLevel(addon_name, 1);
+  public async findFirstByName(
+    addon_name: string,
+    warrens = false,
+  ): Promise<Addon | undefined> {
+    return this.findByNameLevel(addon_name, 1, warrens);
   }
 
-  public async listAll(allow_duplicated = true): Promise<Addon[]> {
+  public async listAll(
+    allow_duplicated = true,
+    warrens = false,
+  ): Promise<Addon[]> {
     let addonList: Addon[];
 
     if (allow_duplicated) {
       addonList = await this.ormRepository.find({
         order: { name: 'ASC', level: 'ASC' },
       });
+    } else if (warrens) {
+      addonList = await this.ormRepository
+        .createQueryBuilder()
+        .distinctOn(['name'])
+        .orderBy('name')
+        .getMany();
     } else {
       addonList = await this.ormRepository
         .createQueryBuilder()
+        .where('req_other = :warren', { warren: Not('Warrens Nosferatu') })
         .distinctOn(['name'])
         .orderBy('name')
         .getMany();

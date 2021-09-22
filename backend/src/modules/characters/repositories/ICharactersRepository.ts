@@ -1,7 +1,7 @@
 import Character from '@modules/characters/infra/typeorm/entities/Character';
 import ICreateCharacterDTO from '@modules/characters/dtos/ICreateCharacterDTO';
 
-export default interface ICharacterRepository {
+export default interface ICharactersRepository {
   create(data: ICreateCharacterDTO): Promise<Character>;
   update(data: Character): Promise<Character>;
   findById(character_id: string): Promise<Character | undefined>;

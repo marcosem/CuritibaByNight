@@ -8,9 +8,13 @@ export default interface IAddonsRepository {
   findByNameLevel(
     addon_name: string,
     addon_level: number,
+    warrens: boolean,
   ): Promise<Addon | undefined>;
-  findFirstByName(addon_name: string): Promise<Addon | undefined>;
-  listAll(allow_duplicated: boolean): Promise<Addon[]>;
+  findFirstByName(
+    addon_name: string,
+    warrens: boolean,
+  ): Promise<Addon | undefined>;
+  listAll(allow_duplicated: boolean, warrens: boolean): Promise<Addon[]>;
   listByName(addon_name: string): Promise<Addon[]>;
   delete(addon_id: string): Promise<void>;
 }

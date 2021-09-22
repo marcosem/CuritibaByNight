@@ -73,24 +73,55 @@ class FakeAddonsRepository implements IAddonsRepository {
   public async findByNameLevel(
     addon_name: string,
     addon_level: number,
+    warrens = false,
   ): Promise<Addon | undefined> {
-    const findAddon = this.addons.find(
-      addon => addon.name === addon_name && addon.level === addon_level,
-    );
+    let addonFound: Addon | undefined;
 
-    return findAddon;
+    if (warrens) {
+      const myAddons = this.addons.filter(
+        addon => addon.name === addon_name && addon.level === addon_level,
+      );
+
+      if (myAddons.length > 0) {
+        if (myAddons.length === 1) {
+          [addonFound] = myAddons;
+        } else {
+          addonFound = myAddons.find(
+            addon => addon.req_other === 'Warrens Nosferatu',
+          );
+        }
+      }
+    } else {
+      addonFound = this.addons.find(
+        addon =>
+          addon.name === addon_name &&
+          addon.level === addon_level &&
+          addon.req_other !== 'Warrens Nosferatu',
+      );
+    }
+
+    return addonFound;
   }
 
-  public async findFirstByName(addon_name: string): Promise<Addon | undefined> {
-    return this.findByNameLevel(addon_name, 1);
+  public async findFirstByName(
+    addon_name: string,
+    warrens = false,
+  ): Promise<Addon | undefined> {
+    return this.findByNameLevel(addon_name, 1, warrens);
   }
 
-  public async listAll(allow_duplicated = true): Promise<Addon[]> {
+  public async listAll(
+    allow_duplicated = true,
+    warrens = false,
+  ): Promise<Addon[]> {
     if (allow_duplicated) return this.addons;
 
     const addedAddon: string[] = [];
     const addonsNotDuplicated = this.addons.filter(addon => {
-      if (addedAddon.indexOf(addon.name) === -1) {
+      if (
+        addedAddon.indexOf(addon.name) === -1 &&
+        (warrens || addon.req_other !== 'Warrens Nosferatu')
+      ) {
         addedAddon.push(addon.name);
         return true;
       }

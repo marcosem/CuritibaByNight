@@ -19,6 +19,12 @@ import LocationsRepository from '@modules/locations/infra/typeorm/repositories/L
 import ILocationsCharactersRepository from '@modules/locations/repositories/ILocationsCharactersRepository';
 import LocationsCharactersRepository from '@modules/locations/infra/typeorm/repositories/LocationsCharactersRepository';
 
+import IAddonsRepository from '@modules/locations/repositories/IAddonsRepository';
+import AddonsRepository from '@modules/locations/infra/typeorm/repositories/AddonsRepository';
+
+import ILocationsAddonsRepository from '@modules/locations/repositories/ILocationsAddonsRepository';
+import LocationsAddonsRepository from '@modules/locations/infra/typeorm/repositories/LocationsAddonsRepository';
+
 import ITerritoriesRepository from '@modules/locations/repositories/ITerritoriesRepository';
 import TerritoriesRepository from '@modules/locations/infra/typeorm/repositories/TerritoriesRepository';
 
@@ -50,6 +56,16 @@ container.registerSingleton<ILocationsRepository>(
 container.registerSingleton<ILocationsCharactersRepository>(
   'LocationsCharactersRepository',
   LocationsCharactersRepository,
+);
+
+container.registerSingleton<IAddonsRepository>(
+  'AddonsRepository',
+  AddonsRepository,
+);
+
+container.registerSingleton<ILocationsAddonsRepository>(
+  'LocationsAddonsRepository',
+  LocationsAddonsRepository,
 );
 
 container.registerSingleton<ITerritoriesRepository>(
