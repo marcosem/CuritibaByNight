@@ -36,10 +36,10 @@ class GetAvailableAddonsListService {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
-      throw new AppError('Only authenticated user can get locations list', 401);
+      throw new AppError('Only authenticated user can get addons list', 401);
     } else if (!user.storyteller && !char_id) {
       throw new AppError(
-        'Only authenticated Storytellers can get locations list without identify a character',
+        'Only authenticated Storytellers can get addons without identify a character',
         401,
       );
     }
