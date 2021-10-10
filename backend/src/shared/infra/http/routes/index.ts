@@ -5,6 +5,8 @@ import charactersRouter from '@modules/characters/infra/http/routes/characters.r
 import domainRouter from '@modules/characters/infra/http/routes/domain.routes';
 import locationsRouter from '@modules/locations/infra/http/routes/locations.routes';
 import locationsCharactersRouter from '@modules/locations/infra/http/routes/locationsCharacters.routes';
+import addonsRouter from '@modules/locations/infra/http/routes/addons.routes';
+import locationsAddonsRouter from '@modules/locations/infra/http/routes/locationsAddons.routes';
 import territoriesRouter from '@modules/locations/infra/http/routes/territories.routes';
 import passwordRouter from '@modules/users/infra/http/routes/password.routes';
 import sessionsRouter from '@modules/users/infra/http/routes/sessions.routes';
@@ -25,6 +27,8 @@ routes.use('/character', userCharactersRouter);
 routes.use('/characters', charactersRouter);
 routes.use('/domain', domainRouter);
 routes.use('/locations', locationsRouter);
+routes.use('/addons', addonsRouter);
+routes.use('/locaddon', locationsAddonsRouter);
 routes.use('/territories', territoriesRouter);
 routes.use('/locchar', locationsCharactersRouter);
 routes.use('/password', passwordRouter);
