@@ -289,7 +289,7 @@ describe('GetLocationAddons', () => {
 
     expect(locationAddonsResult.defense).toEqual(expectedDefense);
     expect(locationAddonsResult.surveillance).toEqual(expectedSurveillance);
-    expect(locationAddonsResult.addonsList.length).toEqual(4);
+    expect(locationAddonsResult.addonsList).toHaveLength(4);
   });
 
   it('Should be able to list all only valid addons of a location', async () => {
@@ -352,7 +352,7 @@ describe('GetLocationAddons', () => {
       location_id: location.id,
     });
 
-    expect(locationAddonsResult.addonsList.length).toEqual(2);
+    expect(locationAddonsResult.addonsList).toHaveLength(2);
     expect(removeInvalidAddon).toHaveBeenCalledWith(invalidLocAddon.id);
   });
 
@@ -412,7 +412,7 @@ describe('GetLocationAddons', () => {
 
     expect(locationAddonsResult).toHaveProperty('defense');
     expect(locationAddonsResult).toHaveProperty('surveillance');
-    expect(locationAddonsResult.addonsList.length).toEqual(2);
+    expect(locationAddonsResult.addonsList).toHaveLength(2);
   });
 
   it('Should be able to list all addons for characters clan location', async () => {
@@ -470,7 +470,7 @@ describe('GetLocationAddons', () => {
 
     expect(locationAddonsResult).toHaveProperty('defense');
     expect(locationAddonsResult).toHaveProperty('surveillance');
-    expect(locationAddonsResult.addonsList.length).toEqual(2);
+    expect(locationAddonsResult.addonsList).toHaveLength(2);
   });
 
   it('Should be able to list all addons for location shared by the character', async () => {
@@ -534,7 +534,7 @@ describe('GetLocationAddons', () => {
 
     expect(locationAddonsResult).toHaveProperty('defense');
     expect(locationAddonsResult).toHaveProperty('surveillance');
-    expect(locationAddonsResult.addonsList.length).toEqual(2);
+    expect(locationAddonsResult.addonsList).toHaveLength(2);
   });
 
   it('Should not allow invalid users to get a list of addons', async () => {

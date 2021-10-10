@@ -45,7 +45,7 @@ describe('RemoveTerritory', () => {
       territory.id,
     );
 
-    expect(finalListSize.length).toEqual(initialListSize.length - 1);
+    expect(finalListSize).toHaveLength(initialListSize.length - 1);
     expect(findTerritory).toBeUndefined();
   });
 

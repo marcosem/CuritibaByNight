@@ -54,7 +54,7 @@ describe('RemoveCharacter', () => {
 
     const finalListSize = await fakeCharactersRepository.listAll();
     const findChar = await fakeCharactersRepository.findById(char.id);
-    expect(finalListSize.length).toEqual(initialListSize.length - 1);
+    expect(finalListSize).toHaveLength(initialListSize.length - 1);
     expect(findChar).toBeUndefined();
     expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
   });

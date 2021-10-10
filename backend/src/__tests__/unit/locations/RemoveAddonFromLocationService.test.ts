@@ -76,9 +76,7 @@ describe('RemoveAddonFromLocation', () => {
       'My Addon #1',
     );
 
-    expect(addonListAfterRemove.length).toEqual(
-      addonListBeforeRemove.length - 1,
-    );
+    expect(addonListAfterRemove).toHaveLength(addonListBeforeRemove.length - 1);
     expect(removedAddon).toBeUndefined();
   });
 

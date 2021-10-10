@@ -185,7 +185,7 @@ describe('GetAvailableAddonsList', () => {
       location_id: location.id,
     });
 
-    expect(addonsList.length).toEqual(4);
+    expect(addonsList).toHaveLength(4);
   });
 
   it('Should be able to list all addons for non warrens', async () => {
@@ -211,7 +211,7 @@ describe('GetAvailableAddonsList', () => {
       location_id: location.id,
     });
 
-    expect(addonsList.length).toEqual(3);
+    expect(addonsList).toHaveLength(3);
   });
 
   it('Should be able to list all addons for characters location', async () => {
@@ -248,7 +248,7 @@ describe('GetAvailableAddonsList', () => {
       location_id: location.id,
     });
 
-    expect(addonsList.length).toEqual(3);
+    expect(addonsList).toHaveLength(3);
   });
 
   it('Should be able to list all addons for characters clan location', async () => {
@@ -284,7 +284,7 @@ describe('GetAvailableAddonsList', () => {
       location_id: location.id,
     });
 
-    expect(addonsList.length).toEqual(3);
+    expect(addonsList).toHaveLength(3);
   });
 
   it('Should be able to list all addons for location shared by the character', async () => {
@@ -326,7 +326,7 @@ describe('GetAvailableAddonsList', () => {
       location_id: location.id,
     });
 
-    expect(addonsList.length).toEqual(3);
+    expect(addonsList).toHaveLength(3);
   });
 
   it('Should not allow invalid users to get a list of addons', async () => {

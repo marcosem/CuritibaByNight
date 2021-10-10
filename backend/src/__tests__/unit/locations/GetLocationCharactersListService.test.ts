@@ -77,7 +77,7 @@ describe('GetLocationCharactersList', () => {
       location_id: location.id,
     });
 
-    expect(locationCharsList.length).toEqual(2);
+    expect(locationCharsList).toHaveLength(2);
     expect(locationCharsList[0].character_id).toBe(char1.id);
     expect(locationCharsList[1].character_id).toBe(char2.id);
   });

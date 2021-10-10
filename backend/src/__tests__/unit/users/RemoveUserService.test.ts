@@ -33,8 +33,8 @@ describe('RemoveUser', () => {
 
     await removeUserService.execute({ user_id: user.id });
 
-    const listLenght = await fakeUsersRepository.listAll();
-    expect(listLenght).toHaveLength(0);
+    const listLength = await fakeUsersRepository.listAll();
+    expect(listLength).toHaveLength(0);
   });
 
   it('Should not allow remove an invalid user', async () => {
@@ -86,8 +86,8 @@ describe('RemoveUser', () => {
       profile_id: anotherUser.id,
     });
 
-    const listLenght = await fakeUsersRepository.listAll();
-    expect(listLenght).toHaveLength(1);
+    const listLength = await fakeUsersRepository.listAll();
+    expect(listLength).toHaveLength(1);
 
     const lastUser = await fakeUsersRepository.findById(stUser.id);
     expect(lastUser).toMatchObject(stUser);
@@ -133,9 +133,9 @@ describe('RemoveUser', () => {
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
 
     await removeUserService.execute({ user_id: user.id });
-    const listLenght = await fakeUsersRepository.listAll();
+    const listLength = await fakeUsersRepository.listAll();
 
-    expect(listLenght).toHaveLength(0);
+    expect(listLength).toHaveLength(0);
     expect(deleteFile).toBeCalledWith('avatar.jpg', 'avatar');
   });
 });
