@@ -31,7 +31,7 @@ class GetLocationAddonsService {
     private addonsRepository: IAddonsRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
-    @inject('CharacterRepository')
+    @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
     @inject('LocationsCharactersRepository')
     private locationsCharactersRepository: ILocationsCharactersRepository,
