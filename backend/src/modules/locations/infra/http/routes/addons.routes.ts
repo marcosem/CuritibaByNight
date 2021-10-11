@@ -6,7 +6,7 @@ import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAut
 const addonsRouter = Router();
 const addonsController = new AddonsController();
 
-addonsRouter.get(
+addonsRouter.post(
   '/list',
   ensureAuthenticated,
   celebrate({
