@@ -66,12 +66,18 @@ class UpdateAddonLocationService {
       throw new AppError('Addon-Location not found', 400);
     }
 
+    // data from DB comes as string, need to ensure it is integer for comparision
+    const locationAddonLevel: number = parseInt(
+      `${locationAddon.addon_level}`,
+      10,
+    );
+
     const addonLevel =
-      addon_level === undefined ? locationAddon.addon_level : addon_level;
+      addon_level === undefined ? locationAddonLevel : addon_level;
 
     let nextAddon: Addon | null;
 
-    if (addonLevel !== locationAddon.addon_level) {
+    if (addonLevel !== locationAddonLevel) {
       const warrens = location.name === 'Warrens Nosferatu';
       const nextLevel = addonLevel + 1;
       let currentAddon: Addon | null;
@@ -151,9 +157,11 @@ class UpdateAddonLocationService {
       locationAddon.temp_influence = tempInfluence;
     }
 
-    await this.locationsAddonsRepository.updateAddonLocation(locationAddon);
+    const updatedLocationAddon = await this.locationsAddonsRepository.updateAddonLocation(
+      locationAddon,
+    );
 
-    return locationAddon;
+    return updatedLocationAddon;
   }
 }
 

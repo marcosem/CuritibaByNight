@@ -95,29 +95,31 @@ class GetLocationAddonsService {
     let surveillance = 0;
     const removeAddonsList: string[] = [];
 
-    await new Promise<void>((resolve, _) => {
-      locationAddons.forEach(async (locAddon, index, myArray) => {
-        const addonId = locAddon.addon_id_current;
+    if (locationAddons.length > 0) {
+      await new Promise<void>((resolve, _) => {
+        locationAddons.forEach(async (locAddon, index, myArray) => {
+          const addonId = locAddon.addon_id_current;
 
-        if (addonId !== null) {
-          const addon = await this.addonsRepository.findById(addonId);
+          if (addonId !== null) {
+            const addon = await this.addonsRepository.findById(addonId);
 
-          if (addon) {
-            defense += addon.defense;
-            surveillance += addon.surveillance;
-          } else {
-            removeAddonsList.push(locAddon.id);
+            if (addon) {
+              defense += addon.defense;
+              surveillance += addon.surveillance;
+            } else {
+              removeAddonsList.push(locAddon.id);
+            }
           }
-        }
 
-        if (index === myArray.length - 1) {
-          // Add a small delay just to ensure everything is processed
-          setTimeout(() => {
-            resolve();
-          }, 50);
-        }
+          if (index === myArray.length - 1) {
+            // Add a small delay just to ensure everything is processed
+            setTimeout(() => {
+              resolve();
+            }, 50);
+          }
+        });
       });
-    });
+    }
 
     if (removeAddonsList.length > 0) {
       locationAddons = locationAddons.filter(

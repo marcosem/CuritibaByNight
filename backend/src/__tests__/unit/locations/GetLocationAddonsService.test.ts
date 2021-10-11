@@ -292,6 +292,34 @@ describe('GetLocationAddons', () => {
     expect(locationAddonsResult.addonsList).toHaveLength(4);
   });
 
+  it('Should list no addon if there is no addon in the location', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Ateliê Victor Augusto Gentil',
+      description: 'Elysium Toreador',
+      latitude: -25.4384281,
+      longitude: -49.293875,
+      property: 'clan',
+      elysium: true,
+      clan: 'Toreador',
+    });
+
+    const locationAddonsResult = await getLocationAddons.execute({
+      user_id: user.id,
+      location_id: location.id,
+    });
+
+    expect(locationAddonsResult.defense).toEqual(0);
+    expect(locationAddonsResult.surveillance).toEqual(0);
+    expect(locationAddonsResult.addonsList).toHaveLength(0);
+  });
+
   it('Should be able to list all only valid addons of a location', async () => {
     const removeInvalidAddon = jest.spyOn(
       fakeLocationsAddonsRepository,
