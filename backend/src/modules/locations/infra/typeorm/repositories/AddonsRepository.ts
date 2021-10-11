@@ -136,13 +136,17 @@ class AddonsRepository implements IAddonsRepository {
     } else if (warrens) {
       addonList = await this.ormRepository
         .createQueryBuilder()
+        .where({ level: 1 })
         .distinctOn(['name'])
         .orderBy('name')
         .getMany();
     } else {
       addonList = await this.ormRepository
         .createQueryBuilder()
-        .where('req_other = :warren', { warren: Not('Warrens Nosferatu') })
+        .where([
+          { level: 1, req_other: Not('Warrens Nosferatu') },
+          { level: 1, req_other: null },
+        ])
         .distinctOn(['name'])
         .orderBy('name')
         .getMany();
