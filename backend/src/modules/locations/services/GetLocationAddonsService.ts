@@ -104,8 +104,15 @@ class GetLocationAddonsService {
             const addon = await this.addonsRepository.findById(addonId);
 
             if (addon) {
-              defense += addon.defense;
-              surveillance += addon.surveillance;
+              // data from DB comes as string, need to ensure it is integer for comparision
+              const addonDefense: number = parseInt(`${addon.defense}`, 10);
+              const addonSurveillance: number = parseInt(
+                `${addon.surveillance}`,
+                10,
+              );
+
+              defense += addonDefense;
+              surveillance += addonSurveillance;
             } else {
               removeAddonsList.push(locAddon.id);
             }
