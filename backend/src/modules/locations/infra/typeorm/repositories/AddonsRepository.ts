@@ -104,11 +104,18 @@ class AddonsRepository implements IAddonsRepository {
       }
     } else {
       addonFound = await this.ormRepository.findOne({
-        where: {
-          name: addon_name,
-          level: addon_level,
-          req_other: Not('Warrens Nosferatu'),
-        },
+        where: [
+          {
+            name: addon_name,
+            level: addon_level,
+            req_other: Not('Warrens Nosferatu'),
+          },
+          {
+            name: addon_name,
+            level: addon_level,
+            req_other: null,
+          },
+        ],
       });
     }
 
