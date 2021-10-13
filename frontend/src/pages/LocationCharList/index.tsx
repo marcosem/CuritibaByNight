@@ -245,7 +245,7 @@ const LocationCharList: React.FC = () => {
     setBusy(false);
   }, [addToast, selectedLocation.id]);
 
-  const handleSelectedCharCharge = useCallback(
+  const handleSelectedCharChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const selIndex = event.target.selectedIndex;
 
@@ -780,7 +780,7 @@ const LocationCharList: React.FC = () => {
                         name="responsible"
                         id="responsible"
                         value={selectedChar ? selectedChar.id : ''}
-                        onChange={handleSelectedCharCharge}
+                        onChange={handleSelectedCharChange}
                         isMobile={isMobileVersion}
                       >
                         <option value="">Personagem:</option>
