@@ -134,7 +134,7 @@ class UpdateAddonLocationService {
         tempAbility = 0;
         tempInfluence = 0;
       } else {
-        if (temp_ability) {
+        if (temp_ability !== undefined) {
           tempAbility =
             temp_ability > nextAddon.ability_qty
               ? nextAddon.ability_qty
@@ -143,7 +143,7 @@ class UpdateAddonLocationService {
           tempAbility = locationAddon.temp_ability;
         }
 
-        if (temp_influence) {
+        if (temp_influence !== undefined) {
           tempInfluence =
             temp_influence > nextAddon.influence_qty
               ? nextAddon.influence_qty

@@ -5,8 +5,9 @@ import RemoveAddonFromLocationService from '@modules/locations/services/RemoveAd
 import UpdateAddonLocationService from '@modules/locations/services/UpdateAddonLocationService';
 
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
-export default class LocationsController {
+export default class LocationAddonController {
   public async create(req: Request, res: Response): Promise<Response> {
     const { addon_name, addon_level, location_id } = req.body;
 
@@ -21,7 +22,7 @@ export default class LocationsController {
       location_id,
     });
 
-    return res.json(addonLocation);
+    return res.json(classToClass(addonLocation));
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
@@ -36,6 +37,15 @@ export default class LocationsController {
       char_id,
       location_id,
     });
+
+    const locAddonListUpdated = locationAddons.addonsList.map(locAddon => {
+      const newLocAddon = locAddon;
+      newLocAddon.locationId = classToClass(newLocAddon.locationId);
+
+      return newLocAddon;
+    });
+
+    locationAddons.addonsList = locAddonListUpdated;
 
     return res.json(locationAddons);
   }
@@ -64,7 +74,7 @@ export default class LocationsController {
 
     const locAddon = await updateAddonLocationService.execute(inputData);
 
-    return res.json(locAddon);
+    return res.json(classToClass(locAddon));
   }
 
   public async delete(req: Request, res: Response): Promise<Response> {

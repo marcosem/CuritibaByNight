@@ -25,7 +25,7 @@ locationsAddonsRouter.post(
   ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
-      char_id: Joi.string().uuid().required(),
+      char_id: Joi.string().uuid().optional(),
       location_id: Joi.string().uuid().required(),
     },
   }),

@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 
 @Entity('locations_addons')
-class LocationCharacter {
+class LocationAddon {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -56,4 +56,4 @@ class LocationCharacter {
   updated_at: Date;
 }
 
-export default LocationCharacter;
+export default LocationAddon;
