@@ -20,6 +20,7 @@ import AddCharacter from '../pages/AddCharacter';
 import AddLocation from '../pages/AddLocation';
 import LocationUpdate from '../pages/LocationUpdate';
 import LocationCharList from '../pages/LocationCharList';
+import LocationDetails from '../pages/LocationDetails';
 import CharacterDetails from '../pages/CharacterDetails';
 import Challenges from '../pages/Challenges';
 import Influences from '../pages/Influences';
@@ -97,6 +98,11 @@ const Routes: React.FC = () => (
       component={Territories}
       isPrivate
       isStoryteller
+    />
+    <Route
+      path="/localdetails/:locationId"
+      component={LocationDetails}
+      isPrivate
     />
     <Route
       path="/localchars"
