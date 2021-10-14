@@ -286,13 +286,6 @@ export const Select = styled.select<IContainerProps>`
   text-align-last: center;
   -moz-text-align-last: center;
 `;
-/*
-export const ButtonBox = styled.div`
-  margin: auto auto 0 auto;
-  max-width: 340px;
-  padding-top: 16px;
-`;
-*/
 
 export const GoBackButton = styled.button.attrs<IButtonProps>(() => ({
   type: 'button',

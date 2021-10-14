@@ -151,8 +151,8 @@ const LocationDetails: React.FC = () => {
   const [selectedAddon, setSelectedAddon] = useState<
     IAddonDetails | undefined
   >();
-  const [addonDefense, setAddonDefense] = useState<number>(0);
-  const [addonSurveillance, setAddonSurveillance] = useState<number>(0);
+  const [locationDefense, setLocationDefense] = useState<number>(0);
+  const [locationSurveillance, setLocationSurveillance] = useState<number>(0);
 
   const [selectedLocation, setSelectedLocation] = useState<ILocation>({
     id: undefined,
@@ -330,8 +330,8 @@ const LocationDetails: React.FC = () => {
             return newAddon;
           });
 
-          setAddonDefense(defense);
-          setAddonSurveillance(surveillance);
+          setLocationDefense(defense);
+          setLocationSurveillance(surveillance);
           setLocationAddonList(newAddonList);
         });
     } catch (error) {
@@ -925,15 +925,11 @@ const LocationDetails: React.FC = () => {
                     <LocationShields>
                       <LocationShield title="Defesa">
                         <FaShieldAlt />
-                        <span>
-                          {`${selectedLocation.level + addonDefense}`}
-                        </span>
+                        <span>{locationDefense}</span>
                       </LocationShield>
                       <LocationShield title="Vigilância">
                         <FaEye />
-                        <span>
-                          {`${selectedLocation.level + addonSurveillance}`}
-                        </span>
+                        <span>{locationSurveillance}</span>
                       </LocationShield>
                     </LocationShields>
                   </DetailsContainer>

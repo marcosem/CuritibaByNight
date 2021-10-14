@@ -7,6 +7,7 @@ import React, {
   ChangeEvent,
 } from 'react';
 import { FiHome, FiFileText, FiMap, FiMapPin } from 'react-icons/fi';
+import { GiZBrick } from 'react-icons/gi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -25,6 +26,7 @@ import {
   SelectContainer,
   Select,
   ButtonBox,
+  FunctionButton,
 } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -591,6 +593,10 @@ const AddLocation: React.FC = () => {
     [locationData],
   );
 
+  const handleLocationDetails = useCallback(() => {
+    history.push(`/localdetails/${locationData.locationId}`);
+  }, [history, locationData.locationId]);
+
   useEffect(() => {
     setCurrentPage('addlocal');
     loadCharacters();
@@ -864,6 +870,15 @@ const AddLocation: React.FC = () => {
                   )}
                 </ButtonBox>
               </Form>
+              {saved && (
+                <FunctionButton
+                  onClick={handleLocationDetails}
+                  title="Gerenciar Addons"
+                  disabled={saving}
+                >
+                  <GiZBrick />
+                </FunctionButton>
+              )}
             </LocationFormContainer>
           </>
         )}

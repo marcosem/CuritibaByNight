@@ -397,10 +397,14 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   );
 
   const handleLocationJump = useCallback(
-    async (e: MouseEvent<HTMLTableRowElement>) => {
+    async (e: MouseEvent<HTMLTableRowElement>, ownership: boolean) => {
       const locationId = e.currentTarget.id;
 
-      history.push(`/locals/${locationId}`);
+      if (ownership) {
+        history.push(`/localdetails/${locationId}`);
+      } else {
+        history.push(`/locals/${locationId}`);
+      }
     },
     [history],
   );
@@ -412,7 +416,6 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   useEffect(() => {
     loadLocations();
     loadRetainers();
-    // loadTraits();
   }, [loadLocations, loadRetainers, myChar]);
 
   const handleGoBack = useCallback(() => {
@@ -637,7 +640,15 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                               <tr
                                 key={local.id}
                                 id={local.id}
-                                onClick={handleLocationJump}
+                                onClick={
+                                  e =>
+                                    handleLocationJump(
+                                      e,
+                                      local.responsible === myChar.id ||
+                                        local.shared,
+                                    )
+                                  // eslint-disable-next-line react/jsx-curly-newline
+                                }
                                 title={`${
                                   local.responsible === myChar.id
                                     ? 'Proprietário'

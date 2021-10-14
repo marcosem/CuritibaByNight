@@ -214,3 +214,11 @@ export const Select = styled.select`
   text-align-last: center;
   -moz-text-align-last: center;
 `;
+
+export const LocationContainer = styled.div`
+  padding: 0 !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  cursor: pointer !important;
+`;

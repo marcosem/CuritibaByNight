@@ -10,6 +10,11 @@ interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
 
+interface IFunctionButtonProps {
+  bgColor: string;
+  marginTop?: boolean;
+}
+
 interface ISelectProps {
   center?: boolean;
 }
@@ -161,37 +166,6 @@ export const ButtonBox = styled.div`
   max-width: 340px;
 `;
 
-export const RemoveButton = styled.button.attrs<IButtonProps>(() => ({
-  type: 'button',
-}))`
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-
-  width: 64px;
-  height: 64px;
-  border: 0;
-
-  background: #860209;
-  border-radius: 20px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: ${shade(0.2, '#860209')};
-  }
-
-  svg {
-    width: 32px;
-    height: 32px;
-    color: #ccc;
-  }
-`;
-
 export const SelectLocation = styled.select`
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -209,4 +183,61 @@ export const SelectLocation = styled.select`
   font-size: 14px;
   font-weight: 500;
   color: #888;
+  text-align: left;
+  text-align-last: center;
+  -moz-text-align-last: center;
+`;
+
+export const FunctionsContainer = styled.div`
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 64px !important;
+  height: 144px;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 10;
+`;
+
+export const FunctionButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<IFunctionButtonProps>`
+  width: 64px;
+  height: 64px;
+  border: 0;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ${props =>
+    props.marginTop &&
+    css`
+      margin-top: 16px;
+    `}
+
+  transition: background-color 0.2s;
+
+  ${props =>
+    props.bgColor === 'red'
+      ? css`
+          background: #860209;
+          &:hover {
+            background: ${shade(0.2, '#860209')};
+          }
+        `
+      : css`
+          background: #090266;
+          &:hover {
+            background: ${shade(0.2, '#090266')};
+          }
+        `}
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #ccc;
+  }
 `;

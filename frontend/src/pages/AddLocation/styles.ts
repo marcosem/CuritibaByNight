@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { shade } from 'polished';
 import bgImg from '../../assets/yellow-old-paper.jpg';
 
 interface IContainerProps {
@@ -7,6 +8,10 @@ interface IContainerProps {
 
 interface ISelectProps {
   center?: boolean;
+}
+
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
 
 export const Container = styled.div<IContainerProps>`
@@ -158,4 +163,33 @@ export const Select = styled.select<ISelectProps>`
 export const ButtonBox = styled.div`
   margin: 50px auto 0 auto;
   max-width: 340px;
+`;
+
+export const FunctionButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+
+  width: 64px;
+  height: 64px;
+  border: 0;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: background-color 0.2s;
+
+  background: #090266;
+  &:hover {
+    background: ${shade(0.2, '#090266')};
+  }
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #ccc;
+  }
 `;

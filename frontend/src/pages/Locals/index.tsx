@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import ReactDomServer from 'react-dom/server';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import { IconType } from 'react-icons';
 import { FiPlus, FiEdit, FiUserPlus, FiFlag } from 'react-icons/fi';
 import {
@@ -36,6 +36,7 @@ import {
   LocationLegend,
   FunctionsContainer,
   CheckboxContainer,
+  LocationContainer,
 } from './styles';
 import Loading from '../../components/Loading';
 import 'leaflet/dist/leaflet.css';
@@ -123,6 +124,7 @@ const Locals: React.FC = () => {
   const { user, char, signOut } = useAuth();
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
+  const history = useHistory();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -428,6 +430,13 @@ const Locals: React.FC = () => {
     [],
   );
 
+  const handleLocalDetails = useCallback(
+    (locationId: string) => {
+      history.push(`/localdetails/${locationId}`);
+    },
+    [history],
+  );
+
   useEffect(() => {
     setCurrentPage('locals');
     if (user.storyteller) {
@@ -566,6 +575,40 @@ const Locals: React.FC = () => {
                       locked
                     />
                   </Tooltip>
+
+                  <Popup>
+                    <LocationContainer
+                      title="Ver detalhes"
+                      onClick={
+                        user.storyteller || typeof location.level !== 'string'
+                          ? () => handleLocalDetails(location.id)
+                          : undefined
+                      }
+                    >
+                      <LocationCard
+                        locationId={location.id}
+                        name={location.name}
+                        description={location.description}
+                        address={location.address}
+                        elysium={location.elysium}
+                        type={location.type}
+                        property={location.property}
+                        responsibleId={location.responsible}
+                        responsibleName={
+                          location.responsible_char !== null
+                            ? location.responsible_char.name
+                            : ''
+                        }
+                        clan={location.clan}
+                        creature_type={location.creature_type}
+                        sect={location.sect}
+                        level={location.level}
+                        mysticalLevel={location.mystical_level}
+                        pictureUrl={location.picture_url}
+                        locked
+                      />
+                    </LocationContainer>
+                  </Popup>
                 </Marker>
               ))}
             </>

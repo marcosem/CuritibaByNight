@@ -6,7 +6,9 @@ import React, {
   useEffect,
   ChangeEvent,
 } from 'react';
+import { useHistory } from 'react-router-dom';
 import { FiHome, FiFileText, FiMap, FiMapPin, FiTrash2 } from 'react-icons/fi';
+import { GiZBrick } from 'react-icons/gi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -25,7 +27,9 @@ import {
   SelectContainer,
   Select,
   ButtonBox,
-  RemoveButton,
+  FunctionsContainer,
+  FunctionButton,
+  // RemoveButton,
 } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -200,6 +204,7 @@ const LocationUpdate: React.FC = () => {
   const { showModal } = useModalBox();
   const { setCurrentPage } = useHeader();
   const { isMobileVersion } = useMobile();
+  const history = useHistory();
 
   const loadCharacters = useCallback(async () => {
     setBusy(true);
@@ -739,6 +744,10 @@ const LocationUpdate: React.FC = () => {
     [locationList],
   );
 
+  const handleLocationDetails = useCallback(() => {
+    history.push(`/localdetails/${selectedLocation.id}`);
+  }, [history, selectedLocation.id]);
+
   const handleRemove = useCallback(async () => {
     try {
       const requestData = {
@@ -1089,12 +1098,25 @@ const LocationUpdate: React.FC = () => {
                 </ButtonBox>
               </Form>
               {selectedLocation.id && (
-                <RemoveButton
-                  onClick={handleConfirmRemove}
-                  title="Excluir Localização"
-                >
-                  <FiTrash2 />
-                </RemoveButton>
+                <FunctionsContainer>
+                  <FunctionButton
+                    bgColor="blue"
+                    onClick={handleLocationDetails}
+                    title="Gerenciar Addons"
+                    disabled={saving}
+                  >
+                    <GiZBrick />
+                  </FunctionButton>
+                  <FunctionButton
+                    bgColor="red"
+                    onClick={handleConfirmRemove}
+                    title="Excluir Localização"
+                    disabled={saving}
+                    marginTop
+                  >
+                    <FiTrash2 />
+                  </FunctionButton>
+                </FunctionsContainer>
               )}
             </LocationFormContainer>
           </>
