@@ -551,30 +551,32 @@ const Locals: React.FC = () => {
                   icon={location.icon}
                   position={[location.latitude, location.longitude]}
                 >
-                  <Tooltip>
-                    <LocationCard
-                      locationId={location.id}
-                      name={location.name}
-                      description={location.description}
-                      address={location.address}
-                      elysium={location.elysium}
-                      type={location.type}
-                      property={location.property}
-                      responsibleId={location.responsible}
-                      responsibleName={
-                        location.responsible_char !== null
-                          ? location.responsible_char.name
-                          : ''
-                      }
-                      clan={location.clan}
-                      creature_type={location.creature_type}
-                      sect={location.sect}
-                      level={location.level}
-                      mysticalLevel={location.mystical_level}
-                      pictureUrl={location.picture_url}
-                      locked
-                    />
-                  </Tooltip>
+                  {!isMobileVersion && (
+                    <Tooltip>
+                      <LocationCard
+                        locationId={location.id}
+                        name={location.name}
+                        description={location.description}
+                        address={location.address}
+                        elysium={location.elysium}
+                        type={location.type}
+                        property={location.property}
+                        responsibleId={location.responsible}
+                        responsibleName={
+                          location.responsible_char !== null
+                            ? location.responsible_char.name
+                            : ''
+                        }
+                        clan={location.clan}
+                        creature_type={location.creature_type}
+                        sect={location.sect}
+                        level={location.level}
+                        mysticalLevel={location.mystical_level}
+                        pictureUrl={location.picture_url}
+                        locked
+                      />
+                    </Tooltip>
+                  )}
 
                   <Popup>
                     <LocationContainer
