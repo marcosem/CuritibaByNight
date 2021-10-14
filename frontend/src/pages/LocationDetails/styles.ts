@@ -32,6 +32,7 @@ interface IButtonProps {
 
 interface IAddonContainerProps {
   level: number;
+  isMobile: boolean;
 }
 
 interface IAddonRequirementProps {
@@ -429,24 +430,31 @@ export const DetailsContainer = styled.div<IDetailsContainerProps>`
   }
 `;
 
-export const LocationShields = styled.div`
+export const LocationShields = styled.div<IContainerProps>`
   display: flex;
   flex-direction: row;
   width: auto !important;
   margin: 0 !important;
 
   position: absolute;
-  top: 5px;
-  right: 5px;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          top: 15px;
+          right: 5px;
+        `
+      : css`
+          top: 5px;
+          right: 5px;
+        `}
 `;
 
-export const LocationShield = styled.div`
+export const LocationShield = styled.div<IContainerProps>`
   display: flex;
   flex-direction: column;
   margin: 0 !important;
   padding: 1px;
-  width: 53px !important;
-  height: 53px !important;
   justify-content: center;
   align-items: center;
   cursor: default;
@@ -457,20 +465,45 @@ export const LocationShield = styled.div`
 
   svg {
     color: #000;
-    width: 38px;
-    height: 38px;
-
     transition: color 0.3s;
   }
 
   span {
     color: #000 !important;
-    font-size: 14px !important;
     font-weight: 500 !important;
     margin: 0 !important;
 
     transition: color 0.3s;
   }
+
+  ${props =>
+    props.isMobile
+      ? css`
+          width: 21px !important;
+          height: 31px !important;
+
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+
+          span {
+            font-size: 10px !important;
+          }
+        `
+      : css`
+          width: 53px !important;
+          height: 53px !important;
+
+          svg {
+            width: 38px;
+            height: 38px;
+          }
+
+          span {
+            font-size: 14px !important;
+          }
+        `}
 
   &:hover {
     border-color: #888;
@@ -532,8 +565,16 @@ export const AddonContainer = styled.div<IAddonContainerProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 310px !important;
   background-color: #efefef;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          width: 288px !important;
+        `
+      : css`
+          width: 310px !important;
+        `}
 
   // margin: 0 !important;
   margin: 10px auto 0 auto !important;

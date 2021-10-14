@@ -13,6 +13,8 @@ import {
   AddonShield,
 } from './styles';
 
+import { useMobile } from '../../hooks/mobile';
+
 export interface IAddonDetails {
   name: string;
   level: number;
@@ -46,13 +48,14 @@ export interface IAddon {
 
 const AddonCard: React.FC<IAddon> = (myAddon: IAddon) => {
   const [addonData, setAddonData] = useState<IAddon>({} as IAddon);
+  const { isMobileVersion } = useMobile();
 
   useEffect(() => {
     setAddonData(myAddon);
   }, [myAddon]);
 
   return (
-    <Container>
+    <Container isMobile={isMobileVersion}>
       {addonData.currentAddon && addonData.currentAddon !== null && (
         <AddonShields>
           <AddonShield title="Defesa">

@@ -1,12 +1,12 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { lighten } from 'polished';
 
 interface ITitleProps {
   level: number;
 }
 
-interface IButtonProps {
-  readonly type: 'button' | 'submit' | 'reset' | undefined;
+interface IContainerProps {
+  isMobile: boolean;
 }
 
 const getLevelColor = (level: number): string => {
@@ -26,14 +26,22 @@ const getLevelColor = (level: number): string => {
   }
 };
 
-export const Container = styled.div`
+export const Container = styled.div<IContainerProps>`
   display: flex;
   flex-direction: column;
   background-color: #efefef;
-  width: 295px !important;
   padding: 0px;
   margin: auto !important;
   position: relative;
+
+  ${props =>
+    props.isMobile
+      ? css`
+          width: 273px !important;
+        `
+      : css`
+          width: 295px !important;
+        `}
 `;
 
 export const AddonTitle = styled.h1<ITitleProps>`

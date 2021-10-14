@@ -668,6 +668,7 @@ const LocationDetails: React.FC = () => {
         <AddonContainer
           key={`AddonCard-${addon.addon_name}`}
           level={addon.addon_level}
+          isMobile={isMobileVersion}
         >
           <AddonCard
             location_id={addon.location_id}
@@ -981,12 +982,15 @@ const LocationDetails: React.FC = () => {
                     <h1>{selectedLocation.name}</h1>
                     <h2>{`Nível ${selectedLocation.level}`}</h2>
 
-                    <LocationShields>
-                      <LocationShield title="Defesa">
+                    <LocationShields isMobile={isMobileVersion}>
+                      <LocationShield title="Defesa" isMobile={isMobileVersion}>
                         <FaShieldAlt />
                         <span>{locationDefense}</span>
                       </LocationShield>
-                      <LocationShield title="Vigilância">
+                      <LocationShield
+                        title="Vigilância"
+                        isMobile={isMobileVersion}
+                      >
                         <FaEye />
                         <span>{locationSurveillance}</span>
                       </LocationShield>
