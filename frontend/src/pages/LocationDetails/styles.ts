@@ -34,6 +34,10 @@ interface IAddonContainerProps {
   level: number;
 }
 
+interface IAddonRequirementProps {
+  justifyCenter?: boolean;
+}
+
 interface IActionButton {
   mode: string;
 }
@@ -672,13 +676,22 @@ export const SubDivision = styled.div`
   align-self: center;
 `;
 
-export const AddonRequirement = styled.div`
+export const AddonRequirement = styled.div<IAddonRequirementProps>`
   display: flex;
   flex-direction: row;
-  justify-content: center;
+
   padding: 0 !important;
   margin: 3px 0 0 0 !important;
   width: 100%;
+
+  ${props =>
+    props.justifyCenter
+      ? css`
+          justify-content: center;
+        `
+      : css`
+          justify-content: left;
+        `}
 `;
 
 export const AddonReqTitle = styled.span`

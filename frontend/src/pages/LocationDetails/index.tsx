@@ -182,8 +182,6 @@ const LocationDetails: React.FC = () => {
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
   const history = useHistory();
-  // const tableRowRef = useRef<HTMLTableRowElement>(null);
-  // const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const loadLocation = useCallback(async () => {
     setBusy(true);
@@ -689,14 +687,14 @@ const LocationDetails: React.FC = () => {
                 <ActionButton
                   mode="down"
                   onClick={
-                    () =>
-                      handleAddonLevelChange(
-                        addon.addon_name,
-                        addon.addon_level - 1,
-                      )
-                    // eslint-disable-next-line react/jsx-curly-newline
+                    saving
+                      ? undefined
+                      : () =>
+                          handleAddonLevelChange(
+                            addon.addon_name,
+                            addon.addon_level - 1,
+                          )
                   }
-                  disabled={saving}
                 >
                   {addon.addon_level === 0 ? <FiTrash2 /> : <FiMinus />}
                 </ActionButton>
@@ -707,14 +705,15 @@ const LocationDetails: React.FC = () => {
                   mode="up"
                   key={addon.addon_name}
                   onClick={
-                    () =>
-                      handleAddonLevelChange(
-                        addon.addon_name,
-                        addon.addon_level + 1,
-                      )
-                    // eslint-disable-next-line react/jsx-curly-newline
+                    saving
+                      ? undefined
+                      : () =>
+                          handleAddonLevelChange(
+                            addon.addon_name,
+                            addon.addon_level + 1,
+                          )
                   }
-                  disabled={saving || addon.nextAddon === null}
+                  disabled={addon.nextAddon === null}
                 >
                   <FiPlus />
                 </ActionButton>
@@ -730,7 +729,7 @@ const LocationDetails: React.FC = () => {
                 {`Progresso até o Nível ${addon.nextAddon.level}`}
               </ActionTitle>
 
-              <AddonRequirement>
+              <AddonRequirement justifyCenter>
                 <AddonReqTitle>
                   {`Habilidades chaves (${addon.nextAddon.ability_qty}):`}
                 </AddonReqTitle>
@@ -741,15 +740,16 @@ const LocationDetails: React.FC = () => {
                   <ActionButton
                     mode="down"
                     onClick={
-                      () =>
-                        handleAddonProgressChange(
-                          addon.addon_name,
-                          'ability',
-                          addon.temp_ability - 1,
-                        )
-                      // eslint-disable-next-line react/jsx-curly-newline
+                      saving
+                        ? undefined
+                        : () =>
+                            handleAddonProgressChange(
+                              addon.addon_name,
+                              'ability',
+                              addon.temp_ability - 1,
+                            )
                     }
-                    disabled={saving || addon.temp_ability === 0}
+                    disabled={addon.temp_ability === 0}
                   >
                     <FiMinus />
                   </ActionButton>
@@ -767,16 +767,16 @@ const LocationDetails: React.FC = () => {
                   <ActionButton
                     mode="up"
                     onClick={
-                      () =>
-                        handleAddonProgressChange(
-                          addon.addon_name,
-                          'ability',
-                          addon.temp_ability + 1,
-                        )
-                      // eslint-disable-next-line react/jsx-curly-newline
+                      saving
+                        ? undefined
+                        : () =>
+                            handleAddonProgressChange(
+                              addon.addon_name,
+                              'ability',
+                              addon.temp_ability + 1,
+                            )
                     }
                     disabled={
-                      saving ||
                       addon.temp_ability === addon.nextAddon.ability_qty
                     }
                   >
@@ -785,7 +785,7 @@ const LocationDetails: React.FC = () => {
                 )}
               </ActionContainer>
 
-              <AddonRequirement>
+              <AddonRequirement justifyCenter>
                 <AddonReqTitle>
                   {`Influências chaves (${addon.nextAddon.influence_qty}):`}
                 </AddonReqTitle>
@@ -796,15 +796,16 @@ const LocationDetails: React.FC = () => {
                   <ActionButton
                     mode="down"
                     onClick={
-                      () =>
-                        handleAddonProgressChange(
-                          addon.addon_name,
-                          'influence',
-                          addon.temp_influence - 1,
-                        )
-                      // eslint-disable-next-line react/jsx-curly-newline
+                      saving
+                        ? undefined
+                        : () =>
+                            handleAddonProgressChange(
+                              addon.addon_name,
+                              'influence',
+                              addon.temp_influence - 1,
+                            )
                     }
-                    disabled={saving || addon.temp_influence === 0}
+                    disabled={addon.temp_influence === 0}
                   >
                     <FiMinus />
                   </ActionButton>
@@ -823,16 +824,16 @@ const LocationDetails: React.FC = () => {
                   <ActionButton
                     mode="up"
                     onClick={
-                      () =>
-                        handleAddonProgressChange(
-                          addon.addon_name,
-                          'influence',
-                          addon.temp_influence + 1,
-                        )
-                      // eslint-disable-next-line react/jsx-curly-newline
+                      saving
+                        ? undefined
+                        : () =>
+                            handleAddonProgressChange(
+                              addon.addon_name,
+                              'influence',
+                              addon.temp_influence + 1,
+                            )
                     }
                     disabled={
-                      saving ||
                       addon.temp_influence === addon.nextAddon.influence_qty
                     }
                   >
@@ -840,6 +841,64 @@ const LocationDetails: React.FC = () => {
                   </ActionButton>
                 )}
               </ActionContainer>
+
+              <SubDivision />
+              <ActionTitle isMobile={isMobileVersion}>
+                Requisitos do próximo nível
+              </ActionTitle>
+              <AddonRequirement>
+                <AddonReqTitle>Tempo mínimo:</AddonReqTitle>
+                <AddonReqDesc>{`${addon.nextAddon.time_qty} ${addon.nextAddon.time_type}`}</AddonReqDesc>
+              </AddonRequirement>
+
+              {(addon.nextAddon.req_merit !== null ||
+                addon.nextAddon.req_background !== null ||
+                addon.nextAddon.req_influence !== null ||
+                addon.nextAddon.req_addon_1 !== null) && (
+                <>
+                  {addon.nextAddon.req_merit !== null && (
+                    <AddonRequirement>
+                      <AddonReqTitle>Qualidades:</AddonReqTitle>
+                      <AddonReqDesc>{addon.nextAddon.req_merit}</AddonReqDesc>
+                    </AddonRequirement>
+                  )}
+
+                  {addon.nextAddon.req_background !== null && (
+                    <AddonRequirement>
+                      <AddonReqTitle>Antecedentes:</AddonReqTitle>
+                      <AddonReqDesc>
+                        {addon.nextAddon.req_background}
+                      </AddonReqDesc>
+                    </AddonRequirement>
+                  )}
+
+                  {addon.nextAddon.req_influence !== null && (
+                    <AddonRequirement>
+                      <AddonReqTitle>Influências:</AddonReqTitle>
+                      <AddonReqDesc>
+                        {addon.nextAddon.req_influence}
+                      </AddonReqDesc>
+                    </AddonRequirement>
+                  )}
+
+                  {addon.nextAddon.req_addon_1 !== null && (
+                    <AddonRequirement>
+                      <AddonReqTitle>Addons:</AddonReqTitle>
+                      <AddonReqDesc>
+                        {`${addon.nextAddon.req_addon_1}${
+                          addon.nextAddon.req_addon_2 !== null
+                            ? `, ${addon.nextAddon.req_addon_2}`
+                            : ''
+                        }${
+                          addon.nextAddon.req_addon_3 !== null
+                            ? `, ${addon.nextAddon.req_addon_3}`
+                            : ''
+                        }`}
+                      </AddonReqDesc>
+                    </AddonRequirement>
+                  )}
+                </>
+              )}
             </>
           )}
         </AddonContainer>,
