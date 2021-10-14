@@ -56,7 +56,7 @@ export default class LocationAddonController {
       addon_level,
       location_id,
       temp_ability,
-      temp_influnece,
+      temp_influence,
     } = req.body;
 
     const updateAddonLocationService = container.resolve(
@@ -69,7 +69,7 @@ export default class LocationAddonController {
       addon_level,
       location_id,
       temp_ability,
-      temp_influnece,
+      temp_influence,
     };
 
     const locAddon = await updateAddonLocationService.execute(inputData);
