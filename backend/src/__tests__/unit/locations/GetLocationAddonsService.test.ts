@@ -228,10 +228,11 @@ describe('GetLocationAddons', () => {
       property: 'clan',
       elysium: true,
       clan: 'Toreador',
+      level: 3,
     });
 
-    let expectedDefense = 0;
-    let expectedSurveillance = 0;
+    let expectedDefense = 8;
+    let expectedSurveillance = 8;
 
     await fakeLocationsAddonsRepository.addAddonToLocation({
       location_id: location.id,
@@ -315,8 +316,8 @@ describe('GetLocationAddons', () => {
       location_id: location.id,
     });
 
-    expect(locationAddonsResult.defense).toEqual(0);
-    expect(locationAddonsResult.surveillance).toEqual(0);
+    expect(locationAddonsResult.defense).toEqual(6);
+    expect(locationAddonsResult.surveillance).toEqual(6);
     expect(locationAddonsResult.addonsList).toHaveLength(0);
   });
 

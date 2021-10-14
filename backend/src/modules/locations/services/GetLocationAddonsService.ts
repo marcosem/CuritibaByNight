@@ -91,8 +91,8 @@ class GetLocationAddonsService {
       location_id,
     );
 
-    let defense = 0;
-    let surveillance = 0;
+    let defense = 5 + parseInt(`${location.level}`, 10);
+    let surveillance = 5 + parseInt(`${location.level}`, 10);
     const removeAddonsList: string[] = [];
 
     if (locationAddons.length > 0) {
