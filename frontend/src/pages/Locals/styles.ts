@@ -209,4 +209,8 @@ export const Select = styled.select`
   font-size: 14px;
   font-weight: 500;
   color: #888;
+
+  text-align: left;
+  text-align-last: center;
+  -moz-text-align-last: center;
 `;
