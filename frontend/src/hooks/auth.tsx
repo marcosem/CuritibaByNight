@@ -11,7 +11,7 @@ import React, {
 import Cookies from 'js-cookie';
 import api from '../services/api';
 
-interface IUser {
+export interface IUser {
   id: string;
   name: string;
   email: string;
