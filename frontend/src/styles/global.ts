@@ -33,4 +33,28 @@ export default createGlobalStyle`
   button {
     cursor: pointer;
   }
+
+  :root {
+    --cbn-neutral-1: #ffffff;
+    --cbn-neutral-2: #c6c6c6;
+    --cbn-neutral-3: #e0e0e0;
+    --cbn-neutral-4: #262626;
+    --cbn-storyteller-border: #ffd700;
+    --cbn-player-border: #cc030e;
+    --cbn-red-1: #860209;
+    --cbn-green-1: #025609;
+
+
+    --background-white: var(--cbn-neutral-1);
+    --background-red: var(--cbn-red-1);
+    --background-green: var(--cbn-green-1);
+
+    --level-common: #707b7c;
+    --level-uncommon: #075202;
+    --level-rare: #032fc9;
+    --level-very-rare: #5d0798;
+    --level-epic: #ff5733;
+
+
+  }
 `;
