@@ -121,7 +121,7 @@ describe('CompleteInitialUser', () => {
   it('Should return error for not existant secret', async () => {
     await expect(
       completeInitialUser.execute({
-        name: 'Anothe Name',
+        name: 'Another Name',
         email: 'other@email.com',
         phone: '21-54321-4321',
         password: '123456',
