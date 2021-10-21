@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { IUser, useAuth } from '../../hooks/auth';
@@ -7,6 +6,7 @@ import imgProfile from '../../assets/profile.jpg';
 
 import {
   Container,
+  AvatarWrapper,
   AvatarImg,
   Tooltip,
   TooltipWrapper,
@@ -15,6 +15,7 @@ import {
   TooltipDataTitle,
   TooltipDataEmail,
   TooltipDataStoryteller,
+  FunctionWrapper,
 } from './styles';
 
 interface IAvatarUser {
@@ -23,7 +24,7 @@ interface IAvatarUser {
 
 const Avatar: React.FC<IAvatarUser> = ({ avatarUser }) => {
   const [tooltipOn, setTooltipOn] = useState<boolean>(false);
-  const { user } = useAuth();
+  const { signOut, user } = useAuth();
 
   const ShowTooltip = useCallback((show: boolean) => {
     setTooltipOn(show);
@@ -31,13 +32,8 @@ const Avatar: React.FC<IAvatarUser> = ({ avatarUser }) => {
 
   return (
     <Container>
-      <Link
-        to={
-          user.id === avatarUser.id
-            ? '/profile'
-            : `/updateplayer/${avatarUser.id}`
-        }
-        title="Editar Pefil"
+      <AvatarWrapper
+        title="Editar Perfil"
         onMouseOver={() => ShowTooltip(true)}
         onFocus={() => ShowTooltip(true)}
         onMouseOut={() => ShowTooltip(false)}
@@ -61,10 +57,25 @@ const Avatar: React.FC<IAvatarUser> = ({ avatarUser }) => {
               <TooltipDataStoryteller>
                 {avatarUser.storyteller ? 'Narrador' : 'Jogador'}
               </TooltipDataStoryteller>
+              <FunctionWrapper>
+                <Link
+                  to={
+                    user.id === avatarUser.id
+                      ? '/profile'
+                      : `/updateplayer/${avatarUser.id}`
+                  }
+                  title="Editar Perfil"
+                >
+                  <span>Editar Perfil</span>
+                </Link>
+                <button type="button" onClick={signOut} title="Logout">
+                  <span>Logout</span>
+                </button>
+              </FunctionWrapper>
             </TooltipData>
           </TooltipWrapper>
         </Tooltip>
-      </Link>
+      </AvatarWrapper>
     </Container>
   );
 };

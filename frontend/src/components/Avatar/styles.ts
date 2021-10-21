@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { lighten } from 'polished';
 
 interface IAvatarProps {
   storyteller: boolean;
@@ -16,12 +17,19 @@ export const Container = styled.div`
   z-index: 1003;
   // position: relative;
 
+  /*
   > a {
     cursor: pointer;
     flex: 0 0 57px;
     padding: 11px;
     text-decoration: none;
   }
+  */
+`;
+
+export const AvatarWrapper = styled.div`
+  flex: 0 0 57px;
+  padding: 11px;
 `;
 
 export const AvatarImg = styled.img<IAvatarProps>`
@@ -93,7 +101,8 @@ export const TooltipWrapper = styled.div`
     calc(100% - 28px) 0
   );
 
-  padding: 32px 24px 16px;
+  // padding: 32px 24px 16px;
+  padding: 24px 16px 8px;
   background: var(--background-white);
 `;
 
@@ -141,4 +150,36 @@ export const TooltipDataStoryteller = styled.span`
   line-height: 1.28571;
   font-weight: 500;
   color: var(--cbn-neutral-4);
+`;
+
+export const FunctionWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  // border: 2px solid red;
+  padding-top: 8px;
+
+  > a {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  > button {
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+  }
+
+  span {
+    font-size: 12px;
+    line-height: 1.28571;
+    font-weight: 500;
+    color: var(--cbn-red-1);
+    transition: color 0.3s;
+
+    &:hover {
+      color: ${lighten(0.14, '#860209')};
+    }
+  }
 `;
