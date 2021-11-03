@@ -26,7 +26,7 @@ const Route: React.FC<INewRouteProps> = ({
     <ReactDOMRoute
       {...rest}
       render={({ location }) => {
-        if (isPrivate === !!user.name) {
+        if (isPrivate === !!user?.name) {
           if ((isStoryteller && user.storyteller) || !isStoryteller) {
             return <Component />;
           }
