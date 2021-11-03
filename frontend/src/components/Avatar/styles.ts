@@ -15,16 +15,6 @@ export const Container = styled.div`
   height: auto;
   display: flex;
   z-index: 1003;
-  // position: relative;
-
-  /*
-  > a {
-    cursor: pointer;
-    flex: 0 0 57px;
-    padding: 11px;
-    text-decoration: none;
-  }
-  */
 `;
 
 export const AvatarWrapper = styled.div`
@@ -54,10 +44,10 @@ export const Tooltip = styled.div<ITooltipProps>`
   right: 13px;
   z-index: 1;
 
-  filter: drop-shadow(1px 0px 0px var(--cbn-neutral-3))
-    drop-shadow(0px 1px 0px var(--cbn-neutral-3))
-    drop-shadow(-1px 0px 0px var(--cbn-neutral-3))
-    drop-shadow(0px -1px 0px var(--cbn-neutral-3));
+  filter: drop-shadow(1px 0px 0px var(--cbn-neutral-2))
+    drop-shadow(0px 1px 0px var(--cbn-neutral-2))
+    drop-shadow(-1px 0px 0px var(--cbn-neutral-2))
+    drop-shadow(0px -1px 0px var(--cbn-neutral-2));
 
   transition: opacity 0.15s;
 
@@ -157,7 +147,6 @@ export const FunctionWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  // border: 2px solid red;
   padding-top: 8px;
 
   > a {

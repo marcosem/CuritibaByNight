@@ -4,14 +4,31 @@ import { lighten } from 'polished';
 export const Container = styled.header`
   position: sticky;
   top: 0;
+  left: 0;
+  right: 0;
 
+  display: flex;
+  flex-direction: column;
+  z-index: 1005;
+
+  height: auto;
+
+  margin: 0;
+  padding: 0;
+
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+`;
+
+export const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   height: 56px;
   background: var(--background-white);
-  z-index: 1005;
 
   @media only screen and (min-width: 1440px) {
     padding: 0 18px 0 32px;
@@ -24,11 +41,6 @@ export const Container = styled.header`
   @media only screen and (min-width: 360px) {
     padding: 0 12px;
   }
-
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
 `;
 
 export const HeaderTitle = styled.div`

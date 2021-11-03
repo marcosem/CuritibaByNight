@@ -33,7 +33,7 @@ const Avatar: React.FC<IAvatarUser> = ({ avatarUser }) => {
   return (
     <Container>
       <AvatarWrapper
-        title="Editar Perfil"
+        title={avatarUser.name}
         onMouseOver={() => ShowTooltip(true)}
         onFocus={() => ShowTooltip(true)}
         onMouseOut={() => ShowTooltip(false)}
