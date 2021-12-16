@@ -162,7 +162,7 @@ const AuthProvider: React.FC = ({ children }) => {
     const oldToken = localStorage.getItem('@CuritibaByNight:token');
     const refreshToken = Cookies.get('@CuritibaByNight:refreshToken');
 
-    if (refreshToken) {
+    if (refreshToken && oldToken) {
       const response = await api.post('sessions/refresh', {
         token: oldToken,
         refresh_token: refreshToken,
