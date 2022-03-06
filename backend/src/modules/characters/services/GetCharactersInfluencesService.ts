@@ -55,9 +55,6 @@ class GetCharactersInfluencesService {
     let infCapList: IInfluenceCapacityDTO[] = [];
     const charInfList: ICharInfluenceDTO[] = [];
 
-    const processedCharList: string[] = [];
-    const processed2CharList: string[] = [];
-
     // eslint-disable-next-line no-restricted-syntax
     for (const char of charList) {
       let skipChar = false;
@@ -96,15 +93,11 @@ class GetCharactersInfluencesService {
           },
         } as ICharInfluenceDTO;
 
-        processedCharList.push(char.name);
-
         // eslint-disable-next-line no-await-in-loop
         const charTraits = await this.charactersTraitsRepository.findByCharId(
           char.id,
           'all',
         );
-
-        processed2CharList.push(char.name);
 
         // Get Morality
         let moralityTrait: string;
@@ -568,8 +561,6 @@ class GetCharactersInfluencesService {
       domain_capacity: 39,
       influence_capacity: infCapList,
       list: charInfList,
-      processed: processedCharList,
-      processed2: processed2CharList,
     };
 
     this.saveRouteResult.set('CharactersInfluences', JSON.stringify(result));
