@@ -287,7 +287,7 @@ class GetCharactersInfluencesService {
           // Add a small delay just to ensure everything is processed
           setTimeout(() => {
             resolve();
-          }, 50);
+          }, 200);
         }
       });
     });
