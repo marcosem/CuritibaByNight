@@ -56,6 +56,7 @@ class GetCharactersInfluencesService {
     const charInfList: ICharInfluenceDTO[] = [];
 
     const processedCharList: string[] = [];
+    const processed2CharList: string[] = [];
 
     await new Promise<void>((resolve, _) => {
       charList.forEach(async (char, index, myArray) => {
@@ -190,6 +191,8 @@ class GetCharactersInfluencesService {
             inf => inf.type === 'influences',
           );
 
+          processedCharList.push(char.name);
+
           if (influenceTraits.length > 0) {
             const infCharList: IInfluenceCharDTO[] = [];
 
@@ -282,7 +285,7 @@ class GetCharactersInfluencesService {
             newCharInfluence.influences = infCharList;
           }
 
-          processedCharList.push(char.name);
+          processed2CharList.push(char.name);
           charInfList.push(newCharInfluence);
         }
 
@@ -332,6 +335,7 @@ class GetCharactersInfluencesService {
       influence_capacity: infCapList,
       list: charInfList,
       processed: processedCharList,
+      processed2: processed2CharList,
     };
 
     this.saveRouteResult.set('CharactersInfluences', JSON.stringify(result));

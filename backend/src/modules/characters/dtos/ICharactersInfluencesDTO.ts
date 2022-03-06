@@ -45,6 +45,7 @@ interface ICharactersInfluencesDTO {
   influence_capacity: IInfluenceCapacityDTO[];
   list: ICharInfluenceDTO[];
   processed?: string[];
+  processed2?: string[];
 }
 
 export {
