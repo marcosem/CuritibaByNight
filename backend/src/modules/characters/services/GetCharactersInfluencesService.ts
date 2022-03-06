@@ -80,9 +80,6 @@ class GetCharactersInfluencesService {
           skipChar = true;
         }
 
-        // TEMPORARY
-        processedCharList.push(char.name);
-
         if (!skipChar) {
           // Initialize Character
           const newCharInfluence: ICharInfluenceDTO = {
@@ -286,6 +283,8 @@ class GetCharactersInfluencesService {
           }
 
           charInfList.push(newCharInfluence);
+          // TEMPORARY
+          processedCharList.push(char.name);
         }
 
         if (index === myArray.length - 1) {
