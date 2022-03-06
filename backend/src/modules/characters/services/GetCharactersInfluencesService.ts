@@ -80,8 +80,6 @@ class GetCharactersInfluencesService {
           skipChar = true;
         }
 
-        processedCharList.push(`${char.name}:${skipChar}`);
-
         if (!skipChar) {
           // Initialize Character
           const newCharInfluence: ICharInfluenceDTO = {
@@ -191,6 +189,8 @@ class GetCharactersInfluencesService {
           const influenceTraits = charTraits.filter(
             inf => inf.type === 'influences',
           );
+
+          processedCharList.push(char.name);
 
           if (influenceTraits.length > 0) {
             const infCharList: IInfluenceCharDTO[] = [];
