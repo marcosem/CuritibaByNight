@@ -55,6 +55,8 @@ class GetCharactersInfluencesService {
     let infCapList: IInfluenceCapacityDTO[] = [];
     const charInfList: ICharInfluenceDTO[] = [];
 
+    const processedCharList: string[] = [];
+
     await new Promise<void>((resolve, _) => {
       charList.forEach(async (char, index, myArray) => {
         let skipChar = false;
@@ -77,6 +79,9 @@ class GetCharactersInfluencesService {
         ) {
           skipChar = true;
         }
+
+        // TEMPORARY
+        processedCharList.push(char.name);
 
         if (!skipChar) {
           // Initialize Character
@@ -287,7 +292,7 @@ class GetCharactersInfluencesService {
           // Add a small delay just to ensure everything is processed
           setTimeout(() => {
             resolve();
-          }, 2000);
+          }, 50);
         }
       });
     });
@@ -328,6 +333,7 @@ class GetCharactersInfluencesService {
       domain_capacity: 39,
       influence_capacity: infCapList,
       list: charInfList,
+      processed: processedCharList,
     };
 
     this.saveRouteResult.set('CharactersInfluences', JSON.stringify(result));
