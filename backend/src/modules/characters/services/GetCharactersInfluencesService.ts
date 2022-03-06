@@ -190,8 +190,6 @@ class GetCharactersInfluencesService {
             inf => inf.type === 'influences',
           );
 
-          processedCharList.push(char.name);
-
           if (influenceTraits.length > 0) {
             const infCharList: IInfluenceCharDTO[] = [];
 
@@ -284,6 +282,7 @@ class GetCharactersInfluencesService {
             newCharInfluence.influences = infCharList;
           }
 
+          processedCharList.push(char.name);
           charInfList.push(newCharInfluence);
         }
 
