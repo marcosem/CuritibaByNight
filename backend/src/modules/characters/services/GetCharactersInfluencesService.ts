@@ -81,6 +81,8 @@ class GetCharactersInfluencesService {
           skipChar = true;
         }
 
+        processedCharList.push(char.name);
+
         if (!skipChar) {
           // Initialize Character
           const newCharInfluence: ICharInfluenceDTO = {
@@ -101,6 +103,8 @@ class GetCharactersInfluencesService {
             char.id,
             'all',
           );
+
+          processed2CharList.push(char.name);
 
           // Get Morality
           let moralityTrait: string;
@@ -146,8 +150,6 @@ class GetCharactersInfluencesService {
             ret => ret.trait === 'Retainers' && ret.type === 'backgrounds',
           );
 
-          processedCharList.push(char.name);
-
           if (retainerTrait) {
             let levelTemp: number;
 
@@ -192,8 +194,6 @@ class GetCharactersInfluencesService {
           const influenceTraits = charTraits.filter(
             inf => inf.type === 'influences',
           );
-
-          processed2CharList.push(char.name);
 
           if (influenceTraits.length > 0) {
             const infCharList: IInfluenceCharDTO[] = [];
