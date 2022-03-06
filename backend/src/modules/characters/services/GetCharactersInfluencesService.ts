@@ -81,8 +81,6 @@ class GetCharactersInfluencesService {
           skipChar = true;
         }
 
-        processedCharList.push(char.name);
-
         if (!skipChar) {
           // Initialize Character
           const newCharInfluence: ICharInfluenceDTO = {
@@ -98,6 +96,8 @@ class GetCharactersInfluencesService {
               retainers_level_temp: 0,
             },
           } as ICharInfluenceDTO;
+
+          processedCharList.push(char.name);
 
           const charTraits = await this.charactersTraitsRepository.findByCharId(
             char.id,
