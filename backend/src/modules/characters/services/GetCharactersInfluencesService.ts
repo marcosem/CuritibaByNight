@@ -146,6 +146,8 @@ class GetCharactersInfluencesService {
             ret => ret.trait === 'Retainers' && ret.type === 'backgrounds',
           );
 
+          processedCharList.push(char.name);
+
           if (retainerTrait) {
             let levelTemp: number;
 
@@ -191,7 +193,7 @@ class GetCharactersInfluencesService {
             inf => inf.type === 'influences',
           );
 
-          processedCharList.push(char.name);
+          processed2CharList.push(char.name);
 
           if (influenceTraits.length > 0) {
             const infCharList: IInfluenceCharDTO[] = [];
@@ -285,7 +287,6 @@ class GetCharactersInfluencesService {
             newCharInfluence.influences = infCharList;
           }
 
-          processed2CharList.push(char.name);
           charInfList.push(newCharInfluence);
         }
 
