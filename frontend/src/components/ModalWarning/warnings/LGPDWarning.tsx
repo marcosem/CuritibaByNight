@@ -167,9 +167,9 @@ const LGPDWarning: React.FC<ILGPDWarning> = ({ setOpenDlg }: ILGPDWarning) => {
         titular, em razão dos eventos por ele participados;
       </p>
       <p>
-        – Permitir que o titular possa usufrir da aplicação disponibilizada pela
-        Controladora em forma de website na internet, aqui identificada como{' '}
-        <strong>www.curitibabynight.com</strong> e{' '}
+        – Permitir que o titular possa usufruir da aplicação disponibilizada
+        pela Controladora em forma de website na internet, aqui identificada
+        como <strong>www.curitibabynight.com</strong> e{' '}
         <strong>www.curitibabynight.com.br</strong>.
       </p>
 
@@ -177,7 +177,7 @@ const LGPDWarning: React.FC<ILGPDWarning> = ({ setOpenDlg }: ILGPDWarning) => {
       <h3>Compartilhamento de Dados</h3>
       <p>
         A Controladora fica autorizada a compartilhar os dados pessoais do
-        Titular com qualquer outros agentes de tratamento de dados com outros
+        Titular com quaisquer outros agentes de tratamento de dados com outros
         agentes de tratamento de dados, caso seja necessário para as finalidades
         listadas neste instrumento, desde que, sejam respeitados os princípios
         da boa-fé, finalidade, adequação, necessidade, livre acesso, qualidade
