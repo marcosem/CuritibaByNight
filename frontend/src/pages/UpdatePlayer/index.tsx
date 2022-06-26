@@ -401,7 +401,7 @@ const UpdatePlayer: React.FC = () => {
           >
             Atualizar Perfil
           </Button>
-          <RemoveButton onClick={handleConfirmRemove}>
+          <RemoveButton onClick={handleConfirmRemove} title="Remover Jogador">
             <FiTrash2 />
           </RemoveButton>
         </Form>
