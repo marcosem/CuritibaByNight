@@ -67,7 +67,16 @@ const CharacterList: React.FC<ICharacterListProps> = ({
     tempArray = newArray;
 
     if (filterClan !== '') {
-      if (
+      if (filterClan.indexOf('Coterie: ') === 0) {
+        const coterie = filterClan.replace('Coterie: ', '');
+
+        tempArray = tempArray.filter((char: ICharacter) => {
+          if (char.coterie === coterie) {
+            return true;
+          }
+          return false;
+        });
+      } else if (
         filterClan === 'Werewolf' ||
         filterClan === 'Wraith' ||
         filterClan === 'Mage' ||

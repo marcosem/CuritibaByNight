@@ -49,7 +49,16 @@ const Characters: React.FC = () => {
         const res = response.data;
 
         // Get list of clan
+        const coteries: string[] = [];
+
         const clanList = res.map((char: ICharacter) => {
+          if (char.coterie !== undefined && char.coterie !== '') {
+            const conterie = `Coterie: ${char.coterie}`;
+            if (!coteries.includes(conterie)) {
+              coteries.push(conterie);
+            }
+          }
+
           if (
             (char.creature_type !== 'Vampire' &&
               char.creature_type !== 'Mortal') ||
@@ -68,11 +77,16 @@ const Characters: React.FC = () => {
           return clanFilter2[0];
         });
         // Sort clan list and remove duplicated
-        const filteredClanList = clanList
-          .sort()
-          .filter((clan: string, pos: number, ary: string[]) => {
-            return !pos || clan !== ary[pos - 1];
-          });
+        const filteredClanList = [
+          ...clanList
+            .sort()
+            .filter((clan: string, pos: number, ary: string[]) => {
+              return !pos || clan !== ary[pos - 1];
+            }),
+          ...coteries,
+        ];
+
+        console.log(coteries);
 
         setFilterList(filteredClanList);
         setCharList(res);
