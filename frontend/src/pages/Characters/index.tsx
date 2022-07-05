@@ -86,8 +86,6 @@ const Characters: React.FC = () => {
           ...coteries,
         ];
 
-        console.log(coteries);
-
         setFilterList(filteredClanList);
         setCharList(res);
       });
