@@ -145,6 +145,7 @@ const CharacterDetails: React.FC = () => {
         myChar && (
           <>
             {user.storyteller &&
+              !isMobileVersion &&
               charInfoList.length > 0 &&
               previewsCharId !== charId && (
                 <NavigateButton
@@ -159,6 +160,7 @@ const CharacterDetails: React.FC = () => {
             <CharacterPanel myChar={myChar} />
 
             {user.storyteller &&
+              !isMobileVersion &&
               charInfoList.length > 0 &&
               nextCharId !== charId && (
                 <NavigateButton
