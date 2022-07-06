@@ -38,11 +38,7 @@ describe('GetLocationAvailableTraits', () => {
       },
     ];
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const myTrait of traitsList) {
-      // eslint-disable-next-line no-await-in-loop
-      await fakeLocationAvailableTraitsRepository.create(myTrait);
-    }
+    await fakeLocationAvailableTraitsRepository.createList(traitsList);
   });
 
   beforeEach(() => {
