@@ -4,6 +4,7 @@ import IPDFParserProvider, {
 
 import Character from '@modules/characters/infra/typeorm/entities/Character';
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
+import LocationAvailableTrait from '@modules/locations/infra/typeorm/entities/LocationAvailableTrait';
 
 class FakePDFParserProvider implements IPDFParserProvider {
   public async parse(
@@ -127,9 +128,25 @@ class FakePDFParserProvider implements IPDFParserProvider {
       },
     ] as CharacterTrait[];
 
+    const locationAvailableTraits = [
+      {
+        trait: 'Dodge',
+        type: 'abilities',
+      },
+      {
+        trait: 'Resourses',
+        type: 'backgrounds',
+      },
+      {
+        trait: 'Police',
+        type: 'influences',
+      },
+    ] as LocationAvailableTrait[];
+
     return {
       character: char,
       charTraits,
+      locationAvailableTraits,
     };
   }
 }

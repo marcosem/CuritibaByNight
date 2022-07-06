@@ -8,6 +8,7 @@ import RemoveCharacterService from '@modules/characters/services/RemoveCharacter
 import AddCharacterTraitsService from '@modules/characters/services/AddCharacterTraitsService';
 import GetCharacterTraitsService from '@modules/characters/services/GetCharacterTraitsService';
 import GetDomainMasqueradeService from '@modules/characters/services/GetDomainMasqueradeService';
+import AddLocationAvailableTraitsService from '@modules/locations/services/AddLocationAvailableTraitsService';
 import { container } from 'tsyringe';
 import { classToClass } from 'class-transformer';
 
@@ -39,6 +40,7 @@ export default class UserCharactersController {
 
     const parsedChar = parsedData?.character;
     const charTraits = parsedData?.charTraits;
+    const locationAvailableTraits = parsedData?.locationAvailableTraits;
 
     const createCharacterSheetService = container.resolve(
       CreateCharacterSheetService,
@@ -84,6 +86,17 @@ export default class UserCharactersController {
         user_id: req.user.id,
         char_id: char.id,
         char_traits: charTraits,
+      });
+    }
+
+    if (locationAvailableTraits) {
+      const addLocationAvailableTraitsService = container.resolve(
+        AddLocationAvailableTraitsService,
+      );
+
+      await addLocationAvailableTraitsService.execute({
+        user_id: req.user.id,
+        loc_avai_traits: locationAvailableTraits,
       });
     }
 
@@ -183,6 +196,7 @@ export default class UserCharactersController {
 
     const parsedChar = parsedData?.character;
     const charTraits = parsedData?.charTraits;
+    const locationAvailableTraits = parsedData?.locationAvailableTraits;
 
     let regnant;
     if (regnant_id === '') {
@@ -240,6 +254,17 @@ export default class UserCharactersController {
         user_id: req.user.id,
         char_id: character_id,
         char_traits: charTraits,
+      });
+    }
+
+    if (locationAvailableTraits) {
+      const addLocationAvailableTraitsService = container.resolve(
+        AddLocationAvailableTraitsService,
+      );
+
+      await addLocationAvailableTraitsService.execute({
+        user_id: req.user.id,
+        loc_avai_traits: locationAvailableTraits,
       });
     }
 

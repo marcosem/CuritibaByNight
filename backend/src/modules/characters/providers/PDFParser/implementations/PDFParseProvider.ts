@@ -3,6 +3,7 @@ import IPDFParserProvider, {
 } from '@modules/characters/providers/PDFParser/models/IPDFParserProvider';
 import Character from '@modules/characters/infra/typeorm/entities/Character';
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
+import LocationAvailableTrait from '@modules/locations/infra/typeorm/entities/LocationAvailableTrait';
 
 import pdfParser from 'pdf-parse';
 import { resolve } from 'path';
@@ -31,6 +32,7 @@ class PDFParseProvider implements IPDFParserProvider {
     let charTraits = [] as CharacterTrait[];
     let powerTraits = [] as CharacterTrait[];
     let statusTraits = [] as CharacterTrait[];
+    const locationAvailableTraits = [] as LocationAvailableTrait[];
 
     const pdfBuffer = await fs.promises.readFile(
       resolve(uploadConfig('sheet').tmpFolder, filename),
@@ -581,6 +583,12 @@ class PDFParseProvider implements IPDFParserProvider {
 
           if (ability) {
             charTraits.push(ability);
+
+            // Add Location Available Trait to the list
+            locationAvailableTraits.push({
+              trait: ability.trait,
+              type: ability.type,
+            } as LocationAvailableTrait);
           }
 
           switch (char.creature_type) {
@@ -727,6 +735,24 @@ class PDFParseProvider implements IPDFParserProvider {
 
             charTraits.push(background);
 
+            // Add Location Available Traits of Background type to the list
+            // Exclude Haven and Generation
+            const invalidLocationTraits = [
+              'Generation',
+              'Haven',
+              'Ancestors',
+              'Past Life',
+              'Pure Breed',
+              'Rites',
+              'Haunt',
+            ];
+            if (invalidLocationTraits.indexOf(background.trait) < 0) {
+              locationAvailableTraits.push({
+                trait: background.trait,
+                type: background.type,
+              } as LocationAvailableTrait);
+            }
+
             // Retainers loses one blood point
             if (
               background.trait === 'Retainers' ||
@@ -837,6 +863,11 @@ class PDFParseProvider implements IPDFParserProvider {
             }
 
             charTraits.push(influence);
+
+            locationAvailableTraits.push({
+              trait: influence.trait,
+              type: influence.type,
+            } as LocationAvailableTrait);
           }
 
           switch (char.creature_type) {
@@ -1229,6 +1260,7 @@ class PDFParseProvider implements IPDFParserProvider {
     return {
       character: char,
       charTraits,
+      locationAvailableTraits,
     };
   }
 }
