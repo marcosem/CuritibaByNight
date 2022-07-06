@@ -10,36 +10,6 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
     this.ormRepository = getRepository(CharacterTrait);
   }
 
-  /*
-  public async create({
-    trait,
-    character_id,
-    level,
-    type,
-  }: ICreateCharacterTraitDTO): Promise<CharacterTrait> {
-    const charTrait = this.ormRepository.create({
-      trait,
-      character_id,
-      level,
-      type,
-    });
-
-    await this.ormRepository.save(charTrait);
-
-    // Return what is saved with user relationship attached.
-    let savedCharTrait = await this.ormRepository.findOne({
-      where: { id: charTrait.id },
-      // relations: ['characterId'],
-    });
-
-    if (!savedCharTrait) {
-      savedCharTrait = charTrait;
-    }
-
-    return savedCharTrait;
-  }
-  */
-
   public async createList(
     dataList: ICreateCharacterTraitDTO[],
   ): Promise<CharacterTrait[]> {
