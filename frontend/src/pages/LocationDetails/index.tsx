@@ -76,6 +76,12 @@ interface ISelectableItem {
   titleEn: string;
 }
 
+interface IAvailableTrait {
+  id: string;
+  trait: string;
+  type: string;
+}
+
 const typeList: ISelectableItem[] = [
   {
     title: 'Outro',
@@ -145,6 +151,9 @@ const propertyList: ISelectableItem[] = [
 const LocationDetails: React.FC = () => {
   const { locationId } = useParams<IRouteParams>();
   const [locationAddonList, setLocationAddonList] = useState<IAddon[]>([]);
+  const [availableTraitsList, setAvailableTraitsList] = useState<
+    IAvailableTrait[]
+  >([]);
   const [availableAddonsList, setAvailableAddonsList] = useState<
     IAddonDetails[]
   >([]);
@@ -401,6 +410,39 @@ const LocationDetails: React.FC = () => {
       }
     }
   }, [addToast, char.id, locationId, user.storyteller]);
+
+  const loadAvailableTraits = useCallback(async () => {
+    try {
+      await api.post('addons/traitslist').then(response => {
+        const traits = response.data;
+        const newAvailableTraits = traits.map((myTrait: IAvailableTrait) => {
+          const newAvailableTrait: IAvailableTrait = {
+            id: myTrait.id,
+            trait: myTrait.trait,
+            type: myTrait.type,
+          };
+
+          return newAvailableTrait;
+        });
+
+        setAvailableTraitsList(newAvailableTraits);
+      });
+    } catch (error) {
+      const parsedError: any = error;
+
+      if (parsedError.response) {
+        const { message } = parsedError.response.data;
+
+        if (parsedError.response.status !== 401) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao tentar listar traits disponíveis',
+            description: `Erro: '${message}'`,
+          });
+        }
+      }
+    }
+  }, [addToast]);
 
   const handleAddAddonToLocation = useCallback(async () => {
     if (selectedAddon === undefined || selectedLocation.id === undefined) {
@@ -925,8 +967,15 @@ const LocationDetails: React.FC = () => {
       loadLocation();
       loadLocationAddons();
       loadAvailableAddons();
+      loadAvailableTraits();
     }
-  }, [locationId, loadLocationAddons, loadLocation, loadAvailableAddons]);
+  }, [
+    locationId,
+    loadLocationAddons,
+    loadLocation,
+    loadAvailableAddons,
+    loadAvailableTraits,
+  ]);
 
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -1137,11 +1186,129 @@ const LocationDetails: React.FC = () => {
                     </DoubleDetailsContainer>
                   )}
 
+                  <DoubleDetailsContainer>
+                    <DetailsContainer isMobile={isMobileVersion} borderTop>
+                      <h2>Habilidades</h2>
+                      {user.storyteller && (
+                        <SelectContainer isMobile={isMobileVersion}>
+                          <div>
+                            <Select
+                              name="ability"
+                              id="ability"
+                              // value={selectedAddon ? selectedAddon.name : ''}
+                              // onChange={handleSelectedAddonChange}
+                              isMobile={isMobileVersion}
+                            >
+                              <option value="">Adicionar Habilidade:</option>
+                              {availableTraitsList
+                                .filter(
+                                  traitFilter =>
+                                    traitFilter.type === 'abilities',
+                                )
+                                .map(myTrait => (
+                                  <option
+                                    key={myTrait.id}
+                                    value={myTrait.trait}
+                                  >
+                                    {myTrait.trait}
+                                  </option>
+                                ))}
+                            </Select>
+                            <AddButton
+                              title="Adicionar Habilidade"
+                              // onClick={handleAddAddonToLocation}
+                              disabled={saving}
+                            >
+                              {saving ? <FaSpinner /> : <FiPlus />}
+                            </AddButton>
+                          </div>
+                        </SelectContainer>
+                      )}
+                    </DetailsContainer>
+                    <DetailsContainer
+                      isMobile={isMobileVersion}
+                      borderTop
+                      borderLeft
+                    >
+                      <h2>Antecedentes</h2>
+                      {user.storyteller && (
+                        <SelectContainer isMobile={isMobileVersion}>
+                          <div>
+                            <Select
+                              name="backgrounds"
+                              id="backgrounds"
+                              // value={selectedAddon ? selectedAddon.name : ''}
+                              // onChange={handleSelectedAddonChange}
+                              isMobile={isMobileVersion}
+                            >
+                              <option value="">Adicionar Antecedente:</option>
+                              {availableTraitsList
+                                .filter(
+                                  traitFilter =>
+                                    traitFilter.type === 'backgrounds',
+                                )
+                                .map(myTrait => (
+                                  <option
+                                    key={myTrait.id}
+                                    value={myTrait.trait}
+                                  >
+                                    {myTrait.trait}
+                                  </option>
+                                ))}
+                            </Select>
+                            <AddButton
+                              title="Adicionar Antecedente"
+                              // onClick={handleAddAddonToLocation}
+                              disabled={saving}
+                            >
+                              {saving ? <FaSpinner /> : <FiPlus />}
+                            </AddButton>
+                          </div>
+                        </SelectContainer>
+                      )}
+                    </DetailsContainer>
+                  </DoubleDetailsContainer>
+
+                  <DetailsContainer isMobile={isMobileVersion} borderTop>
+                    <h2>Influências</h2>
+                    {user.storyteller && (
+                      <SelectContainer isMobile={isMobileVersion}>
+                        <div>
+                          <Select
+                            name="influences"
+                            id="influences"
+                            // value={selectedAddon ? selectedAddon.name : ''}
+                            // onChange={handleSelectedAddonChange}
+                            isMobile={isMobileVersion}
+                          >
+                            <option value="">Adicionar Influência:</option>
+                            {availableTraitsList
+                              .filter(
+                                traitFilter =>
+                                  traitFilter.type === 'influences',
+                              )
+                              .map(myTrait => (
+                                <option key={myTrait.id} value={myTrait.trait}>
+                                  {myTrait.trait}
+                                </option>
+                              ))}
+                          </Select>
+                          <AddButton
+                            title="Adicionar Influência"
+                            // onClick={handleAddAddonToLocation}
+                            disabled={saving}
+                          >
+                            {saving ? <FaSpinner /> : <FiPlus />}
+                          </AddButton>
+                        </div>
+                      </SelectContainer>
+                    )}
+                  </DetailsContainer>
+
                   <DetailsContainer isMobile={isMobileVersion} borderTop>
                     <h2>Addons</h2>
                     {user.storyteller && (
                       <SelectContainer isMobile={isMobileVersion}>
-                        <strong>Adicionar Addon:</strong>
                         <div>
                           <Select
                             name="addon"
@@ -1150,7 +1317,7 @@ const LocationDetails: React.FC = () => {
                             onChange={handleSelectedAddonChange}
                             isMobile={isMobileVersion}
                           >
-                            <option value="">Addon:</option>
+                            <option value="">Adicionar Addon:</option>
                             {availableAddonsList.map(addon => (
                               <option
                                 key={`Select-${addon.name}`}
@@ -1174,10 +1341,6 @@ const LocationDetails: React.FC = () => {
 
                   {locationAddonList.length > 0 ? (
                     <>
-                      <DetailsContainer isMobile={isMobileVersion} borderTop>
-                        <h2>Addons da Propriedade</h2>
-                      </DetailsContainer>
-
                       {isMobileVersion || locationAddonList.length === 1 ? (
                         <DetailsContainer isMobile={isMobileVersion}>
                           {locationAddonList.map(addon => (
