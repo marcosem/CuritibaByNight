@@ -71,11 +71,11 @@ class UpdateTraitLocationService {
     if (currentLocationTrait) {
       newLocationTrait = currentLocationTrait;
 
-      const updatedLevel = currentLocationTrait.level + level;
+      const updatedLevel: number =
+        Number(currentLocationTrait.level) + Number(level);
 
       // Remove the location trait if the level downs to zero or lower
       if (updatedLevel <= 0) {
-        newLocationTrait.id = '';
         newLocationTrait.level = 0;
 
         await this.locationsTraitsRepository.delete(currentLocationTrait.id);
