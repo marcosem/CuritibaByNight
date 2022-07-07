@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { celebrate, Segments, Joi } from 'celebrate';
 import LocationAddonController from '@modules/locations/infra/http/controllers/LocationAddonController';
+import LocationTraitController from '@modules/locations/infra/http/controllers/LocationTraitController';
 import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 
 const locationsAddonsRouter = Router();
 const locationAddonController = new LocationAddonController();
+const locationTraitController = new LocationTraitController();
 
 locationsAddonsRouter.post(
   '/add',
@@ -18,6 +20,19 @@ locationsAddonsRouter.post(
     },
   }),
   locationAddonController.create,
+);
+
+locationsAddonsRouter.patch(
+  '/addtrait',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      trait_id: Joi.string().uuid().required(),
+      location_id: Joi.string().uuid().required(),
+      level: Joi.number().optional(),
+    },
+  }),
+  locationTraitController.update,
 );
 
 locationsAddonsRouter.post(
