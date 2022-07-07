@@ -1,22 +1,27 @@
 import 'reflect-metadata';
 import FakeLocationsAddonsRepository from '@modules/locations/repositories/fakes/FakeLocationsAddonsRepository';
+import FakeLocationsTraitsRepository from '@modules/locations/repositories/fakes/FakeLocationsTraitsRepository';
 import FakeAddonsRepository from '@modules/locations/repositories/fakes/FakeAddonsRepository';
+import FakeLocationAvailableTraitsRepository from '@modules/locations/repositories/fakes/FakeLocationAvailableTraitsRepository';
 import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeLocationsCharactersRepository from '@modules/locations/repositories/fakes/FakeLocationsCharactersRepository';
-import GetLocationAddonsService from '@modules/locations/services/GetLocationAddonsService';
+import GetLocationAddonsAndTraitsService from '@modules/locations/services/GetLocationAddonsAndTraitsService';
 import Addon from '@modules/locations/infra/typeorm/entities/Addon';
+import LocationAvailableTrait from '@modules/locations/infra/typeorm/entities/LocationAvailableTrait';
 
 import AppError from '@shared/errors/AppError';
 
 let fakeLocationsAddonsRepository: FakeLocationsAddonsRepository;
+let fakeLocationsTraitsRepository: FakeLocationsTraitsRepository;
 let fakeAddonsRepository: FakeAddonsRepository;
+let fakeLocationAvailableTraitsRepository: FakeLocationAvailableTraitsRepository;
 let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeLocationsCharactersRepository: FakeLocationsCharactersRepository;
-let getLocationAddons: GetLocationAddonsService;
+let getLocationAddonsAndTraits: GetLocationAddonsAndTraitsService;
 
 let addonsList: {
   addon1: Addon;
@@ -28,7 +33,9 @@ let addonsList: {
   addon0_next: Addon;
 };
 
-describe('GetLocationAddons', () => {
+let locAvaiTraits: LocationAvailableTrait[] = [];
+
+describe('GetLocationAddonsAndTraits', () => {
   beforeAll(async () => {
     fakeAddonsRepository = new FakeAddonsRepository();
 
@@ -193,26 +200,66 @@ describe('GetLocationAddons', () => {
       addon3_next,
       addon0_next,
     };
+
+    fakeLocationAvailableTraitsRepository = new FakeLocationAvailableTraitsRepository();
+
+    const traitsList = [
+      {
+        trait: 'Enigmas',
+        type: 'abilities',
+      },
+      {
+        trait: 'Security',
+        type: 'abilities',
+      },
+      {
+        trait: 'Occult',
+        type: 'abilities',
+      },
+      {
+        trait: 'Academics',
+        type: 'abilities',
+      },
+      {
+        trait: 'Resources',
+        type: 'backgrounds',
+      },
+      {
+        trait: 'Allies',
+        type: 'backgrounds',
+      },
+      {
+        trait: 'Media',
+        type: 'influences',
+      },
+    ];
+
+    locAvaiTraits = await fakeLocationAvailableTraitsRepository.createList(
+      traitsList,
+    );
   });
 
   beforeEach(() => {
     fakeLocationsAddonsRepository = new FakeLocationsAddonsRepository();
+    fakeLocationsTraitsRepository = new FakeLocationsTraitsRepository();
     fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeLocationsCharactersRepository = new FakeLocationsCharactersRepository();
 
-    getLocationAddons = new GetLocationAddonsService(
+    getLocationAddonsAndTraits = new GetLocationAddonsAndTraitsService(
       fakeLocationsAddonsRepository,
+      fakeLocationsTraitsRepository,
       fakeLocationsRepository,
       fakeAddonsRepository,
+      fakeLocationAvailableTraitsRepository,
       fakeUsersRepository,
       fakeCharactersRepository,
       fakeLocationsCharactersRepository,
     );
   });
 
-  it('Should be able to list all addons of a location', async () => {
+  it('Should be able to list all addons and traits of a location', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -283,14 +330,225 @@ describe('GetLocationAddons', () => {
       temp_influence: 0,
     });
 
-    const locationAddonsResult = await getLocationAddons.execute({
-      user_id: user.id,
+    await fakeLocationsTraitsRepository.addTraitToLocation({
       location_id: location.id,
+      trait_id: locAvaiTraits[0].id,
+      level: 3,
+    });
+    expectedDefense += 3;
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: locAvaiTraits[1].id,
+      level: 2,
+    });
+    expectedSurveillance += 2;
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: locAvaiTraits[4].id,
+      level: 2,
     });
 
-    expect(locationAddonsResult.defense).toEqual(expectedDefense);
-    expect(locationAddonsResult.surveillance).toEqual(expectedSurveillance);
-    expect(locationAddonsResult.addonsList).toHaveLength(4);
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: user.id,
+        location_id: location.id,
+      },
+    );
+
+    expect(locationAddonsTraitsResult.defense).toEqual(expectedDefense);
+    expect(locationAddonsTraitsResult.surveillance).toEqual(
+      expectedSurveillance,
+    );
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(4);
+    expect(locationAddonsTraitsResult.traitsList).toHaveLength(3);
+  });
+
+  it('Should be able to calculate surveillance correctly of a location', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Ateliê Victor Augusto Gentil',
+      description: 'Elysium Toreador',
+      latitude: -25.4384281,
+      longitude: -49.293875,
+      property: 'clan',
+      elysium: true,
+      clan: 'Toreador',
+      level: 3,
+    });
+
+    let expectedDefense = 8;
+    let expectedSurveillance = 8;
+
+    await fakeLocationsAddonsRepository.addAddonToLocation({
+      location_id: location.id,
+      addon_name: addonsList.addon1.name,
+      addon_level: addonsList.addon1.level,
+      addon_id_current: addonsList.addon1.id,
+      addon_id_next: addonsList.addon1_next.id,
+      temp_ability: 0,
+      temp_influence: 0,
+    });
+
+    expectedDefense += addonsList.addon1.defense;
+    expectedSurveillance += addonsList.addon1.surveillance;
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: locAvaiTraits[0].id,
+      level: 3,
+    });
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: locAvaiTraits[4].id,
+      level: 2,
+    });
+
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: user.id,
+        location_id: location.id,
+      },
+    );
+
+    expect(locationAddonsTraitsResult.defense).toEqual(expectedDefense);
+    expect(locationAddonsTraitsResult.surveillance).toEqual(
+      expectedSurveillance,
+    );
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(1);
+    expect(locationAddonsTraitsResult.traitsList).toHaveLength(2);
+  });
+
+  it('Should be able to calculate defense correctly of a location', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Ateliê Victor Augusto Gentil',
+      description: 'Elysium Toreador',
+      latitude: -25.4384281,
+      longitude: -49.293875,
+      property: 'clan',
+      elysium: true,
+      clan: 'Toreador',
+      level: 3,
+    });
+
+    let expectedDefense = 8;
+    let expectedSurveillance = 8;
+
+    await fakeLocationsAddonsRepository.addAddonToLocation({
+      location_id: location.id,
+      addon_name: addonsList.addon2.name,
+      addon_level: addonsList.addon2.level,
+      addon_id_current: addonsList.addon2.id,
+      addon_id_next: addonsList.addon2_next.id,
+      temp_ability: 0,
+      temp_influence: 0,
+    });
+
+    expectedDefense += addonsList.addon2.defense;
+    expectedSurveillance += addonsList.addon2.surveillance;
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: 'I am invalid',
+      level: 2,
+    });
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: locAvaiTraits[4].id,
+      level: 2,
+    });
+
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: user.id,
+        location_id: location.id,
+      },
+    );
+
+    expect(locationAddonsTraitsResult.defense).toEqual(expectedDefense);
+    expect(locationAddonsTraitsResult.surveillance).toEqual(
+      expectedSurveillance,
+    );
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(1);
+    expect(locationAddonsTraitsResult.traitsList).toHaveLength(1);
+  });
+
+  it('Should handle invalid traits of a location by removing it from the list', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Ateliê Victor Augusto Gentil',
+      description: 'Elysium Toreador',
+      latitude: -25.4384281,
+      longitude: -49.293875,
+      property: 'clan',
+      elysium: true,
+      clan: 'Toreador',
+      level: 3,
+    });
+
+    let expectedDefense = 8;
+    let expectedSurveillance = 8;
+
+    await fakeLocationsAddonsRepository.addAddonToLocation({
+      location_id: location.id,
+      addon_name: addonsList.addon2.name,
+      addon_level: addonsList.addon2.level,
+      addon_id_current: addonsList.addon2.id,
+      addon_id_next: addonsList.addon2_next.id,
+      temp_ability: 0,
+      temp_influence: 0,
+    });
+
+    expectedDefense += addonsList.addon2.defense;
+    expectedSurveillance += addonsList.addon2.surveillance;
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: locAvaiTraits[1].id,
+      level: 2,
+    });
+
+    await fakeLocationsTraitsRepository.addTraitToLocation({
+      location_id: location.id,
+      trait_id: locAvaiTraits[4].id,
+      level: 2,
+    });
+
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: user.id,
+        location_id: location.id,
+      },
+    );
+
+    expect(locationAddonsTraitsResult.defense).toEqual(expectedDefense);
+    expect(locationAddonsTraitsResult.surveillance).toEqual(
+      expectedSurveillance,
+    );
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(1);
+    expect(locationAddonsTraitsResult.traitsList).toHaveLength(2);
   });
 
   it('Should list no addon if there is no addon in the location', async () => {
@@ -311,14 +569,16 @@ describe('GetLocationAddons', () => {
       clan: 'Toreador',
     });
 
-    const locationAddonsResult = await getLocationAddons.execute({
-      user_id: user.id,
-      location_id: location.id,
-    });
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: user.id,
+        location_id: location.id,
+      },
+    );
 
-    expect(locationAddonsResult.defense).toEqual(6);
-    expect(locationAddonsResult.surveillance).toEqual(6);
-    expect(locationAddonsResult.addonsList).toHaveLength(0);
+    expect(locationAddonsTraitsResult.defense).toEqual(6);
+    expect(locationAddonsTraitsResult.surveillance).toEqual(6);
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(0);
   });
 
   it('Should be able to list all only valid addons of a location', async () => {
@@ -376,12 +636,14 @@ describe('GetLocationAddons', () => {
       },
     );
 
-    const locationAddonsResult = await getLocationAddons.execute({
-      user_id: user.id,
-      location_id: location.id,
-    });
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: user.id,
+        location_id: location.id,
+      },
+    );
 
-    expect(locationAddonsResult.addonsList).toHaveLength(2);
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(2);
     expect(removeInvalidAddon).toHaveBeenCalledWith(invalidLocAddon.id);
   });
 
@@ -433,15 +695,17 @@ describe('GetLocationAddons', () => {
       temp_influence: 0,
     });
 
-    const locationAddonsResult = await getLocationAddons.execute({
-      user_id: nonSTUser.id,
-      char_id: char.id,
-      location_id: location.id,
-    });
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: nonSTUser.id,
+        char_id: char.id,
+        location_id: location.id,
+      },
+    );
 
-    expect(locationAddonsResult).toHaveProperty('defense');
-    expect(locationAddonsResult).toHaveProperty('surveillance');
-    expect(locationAddonsResult.addonsList).toHaveLength(2);
+    expect(locationAddonsTraitsResult).toHaveProperty('defense');
+    expect(locationAddonsTraitsResult).toHaveProperty('surveillance');
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(2);
   });
 
   it('Should be able to list all addons for characters clan location', async () => {
@@ -491,15 +755,17 @@ describe('GetLocationAddons', () => {
       temp_influence: 0,
     });
 
-    const locationAddonsResult = await getLocationAddons.execute({
-      user_id: nonSTUser.id,
-      char_id: char.id,
-      location_id: location.id,
-    });
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: nonSTUser.id,
+        char_id: char.id,
+        location_id: location.id,
+      },
+    );
 
-    expect(locationAddonsResult).toHaveProperty('defense');
-    expect(locationAddonsResult).toHaveProperty('surveillance');
-    expect(locationAddonsResult.addonsList).toHaveLength(2);
+    expect(locationAddonsTraitsResult).toHaveProperty('defense');
+    expect(locationAddonsTraitsResult).toHaveProperty('surveillance');
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(2);
   });
 
   it('Should be able to list all addons for location shared by the character', async () => {
@@ -555,20 +821,22 @@ describe('GetLocationAddons', () => {
       temp_influence: 0,
     });
 
-    const locationAddonsResult = await getLocationAddons.execute({
-      user_id: nonSTUser.id,
-      char_id: char.id,
-      location_id: location.id,
-    });
+    const locationAddonsTraitsResult = await getLocationAddonsAndTraits.execute(
+      {
+        user_id: nonSTUser.id,
+        char_id: char.id,
+        location_id: location.id,
+      },
+    );
 
-    expect(locationAddonsResult).toHaveProperty('defense');
-    expect(locationAddonsResult).toHaveProperty('surveillance');
-    expect(locationAddonsResult.addonsList).toHaveLength(2);
+    expect(locationAddonsTraitsResult).toHaveProperty('defense');
+    expect(locationAddonsTraitsResult).toHaveProperty('surveillance');
+    expect(locationAddonsTraitsResult.addonsList).toHaveLength(2);
   });
 
   it('Should not allow invalid users to get a list of addons', async () => {
     await expect(
-      getLocationAddons.execute({
+      getLocationAddonsAndTraits.execute({
         user_id: 'I am invalid',
         location_id: 'Does not matter',
       }),
@@ -583,7 +851,7 @@ describe('GetLocationAddons', () => {
     });
 
     await expect(
-      getLocationAddons.execute({
+      getLocationAddonsAndTraits.execute({
         user_id: notStUser.id,
         location_id: 'Does not matter',
       }),
@@ -599,7 +867,7 @@ describe('GetLocationAddons', () => {
     });
 
     await expect(
-      getLocationAddons.execute({
+      getLocationAddonsAndTraits.execute({
         user_id: user.id,
         location_id: 'I am invalid',
       }),
@@ -625,7 +893,7 @@ describe('GetLocationAddons', () => {
     });
 
     await expect(
-      getLocationAddons.execute({
+      getLocationAddonsAndTraits.execute({
         user_id: nonSTuser.id,
         location_id: location.id,
         char_id: 'I am invalid',
@@ -667,7 +935,7 @@ describe('GetLocationAddons', () => {
     );
 
     await expect(
-      getLocationAddons.execute({
+      getLocationAddonsAndTraits.execute({
         user_id: nonSTUser.id,
         char_id: char.id,
         location_id: location.id,

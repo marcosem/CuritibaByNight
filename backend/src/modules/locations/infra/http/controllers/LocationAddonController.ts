@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import AddAddonToLocationService from '@modules/locations/services/AddAddonToLocationService';
-import GetLocationAddonsService from '@modules/locations/services/GetLocationAddonsService';
+import GetLocationAddonsAndTraitsService from '@modules/locations/services/GetLocationAddonsAndTraitsService';
 import RemoveAddonFromLocationService from '@modules/locations/services/RemoveAddonFromLocationService';
 import UpdateAddonLocationService from '@modules/locations/services/UpdateAddonLocationService';
 
@@ -28,11 +28,11 @@ export default class LocationAddonController {
   public async index(req: Request, res: Response): Promise<Response> {
     const { char_id, location_id } = req.body;
 
-    const getLocationAddonsService = container.resolve(
-      GetLocationAddonsService,
+    const getLocationAddonsAndTraitsService = container.resolve(
+      GetLocationAddonsAndTraitsService,
     );
 
-    const locationAddons = await getLocationAddonsService.execute({
+    const locationAddons = await getLocationAddonsAndTraitsService.execute({
       user_id: req.user.id,
       char_id,
       location_id,
