@@ -14,6 +14,11 @@ export default function extractBackgroundsTraits(
         const level = line.indexOf('O ') + 1;
         let endBackground: number;
 
+        console.log({
+          line,
+          level,
+        });
+
         if (level <= 0) {
           backgroundTrait = undefined;
           break;
@@ -31,7 +36,6 @@ export default function extractBackgroundsTraits(
             'Industry',
             'Legal',
             'Media',
-            'Military',
             'Occult',
             'Police',
             'Politics',
@@ -39,6 +43,7 @@ export default function extractBackgroundsTraits(
             'Transportation',
             'Underworld',
             'University',
+            'Military',
           ];
 
           if (line.lastIndexOf('   ') >= 0) {
@@ -108,7 +113,6 @@ export default function extractBackgroundsTraits(
               'Industry',
               'Legal',
               'Media',
-              'Military',
               'Occult',
               'Police',
               'Politics',
@@ -116,6 +120,7 @@ export default function extractBackgroundsTraits(
               'Transportation',
               'Underworld',
               'University',
+              'Military',
             ];
 
             influencesList.some(influence => {
