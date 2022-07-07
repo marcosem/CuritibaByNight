@@ -748,6 +748,7 @@ class PDFParseProvider implements IPDFParserProvider {
               'Avatar',
               'Mentor',
               'Insight',
+              'Destiny',
             ];
             if (invalidLocationTraits.indexOf(background.trait) < 0) {
               locationAvailableTraits.push({
