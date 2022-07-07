@@ -33,6 +33,7 @@ import {
   AddonReqTitle,
   AddonReqDesc,
   GoBackButton,
+  ChangeTraitButton,
 } from './styles';
 
 // import Button from '../../components/Button';
@@ -80,6 +81,29 @@ interface IAvailableTrait {
   id: string;
   trait: string;
   type: string;
+}
+
+interface ITrait {
+  id: string;
+  trait: string;
+  type: string;
+}
+
+interface ILocationTrait {
+  id: string;
+  trait_id: string;
+  traitID: ITrait;
+  location_id: string;
+  level: number;
+}
+
+interface IFormatedLocationTrait {
+  id: string;
+  trait_id: string;
+  trait: string;
+  type: string;
+  location_id: string;
+  level: number;
 }
 
 const typeList: ISelectableItem[] = [
@@ -160,6 +184,20 @@ const LocationDetails: React.FC = () => {
   const [selectedAddon, setSelectedAddon] = useState<
     IAddonDetails | undefined
   >();
+
+  const [locationTraitsList, setLocationTraitsList] = useState<
+    IFormatedLocationTrait[]
+  >([]);
+  const [selectedAbility, setSelectedAbility] = useState<
+    IAvailableTrait | undefined
+  >();
+  const [selectedBackground, setSelectedBackground] = useState<
+    IAvailableTrait | undefined
+  >();
+  const [selectedInfluence, setSelectedInfluence] = useState<
+    IAvailableTrait | undefined
+  >();
+
   const [locationDefense, setLocationDefense] = useState<number>(0);
   const [locationSurveillance, setLocationSurveillance] = useState<number>(0);
 
@@ -337,9 +375,25 @@ const LocationDetails: React.FC = () => {
             return newAddon;
           });
 
+          const newLocationTraitList = res.traitsList.map(
+            (trait: ILocationTrait) => {
+              const newLocationTrait = {
+                id: trait.id,
+                trait_id: trait.trait_id,
+                trait: trait.traitID.trait,
+                type: trait.traitID.type,
+                location_id: trait.location_id,
+                level: trait.level,
+              };
+
+              return newLocationTrait;
+            },
+          );
+
           setLocationDefense(defense);
           setLocationSurveillance(surveillance);
           setLocationAddonList(newAddonList);
+          setLocationTraitsList(newLocationTraitList);
         });
     } catch (error) {
       const parsedError: any = error;
@@ -512,6 +566,72 @@ const LocationDetails: React.FC = () => {
       setSelectedAddon(mySelectedAddon);
     },
     [availableAddonsList],
+  );
+
+  const handleSelectedAbilityChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      const availableTypeTraitsList = availableTraitsList.filter(
+        avaiTrait => avaiTrait.type === 'abilities',
+      );
+
+      let mySelectedAbility: IAvailableTrait | undefined;
+
+      if (selIndex > 0) {
+        const selAbility = availableTypeTraitsList[selIndex - 1];
+        mySelectedAbility = selAbility;
+      } else {
+        mySelectedAbility = undefined;
+      }
+
+      setSelectedAbility(mySelectedAbility);
+    },
+    [availableTraitsList],
+  );
+
+  const handleSelectedBackgroundChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      const availableTypeTraitsList = availableTraitsList.filter(
+        avaiTrait => avaiTrait.type === 'backgrounds',
+      );
+
+      let mySelectedBackground: IAvailableTrait | undefined;
+
+      if (selIndex > 0) {
+        const selBackground = availableTypeTraitsList[selIndex - 1];
+        mySelectedBackground = selBackground;
+      } else {
+        mySelectedBackground = undefined;
+      }
+
+      setSelectedBackground(mySelectedBackground);
+    },
+    [availableTraitsList],
+  );
+
+  const handleSelectedInfluenceChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const selIndex = event.target.selectedIndex;
+
+      const availableTypeTraitsList = availableTraitsList.filter(
+        avaiTrait => avaiTrait.type === 'influences',
+      );
+
+      let mySelectedInfluence: IAvailableTrait | undefined;
+
+      if (selIndex > 0) {
+        const selInfluence = availableTypeTraitsList[selIndex - 1];
+        mySelectedInfluence = selInfluence;
+      } else {
+        mySelectedInfluence = undefined;
+      }
+
+      setSelectedInfluence(mySelectedInfluence);
+    },
+    [availableTraitsList],
   );
 
   const deleteAddon = useCallback(
@@ -1195,8 +1315,10 @@ const LocationDetails: React.FC = () => {
                             <Select
                               name="ability"
                               id="ability"
-                              // value={selectedAddon ? selectedAddon.name : ''}
-                              // onChange={handleSelectedAddonChange}
+                              value={
+                                selectedAbility ? selectedAbility.trait : ''
+                              }
+                              onChange={handleSelectedAbilityChange}
                               isMobile={isMobileVersion}
                             >
                               <option value="">Adicionar Habilidade:</option>
@@ -1224,6 +1346,32 @@ const LocationDetails: React.FC = () => {
                           </div>
                         </SelectContainer>
                       )}
+
+                      {locationTraitsList
+                        .filter(locTrait => locTrait.type === 'abilities')
+                        .map(abilTrait => (
+                          <SingleTraitContainer isMobile={isMobileVersion}>
+                            <ChangeTraitButton
+                              title="Diminuir"
+                              // onClick={handleAddAddonToLocation}
+                              disabled={saving}
+                              mode="down"
+                            >
+                              {saving ? <FaSpinner /> : <FiMinus />}
+                            </ChangeTraitButton>
+                            <ChangeTraitButton
+                              title="Aumentar"
+                              // onClick={handleAddAddonToLocation}
+                              disabled={saving}
+                              mode="up"
+                            >
+                              {saving ? <FaSpinner /> : <FiPlus />}
+                            </ChangeTraitButton>
+
+                            <strong>{abilTrait.trait}</strong>
+                            <span>{`x${abilTrait.level}`}</span>
+                          </SingleTraitContainer>
+                        ))}
                     </DetailsContainer>
                     <DetailsContainer
                       isMobile={isMobileVersion}
@@ -1237,8 +1385,12 @@ const LocationDetails: React.FC = () => {
                             <Select
                               name="backgrounds"
                               id="backgrounds"
-                              // value={selectedAddon ? selectedAddon.name : ''}
-                              // onChange={handleSelectedAddonChange}
+                              value={
+                                selectedBackground
+                                  ? selectedBackground.trait
+                                  : ''
+                              }
+                              onChange={handleSelectedBackgroundChange}
                               isMobile={isMobileVersion}
                             >
                               <option value="">Adicionar Antecedente:</option>
@@ -1266,6 +1418,32 @@ const LocationDetails: React.FC = () => {
                           </div>
                         </SelectContainer>
                       )}
+
+                      {locationTraitsList
+                        .filter(locTrait => locTrait.type === 'backgrounds')
+                        .map(bgTrait => (
+                          <SingleTraitContainer isMobile={isMobileVersion}>
+                            <ChangeTraitButton
+                              title="Diminuir"
+                              // onClick={handleAddAddonToLocation}
+                              disabled={saving}
+                              mode="down"
+                            >
+                              {saving ? <FaSpinner /> : <FiMinus />}
+                            </ChangeTraitButton>
+                            <ChangeTraitButton
+                              title="Aumentar"
+                              // onClick={handleAddAddonToLocation}
+                              disabled={saving}
+                              mode="up"
+                            >
+                              {saving ? <FaSpinner /> : <FiPlus />}
+                            </ChangeTraitButton>
+
+                            <strong>{bgTrait.trait}</strong>
+                            <span>{`x${bgTrait.level}`}</span>
+                          </SingleTraitContainer>
+                        ))}
                     </DetailsContainer>
                   </DoubleDetailsContainer>
 
@@ -1277,8 +1455,10 @@ const LocationDetails: React.FC = () => {
                           <Select
                             name="influences"
                             id="influences"
-                            // value={selectedAddon ? selectedAddon.name : ''}
-                            // onChange={handleSelectedAddonChange}
+                            value={
+                              selectedInfluence ? selectedInfluence.trait : ''
+                            }
+                            onChange={handleSelectedInfluenceChange}
                             isMobile={isMobileVersion}
                           >
                             <option value="">Adicionar Influência:</option>
@@ -1303,6 +1483,31 @@ const LocationDetails: React.FC = () => {
                         </div>
                       </SelectContainer>
                     )}
+                    {locationTraitsList
+                      .filter(locTrait => locTrait.type === 'influences')
+                      .map(infTrait => (
+                        <SingleTraitContainer isMobile={isMobileVersion}>
+                          <ChangeTraitButton
+                            title="Diminuir"
+                            // onClick={handleAddAddonToLocation}
+                            disabled={saving}
+                            mode="down"
+                          >
+                            {saving ? <FaSpinner /> : <FiMinus />}
+                          </ChangeTraitButton>
+                          <ChangeTraitButton
+                            title="Aumentar"
+                            // onClick={handleAddAddonToLocation}
+                            disabled={saving}
+                            mode="up"
+                          >
+                            {saving ? <FaSpinner /> : <FiPlus />}
+                          </ChangeTraitButton>
+
+                          <strong>{infTrait.trait}</strong>
+                          <span>{`x${infTrait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
                   </DetailsContainer>
 
                   <DetailsContainer isMobile={isMobileVersion} borderTop>

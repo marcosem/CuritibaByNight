@@ -30,6 +30,10 @@ interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
 
+interface IChangeTraitButtonProps {
+  mode: string;
+}
+
 interface IAddonContainerProps {
   level: number;
   isMobile: boolean;
@@ -532,11 +536,11 @@ export const SingleTraitContainer = styled.div<ITraitContainerProps>`
   min-height: 18px !important;
 
   strong {
-    margin: 0 5px 0 0 !important;
+    margin: auto 5px auto 0 !important;
   }
 
   span {
-    margin: 0 5px 0 0 !important;
+    margin: auto 5px auto 0 !important;
   }
 
   ${props =>
@@ -747,4 +751,52 @@ export const AddonReqDesc = styled.span`
   font-weight: 500 !important;
   margin: 0 0 0 3px !important;
   color: #707b7c !important; ;
+`;
+
+export const ChangeTraitButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))<IChangeTraitButtonProps>`
+  width: 16px;
+  height: 16px;
+
+  display: flex;
+  flex-direction: space-between;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.2s;
+
+  ${props =>
+    props.mode === 'up'
+      ? css`
+          margin-left: 5px;
+          margin-right: 7px;
+          background: #028609;
+
+          &:hover {
+            background: ${shade(0.2, '#028609')};
+          }
+        `
+      : css`
+          background: #860209;
+
+          &:hover {
+            background: ${shade(0.2, '#860209')};
+          }
+        `}
+
+  svg {
+    color: #fff;
+    width: 12px;
+    height: 12px;
+
+    ${props =>
+      props.disabled &&
+      css`
+        animation: ${rotate} 2s linear infinite;
+      `}
+  }
 `;
