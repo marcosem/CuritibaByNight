@@ -739,6 +739,7 @@ class PDFParseProvider implements IPDFParserProvider {
             const invalidLocationTraits = [
               'Generation',
               'Haven',
+              'Communal Haven',
               'Ancestors',
               'Past Life',
               'Pure Breed',
