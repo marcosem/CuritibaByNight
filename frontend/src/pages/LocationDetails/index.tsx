@@ -378,7 +378,7 @@ const LocationDetails: React.FC = () => {
 
           const newLocationTraitList = res.traitsList.map(
             (trait: ILocationTrait) => {
-              const newLocationTrait = {
+              const newLocationTrait: IFormatedLocationTrait = {
                 id: trait.id,
                 trait_id: trait.trait_id,
                 trait: trait.traitId.trait,
@@ -388,6 +388,17 @@ const LocationDetails: React.FC = () => {
               };
 
               return newLocationTrait;
+            },
+          );
+
+          newLocationTraitList.sort(
+            (
+              traitA: IFormatedLocationTrait,
+              traitB: IFormatedLocationTrait,
+            ) => {
+              if (traitA.trait < traitB.trait) return -1;
+              if (traitA.trait > traitB.trait) return 1;
+              return 0;
             },
           );
 
