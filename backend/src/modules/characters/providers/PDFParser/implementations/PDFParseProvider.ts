@@ -585,10 +585,13 @@ class PDFParseProvider implements IPDFParserProvider {
             charTraits.push(ability);
 
             // Add Location Available Trait to the list
-            locationAvailableTraits.push({
-              trait: ability.trait,
-              type: ability.type,
-            } as LocationAvailableTrait);
+            const checkTrait = ability.trait.replace(/\s/g, '');
+            if (checkTrait !== '') {
+              locationAvailableTraits.push({
+                trait: ability.trait,
+                type: ability.type,
+              } as LocationAvailableTrait);
+            }
           }
 
           switch (char.creature_type) {
@@ -749,12 +752,16 @@ class PDFParseProvider implements IPDFParserProvider {
               'Mentor',
               'Insight',
               'Destiny',
+              'Giovanni: Wraith Reputation',
             ];
             if (invalidLocationTraits.indexOf(background.trait) < 0) {
-              locationAvailableTraits.push({
-                trait: background.trait,
-                type: background.type,
-              } as LocationAvailableTrait);
+              const checkTrait = background.trait.replace(/\s/g, '');
+              if (checkTrait !== '') {
+                locationAvailableTraits.push({
+                  trait: background.trait,
+                  type: background.type,
+                } as LocationAvailableTrait);
+              }
             }
 
             // Retainers loses one blood point
@@ -868,10 +875,13 @@ class PDFParseProvider implements IPDFParserProvider {
 
             charTraits.push(influence);
 
-            locationAvailableTraits.push({
-              trait: influence.trait,
-              type: influence.type,
-            } as LocationAvailableTrait);
+            const checkTrait = influence.trait.replace(/\s/g, '');
+            if (checkTrait !== '') {
+              locationAvailableTraits.push({
+                trait: influence.trait,
+                type: influence.type,
+              } as LocationAvailableTrait);
+            }
           }
 
           switch (char.creature_type) {
