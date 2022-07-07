@@ -736,7 +736,6 @@ class PDFParseProvider implements IPDFParserProvider {
             charTraits.push(background);
 
             // Add Location Available Traits of Background type to the list
-            // Exclude Haven and Generation
             const invalidLocationTraits = [
               'Generation',
               'Haven',
@@ -745,6 +744,10 @@ class PDFParseProvider implements IPDFParserProvider {
               'Pure Breed',
               'Rites',
               'Haunt',
+              'Arcane',
+              'Avatar',
+              'Mentor',
+              'Insight',
             ];
             if (invalidLocationTraits.indexOf(background.trait) < 0) {
               locationAvailableTraits.push({
