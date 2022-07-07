@@ -32,6 +32,7 @@ interface IButtonProps {
 
 interface IChangeTraitButtonProps {
   mode: string;
+  loading: boolean;
 }
 
 interface IAddonContainerProps {
@@ -774,11 +775,18 @@ export const ChangeTraitButton = styled.button.attrs<IButtonProps>(() => ({
       ? css`
           margin-left: 5px;
           margin-right: 7px;
-          background: #028609;
 
-          &:hover {
-            background: ${shade(0.2, '#028609')};
-          }
+          ${props.disabled
+            ? css`
+                background: #025609;
+                cursor: default;
+              `
+            : css`
+                background: #028609;
+                &:hover {
+                  background: ${shade(0.2, '#028609')};
+                }
+              `}
         `
       : css`
           background: #860209;
@@ -789,12 +797,20 @@ export const ChangeTraitButton = styled.button.attrs<IButtonProps>(() => ({
         `}
 
   svg {
-    color: #fff;
     width: 12px;
     height: 12px;
 
     ${props =>
-      props.disabled &&
+      props.disabled
+        ? css`
+            color: #999;
+          `
+        : css`
+            color: #fff;
+          `}
+
+    ${props =>
+      props.loading &&
       css`
         animation: ${rotate} 2s linear infinite;
       `}

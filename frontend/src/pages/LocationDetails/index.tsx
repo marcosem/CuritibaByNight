@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -92,7 +93,7 @@ interface ITrait {
 interface ILocationTrait {
   id: string;
   trait_id: string;
-  traitID: ITrait;
+  traitId: ITrait;
   location_id: string;
   level: number;
 }
@@ -380,8 +381,8 @@ const LocationDetails: React.FC = () => {
               const newLocationTrait = {
                 id: trait.id,
                 trait_id: trait.trait_id,
-                trait: trait.traitID.trait,
-                type: trait.traitID.type,
+                trait: trait.traitId.trait,
+                type: trait.traitId.type,
                 location_id: trait.location_id,
                 level: trait.level,
               };
@@ -550,6 +551,121 @@ const LocationDetails: React.FC = () => {
     signOut,
   ]);
 
+  const handleAddTraitToLocation = useCallback(
+    async trait_type => {
+      let selectedTrait: IAvailableTrait | undefined;
+
+      if (trait_type === 'abilities') {
+        selectedTrait = selectedAbility;
+      } else if (trait_type === 'backgrounds') {
+        selectedTrait = selectedBackground;
+      } else if (trait_type === 'influences') {
+        selectedTrait = selectedInfluence;
+      }
+
+      if (selectedTrait === undefined || selectedLocation.id === undefined) {
+        return;
+      }
+
+      setSaving(true);
+
+      try {
+        await api
+          .patch('/locaddon/addtrait', {
+            trait_id: selectedTrait.id,
+            location_id: selectedLocation.id,
+          })
+          .then(() => {
+            loadLocationAddons();
+          });
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (
+            message?.indexOf('token') > 0 &&
+            parsedError.response.status === 401
+          ) {
+            addToast({
+              type: 'error',
+              title: 'Sessão Expirada',
+              description:
+                'Sessão de usuário expirada, faça o login novamente!',
+            });
+
+            signOut();
+          } else {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar adicionar trait',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+
+      setSaving(false);
+    },
+    [
+      addToast,
+      loadLocationAddons,
+      selectedAbility,
+      selectedBackground,
+      selectedInfluence,
+      selectedLocation.id,
+      signOut,
+    ],
+  );
+
+  const handleUpdateTraitToLocation = useCallback(
+    async (trait_id: string, level = 1) => {
+      setSaving(true);
+
+      try {
+        await api
+          .patch('/locaddon/addtrait', {
+            trait_id,
+            location_id: selectedLocation.id,
+            level,
+          })
+          .then(() => {
+            loadLocationAddons();
+          });
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (
+            message?.indexOf('token') > 0 &&
+            parsedError.response.status === 401
+          ) {
+            addToast({
+              type: 'error',
+              title: 'Sessão Expirada',
+              description:
+                'Sessão de usuário expirada, faça o login novamente!',
+            });
+
+            signOut();
+          } else {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar atualizar trait',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+
+      setSaving(false);
+    },
+    [addToast, loadLocationAddons, selectedLocation.id, signOut],
+  );
+
   const handleSelectedAddonChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const selIndex = event.target.selectedIndex;
@@ -573,7 +689,11 @@ const LocationDetails: React.FC = () => {
       const selIndex = event.target.selectedIndex;
 
       const availableTypeTraitsList = availableTraitsList.filter(
-        avaiTrait => avaiTrait.type === 'abilities',
+        avaiTrait =>
+          avaiTrait.type === 'abilities' &&
+          locationTraitsList.findIndex(
+            locTrait => locTrait.trait_id === avaiTrait.id,
+          ) === -1,
       );
 
       let mySelectedAbility: IAvailableTrait | undefined;
@@ -587,7 +707,7 @@ const LocationDetails: React.FC = () => {
 
       setSelectedAbility(mySelectedAbility);
     },
-    [availableTraitsList],
+    [availableTraitsList, locationTraitsList],
   );
 
   const handleSelectedBackgroundChange = useCallback(
@@ -595,7 +715,11 @@ const LocationDetails: React.FC = () => {
       const selIndex = event.target.selectedIndex;
 
       const availableTypeTraitsList = availableTraitsList.filter(
-        avaiTrait => avaiTrait.type === 'backgrounds',
+        avaiTrait =>
+          avaiTrait.type === 'backgrounds' &&
+          locationTraitsList.findIndex(
+            locTrait => locTrait.trait_id === avaiTrait.id,
+          ) === -1,
       );
 
       let mySelectedBackground: IAvailableTrait | undefined;
@@ -609,7 +733,7 @@ const LocationDetails: React.FC = () => {
 
       setSelectedBackground(mySelectedBackground);
     },
-    [availableTraitsList],
+    [availableTraitsList, locationTraitsList],
   );
 
   const handleSelectedInfluenceChange = useCallback(
@@ -617,7 +741,11 @@ const LocationDetails: React.FC = () => {
       const selIndex = event.target.selectedIndex;
 
       const availableTypeTraitsList = availableTraitsList.filter(
-        avaiTrait => avaiTrait.type === 'influences',
+        avaiTrait =>
+          avaiTrait.type === 'influences' &&
+          locationTraitsList.findIndex(
+            locTrait => locTrait.trait_id === avaiTrait.id,
+          ) === -1,
       );
 
       let mySelectedInfluence: IAvailableTrait | undefined;
@@ -631,7 +759,7 @@ const LocationDetails: React.FC = () => {
 
       setSelectedInfluence(mySelectedInfluence);
     },
-    [availableTraitsList],
+    [availableTraitsList, locationTraitsList],
   );
 
   const deleteAddon = useCallback(
@@ -1325,7 +1453,11 @@ const LocationDetails: React.FC = () => {
                               {availableTraitsList
                                 .filter(
                                   traitFilter =>
-                                    traitFilter.type === 'abilities',
+                                    traitFilter.type === 'abilities' &&
+                                    locationTraitsList.findIndex(
+                                      locTrait =>
+                                        locTrait.trait_id === traitFilter.id,
+                                    ) === -1,
                                 )
                                 .map(myTrait => (
                                   <option
@@ -1338,7 +1470,9 @@ const LocationDetails: React.FC = () => {
                             </Select>
                             <AddButton
                               title="Adicionar Habilidade"
-                              // onClick={handleAddAddonToLocation}
+                              onClick={() =>
+                                handleAddTraitToLocation('abilities')
+                              }
                               disabled={saving}
                             >
                               {saving ? <FaSpinner /> : <FiPlus />}
@@ -1350,23 +1484,44 @@ const LocationDetails: React.FC = () => {
                       {locationTraitsList
                         .filter(locTrait => locTrait.type === 'abilities')
                         .map(abilTrait => (
-                          <SingleTraitContainer isMobile={isMobileVersion}>
-                            <ChangeTraitButton
-                              title="Diminuir"
-                              // onClick={handleAddAddonToLocation}
-                              disabled={saving}
-                              mode="down"
-                            >
-                              {saving ? <FaSpinner /> : <FiMinus />}
-                            </ChangeTraitButton>
-                            <ChangeTraitButton
-                              title="Aumentar"
-                              // onClick={handleAddAddonToLocation}
-                              disabled={saving}
-                              mode="up"
-                            >
-                              {saving ? <FaSpinner /> : <FiPlus />}
-                            </ChangeTraitButton>
+                          <SingleTraitContainer
+                            isMobile={isMobileVersion}
+                            key={abilTrait.id}
+                          >
+                            {user.storyteller && (
+                              <>
+                                <ChangeTraitButton
+                                  title="Diminuir"
+                                  onClick={() =>
+                                    handleUpdateTraitToLocation(
+                                      abilTrait.trait_id,
+                                      -1,
+                                    )
+                                  }
+                                  disabled={saving}
+                                  mode="down"
+                                  loading={saving}
+                                >
+                                  {saving ? <FaSpinner /> : <FiMinus />}
+                                </ChangeTraitButton>
+                                <ChangeTraitButton
+                                  title="Aumentar"
+                                  onClick={() =>
+                                    handleUpdateTraitToLocation(
+                                      abilTrait.trait_id,
+                                    )
+                                  }
+                                  disabled={
+                                    saving ||
+                                    abilTrait.level >= selectedLocation.level
+                                  }
+                                  mode="up"
+                                  loading={saving}
+                                >
+                                  {saving ? <FaSpinner /> : <FiPlus />}
+                                </ChangeTraitButton>
+                              </>
+                            )}
 
                             <strong>{abilTrait.trait}</strong>
                             <span>{`x${abilTrait.level}`}</span>
@@ -1397,7 +1552,11 @@ const LocationDetails: React.FC = () => {
                               {availableTraitsList
                                 .filter(
                                   traitFilter =>
-                                    traitFilter.type === 'backgrounds',
+                                    traitFilter.type === 'backgrounds' &&
+                                    locationTraitsList.findIndex(
+                                      locTrait =>
+                                        locTrait.trait_id === traitFilter.id,
+                                    ) === -1,
                                 )
                                 .map(myTrait => (
                                   <option
@@ -1410,7 +1569,9 @@ const LocationDetails: React.FC = () => {
                             </Select>
                             <AddButton
                               title="Adicionar Antecedente"
-                              // onClick={handleAddAddonToLocation}
+                              onClick={() =>
+                                handleAddTraitToLocation('backgrounds')
+                              }
                               disabled={saving}
                             >
                               {saving ? <FaSpinner /> : <FiPlus />}
@@ -1422,23 +1583,44 @@ const LocationDetails: React.FC = () => {
                       {locationTraitsList
                         .filter(locTrait => locTrait.type === 'backgrounds')
                         .map(bgTrait => (
-                          <SingleTraitContainer isMobile={isMobileVersion}>
-                            <ChangeTraitButton
-                              title="Diminuir"
-                              // onClick={handleAddAddonToLocation}
-                              disabled={saving}
-                              mode="down"
-                            >
-                              {saving ? <FaSpinner /> : <FiMinus />}
-                            </ChangeTraitButton>
-                            <ChangeTraitButton
-                              title="Aumentar"
-                              // onClick={handleAddAddonToLocation}
-                              disabled={saving}
-                              mode="up"
-                            >
-                              {saving ? <FaSpinner /> : <FiPlus />}
-                            </ChangeTraitButton>
+                          <SingleTraitContainer
+                            isMobile={isMobileVersion}
+                            key={bgTrait.id}
+                          >
+                            {user.storyteller && (
+                              <>
+                                <ChangeTraitButton
+                                  title="Diminuir"
+                                  onClick={() =>
+                                    handleUpdateTraitToLocation(
+                                      bgTrait.trait_id,
+                                      -1,
+                                    )
+                                  }
+                                  disabled={saving}
+                                  mode="down"
+                                  loading={saving}
+                                >
+                                  {saving ? <FaSpinner /> : <FiMinus />}
+                                </ChangeTraitButton>
+                                <ChangeTraitButton
+                                  title="Aumentar"
+                                  onClick={() =>
+                                    handleUpdateTraitToLocation(
+                                      bgTrait.trait_id,
+                                    )
+                                  }
+                                  disabled={
+                                    saving ||
+                                    bgTrait.level >= selectedLocation.level
+                                  }
+                                  mode="up"
+                                  loading={saving}
+                                >
+                                  {saving ? <FaSpinner /> : <FiPlus />}
+                                </ChangeTraitButton>
+                              </>
+                            )}
 
                             <strong>{bgTrait.trait}</strong>
                             <span>{`x${bgTrait.level}`}</span>
@@ -1465,7 +1647,11 @@ const LocationDetails: React.FC = () => {
                             {availableTraitsList
                               .filter(
                                 traitFilter =>
-                                  traitFilter.type === 'influences',
+                                  traitFilter.type === 'influences' &&
+                                  locationTraitsList.findIndex(
+                                    locTrait =>
+                                      locTrait.trait_id === traitFilter.id,
+                                  ) === -1,
                               )
                               .map(myTrait => (
                                 <option key={myTrait.id} value={myTrait.trait}>
@@ -1475,7 +1661,9 @@ const LocationDetails: React.FC = () => {
                           </Select>
                           <AddButton
                             title="Adicionar Influência"
-                            // onClick={handleAddAddonToLocation}
+                            onClick={() =>
+                              handleAddTraitToLocation('influences')
+                            }
                             disabled={saving}
                           >
                             {saving ? <FaSpinner /> : <FiPlus />}
@@ -1486,23 +1674,42 @@ const LocationDetails: React.FC = () => {
                     {locationTraitsList
                       .filter(locTrait => locTrait.type === 'influences')
                       .map(infTrait => (
-                        <SingleTraitContainer isMobile={isMobileVersion}>
-                          <ChangeTraitButton
-                            title="Diminuir"
-                            // onClick={handleAddAddonToLocation}
-                            disabled={saving}
-                            mode="down"
-                          >
-                            {saving ? <FaSpinner /> : <FiMinus />}
-                          </ChangeTraitButton>
-                          <ChangeTraitButton
-                            title="Aumentar"
-                            // onClick={handleAddAddonToLocation}
-                            disabled={saving}
-                            mode="up"
-                          >
-                            {saving ? <FaSpinner /> : <FiPlus />}
-                          </ChangeTraitButton>
+                        <SingleTraitContainer
+                          isMobile={isMobileVersion}
+                          key={infTrait.id}
+                        >
+                          {user.storyteller && (
+                            <>
+                              <ChangeTraitButton
+                                title="Diminuir"
+                                onClick={() =>
+                                  handleUpdateTraitToLocation(
+                                    infTrait.trait_id,
+                                    -1,
+                                  )
+                                }
+                                disabled={saving}
+                                mode="down"
+                                loading={saving}
+                              >
+                                {saving ? <FaSpinner /> : <FiMinus />}
+                              </ChangeTraitButton>
+                              <ChangeTraitButton
+                                title="Aumentar"
+                                onClick={() =>
+                                  handleUpdateTraitToLocation(infTrait.trait_id)
+                                }
+                                disabled={
+                                  saving ||
+                                  infTrait.level >= selectedLocation.level
+                                }
+                                mode="up"
+                                loading={saving}
+                              >
+                                {saving ? <FaSpinner /> : <FiPlus />}
+                              </ChangeTraitButton>
+                            </>
+                          )}
 
                           <strong>{infTrait.trait}</strong>
                           <span>{`x${infTrait.level}`}</span>
