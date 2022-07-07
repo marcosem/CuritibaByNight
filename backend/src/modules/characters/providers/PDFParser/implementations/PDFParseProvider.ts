@@ -585,13 +585,10 @@ class PDFParseProvider implements IPDFParserProvider {
             charTraits.push(ability);
 
             // Add Location Available Trait to the list
-            const checkTrait = ability.trait.replace(/\s/g, '');
-            if (checkTrait !== '') {
-              locationAvailableTraits.push({
-                trait: ability.trait,
-                type: ability.type,
-              } as LocationAvailableTrait);
-            }
+            locationAvailableTraits.push({
+              trait: ability.trait,
+              type: ability.type,
+            } as LocationAvailableTrait);
           }
 
           switch (char.creature_type) {
@@ -755,13 +752,10 @@ class PDFParseProvider implements IPDFParserProvider {
               'Giovanni: Wraith Reputation',
             ];
             if (invalidLocationTraits.indexOf(background.trait) < 0) {
-              const checkTrait = background.trait.replace(/\s/g, '');
-              if (checkTrait !== '') {
-                locationAvailableTraits.push({
-                  trait: background.trait,
-                  type: background.type,
-                } as LocationAvailableTrait);
-              }
+              locationAvailableTraits.push({
+                trait: background.trait,
+                type: background.type,
+              } as LocationAvailableTrait);
             }
 
             // Retainers loses one blood point
@@ -875,13 +869,11 @@ class PDFParseProvider implements IPDFParserProvider {
 
             charTraits.push(influence);
 
-            const checkTrait = influence.trait.replace(/\s/g, '');
-            if (checkTrait !== '') {
-              locationAvailableTraits.push({
-                trait: influence.trait,
-                type: influence.type,
-              } as LocationAvailableTrait);
-            }
+            // Add Location Available Trait to the list
+            locationAvailableTraits.push({
+              trait: influence.trait,
+              type: influence.type,
+            } as LocationAvailableTrait);
           }
 
           switch (char.creature_type) {
