@@ -35,7 +35,7 @@ class GetLocationAddonsAndTraitsService {
     private locationsRepository: ILocationsRepository,
     @inject('AddonsRepository')
     private addonsRepository: IAddonsRepository,
-    @inject('locationAvailableTraitsRepository')
+    @inject('LocationAvailableTraitsRepository')
     private locationAvailableTraitsRepository: ILocationAvailableTraitsRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
