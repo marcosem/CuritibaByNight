@@ -34,7 +34,23 @@ class GetCharacterService {
       throw new AppError('Character not found', 400);
     }
 
-    if (!user.storyteller && user_id !== char.user_id) {
+    let charRegnant: Character | undefined = char;
+    if (char.regnant) {
+      charRegnant = await this.charactersRepository.findById(char.regnant);
+
+      if (!charRegnant) {
+        throw new AppError(
+          'This character has a regnant and it was not found',
+          400,
+        );
+      }
+    }
+
+    if (
+      !user.storyteller &&
+      user_id !== char.user_id &&
+      charRegnant.user_id !== user_id
+    ) {
       throw new AppError(
         'Only authenticated Storytellers can get other players character sheets',
         401,
