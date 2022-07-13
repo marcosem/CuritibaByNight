@@ -293,7 +293,7 @@ describe('updateTraitLocationService', () => {
     });
 
     const templateTraitLocation: LocationTrait = {
-      id: '',
+      id: newTraitLocation.id,
       location_id: location.id,
       trait_id: newTrait.id,
       level: 0,
@@ -354,7 +354,7 @@ describe('updateTraitLocationService', () => {
     });
 
     const templateTraitLocation: LocationTrait = {
-      id: '',
+      id: newTraitLocation.id,
       location_id: location.id,
       trait_id: newTrait.id,
       level: 0,
