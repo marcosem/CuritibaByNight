@@ -14,7 +14,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class UpdateChracterAvatarService {
+class UpdateCharacterAvatarService {
   constructor(
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
@@ -84,4 +84,4 @@ class UpdateChracterAvatarService {
   }
 }
 
-export default UpdateChracterAvatarService;
+export default UpdateCharacterAvatarService;

@@ -29,12 +29,12 @@ class GetLocationCharactersListService {
 
     if (!user) {
       throw new AppError(
-        'Only authenticated Storytellers can list all chracters from a locations',
+        'Only authenticated Storytellers can list all characters from a locations',
         401,
       );
     } else if (!user.storyteller) {
       throw new AppError(
-        'Only authenticated Storytellers can list all chracters from a locations',
+        'Only authenticated Storytellers can list all characters from a locations',
         401,
       );
     }

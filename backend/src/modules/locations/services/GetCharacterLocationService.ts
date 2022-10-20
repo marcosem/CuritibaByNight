@@ -53,7 +53,7 @@ class GetCharacterLocationService {
 
     if (!user.storyteller && char.user_id !== user_id) {
       throw new AppError(
-        'Only authenticated Storytellers can get character-location for others chracters',
+        'Only authenticated Storytellers can get character-location for others characters',
         401,
       );
     }

@@ -4,6 +4,7 @@ import Location from '@modules/locations/infra/typeorm/entities/Location';
 import ILocationsRepository from '@modules/locations/repositories/ILocationsRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
+import ILocationsCharactersRepository from '@modules/locations/repositories/ILocationsCharactersRepository';
 
 interface IRequestDTO {
   user_id: string;
@@ -20,6 +21,8 @@ class GetLocationService {
     private usersRepository: IUsersRepository,
     @inject('CharactersRepository')
     private charactersRepository: ICharactersRepository,
+    @inject('LocationsCharactersRepository')
+    private locationsCharactersRepository: ILocationsCharactersRepository,
   ) {}
 
   public async execute({
@@ -56,12 +59,20 @@ class GetLocationService {
         throw new AppError('Character not found', 400);
       }
 
+      const locationChar = await this.locationsCharactersRepository.find(
+        char_id,
+        location_id,
+      );
+
+      const isShared = locationChar ? locationChar.shared : false;
+
       if (
-        location.responsible !== char_id &&
-        location.clan !== char.clan &&
-        (location.creature_type === undefined ||
-          location.creature_type !== char.creature_type) &&
-        (location.sect === undefined || location.sect !== char.sect)
+        (location.responsible !== char_id &&
+          location.clan !== char.clan &&
+          (location.creature_type === undefined ||
+            location.creature_type !== char.creature_type) &&
+          (location.sect === undefined || location.sect !== char.sect)) ||
+        !isShared
       ) {
         throw new AppError(
           'This character does not have permission to load this location',
