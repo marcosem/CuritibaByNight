@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import FakeLocationsRepository from '@modules/locations/repositories/fakes/FakeLocationsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
+import FakeLocationsCharactersRepository from '@modules/locations/repositories/fakes/FakeLocationsCharactersRepository';
 import GetLocationService from '@modules/locations/services/GetLocationService';
 import AppError from '@shared/errors/AppError';
 
 let fakeLocationsRepository: FakeLocationsRepository;
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
+let fakeLocationsCharactersRepository: FakeLocationsCharactersRepository;
 let getLocation: GetLocationService;
 
 describe('GetLocation', () => {
@@ -15,11 +17,13 @@ describe('GetLocation', () => {
     fakeLocationsRepository = new FakeLocationsRepository();
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
+    fakeLocationsCharactersRepository = new FakeLocationsCharactersRepository();
 
     getLocation = new GetLocationService(
       fakeLocationsRepository,
       fakeUsersRepository,
       fakeCharactersRepository,
+      fakeLocationsCharactersRepository,
     );
   });
 
@@ -190,6 +194,52 @@ describe('GetLocation', () => {
       latitude: location.latitude,
       longitude: location.longitude,
       clan: 'Tzimisce',
+    });
+  });
+
+  it('Should be able to get shared location', async () => {
+    const noStUser = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+    });
+
+    const char = await fakeCharactersRepository.create({
+      user_id: noStUser.id,
+      name: 'Dracula',
+      experience: 666,
+      clan: 'Tzimisce',
+      file: 'dracula.pdf',
+      npc: false,
+    });
+
+    const location = await fakeLocationsRepository.create({
+      name: 'Prefeitura de Curitiba',
+      description: 'Prefeitura Municipal de Curitiba',
+      latitude: -25.4166496,
+      longitude: -49.2713069,
+      clan: 'Ventrue',
+    });
+
+    await fakeLocationsCharactersRepository.addCharToLocation(
+      char.id,
+      location.id,
+      true,
+    );
+
+    const locationLoaded = await getLocation.execute({
+      user_id: noStUser.id,
+      char_id: char.id,
+      location_id: location.id,
+    });
+
+    expect(locationLoaded).toMatchObject({
+      id: location.id,
+      name: location.name,
+      description: location.description,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      clan: location.clan,
     });
   });
 

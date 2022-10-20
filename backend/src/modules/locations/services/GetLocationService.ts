@@ -64,7 +64,7 @@ class GetLocationService {
         location_id,
       );
 
-      const isShared = locationChar ? locationChar.shared : false;
+      const isShared = locationChar && locationChar.shared;
 
       if (
         location.responsible !== char_id &&
