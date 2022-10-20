@@ -67,11 +67,11 @@ class GetLocationService {
       const isShared = locationChar ? locationChar.shared : false;
 
       if (
-        (location.responsible !== char_id &&
-          location.clan !== char.clan &&
-          (location.creature_type === undefined ||
-            location.creature_type !== char.creature_type) &&
-          (location.sect === undefined || location.sect !== char.sect)) ||
+        location.responsible !== char_id &&
+        location.clan !== char.clan &&
+        (location.creature_type === undefined ||
+          location.creature_type !== char.creature_type) &&
+        (location.sect === undefined || location.sect !== char.sect) &&
         !isShared
       ) {
         throw new AppError(
