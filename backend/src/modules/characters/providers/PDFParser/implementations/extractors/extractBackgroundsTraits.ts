@@ -14,10 +14,12 @@ export default function extractBackgroundsTraits(
         const level = line.indexOf('O ') + 1;
         let endBackground: number;
 
+        /*
         console.log({
           line,
           level,
         });
+        */
 
         if (level <= 0) {
           backgroundTrait = undefined;
