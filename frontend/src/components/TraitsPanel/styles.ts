@@ -240,6 +240,53 @@ export const SingleTraitContainer = styled.div<ITraitContainer>`
         `}
 `;
 
+export const MoralityContainer = styled.div<ITraitContainer>`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 18px;
+
+  margin: 0 0 5px 0;
+  justify-content: center;
+  align-items: center;
+
+  strong {
+    margin-right: 5px;
+  }
+
+  span {
+    margin-right: 5px;
+  }
+
+  ${props =>
+    props.isMobile
+      ? css`
+          strong {
+            font-size: 10px;
+          }
+
+          span {
+            font-size: 10px;
+          }
+        `
+      : css`
+          strong {
+            font-size: 12px;
+          }
+
+          span {
+            font-size: 12px;
+          }
+        `}
+`;
+
+export const MoralityLabel = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  margin-bottom: 3px;
+`;
+
 export const AttributeContainer = styled.div<ITraitContainer>`
   display: flex;
   flex-direction: column;
