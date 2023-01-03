@@ -20,6 +20,7 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
         level: data.level,
         level_temp: data.level_temp,
         type: data.type,
+        updated_at: data.updated_at,
       });
 
       return charTrait;
