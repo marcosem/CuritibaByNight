@@ -1,5 +1,38 @@
 const characterList = [
   {
+    name: 'Vampire #3',
+    experience: 666,
+    file: 'vamp3.pdf',
+    clan: 'Tremere',
+    creature_type: 'Vampire',
+    sect: 'Camarilla',
+    situation: 'active',
+    npc: false,
+    traits: [
+      {
+        trait: 'Morality: Humanity',
+        level: 1,
+        type: 'virtues',
+        updated_at: new Date('2022-11-02T00:00:00.000Z'),
+      },
+      {
+        trait: 'Physical',
+        level: 11,
+        type: 'attributes',
+      },
+      {
+        trait: 'Social',
+        level: 11,
+        type: 'attributes',
+      },
+      {
+        trait: 'Mental',
+        level: 11,
+        type: 'attributes',
+      },
+    ],
+  },
+  {
     name: 'Vampire #2',
     experience: 666,
     file: 'vamp2.pdf',
@@ -11,8 +44,9 @@ const characterList = [
     traits: [
       {
         trait: 'Morality: Humanity',
-        level: 3,
+        level: 6,
         type: 'virtues',
+        updated_at: new Date('2022-11-02T00:00:00.000Z'),
       },
       {
         trait: 'Retainers',

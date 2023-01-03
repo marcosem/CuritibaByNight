@@ -203,6 +203,23 @@ const charListOutput = {
     },
     {
       character: {
+        name: 'Vampire #3',
+        creature_type: 'Vampire',
+        clan: 'Tremere',
+        sect: 'Camarilla',
+        npc: false,
+        situation: 'active',
+        retainers_level_perm: 0,
+        retainers_level_temp: 0,
+        morality: 'Humanity',
+        morality_level: 1,
+        attributes: 33,
+        influence_capacity: 33,
+        actions: 1,
+      },
+    },
+    {
+      character: {
         name: 'Vampire #5',
         creature_type: 'Vampire',
         clan: 'Brujah',

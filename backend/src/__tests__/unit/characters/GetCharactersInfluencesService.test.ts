@@ -108,6 +108,7 @@ describe('GetCharactersInfluences', () => {
             level: trait.level,
             level_temp: trait.level_temp,
             type: trait.type,
+            updated_at: trait.updated_at,
           };
           return newTrait;
         });
