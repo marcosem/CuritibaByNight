@@ -4,4 +4,5 @@ export default interface ICreateCharacterTraitDTO {
   level: number;
   level_temp?: string;
   type: string;
+  updated_at?: Date;
 }
