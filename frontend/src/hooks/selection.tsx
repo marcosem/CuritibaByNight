@@ -121,7 +121,7 @@ const SelectionProvider: React.FC = ({ children }) => {
 
           setCharList(myCharList);
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error.response) {
           const { message } = error.response.data;
 
