@@ -115,40 +115,6 @@ const CharAlliedCard: React.FC<ICharacterCardProps> = ({
     }
   }, [clan]);
 
-  /*
-  const handleAvatarChange = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        try {
-          const data = new FormData();
-
-          data.append('avatar', e.target.files[0]);
-
-          const response = await api.patch(`/character/avatar/${charId}`, data);
-
-          const res = response.data;
-          if (res.avatar_url) {
-            setCharImg(res.avatar_url);
-          }
-
-          addToast({
-            type: 'success',
-            title: 'Avatar Atualizado!',
-            description: `Avatar do personagem '${name}' atualizado com sucesso!`,
-          });
-        } catch (err) {
-          addToast({
-            type: 'error',
-            title: 'Erro na atualização',
-            description: 'Erro ao atualizar o avatar do personagem.',
-          });
-        }
-      }
-    },
-    [addToast, charId, name],
-  );
-  */
-
   const handleAvatarChange = useCallback(async () => {
     if (!locked) showImageCrop(192, 252);
   }, [locked, showImageCrop]);

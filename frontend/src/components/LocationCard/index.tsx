@@ -181,43 +181,6 @@ const LocationCard: React.FC<ILocationCardProps> = ({
     }
   }, [clan, creature_type, property, responsibleName, sect]);
 
-  /*
-  const handleImageChange = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        try {
-          const data = new FormData();
-
-          data.append('locations', e.target.files[0]);
-
-          const response = await api.patch(
-            `/locations/picture/${locationId}`,
-            data,
-          );
-
-          const res = response.data;
-          if (res.picture_url) {
-            setLocationImg(res.picture_url);
-          }
-
-          addToast({
-            type: 'success',
-            title: 'Imagem Atualizada!',
-            description: `Imagem da localização: '${name}' atualizada com sucesso!`,
-          });
-        } catch (err) {
-          addToast({
-            type: 'error',
-            title: 'Erro na atualização',
-            description: 'Erro ao atualizar a imagem da localização.',
-          });
-        }
-      }
-    },
-    [addToast, locationId, name],
-  );
-  */
-
   const handleImageChange = useCallback(async () => {
     if (!locked) showImageCrop(198, 172);
   }, [locked, showImageCrop]);
