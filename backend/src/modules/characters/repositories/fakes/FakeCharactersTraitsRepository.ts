@@ -1,7 +1,6 @@
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 import ICreateCharacterTraitDTO from '@modules/characters/dtos/ICreateCharacterTraitDTO';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
-
 import { v4 } from 'uuid';
 
 class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
@@ -11,8 +10,10 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
     dataList: ICreateCharacterTraitDTO[],
   ): Promise<CharacterTrait[]> {
     const charTraitList = dataList.map(data => {
-      const charTrait = new CharacterTrait();
+      // const charTrait = new CharacterTrait();
+      const charTrait = { id: v4(), ...data } as CharacterTrait;
 
+      /*
       Object.assign(charTrait, {
         id: v4(),
         trait: data.trait,
@@ -20,8 +21,10 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
         level: data.level,
         level_temp: data.level_temp,
         type: data.type,
+        // characterId: data.characterId,
         updated_at: data.updated_at,
       });
+      */
 
       return charTrait;
     });

@@ -8,10 +8,10 @@ import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 @injectable()
 class GetPowersFullListService {
   constructor(
-    @inject('CharactersTraitsRepository')
-    private charactersTraitsRepository: ICharactersTraitsRepository,
     @inject('PowersRepository')
     private powersRepository: IPowersRepository,
+    @inject('CharactersTraitsRepository')
+    private charactersTraitsRepository: ICharactersTraitsRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
   ) {}
@@ -43,19 +43,20 @@ class GetPowersFullListService {
         short_name: myTrait.trait,
         level: Number(myTrait.level),
         type: myTrait.type,
-        creature: myTrait.characterId?.creature_type,
+        creature_type: myTrait.characterId?.creature_type || '',
+        clan: myTrait.characterId?.clan || '',
       };
 
       return newTrait;
     });
 
-    const filteredTraitsList: Power[] = [];
+    let filteredTraitsList: Power[] = [];
 
     // Removing duplicated and adding all discipline levels
     for (let i = 0; i < parsedTraitsList.length; i += 1) {
       const myTrait = parsedTraitsList[i];
       const nextTrait =
-        i < parsedTraitsList.length ? parsedTraitsList[i + 1] : undefined;
+        i < parsedTraitsList.length - 1 ? parsedTraitsList[i + 1] : undefined;
 
       if (
         nextTrait === undefined ||
@@ -66,9 +67,12 @@ class GetPowersFullListService {
             fTrait => fTrait.long_name === myTrait.long_name,
           ) === undefined
         ) {
+          const multiLevelCreatures = ['Vampire', 'Mage', 'Wraith'];
+
           if (
             myTrait.type === 'rituals' ||
-            myTrait.creature !== 'Vampire' ||
+            (!multiLevelCreatures.includes(myTrait.creature_type) &&
+              myTrait.clan.indexOf('Ghoul') === -1) ||
             myTrait.level === 0
           ) {
             const newTrait = {
@@ -93,7 +97,7 @@ class GetPowersFullListService {
               newTraitsList.push(newTrait);
             }
 
-            filteredTraitsList.concat(newTraitsList);
+            filteredTraitsList = filteredTraitsList.concat(newTraitsList);
           }
         }
       }
