@@ -25,6 +25,7 @@ import CharacterDetails from '../pages/CharacterDetails';
 import Challenges from '../pages/Challenges';
 import Influences from '../pages/Influences';
 import InfluencesStat from '../pages/InfluencesStat';
+import Powers from '../pages/Powers';
 import Rules from '../pages/Rules';
 import Page404 from '../pages/Page404';
 
@@ -110,6 +111,7 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
+    <Route path="/powers" component={Powers} isPrivate isStoryteller />
     <Route path="/character/:charId" component={CharacterDetails} isPrivate />
     <Route path="/challenges" component={Challenges} isPrivate />
     <Route path="*" isPrivate component={Page404} />

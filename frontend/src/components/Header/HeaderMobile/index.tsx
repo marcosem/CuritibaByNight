@@ -15,6 +15,7 @@ import {
   GiPositionMarker,
   GiStoneTower,
   GiStabbedNote,
+  GiSpikedHalo,
 } from 'react-icons/gi';
 import { useAuth } from '../../../hooks/auth';
 import { useSocket } from '../../../hooks/socket';
@@ -217,6 +218,20 @@ const HeaderMobile: React.FC<IHeaderProps> = ({ page }) => {
                     ) : (
                       <Link to="/characters/npc">
                         <GiMinions />
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <ToolTip>Poderes</ToolTip>
+                    {page === 'powers' ? (
+                      <NavSpan>
+                        <GiSpikedHalo />
+                      </NavSpan>
+                    ) : (
+                      <Link to="/powers">
+                        <GiSpikedHalo />
                       </Link>
                     )}
                   </td>
