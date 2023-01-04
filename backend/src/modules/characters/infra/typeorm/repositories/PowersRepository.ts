@@ -90,16 +90,10 @@ class PowersRepository implements IPowersRepository {
 
   public async listByNames(powersNames: Power[]): Promise<Power[]> {
     const where = powersNames.map(power => {
-      const newWhere = [
-        {
-          long_name: power.long_name,
-          level: power.level,
-        },
-        {
-          short_name: power.short_name,
-          level: power.level,
-        },
-      ];
+      const newWhere = {
+        long_name: power.long_name,
+        level: power.level,
+      };
 
       return newWhere;
     });

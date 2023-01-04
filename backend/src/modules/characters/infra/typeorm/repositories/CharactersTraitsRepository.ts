@@ -109,24 +109,23 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
     await this.ormRepository.save(newTraitsList);
   }
 
-  /*
-  public async listAllByTrait(
-    trait: string,
-    type: string,
-  ): Promise<CharacterTrait[]> {
-    const where = {
-      trait,
-      type,
-    };
+  public async listByTypes(types: string[]): Promise<CharacterTrait[]> {
+    const where = types.map(type => {
+      const newWhere = {
+        type,
+      };
+
+      return newWhere;
+    });
 
     const charTraitList = await this.ormRepository.find({
       where,
-      order: { trait: 'ASC' },
+      relations: ['characterId'],
+      order: { trait: 'ASC', level: 'ASC' },
     });
 
     return charTraitList;
   }
-  */
 
   /*
   public async listAll(): Promise<CharacterTrait[]> {

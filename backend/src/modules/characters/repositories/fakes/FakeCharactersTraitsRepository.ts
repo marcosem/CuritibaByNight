@@ -101,6 +101,14 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
     this.charsTraits = newCharsTraits;
   }
 
+  public async listByTypes(types: string[]): Promise<CharacterTrait[]> {
+    const myCharsTraits: CharacterTrait[] = this.charsTraits.filter(charTrait =>
+      types.includes(charTrait.type),
+    );
+
+    return myCharsTraits;
+  }
+
   public async deleteAllByChar(char_id: string): Promise<void> {
     const listWithRemovedChars = this.charsTraits.filter(
       charTrait => charTrait.character_id !== char_id,

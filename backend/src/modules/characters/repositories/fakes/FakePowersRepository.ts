@@ -72,17 +72,26 @@ class FakePowersRepository implements IPowersRepository {
   }
 
   public async listByNames(powersNames: Power[]): Promise<Power[]> {
-    const myPowersNames: Power[] = powersNames.map(power => {
-      const newPower: Power =
-        this.powers.find(
-          myPower =>
-            (myPower.long_name === power.long_name ||
-              myPower.short_name === power.short_name) &&
-            myPower.level === power.level,
-        ) || power;
+    const myPowersNames: Power[] = powersNames
+      .map(power => {
+        const fakePower: Power = {
+          long_name: 'remove',
+          short_name: '',
+          description: '',
+          system: '',
+        } as Power;
 
-      return newPower;
-    });
+        const newPower: Power =
+          this.powers.find(
+            myPower =>
+              (myPower.long_name === power.long_name ||
+                myPower.short_name === power.short_name) &&
+              myPower.level === power.level,
+          ) || fakePower;
+
+        return newPower;
+      })
+      .filter(power => power.long_name !== 'remove');
 
     return myPowersNames;
   }
