@@ -740,7 +740,9 @@ class WebSocketServer {
             if (closeMe) ws.close();
           }
         } catch (error) {
-          this.sendMsg(ws, { message: 'error', error: error.message });
+          const parsedError: any = error;
+
+          this.sendMsg(ws, { message: 'error', error: parsedError.message });
           ws.close();
         }
       });
