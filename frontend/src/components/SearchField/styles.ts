@@ -44,7 +44,7 @@ const CssTextField = withStyles({
 })(TextField);
 
 interface ITextFieldProps {
-  readonly type: 'search' | 'number' | 'password' | undefined;
+  readonly type: 'search' | 'number' | 'password' | 'email' | undefined;
   readonly variant: 'outlined' | 'filled' | undefined;
 }
 
