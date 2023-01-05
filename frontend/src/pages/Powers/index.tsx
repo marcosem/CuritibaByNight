@@ -5,6 +5,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 
 import Skeleton from '@material-ui/lab/Skeleton';
+
 import api from '../../services/api';
 
 // import Loading from '../../components/Loading';
@@ -26,6 +27,7 @@ import {
 } from './styles';
 
 import SearchField from '../../components/SearchField';
+import AddPower from '../../components/AddPower';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
@@ -63,6 +65,10 @@ interface ISort {
 // using https://v4.mui.com
 const Powers: React.FC = () => {
   const [powersList, setPowersList] = useState<IPowerSimple[]>([]);
+  const [selectedPower, setSelectedPower] = useState<IPowerSimple>(
+    {} as IPowerSimple,
+  );
+  const [addPowerOn, setAddPowerOn] = useState(false);
   const [sortOrder, setSortOrder] = useState<ISort[]>([
     {
       title: 'power',
@@ -330,6 +336,15 @@ const Powers: React.FC = () => {
     [powersList],
   );
 
+  const handleAddPower = useCallback(() => {
+    setAddPowerOn(!addPowerOn);
+  }, [addPowerOn]);
+
+  const handleEditPower = useCallback(power => {
+    setSelectedPower(power);
+    setAddPowerOn(true);
+  }, []);
+
   useEffect(() => {
     setCurrentPage('powers');
     loadPowers();
@@ -431,6 +446,7 @@ const Powers: React.FC = () => {
                             <ActionButton
                               id={`edit:${power.name}-${power.level}`}
                               title="Editar"
+                              onClick={() => handleEditPower(power)}
                             >
                               <FiEdit />
                             </ActionButton>
@@ -451,6 +467,12 @@ const Powers: React.FC = () => {
           </StyledTable>
         </StyledTableContainer>
       </TableWrapper>
+      <AddPower
+        open={addPowerOn}
+        handleClose={handleAddPower}
+        handleSave={handleAddPower}
+        selectedPower={selectedPower}
+      />
     </Container>
   );
 };
