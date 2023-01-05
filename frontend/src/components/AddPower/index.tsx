@@ -29,7 +29,7 @@ interface DialogPropsEx extends DialogProps {
 
 const AddPower: React.FC<DialogPropsEx> = ({
   selectedPower,
-  handleSave,
+  // handleSave,
   handleClose,
   ...rest
 }) => {
