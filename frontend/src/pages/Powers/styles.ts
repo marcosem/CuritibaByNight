@@ -77,7 +77,7 @@ export const SearchBox = styled.div`
 
 export const StyledTableContainer = styled(TableContainer)`
   && {
-    height: 67vh;
+    max-height: 67vh;
 
     scrollbar-width: thin;
     scrollbar-color: #555;
@@ -132,11 +132,11 @@ export const StyledTableRow = styled(TableRow)`
       &:last-of-type {
         td {
           &:first-of-type {
-            border-radius: 0 0 10px 0;
+            border-radius: 0 0 0 10px;
           }
 
           &:last-of-type {
-            border-radius: 0 0 0 10px;
+            border-radius: 0 0 10px 0;
           }
         }
       }
