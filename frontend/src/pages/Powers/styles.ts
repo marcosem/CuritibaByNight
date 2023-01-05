@@ -64,9 +64,20 @@ export const TableWrapper = styled.div`
   max-width: 1012px;
 `;
 
+export const SearchBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  margin: 20px auto 10px;
+
+  div {
+    max-width: 340px;
+  }
+`;
+
 export const StyledTableContainer = styled(TableContainer)`
   && {
-    height: 75vh;
+    height: 67vh;
 
     scrollbar-width: thin;
     scrollbar-color: #555;

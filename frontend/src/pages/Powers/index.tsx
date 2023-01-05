@@ -13,6 +13,7 @@ import {
   Container,
   TitleBox,
   TableWrapper,
+  SearchBox,
   StyledTableContainer,
   StyledTable,
   StyledTableHead,
@@ -24,6 +25,7 @@ import {
   ActionButton,
 } from './styles';
 
+import SearchField from '../../components/SearchField';
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
@@ -35,6 +37,7 @@ interface IPowerSimple {
   level: number;
   type: string;
   included: string;
+  show: boolean;
 }
 
 interface IPowerResponse {
@@ -57,7 +60,7 @@ interface ISort {
   active: boolean;
 }
 
-// using https://v4.mui.com/components
+// using https://v4.mui.com
 const Powers: React.FC = () => {
   const [powersList, setPowersList] = useState<IPowerSimple[]>([]);
   const [sortOrder, setSortOrder] = useState<ISort[]>([
@@ -152,6 +155,7 @@ const Powers: React.FC = () => {
             level,
             type: translateType(power.type),
             included,
+            show: true,
           };
 
           return newPower;
@@ -292,6 +296,40 @@ const Powers: React.FC = () => {
     [powersList, sortOrder],
   );
 
+  const handleSearchChange = useCallback(
+    event => {
+      const inputText = event.target.value;
+      let newPowersList: IPowerSimple[];
+
+      if (inputText === '') {
+        newPowersList = powersList.map(power => {
+          const newPower = power;
+          newPower.show = true;
+
+          return newPower;
+        });
+      } else {
+        newPowersList = powersList.map(power => {
+          const newPower = power;
+
+          if (
+            power.name.indexOf(inputText) >= 0 ||
+            power.type.indexOf(inputText) >= 0
+          ) {
+            newPower.show = true;
+          } else {
+            newPower.show = false;
+          }
+
+          return newPower;
+        });
+      }
+
+      setPowersList(newPowersList);
+    },
+    [powersList],
+  );
+
   useEffect(() => {
     setCurrentPage('powers');
     loadPowers();
@@ -303,6 +341,17 @@ const Powers: React.FC = () => {
         <strong>Lista de Poderes</strong>
       </TitleBox>
       <TableWrapper>
+        <SearchBox>
+          {isBusy ? (
+            <Skeleton variant="rect" width={340} height={51} />
+          ) : (
+            <SearchField
+              id="searching"
+              label="Procurar..."
+              onChange={e => handleSearchChange(e)}
+            />
+          )}
+        </SearchBox>
         <StyledTableContainer>
           <StyledTable stickyHeader>
             <StyledTableHead>
@@ -358,37 +407,45 @@ const Powers: React.FC = () => {
                   </StyledTableCell>
                 </StyledTableRow>
               ) : (
-                powersList.map(power => (
-                  <StyledTableRow key={`${power.name}-${power.level}`}>
-                    <StyledTableCell align="left">{power.name}</StyledTableCell>
-                    <StyledTableCell align="center">
-                      {power.level}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {power.type}
-                    </StyledTableCell>
-                    <StyledTableCell align="center" included={power.included}>
-                      {power.included}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <ActionsContainer>
-                        <ActionButton
-                          id={`edit:${power.name}-${power.level}`}
-                          title="Editar"
+                powersList.map(
+                  power =>
+                    power.show && (
+                      <StyledTableRow key={`${power.name}-${power.level}`}>
+                        <StyledTableCell align="left">
+                          {power.name}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {power.level}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {power.type}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          align="center"
+                          included={power.included}
                         >
-                          <FiEdit />
-                        </ActionButton>
-                        <ActionButton
-                          id={`delete:${power.name}-${power.level}`}
-                          title="Remover"
-                          disabled={power.included === 'Não'}
-                        >
-                          <FiTrash2 />
-                        </ActionButton>
-                      </ActionsContainer>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))
+                          {power.included}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <ActionsContainer>
+                            <ActionButton
+                              id={`edit:${power.name}-${power.level}`}
+                              title="Editar"
+                            >
+                              <FiEdit />
+                            </ActionButton>
+                            <ActionButton
+                              id={`delete:${power.name}-${power.level}`}
+                              title="Remover"
+                              disabled={power.included === 'Não'}
+                            >
+                              <FiTrash2 />
+                            </ActionButton>
+                          </ActionsContainer>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ),
+                )
               )}
             </StyledTableBody>
           </StyledTable>
