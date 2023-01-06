@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { celebrate, Segments, Joi } from 'celebrate';
 import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
+import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import PowersControllers from '@modules/characters/infra/http/controllers/PowersController';
 
 const powersRouter = Router();
@@ -41,7 +42,7 @@ powersRouter.get('/list', ensureSTAuthenticated, powersController.index);
 
 powersRouter.get(
   '/list/:id',
-  ensureSTAuthenticated,
+  ensureAuthenticated,
   celebrate({
     [Segments.PARAMS]: {
       id: Joi.string().uuid().required(),
