@@ -63,7 +63,7 @@ class CreatePowerService {
     const power = await this.powersRepository.findByName(long_name, level);
 
     if (power) {
-      throw new AppError('This power already exist', 400);
+      throw new AppError('This power already exists', 400);
     }
 
     const newPower = {
