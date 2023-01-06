@@ -363,6 +363,7 @@ const Powers: React.FC = () => {
             <SearchField
               id="searching"
               label="Procurar..."
+              placeholder="Procurar..."
               onChange={e => handleSearchChange(e)}
             />
           )}
