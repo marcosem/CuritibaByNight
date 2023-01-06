@@ -72,13 +72,26 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
       type,
     };
 
-    const charTraitList = await this.ormRepository.findOne({
+    const myCharTrait = await this.ormRepository.findOne({
       where,
       relations: ['characterId'],
     });
 
     // if not found, return undefined
-    return charTraitList;
+    return myCharTrait;
+  }
+
+  public async traitLevelExist(trait: string, level: number): Promise<boolean> {
+    const where = {
+      trait,
+      level,
+    };
+
+    const myCharTrait = await this.ormRepository.findOne({
+      where,
+    });
+
+    return !!myCharTrait;
   }
 
   public async resetTraitsLevel(

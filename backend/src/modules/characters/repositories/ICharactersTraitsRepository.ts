@@ -12,6 +12,7 @@ export default interface ICharactersTraitsRepository {
     trait: string,
     type: string,
   ): Promise<CharacterTrait | undefined>;
+  traitLevelExist(trait: string, level: number): Promise<boolean>;
   resetTraitsLevel(char_id: string, keepMasquerade: boolean): Promise<void>;
   listByTypes(types: string[]): Promise<CharacterTrait[]>;
   // listAllByTrait(trait: string, type: string): Promise<CharacterTrait[]>;
