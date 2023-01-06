@@ -14,10 +14,6 @@ interface IContainerProps {
   isMobile: boolean;
 }
 
-interface ICellProps {
-  included?: string;
-}
-
 interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
@@ -144,7 +140,7 @@ export const StyledTableRow = styled(TableRow)`
   }
 `;
 
-export const StyledTableCell = styled(TableCell)<ICellProps>`
+export const StyledTableCell = styled(TableCell)`
   // Prioritize the CSS rules of styled-component over those of JSS
   && {
     ${StyledTableHead} & {
@@ -185,6 +181,7 @@ export const StyledTableCell = styled(TableCell)<ICellProps>`
       font-weight: normal;
       padding: 8px;
       line-height: 24px;
+      color: rgba(0, 0, 0, 0.87);
 
       &:not(:first-of-type) {
         border-left: 1px solid #ddd;
@@ -197,24 +194,6 @@ export const StyledTableCell = styled(TableCell)<ICellProps>`
       &:last-of-type {
         width: 75px;
       }
-
-      ${props =>
-        props.included === 'Sim' &&
-        css`
-          color: #028609;
-        `}
-
-      ${props =>
-        props.included === 'Não' &&
-        css`
-          color: #860209;
-        `}
-
-    ${props =>
-        props.included === undefined &&
-        css`
-          color: rgba(0, 0, 0, 0.87);
-        `}
     }
   }
 `;
@@ -268,6 +247,5 @@ export const ActionButton = styled.button.attrs<IButtonProps>(() => ({
     css`
       cursor: default;
       opacity: 0.7;
-      // background: ${shade(0.3, '#860209')};
     `}
 `;

@@ -17,7 +17,7 @@ interface IPowerSimple {
   name: string;
   level: number;
   type: string;
-  included: string;
+  included: boolean;
   show: boolean;
 }
 

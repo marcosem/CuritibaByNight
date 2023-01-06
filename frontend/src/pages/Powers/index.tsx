@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 // import { Link, useHistory } from 'react-router-dom';
 
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
 
 import Skeleton from '@material-ui/lab/Skeleton';
 
@@ -38,7 +39,7 @@ interface IPowerSimple {
   name: string;
   level: number;
   type: string;
-  included: string;
+  included: boolean;
   show: boolean;
 }
 
@@ -72,22 +73,22 @@ const Powers: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<ISort[]>([
     {
       title: 'power',
-      direction: 'desc',
+      direction: 'asc',
       active: true,
     },
     {
       title: 'level',
-      direction: 'asc',
+      direction: 'desc',
       active: false,
     },
     {
       title: 'type',
-      direction: 'asc',
+      direction: 'desc',
       active: false,
     },
     {
       title: 'included',
-      direction: 'asc',
+      direction: 'desc',
       active: false,
     },
   ]);
@@ -144,16 +145,22 @@ const Powers: React.FC = () => {
 
         const newArray = res.map((power: IPowerResponse) => {
           let level;
+          const powerLevel = Number(power.level);
 
-          if (power.type === 'rituals') {
-            level = power.level <= 3 ? levelsMap[power.level - 1] : power.level;
-          } else if (power.level === 0) {
-            level = '-';
-          } else {
-            level = power.level;
+          switch (power.type) {
+            case 'rituals':
+              level = powerLevel <= 3 ? levelsMap[powerLevel - 1] : powerLevel;
+              break;
+            default:
+              if (powerLevel === 0) {
+                level = '-';
+              } else {
+                level = powerLevel;
+              }
+              break;
           }
 
-          const included = power.description ? 'Sim' : 'Não';
+          const included = !!power.id;
 
           const newPower = {
             id: power.id,
@@ -202,7 +209,7 @@ const Powers: React.FC = () => {
     title => {
       let newSortItem: ISort = {
         title,
-        direction: 'desc',
+        direction: 'asc',
         active: true,
       };
 
@@ -233,7 +240,7 @@ const Powers: React.FC = () => {
       const newPowersList = powersList;
       switch (newSortItem.title) {
         case 'level':
-          if (newSortItem.direction === 'asc') {
+          if (newSortItem.direction === 'desc') {
             newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
               if (powerA.level > powerB.level) return -1;
               if (powerA.level < powerB.level) return 1;
@@ -249,7 +256,7 @@ const Powers: React.FC = () => {
           break;
 
         case 'type':
-          if (newSortItem.direction === 'asc') {
+          if (newSortItem.direction === 'desc') {
             newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
               if (powerA.type > powerB.type) return -1;
               if (powerA.type < powerB.type) return 1;
@@ -282,7 +289,7 @@ const Powers: React.FC = () => {
 
         case 'power':
         default:
-          if (newSortItem.direction === 'asc') {
+          if (newSortItem.direction === 'desc') {
             newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
               if (powerA.name > powerB.name) return -1;
               if (powerA.name < powerB.name) return 1;
@@ -438,9 +445,13 @@ const Powers: React.FC = () => {
                         </StyledTableCell>
                         <StyledTableCell
                           align="center"
-                          included={power.included}
+                          title={power.included ? 'Adicionado' : 'Pendente...'}
                         >
-                          {power.included}
+                          {power.included ? (
+                            <FaCheckCircle color="green" />
+                          ) : (
+                            <FaMinusCircle color="red" />
+                          )}
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           <ActionsContainer>
@@ -454,7 +465,7 @@ const Powers: React.FC = () => {
                             <ActionButton
                               id={`delete:${power.name}-${power.level}`}
                               title="Remover"
-                              disabled={power.included === 'Não'}
+                              disabled={!power.included}
                             >
                               <FiTrash2 />
                             </ActionButton>
