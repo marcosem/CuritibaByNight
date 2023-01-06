@@ -38,6 +38,8 @@ import {
   MoralityLabel,
 } from './styles';
 
+import PowersList from './PowersList';
+
 import ICharacter from '../CharacterList/ICharacter';
 import Loading from '../Loading';
 
@@ -2763,6 +2765,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
               )}
             </>
           )}
+          <PowersList myChar={myChar} />
         </>
       )}
     </Container>
