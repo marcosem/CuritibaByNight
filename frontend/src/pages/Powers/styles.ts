@@ -82,8 +82,7 @@ export const StyledTableContainer = styled(TableContainer)`
 
     &::-webkit-scrollbar {
       width: 8px;
-      // background-color: #f5f5f5;
-      background-color: transparent;
+      background-color: #f5f5f5;
     }
 
     &::-webkit-scrollbar-track {
@@ -99,6 +98,7 @@ export const StyledTableContainer = styled(TableContainer)`
     }
 
     border-radius: 10px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
   }
 `;
 
