@@ -94,16 +94,16 @@ describe('GetPowersFullList', () => {
 
     const traitsListOutput = await getPowersFullList.execute(user.id);
 
-    expect(traitsListOutput).toHaveLength(12);
+    expect(traitsListOutput).toHaveLength(16);
     expect(
       traitsListOutput.filter(power => power.long_name === 'Animalism'),
-    ).toHaveLength(3);
+    ).toHaveLength(4);
     expect(
       traitsListOutput.filter(power => power.long_name === 'Argos'),
-    ).toHaveLength(2);
+    ).toHaveLength(3);
     expect(
       traitsListOutput.filter(power => power.long_name === 'Auspex'),
-    ).toHaveLength(2);
+    ).toHaveLength(3);
     expect(
       traitsListOutput.filter(power => power.long_name === 'Custom Power'),
     ).toHaveLength(1);
@@ -165,7 +165,7 @@ describe('GetPowersFullList', () => {
       long_name: 'Potence',
       short_name: 'Potence',
       level: 1,
-      type: 'powers',
+      type: 'discipline',
       origin: 'Brujah',
       requirements: '',
       description: 'Potence rules',
@@ -178,24 +178,33 @@ describe('GetPowersFullList', () => {
 
     const traitsListOutput = await getPowersFullList.execute(user.id);
 
-    expect(traitsListOutput).toHaveLength(4);
+    expect(traitsListOutput).toHaveLength(6);
 
-    const validPower = traitsListOutput.find(
+    const validPower = traitsListOutput.filter(
       power => power.long_name === 'Potence',
     );
-    const templatevalidPower: Power = {
-      id: expect.any(String),
-      long_name: powerInput.long_name,
-      short_name: powerInput.short_name,
-      level: powerInput.level,
-      type: powerInput.type,
-      origin: powerInput.origin,
-      requirements: powerInput.requirements,
-      description: powerInput.description,
-      system: powerInput.system,
-      cost: powerInput.cost,
-      source: powerInput.source,
-    } as Power;
+
+    const templatevalidPower: Power[] = [
+      {
+        long_name: powerInput.long_name,
+        short_name: powerInput.short_name,
+        level: 0,
+        type: 'powers',
+      },
+      {
+        id: expect.any(String),
+        long_name: powerInput.long_name,
+        short_name: powerInput.short_name,
+        level: powerInput.level,
+        type: powerInput.type,
+        origin: powerInput.origin,
+        requirements: powerInput.requirements,
+        description: powerInput.description,
+        system: powerInput.system,
+        cost: powerInput.cost,
+        source: powerInput.source,
+      },
+    ] as Power[];
 
     expect(validPower).toMatchObject(templatevalidPower);
   });
@@ -217,58 +226,4 @@ describe('GetPowersFullList', () => {
       getPowersFullList.execute(nonSTUser.id),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
-
-  /*
-
-  it('Should not allow invalid users to get character sheets', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: true,
-    });
-
-    await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
-    await expect(
-      getCharactersList.execute({
-        user_id: 'I am invalid',
-      }),
-    ).rejects.toMatchObject({ statusCode: 401 });
-  });
-
-  it('Should not allow non storyteller user to get character sheets from others users', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-    });
-
-    const nonSTUser = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'notSTuser@user.com',
-      password: '123456',
-    });
-
-    await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
-    await expect(
-      getCharactersList.execute({
-        user_id: nonSTUser.id,
-      }),
-    ).rejects.toMatchObject({ statusCode: 401 });
-  });
-  */
 });

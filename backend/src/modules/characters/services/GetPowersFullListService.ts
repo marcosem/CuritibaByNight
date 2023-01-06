@@ -86,11 +86,11 @@ class GetPowersFullListService {
           } else {
             const newTraitsList: Power[] = [];
 
-            for (let j = 0; j < myTrait.level; j += 1) {
+            for (let j = 0; j <= myTrait.level; j += 1) {
               const newTrait: Power = {
                 long_name: myTrait.long_name,
                 short_name: myTrait.short_name,
-                level: j + 1,
+                level: j,
                 type: myTrait.type,
               } as Power;
 
