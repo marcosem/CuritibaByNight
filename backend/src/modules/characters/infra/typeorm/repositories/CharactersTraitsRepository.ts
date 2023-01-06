@@ -1,4 +1,4 @@
-import { getRepository, Repository, Not } from 'typeorm';
+import { getRepository, Repository, Not, MoreThanOrEqual } from 'typeorm';
 import CharacterTrait from '@modules/characters/infra/typeorm/entities/CharacterTrait';
 import ICreateCharacterTraitDTO from '@modules/characters/dtos/ICreateCharacterTraitDTO';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
@@ -84,7 +84,7 @@ class CharactersTraitsRepository implements ICharactersTraitsRepository {
   public async traitLevelExist(trait: string, level: number): Promise<boolean> {
     const where = {
       trait,
-      level,
+      level: MoreThanOrEqual(level),
     };
 
     const myCharTrait = await this.ormRepository.findOne({

@@ -112,7 +112,7 @@ class GetPowersFullListService {
         existantPowersList.find(
           eTrait =>
             eTrait.long_name === myTrait.long_name &&
-            eTrait.level === myTrait.level,
+            Number(eTrait.level) === Number(myTrait.level),
         ) || myTrait;
 
       return newTrait;

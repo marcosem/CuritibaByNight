@@ -82,7 +82,7 @@ class FakeCharactersTraitsRepository implements ICharactersTraitsRepository {
 
   public async traitLevelExist(trait: string, level: number): Promise<boolean> {
     const myCharTrait = this.charsTraits.find(
-      charTrait => charTrait.trait === trait && charTrait.level === level,
+      charTrait => charTrait.trait === trait && charTrait.level >= level,
     );
 
     return !!myCharTrait;

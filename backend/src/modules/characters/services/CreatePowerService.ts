@@ -60,6 +60,12 @@ class CreatePowerService {
       throw new AppError('None of the characters have this power', 400);
     }
 
+    const power = await this.powersRepository.findByName(long_name, level);
+
+    if (power) {
+      throw new AppError('This power already exist', 400);
+    }
+
     const newPower = {
       long_name,
       short_name,
