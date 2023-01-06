@@ -874,7 +874,7 @@ describe('GetLocationAddonsAndTraits', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should now allow to get a list of addons with an invalid character', async () => {
+  it('Should not allow to get a list of addons with an invalid character', async () => {
     const nonSTuser = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

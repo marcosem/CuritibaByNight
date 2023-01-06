@@ -3,38 +3,66 @@ import AppError from '@shared/errors/AppError';
 import Power from '@modules/characters/infra/typeorm/entities/Power';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
+import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
+interface IRequestDTO {
+  user_id: string;
+  char_id?: string;
+}
+
 @injectable()
-class GetPowersFullListService {
+class GetPowersListService {
   constructor(
     @inject('PowersRepository')
     private powersRepository: IPowersRepository,
     @inject('CharactersTraitsRepository')
     private charactersTraitsRepository: ICharactersTraitsRepository,
+    @inject('CharactersRepository')
+    private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute(user_id: string): Promise<Power[]> {
+  public async execute({
+    user_id,
+    char_id = 'all',
+  }: IRequestDTO): Promise<Power[]> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
-      throw new AppError(
-        'Only authenticated Storytellers can get full powers list',
-        401,
-      );
-    } else if (!user.storyteller) {
-      throw new AppError(
-        'Only authenticated Storytellers can get full powers list',
-        401,
-      );
+      throw new AppError('Only authenticated users can get powers list', 401);
+    }
+    if (char_id === 'all') {
+      if (!user.storyteller) {
+        throw new AppError(
+          'Only authenticated Storytellers can get full powers list',
+          401,
+        );
+      }
+    } else {
+      const char = await this.charactersRepository.findById(char_id);
+
+      if (!char) {
+        throw new AppError('Character not found', 400);
+      }
+
+      if (
+        !user.storyteller &&
+        user_id !== char.user_id &&
+        user_id !== char.regnant_char?.user_id
+      ) {
+        throw new AppError(
+          'Only authenticated Storytellers can get other players powers list',
+          401,
+        );
+      }
     }
 
-    const traitsList = await this.charactersTraitsRepository.listByTypes([
-      'powers',
-      'rituals',
-    ]);
+    const traitsList = await this.charactersTraitsRepository.listByTypes(
+      ['powers', 'rituals'],
+      char_id,
+    );
 
     // Filter uniques (ES5)
     const parsedTraitsList = traitsList.map(myTrait => {
@@ -122,4 +150,4 @@ class GetPowersFullListService {
   }
 }
 
-export default GetPowersFullListService;
+export default GetPowersListService;

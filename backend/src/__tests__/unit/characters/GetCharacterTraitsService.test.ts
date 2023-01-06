@@ -175,7 +175,7 @@ describe('GetCharacterTraits', () => {
     expect(traitsListResult).toMatchObject(traitsList);
   });
 
-  it('Should now allow invalid user to get character traits', async () => {
+  it('Should not allow invalid user to get character traits', async () => {
     await expect(
       getCharacterTraits.execute({
         user_id: 'I am invalid',
@@ -184,7 +184,7 @@ describe('GetCharacterTraits', () => {
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
-  it('Should now allow to get traits from a invalid character', async () => {
+  it('Should not allow to get traits from a invalid character', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -200,7 +200,7 @@ describe('GetCharacterTraits', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should now allow to get traits from another user characters', async () => {
+  it('Should not allow to get traits from another user characters', async () => {
     const anotherUser = await fakeUsersRepository.create({
       name: 'Another',
       email: 'another@user.com',

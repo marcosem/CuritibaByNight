@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import CreatePowerService from '@modules/characters/services/CreatePowerService';
-import GetPowersFullListService from '@modules/characters/services/GetPowersFullListService';
+import GetPowersListService from '@modules/characters/services/GetPowersListService';
 import { container } from 'tsyringe';
 // import { classToClass } from 'class-transformer';
 
@@ -41,10 +41,13 @@ export default class CharactersController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
-    const powersFullList = container.resolve(GetPowersFullListService);
+    const { id } = req.params;
 
-    const charList = await powersFullList.execute(req.user.id);
-
-    return res.json(charList);
+    const powersList = container.resolve(GetPowersListService);
+    const myPowersList = await powersList.execute({
+      user_id: req.user.id,
+      char_id: id,
+    });
+    return res.json(myPowersList);
   }
 }

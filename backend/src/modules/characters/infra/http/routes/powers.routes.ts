@@ -39,4 +39,15 @@ powersRouter.post(
 // Show powers list
 powersRouter.get('/list', ensureSTAuthenticated, powersController.index);
 
+powersRouter.get(
+  '/list/:id',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  powersController.index,
+);
+
 export default powersRouter;
