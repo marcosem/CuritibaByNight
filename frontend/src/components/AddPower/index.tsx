@@ -370,7 +370,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
 
   return (
     <Dialog TransitionComponent={Transition} fullWidth maxWidth="md" {...rest}>
-      <DialogTitle>Editar Poder</DialogTitle>
+      <DialogTitle>{power.id ? 'Editar ' : 'Adicionar '} Poder</DialogTitle>
       <AddPowerContainer>
         <Form onSubmit={handleSubmit} ref={formRef}>
           <FieldBox>
