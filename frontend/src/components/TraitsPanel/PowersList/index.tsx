@@ -44,18 +44,20 @@ type IPanelProps = HTMLAttributes<HTMLDivElement> & {
   myChar: ICharacter;
 };
 
+const powersTypes: string[] = [
+  'discipline',
+  'ritual',
+  'gift',
+  'arcanoi',
+  'spheres',
+  'routes',
+  'combination',
+  'other',
+];
+
 const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
   const [powersList, setPowersList] = useState<IPower[]>([]);
-  const [powerTypes, setPowerTypes] = useState<string[]>([
-    'discipline',
-    'ritual',
-    'gift',
-    'arcanoi',
-    'spheres',
-    'routes',
-    'combination',
-    'other',
-  ]);
+  const [powersTypesFound, setPowersTypesFound] = useState<string[]>([]);
 
   const [isBusy, setBusy] = useState(true);
 
@@ -129,11 +131,11 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
           return newPower;
         });
 
-        const newPowerTypes = powerTypes.filter(ptype =>
+        const newPowerTypes = powersTypes.filter(ptype =>
           validPowerTypes.includes(ptype),
         );
 
-        setPowerTypes(newPowerTypes);
+        setPowersTypesFound(newPowerTypes);
         setPowersList(newArray);
       });
     } catch (error) {
@@ -163,7 +165,7 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
       }
     }
     setBusy(false);
-  }, [addToast, myChar, powerTypes, signOut]);
+  }, [addToast, myChar, signOut]);
 
   const getPowerTypeTitle = useCallback(type => {
     let title;
@@ -208,7 +210,7 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
         <TypeContainer borderTop isMobile={isMobileVersion}>
           <h1>Descrição dos Poderes</h1>
 
-          {powerTypes.map(myType => (
+          {powersTypesFound.map(myType => (
             <div key={myType}>
               <PowerTitle isMobile={isMobileVersion}>
                 <h1>{getPowerTypeTitle(myType)}</h1>
