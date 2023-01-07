@@ -66,8 +66,9 @@ interface ISort {
 // using https://v4.mui.com
 const Powers: React.FC = () => {
   const [powersList, setPowersList] = useState<IPowerSimple[]>([]);
-  const [selectedPower, setSelectedPower] = useState<IPowerSimple>(
-    {} as IPowerSimple,
+  const [rawPowerList, setRawPowerList] = useState<IPowerResponse[]>([]);
+  const [selectedPower, setSelectedPower] = useState<IPowerResponse>(
+    {} as IPowerResponse,
   );
   const [addPowerOn, setAddPowerOn] = useState(false);
   const [sortOrder, setSortOrder] = useState<ISort[]>([
@@ -140,7 +141,6 @@ const Powers: React.FC = () => {
     try {
       await api.get('/powers/list').then(response => {
         const res = response.data;
-
         const levelsMap = ['Básico', 'Intermediário', 'Avançado'];
 
         const newArray = res.map((power: IPowerResponse) => {
@@ -174,6 +174,7 @@ const Powers: React.FC = () => {
           return newPower;
         });
 
+        setRawPowerList(res);
         setPowersList(newArray);
       });
     } catch (error) {
@@ -326,8 +327,8 @@ const Powers: React.FC = () => {
           const newPower = power;
 
           if (
-            power.name.indexOf(inputText) >= 0 ||
-            power.type.indexOf(inputText) >= 0
+            power.name.toLowerCase().indexOf(inputText.toLowerCase()) >= 0 ||
+            power.type.toLowerCase().indexOf(inputText.toLowerCase()) >= 0
           ) {
             newPower.show = true;
           } else {
@@ -347,10 +348,13 @@ const Powers: React.FC = () => {
     setAddPowerOn(!addPowerOn);
   }, [addPowerOn]);
 
-  const handleEditPower = useCallback(power => {
-    setSelectedPower(power);
-    setAddPowerOn(true);
-  }, []);
+  const handleEditPower = useCallback(
+    index => {
+      setSelectedPower(rawPowerList[index]);
+      setAddPowerOn(true);
+    },
+    [rawPowerList],
+  );
 
   useEffect(() => {
     setCurrentPage('powers');
@@ -431,7 +435,7 @@ const Powers: React.FC = () => {
                 </StyledTableRow>
               ) : (
                 powersList.map(
-                  power =>
+                  (power, index) =>
                     power.show && (
                       <StyledTableRow key={`${power.name}-${power.level}`}>
                         <StyledTableCell align="left">
@@ -455,13 +459,16 @@ const Powers: React.FC = () => {
                         </StyledTableCell>
                         <StyledTableCell align="center">
                           <ActionsContainer>
-                            <ActionButton
-                              id={`edit:${power.name}-${power.level}`}
-                              title="Editar"
-                              onClick={() => handleEditPower(power)}
-                            >
-                              <FiEdit />
-                            </ActionButton>
+                            {!isMobileVersion && (
+                              <ActionButton
+                                id={`edit:${power.name}-${power.level}`}
+                                title="Editar"
+                                onClick={() => handleEditPower(index)}
+                              >
+                                <FiEdit />
+                              </ActionButton>
+                            )}
+
                             <ActionButton
                               id={`delete:${power.name}-${power.level}`}
                               title="Remover"
