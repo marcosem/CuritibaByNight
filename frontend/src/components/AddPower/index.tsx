@@ -132,20 +132,26 @@ const AddPower: React.FC<DialogPropsEx> = ({
   }, []);
 
   const updateLevelLabel = useCallback((level, type) => {
-    if (level === undefined || level === 0 || type === 'combination') {
-      setCurrentLevel('');
+    if (level === undefined || Number(level) === 0 || type === 'combination') {
+      setCurrentLevel('-');
       return;
     }
 
     const typesText = ['rituals', 'gift', 'routes'];
-    const levelLabels = ['Básico', 'Intermediário', 'Avançado'];
+    const levelLabels = [
+      'Básico',
+      'Intermediário',
+      'Avançado',
+      'Mestre',
+      'Ancião',
+    ];
     let label = '';
 
     if (typesText.includes(type)) {
-      if (level > 3) {
+      if (Number(level) > 5) {
         label = 'Ancião';
       } else {
-        label = levelLabels[level - 1];
+        label = levelLabels[Number(level) - 1];
       }
     } else {
       label = `${level}`;
@@ -183,30 +189,41 @@ const AddPower: React.FC<DialogPropsEx> = ({
       <DialogTitle>Editar Poder</DialogTitle>
       <AddPowerContainer>
         <Form onSubmit={handleSubmit} ref={formRef}>
-          <InputField
-            id="long_name"
-            label="Nome"
-            fullWidth
-            InputProps={{ readOnly: true }}
-            value={power.long_name}
-          />
-          <InputField
-            id="short_name"
-            label="Nome abreviado ou Título*"
-            fullWidth
-            defaultValue={power.short_name}
-          />
+          <FieldBox>
+            <FieldBoxChild>
+              <InputField
+                id="long_name"
+                label="Nome"
+                fullWidth
+                InputProps={{ readOnly: true }}
+                addMarginRight
+                value={power.long_name}
+              />
+            </FieldBoxChild>
+            <FieldBoxChild>
+              <InputField
+                id="short_name"
+                label="Nome abreviado ou Título"
+                fullWidth
+                required
+                defaultValue={power.short_name}
+              />
+            </FieldBoxChild>
+          </FieldBox>
 
           <FieldBox>
             <FieldBoxChild>
               <InputField
                 id="type"
                 select
-                label="Tipo*"
+                label="Tipo"
                 value={selectedType.label}
                 onChange={handleTypeSelectChange}
                 helperText="Selecione o tipo do poder"
                 align="center"
+                fullWidth
+                required
+                addMarginRight
               >
                 {types.map(type => (
                   <MenuItem key={type.type} value={type.label}>
@@ -220,7 +237,8 @@ const AddPower: React.FC<DialogPropsEx> = ({
                 InputProps={{ readOnly: true }}
                 value={currentLevel}
                 align="center"
-                addMarginLeft
+                fullWidth
+                addMarginRight
               />
             </FieldBoxChild>
 
@@ -231,6 +249,43 @@ const AddPower: React.FC<DialogPropsEx> = ({
                 fullWidth
                 value={power.origin}
                 helperText="Este poder é exclusivo, único, segredo de secto/clã? Inclua esta informação aqui..."
+              />
+            </FieldBoxChild>
+          </FieldBox>
+          <FieldBox>
+            <FieldBoxChild proportion={25}>
+              <InputField
+                id="cost"
+                label="Custo"
+                type="number"
+                InputProps={{ readOnly: selectedType.type !== 'combination' }}
+                defaultValue={
+                  selectedType.type === 'combination' ? power.cost : ''
+                }
+                required={selectedType.type === 'combination'}
+                fullWidth
+                addMarginRight
+                align="center"
+                helperText="Custo em XP, requerido para Combos"
+              />
+            </FieldBoxChild>
+            <FieldBoxChild proportion={50}>
+              <InputField
+                id="requeriments"
+                label="Requisitos"
+                defaultValue={power.requirements}
+                fullWidth
+                helperText="Requisitos deste poder, disciplinas, níveis, etc."
+              />
+            </FieldBoxChild>
+            <FieldBoxChild proportion={25}>
+              <InputField
+                id="source"
+                label="Fonte"
+                defaultValue={power.source}
+                fullWidth
+                addMarginLeft
+                helperText="Fonte da descrição (Livro/Página)"
               />
             </FieldBoxChild>
           </FieldBox>
