@@ -35,6 +35,17 @@ const CssTextField = withStyles({
         color: '#000',
       },
 
+      '& textarea': {
+        color: 'rgba(0, 0, 0, 0.87)',
+        fontSize: '11px',
+        fontWeight: '400',
+        letterSpacing: '0.01071em',
+        lineHeight: '1.43',
+      },
+      '&.Mui-focused textarea': {
+        color: '#000',
+      },
+
       '& fieldset': {
         borderColor: '#222',
       },
@@ -58,8 +69,7 @@ interface ITextFieldProps {
 
 interface IFieldProps {
   align?: string;
-  addMarginLeft?: boolean;
-  addMarginRight?: boolean;
+  addmargin?: string;
 }
 
 interface IFieldBoxChildProps {
@@ -68,7 +78,6 @@ interface IFieldBoxChildProps {
 
 export const AddPowerContainer = styled.div`
   padding: 8px 24px 24px 24px;
-  height: calc(100vh - 140px);
   width: 100%;
 
   border-top: 1px solid #888;
@@ -78,8 +87,6 @@ export const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: right;
-
-  margin: 24px auto 0 auto;
 `;
 
 export const ButtonBox = styled.div`
@@ -123,13 +130,15 @@ export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
     margin: 8px 0;
 
     ${props =>
-      props.addMarginLeft &&
+      props.addmargin &&
+      props.addmargin === 'left' &&
       css`
         margin-left: 16px;
       `}
 
     ${props =>
-      props.addMarginRight &&
+      props.addmargin &&
+      props.addmargin === 'right' &&
       css`
         margin-right: 16px;
       `}

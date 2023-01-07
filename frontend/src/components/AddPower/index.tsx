@@ -16,7 +16,12 @@ import {
 import { TransitionProps } from '@material-ui/core/transitions';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import * as Yup from 'yup';
 import Button from '../Button';
+
+import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import {
   AddPowerContainer,
@@ -33,16 +38,6 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-/*
-interface IPowerSimple {
-  id: string;
-  name: string;
-  level: number;
-  type: string;
-  included: boolean;
-  show: boolean;
-} */
 
 interface IType {
   type: string;
@@ -85,7 +80,7 @@ const types: IType[] = [
 ];
 
 interface IPower {
-  id: string;
+  id?: string;
   long_name: string;
   short_name: string;
   level: number;
@@ -98,9 +93,19 @@ interface IPower {
   source?: string;
 }
 
+interface IError {
+  short_name?: string;
+  origin?: string;
+  requirements?: string;
+  description?: string;
+  system?: string;
+  cost?: string;
+  source?: string;
+}
+
 interface DialogPropsEx extends DialogProps {
   selectedPower: IPower;
-  handleSave: () => void;
+  handleSave: (savedPower: IPower) => void;
   handleClose: () => void;
 }
 
@@ -114,6 +119,22 @@ const AddPower: React.FC<DialogPropsEx> = ({
   const [power, setPower] = useState<IPower>({} as IPower);
   const [selectedType, setSelectedType] = useState<IType>({} as IType);
   const [currentLevel, setCurrentLevel] = useState<string>('');
+  const [saving, setSaving] = useState<boolean>(false);
+
+  const [validationErrors, setValidationErrors] = useState<IError>(
+    {} as IError,
+  );
+
+  const [shortName, setShortName] = useState<string>('');
+  const [origin, setOrigin] = useState<string>('');
+  const [cost, setCost] = useState<number>(0);
+  const [requirements, setRequirements] = useState<string>('');
+  const [source, setSource] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [system, setSystem] = useState<string>('');
+
+  const { addToast } = useToast();
+  // const { signOut } = useAuth();
 
   const getType = useCallback(type => {
     const typeFound = types.find(myType => myType.type === type);
@@ -169,16 +190,179 @@ const AddPower: React.FC<DialogPropsEx> = ({
     [getTypeByLabel, power.level, updateLevelLabel],
   );
 
-  const handleSubmit = useCallback(() => {
-    const toDO = '';
-    return toDO;
-  }, []);
+  const handleSubmit = useCallback(async () => {
+    try {
+      formRef.current?.setErrors({});
+
+      const powerData: IPower = {
+        // id: power.id,
+        long_name: power.long_name,
+        short_name: shortName
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+        level: power.level,
+        type: selectedType.type,
+        origin: origin
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+        requirements: requirements
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+        description: description
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+        system: system
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+        cost,
+        source: source
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+      };
+
+      const schema = Yup.object().shape({
+        short_name: Yup.string().required(
+          'Nome abreviado ou Título obrigatório',
+        ),
+        origin: Yup.string(),
+        requirements: Yup.string(),
+        description: Yup.string().required('Descrição obrigatória'),
+        system: Yup.string().required('Sistema obrigatório'),
+        cost: Yup.number(),
+        source: Yup.string(),
+      });
+
+      await schema.validate(powerData, { abortEarly: false });
+      setValidationErrors({} as IError);
+
+      setSaving(true);
+
+      const response = await api.post('/powers/add', powerData);
+
+      setSaving(false);
+
+      addToast({
+        type: 'success',
+        title: 'Poder adicionado!',
+        description: 'Poder adicionado com sucesso!',
+      });
+
+      handleSave(response.data);
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+        setValidationErrors(errors);
+
+        return;
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro no cadastro de poder',
+        description: 'Erro ao adicionar poder, tente novamente.',
+      });
+    }
+  }, [
+    addToast,
+    cost,
+    description,
+    handleSave,
+    origin,
+    power.level,
+    power.long_name,
+    requirements,
+    selectedType.type,
+    shortName,
+    source,
+    system,
+  ]);
+
+  const handleShortNameChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setShortName(changedValue);
+    },
+    [],
+  );
+
+  const handleCostChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      const parsedValue = changedValue.replace(/\D/g, '');
+
+      setCost(Number(parsedValue));
+    },
+    [],
+  );
+
+  const handleOriginChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setOrigin(changedValue);
+    },
+    [],
+  );
+
+  const handleRequirementsChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setRequirements(changedValue);
+    },
+    [],
+  );
+
+  const handleSourceChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setSource(changedValue);
+    },
+    [],
+  );
+
+  const handleDescriptionChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setDescription(changedValue);
+    },
+    [],
+  );
+
+  const handleSystemChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setSystem(changedValue);
+    },
+    [],
+  );
 
   useEffect(() => {
     const currType = getType(power.type);
     setSelectedType(currType);
     updateLevelLabel(power.level, currType.type);
-  }, [getType, power.level, power.type, updateLevelLabel]);
+
+    setShortName(power.short_name || '');
+    setOrigin(power.origin || '');
+    setCost(power.cost || 0);
+    setRequirements(power.requirements || '');
+    setSource(power.source || '');
+    setDescription(power.description || '');
+    setSystem(power.system || '');
+  }, [getType, power, updateLevelLabel]);
 
   useEffect(() => {
     setPower(selectedPower);
@@ -192,21 +376,28 @@ const AddPower: React.FC<DialogPropsEx> = ({
           <FieldBox>
             <FieldBoxChild>
               <InputField
+                name="long_name"
                 id="long_name"
                 label="Nome"
+                defaultValue={power.long_name}
                 fullWidth
                 InputProps={{ readOnly: true }}
-                addMarginRight
-                value={power.long_name}
+                addmargin="right"
+                disabled={saving}
               />
             </FieldBoxChild>
             <FieldBoxChild>
               <InputField
+                name="short_name"
                 id="short_name"
                 label="Nome abreviado ou Título"
+                value={shortName}
+                onChange={handleShortNameChange}
                 fullWidth
                 required
-                defaultValue={power.short_name}
+                error={!!validationErrors.short_name}
+                helperText={validationErrors.short_name}
+                disabled={saving}
               />
             </FieldBoxChild>
           </FieldBox>
@@ -214,16 +405,18 @@ const AddPower: React.FC<DialogPropsEx> = ({
           <FieldBox>
             <FieldBoxChild>
               <InputField
+                name="type"
                 id="type"
-                select
                 label="Tipo"
                 value={selectedType.label}
                 onChange={handleTypeSelectChange}
+                select
+                required
                 helperText="Selecione o tipo do poder"
                 align="center"
                 fullWidth
-                required
-                addMarginRight
+                addmargin="right"
+                disabled={saving}
               >
                 {types.map(type => (
                   <MenuItem key={type.type} value={type.label}>
@@ -232,63 +425,117 @@ const AddPower: React.FC<DialogPropsEx> = ({
                 ))}
               </InputField>
               <InputField
+                name="level"
                 id="level"
                 label="Nível"
+                defaultValue={currentLevel}
                 InputProps={{ readOnly: true }}
-                value={currentLevel}
                 align="center"
                 fullWidth
-                addMarginRight
+                addmargin="right"
+                disabled={saving}
               />
             </FieldBoxChild>
 
             <FieldBoxChild>
               <InputField
+                name="origin"
                 id="origin"
                 label="Origem"
+                value={origin}
+                onChange={handleOriginChange}
                 fullWidth
-                value={power.origin}
-                helperText="Este poder é exclusivo, único, segredo de secto/clã? Inclua esta informação aqui..."
+                error={!!validationErrors.origin}
+                helperText={
+                  validationErrors.origin ||
+                  'Este poder é exclusivo, único, segredo de secto/clã? Inclua esta informação aqui...'
+                }
+                disabled={saving}
               />
             </FieldBoxChild>
           </FieldBox>
           <FieldBox>
             <FieldBoxChild proportion={25}>
               <InputField
+                name="cost"
                 id="cost"
                 label="Custo"
+                value={selectedType.type === 'combination' ? cost : ''}
+                onChange={handleCostChange}
                 type="number"
                 InputProps={{ readOnly: selectedType.type !== 'combination' }}
-                defaultValue={
-                  selectedType.type === 'combination' ? power.cost : ''
-                }
                 required={selectedType.type === 'combination'}
                 fullWidth
-                addMarginRight
+                addmargin="right"
                 align="center"
-                helperText="Custo em XP, requerido para Combos"
+                error={!!validationErrors.cost}
+                helperText={
+                  validationErrors.cost || 'Custo em XP, requerido para Combos'
+                }
+                disabled={saving}
               />
             </FieldBoxChild>
             <FieldBoxChild proportion={50}>
               <InputField
+                name="requeriments"
                 id="requeriments"
                 label="Requisitos"
-                defaultValue={power.requirements}
+                value={requirements}
+                onChange={handleRequirementsChange}
                 fullWidth
-                helperText="Requisitos deste poder, disciplinas, níveis, etc."
+                error={!!validationErrors.requirements}
+                helperText={
+                  validationErrors.requirements ||
+                  'Requisitos deste poder, disciplinas, níveis, etc.'
+                }
+                disabled={saving}
               />
             </FieldBoxChild>
             <FieldBoxChild proportion={25}>
               <InputField
+                name="source"
                 id="source"
                 label="Fonte"
-                defaultValue={power.source}
+                value={source}
+                onChange={handleSourceChange}
                 fullWidth
-                addMarginLeft
-                helperText="Fonte da descrição (Livro/Página)"
+                addmargin="left"
+                error={!!validationErrors.source}
+                helperText={
+                  validationErrors.source || 'Fonte da descrição (Livro/Página)'
+                }
+                disabled={saving}
               />
             </FieldBoxChild>
           </FieldBox>
+          <InputField
+            name="description"
+            id="description"
+            label="Descrição"
+            value={description}
+            onChange={handleDescriptionChange}
+            multiline
+            minRows={6}
+            maxRows={6}
+            fullWidth
+            error={!!validationErrors.description}
+            helperText={validationErrors.description || 'Descrição RP do poder'}
+            disabled={saving}
+          />
+          <InputField
+            name="system"
+            id="system"
+            label="Sistema"
+            value={system}
+            onChange={handleSystemChange}
+            multiline
+            minRows={6}
+            maxRows={6}
+            fullWidth
+            error={!!validationErrors.system}
+            helperText={validationErrors.system || 'Sistema de regras do poder'}
+            disabled={saving}
+          />
 
           <ButtonsContainer>
             <ButtonBox>

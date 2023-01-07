@@ -35,7 +35,7 @@ import { useMobile } from '../../hooks/mobile';
 import { useHeader } from '../../hooks/header';
 
 interface IPowerSimple {
-  id: string;
+  id?: string;
   name: string;
   level: number;
   type: string;
@@ -44,7 +44,7 @@ interface IPowerSimple {
 }
 
 interface IPowerResponse {
-  id: string;
+  id?: string;
   long_name: string;
   short_name: string;
   level: number;
@@ -344,9 +344,67 @@ const Powers: React.FC = () => {
     [powersList],
   );
 
-  const handleAddPower = useCallback(() => {
+  /*
+interface IPowerSimple {
+  id: string;
+  name: string;
+  level: number;
+  type: string;
+  included: boolean;
+  show: boolean;
+}
+
+interface IPowerResponse {
+  id: string;
+  long_name: string;
+  short_name: string;
+  level: number;
+  type: string;
+  origin?: string;
+  requirements?: string;
+  description?: string;
+  system?: string;
+  cost?: number;
+  source?: string;
+}
+  */
+
+  const handleClose = useCallback(() => {
     setAddPowerOn(!addPowerOn);
   }, [addPowerOn]);
+
+  const handleUpdatePower = useCallback(
+    (updatedPower: IPowerResponse) => {
+      if (updatedPower) {
+        const powerSimple: IPowerSimple = {
+          id: updatedPower.id,
+          name: updatedPower.long_name,
+          level: updatedPower.level,
+          type: updatedPower.type,
+          included: !!updatedPower.id,
+          show: true,
+        };
+
+        const newPowersList = powersList.map(power =>
+          power.name === powerSimple.name && power.level === powerSimple.level
+            ? powerSimple
+            : power,
+        );
+        const newRawPowersList = rawPowerList.map(power =>
+          power.long_name === updatedPower.long_name &&
+          power.level === updatedPower.level
+            ? updatedPower
+            : power,
+        );
+
+        setPowersList(newPowersList);
+        setRawPowerList(newRawPowersList);
+      }
+
+      setAddPowerOn(!addPowerOn);
+    },
+    [addPowerOn, powersList, rawPowerList],
+  );
 
   const handleEditPower = useCallback(
     index => {
@@ -488,8 +546,8 @@ const Powers: React.FC = () => {
       </TableWrapper>
       <AddPower
         open={addPowerOn}
-        handleClose={handleAddPower}
-        handleSave={handleAddPower}
+        handleClose={handleClose}
+        handleSave={handleUpdatePower}
         selectedPower={selectedPower}
       />
     </Container>
