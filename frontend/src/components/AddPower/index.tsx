@@ -233,7 +233,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
         ),
         origin: Yup.string(),
         requirements: Yup.string(),
-        description: Yup.string().required('Descrição obrigatória'),
+        description: Yup.string(),
         system: Yup.string(),
         cost: Yup.number(),
         source: Yup.string(),
