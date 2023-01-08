@@ -37,7 +37,7 @@ import { useHeader } from '../../hooks/header';
 interface IPowerSimple {
   id?: string;
   name: string;
-  level: number;
+  level: number | '-';
   type: string;
   included: boolean;
   show: boolean;
@@ -344,31 +344,6 @@ const Powers: React.FC = () => {
     [powersList],
   );
 
-  /*
-interface IPowerSimple {
-  id: string;
-  name: string;
-  level: number;
-  type: string;
-  included: boolean;
-  show: boolean;
-}
-
-interface IPowerResponse {
-  id: string;
-  long_name: string;
-  short_name: string;
-  level: number;
-  type: string;
-  origin?: string;
-  requirements?: string;
-  description?: string;
-  system?: string;
-  cost?: number;
-  source?: string;
-}
-  */
-
   const handleClose = useCallback(() => {
     setAddPowerOn(!addPowerOn);
   }, [addPowerOn]);
@@ -379,7 +354,7 @@ interface IPowerResponse {
         const powerSimple: IPowerSimple = {
           id: updatedPower.id,
           name: updatedPower.long_name,
-          level: updatedPower.level,
+          level: updatedPower.level === 0 ? '-' : updatedPower.level,
           type: updatedPower.type,
           included: !!updatedPower.id,
           show: true,
@@ -390,6 +365,7 @@ interface IPowerResponse {
             ? powerSimple
             : power,
         );
+
         const newRawPowersList = rawPowerList.map(power =>
           power.long_name === updatedPower.long_name &&
           power.level === updatedPower.level
