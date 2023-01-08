@@ -355,7 +355,7 @@ const Powers: React.FC = () => {
           id: updatedPower.id,
           name: updatedPower.long_name,
           level: updatedPower.level === 0 ? '-' : updatedPower.level,
-          type: updatedPower.type,
+          type: translateType(updatedPower.type),
           included: !!updatedPower.id,
           show: true,
         };
@@ -379,7 +379,7 @@ const Powers: React.FC = () => {
 
       setAddPowerOn(!addPowerOn);
     },
-    [addPowerOn, powersList, rawPowerList],
+    [addPowerOn, powersList, rawPowerList, translateType],
   );
 
   const handleEditPower = useCallback(
