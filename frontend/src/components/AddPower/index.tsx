@@ -50,7 +50,7 @@ const types: IType[] = [
     label: 'Disciplina',
   },
   {
-    type: 'rituals',
+    type: 'ritual',
     label: 'Ritual',
   },
   {
@@ -138,7 +138,8 @@ const AddPower: React.FC<DialogPropsEx> = ({
   // const { signOut } = useAuth();
 
   const getType = useCallback(type => {
-    const typeFound = types.find(myType => myType.type === type);
+    const parsedType = type === 'rituals' ? 'ritual' : type;
+    const typeFound = types.find(myType => myType.type === parsedType);
 
     const typeResult = typeFound || { type: 'other', label: 'Outro' };
 

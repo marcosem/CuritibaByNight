@@ -38,7 +38,7 @@ import { useModalBox } from '../../hooks/modalBox';
 interface IPowerSimple {
   id?: string;
   name: string;
-  level: number | '-';
+  level: number | string;
   type: string;
   included: boolean;
   show: boolean;
@@ -107,6 +107,7 @@ const Powers: React.FC = () => {
 
     switch (type) {
       case 'rituals':
+      case 'ritual':
         traslatedType = 'Ritual';
         break;
       case 'powers':
@@ -181,21 +182,18 @@ const Powers: React.FC = () => {
           'Ancião',
         ];
 
+        const typesWithLables = ['rituals', 'ritual', 'gift', 'routes'];
+
         const newArray = res.map((power: IPowerResponse) => {
           let level;
           const powerLevel = Number(power.level);
 
-          switch (power.type) {
-            case 'rituals':
-              level = powerLevel <= 5 ? levelsMap[powerLevel - 1] : powerLevel;
-              break;
-            default:
-              if (powerLevel === 0) {
-                level = '-';
-              } else {
-                level = powerLevel;
-              }
-              break;
+          if (powerLevel === 0) {
+            level = '-';
+          } else if (typesWithLables.includes(power.type)) {
+            level = powerLevel <= 5 ? levelsMap[powerLevel - 1] : powerLevel;
+          } else {
+            level = powerLevel;
           }
 
           const included = !!power.id;
@@ -481,10 +479,31 @@ const Powers: React.FC = () => {
   const handleUpdatePower = useCallback(
     (updatedPower: IPowerResponse) => {
       if (updatedPower) {
+        const levelsMap = [
+          'Básico',
+          'Intermediário',
+          'Avançado',
+          'Master',
+          'Ancião',
+        ];
+        const typesWithLables = ['rituals', 'ritual', 'gift', 'routes'];
+
+        let level;
+        if (updatedPower.level === 0) {
+          level = '-';
+        } else if (typesWithLables.includes(updatedPower.type)) {
+          level =
+            updatedPower.level <= 5
+              ? levelsMap[updatedPower.level - 1]
+              : updatedPower.level;
+        } else {
+          level = updatedPower.level;
+        }
+
         const powerSimple: IPowerSimple = {
           id: updatedPower.id,
           name: updatedPower.long_name,
-          level: updatedPower.level === 0 ? '-' : updatedPower.level,
+          level,
           type: translateType(updatedPower.type),
           included: !!updatedPower.id,
           show: true,
