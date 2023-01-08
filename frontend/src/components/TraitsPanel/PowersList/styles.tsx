@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { lighten } from 'polished';
 
 interface ITypeContainer {
   isMobile: boolean;
@@ -110,6 +111,33 @@ export const PowerContainer = styled.div<ITypeContainer>`
         : css`
             font-size: 12px;
           `}
+  }
+
+  a {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-decoration: none;
+    color: #000;
+
+    &:hover {
+      color: ${lighten(0.3, '#000')};
+    }
+
+    strong {
+      text-align: center;
+      padding: 5px 0 0 0;
+      font-weight: 500;
+
+      ${props =>
+        props.isMobile
+          ? css`
+              font-size: 9px;
+            `
+          : css`
+              font-size: 11px;
+            `}
+    }
   }
 `;
 

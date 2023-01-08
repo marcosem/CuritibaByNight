@@ -222,6 +222,7 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
                     key={power.id}
                     isMobile={isMobileVersion}
                     isFirst={index === 0}
+                    id={`power-${power.long_name}`}
                   >
                     <h2>
                       {`${power.long_name}${
@@ -267,6 +268,11 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
                         <strong>Fonte:</strong> {power.source}
                       </p>
                     )}
+                    <p>
+                      <a href={`#power-trait-${power.long_name}`}>
+                        <strong>Voltar ao topo</strong>
+                      </a>
+                    </p>
                   </PowerContainer>
                 ))}
             </div>

@@ -228,6 +228,10 @@ export const SingleTraitContainer = styled.div<ITraitContainer>`
           span {
             font-size: 10px;
           }
+
+          a {
+            font-size: 10px;
+          }
         `
       : css`
           strong {
@@ -237,7 +241,20 @@ export const SingleTraitContainer = styled.div<ITraitContainer>`
           span {
             font-size: 12px;
           }
+
+          a {
+            font-size: 12px;
+          }
         `}
+
+  a {
+    text-decoration: none;
+    color: #000;
+
+    &:hover {
+      color: ${lighten(0.3, '#000')};
+    }
+  }
 `;
 
 export const MoralityContainer = styled.div<ITraitContainer>`
