@@ -353,7 +353,6 @@ const AddPower: React.FC<DialogPropsEx> = ({
   useEffect(() => {
     const currType = getType(power.type);
     setSelectedType(currType);
-    updateLevelLabel(power.level, currType.type);
 
     setShortName(power.short_name || '');
     setOrigin(power.origin || '');
@@ -362,11 +361,12 @@ const AddPower: React.FC<DialogPropsEx> = ({
     setSource(power.source || '');
     setDescription(power.description || '');
     setSystem(power.system || '');
-  }, [getType, power, updateLevelLabel]);
+  }, [getType, power]);
 
   useEffect(() => {
     setPower(selectedPower);
-  }, [selectedPower]);
+    updateLevelLabel(selectedPower.level, selectedPower.type);
+  }, [selectedPower, updateLevelLabel]);
 
   return (
     <Dialog TransitionComponent={Transition} fullWidth maxWidth="md" {...rest}>
