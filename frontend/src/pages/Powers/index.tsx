@@ -156,7 +156,7 @@ const Powers: React.FC = () => {
       case 'Avançado':
         translatedLevel = 3;
         break;
-      case 'Master':
+      case 'Mestre':
         translatedLevel = 4;
         break;
       case 'Ancião':
@@ -178,11 +178,11 @@ const Powers: React.FC = () => {
           'Básico',
           'Intermediário',
           'Avançado',
-          'Master',
+          'Mestre',
           'Ancião',
         ];
 
-        const typesWithLables = ['rituals', 'ritual', 'gift', 'routes'];
+        const typesWithLabels = ['rituals', 'ritual', 'gift', 'routes'];
 
         const newArray = res.map((power: IPowerResponse) => {
           let level;
@@ -190,7 +190,7 @@ const Powers: React.FC = () => {
 
           if (powerLevel === 0) {
             level = '-';
-          } else if (typesWithLables.includes(power.type)) {
+          } else if (typesWithLabels.includes(power.type)) {
             level = powerLevel <= 5 ? levelsMap[powerLevel - 1] : powerLevel;
           } else {
             level = powerLevel;
@@ -483,15 +483,15 @@ const Powers: React.FC = () => {
           'Básico',
           'Intermediário',
           'Avançado',
-          'Master',
+          'Mestre',
           'Ancião',
         ];
-        const typesWithLables = ['rituals', 'ritual', 'gift', 'routes'];
+        const typesWithLabels = ['rituals', 'ritual', 'gift', 'routes'];
 
         let level;
         if (updatedPower.level === 0) {
           level = '-';
-        } else if (typesWithLables.includes(updatedPower.type)) {
+        } else if (typesWithLabels.includes(updatedPower.type)) {
           level =
             updatedPower.level <= 5
               ? levelsMap[updatedPower.level - 1]

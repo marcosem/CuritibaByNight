@@ -200,6 +200,30 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
     return title;
   }, []);
 
+  const getLevelLabel = useCallback((level, type) => {
+    const levelsMap = [
+      'Básico',
+      'Intermediário',
+      'Avançado',
+      'Mestre',
+      'Ancião',
+    ];
+
+    const typesWithLabels = ['rituals', 'ritual', 'gift', 'routes'];
+
+    let levelLabel;
+
+    if (level === 0) {
+      levelLabel = '';
+    } else if (typesWithLabels.includes(type)) {
+      levelLabel = level <= 5 ? `(${levelsMap[level - 1]})` : level;
+    } else {
+      levelLabel = level;
+    }
+
+    return levelLabel;
+  }, []);
+
   useEffect(() => {
     loadPowers();
   }, [loadPowers]);
@@ -227,7 +251,7 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
                     <h2>
                       {`${power.long_name}${
                         power.level && power.level !== 0
-                          ? ` ${power.level}`
+                          ? ` ${getLevelLabel(power.level, power.type)}`
                           : ''
                       }`}
                     </h2>
