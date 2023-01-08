@@ -59,9 +59,7 @@ class FakePowersRepository implements IPowersRepository {
     level = -1,
   ): Promise<Power | undefined> {
     const myPower = this.powers.find(
-      power =>
-        (power.long_name === name || power.short_name === name) &&
-        power.level === level,
+      power => power.long_name === name && power.level === level,
     );
 
     return myPower;

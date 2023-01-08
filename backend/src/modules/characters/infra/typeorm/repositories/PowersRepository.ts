@@ -66,10 +66,7 @@ class PowersRepository implements IPowersRepository {
     name: string,
     level = -1,
   ): Promise<Power | undefined> {
-    const where = [
-      { long_name: name, level },
-      { short_name: name, level },
-    ];
+    const where = { long_name: name, level };
 
     const powerList = await this.ormRepository.findOne({
       where,
