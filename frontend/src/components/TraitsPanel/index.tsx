@@ -2162,7 +2162,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                               key={trait.id}
                               isMobile={isMobileVersion}
                             >
-                              <strong>{trait.trait}</strong>
+                              <a
+                                href={`#power-${trait.trait}`}
+                                id={`power-trait-${trait.trait}`}
+                              >
+                                <strong>{trait.trait}</strong>
+                              </a>
                             </SingleTraitContainer>
                           </div>
                         ),
@@ -2175,7 +2180,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           key={trait.id}
                           isMobile={isMobileVersion}
                         >
-                          <strong>{trait.trait}</strong>
+                          <a
+                            href={`#power-${trait.trait}`}
+                            id={`power-trait-${trait.trait}`}
+                          >
+                            <strong>{trait.trait}</strong>
+                          </a>
                           {trait.level > 0 && <span>{`x${trait.level}`}</span>}
                         </SingleTraitContainer>
                       ))}
@@ -2215,7 +2225,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                               key={trait.id}
                               isMobile={isMobileVersion}
                             >
-                              <strong>{trait.trait}</strong>
+                              <a
+                                href={`#power-${trait.trait}`}
+                                id={`power-trait-${trait.trait}`}
+                              >
+                                <strong>{trait.trait}</strong>
+                              </a>
                             </SingleTraitContainer>
                           </div>
                         ),
