@@ -383,9 +383,22 @@ const Powers: React.FC = () => {
   );
 
   const handleEditPower = useCallback(
-    index => {
-      setSelectedPower(rawPowerList[index]);
-      setAddPowerOn(true);
+    (power: IPowerSimple) => {
+      const powerToFind = {
+        long_name: power.name,
+        level: power.level === '-' ? 0 : power.level,
+      };
+
+      const powerToEdit = rawPowerList.find(
+        myPower =>
+          myPower.long_name === powerToFind.long_name &&
+          Number(myPower.level) === Number(powerToFind.level),
+      );
+
+      if (powerToEdit) {
+        setSelectedPower(powerToEdit);
+        setAddPowerOn(true);
+      }
     },
     [rawPowerList],
   );
@@ -469,7 +482,7 @@ const Powers: React.FC = () => {
                 </StyledTableRow>
               ) : (
                 powersList.map(
-                  (power, index) =>
+                  power =>
                     power.show && (
                       <StyledTableRow key={`${power.name}-${power.level}`}>
                         <StyledTableCell align="left">
@@ -497,7 +510,7 @@ const Powers: React.FC = () => {
                               <ActionButton
                                 id={`edit:${power.name}-${power.level}`}
                                 title="Editar"
-                                onClick={() => handleEditPower(index)}
+                                onClick={() => handleEditPower(power)}
                               >
                                 <FiEdit />
                               </ActionButton>
