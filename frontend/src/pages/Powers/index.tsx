@@ -33,6 +33,7 @@ import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useHeader } from '../../hooks/header';
+import { useModalBox } from '../../hooks/modalBox';
 
 interface IPowerSimple {
   id?: string;
@@ -96,6 +97,7 @@ const Powers: React.FC = () => {
   const [isBusy, setBusy] = useState(true);
   const { signOut } = useAuth();
   const { addToast } = useToast();
+  const { showModal } = useModalBox();
 
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
@@ -137,11 +139,47 @@ const Powers: React.FC = () => {
     return traslatedType;
   }, []);
 
+  const translateLevel = useCallback(level => {
+    let translatedLevel: number;
+
+    switch (level) {
+      case '-':
+        translatedLevel = 0;
+        break;
+      case 'Básico':
+        translatedLevel = 1;
+        break;
+      case 'Intermediário':
+        translatedLevel = 2;
+        break;
+      case 'Avançado':
+        translatedLevel = 3;
+        break;
+      case 'Master':
+        translatedLevel = 4;
+        break;
+      case 'Ancião':
+        translatedLevel = 5;
+        break;
+      default:
+        translatedLevel = Number(level);
+        break;
+    }
+
+    return translatedLevel;
+  }, []);
+
   const loadPowers = useCallback(async () => {
     try {
       await api.get('/powers/list').then(response => {
         const res = response.data;
-        const levelsMap = ['Básico', 'Intermediário', 'Avançado'];
+        const levelsMap = [
+          'Básico',
+          'Intermediário',
+          'Avançado',
+          'Master',
+          'Ancião',
+        ];
 
         const newArray = res.map((power: IPowerResponse) => {
           let level;
@@ -149,7 +187,7 @@ const Powers: React.FC = () => {
 
           switch (power.type) {
             case 'rituals':
-              level = powerLevel <= 3 ? levelsMap[powerLevel - 1] : powerLevel;
+              level = powerLevel <= 5 ? levelsMap[powerLevel - 1] : powerLevel;
               break;
             default:
               if (powerLevel === 0) {
@@ -205,6 +243,98 @@ const Powers: React.FC = () => {
     }
     setBusy(false);
   }, [addToast, signOut, translateType]);
+
+  const handleRemove = useCallback(
+    async power => {
+      try {
+        const requestData = {
+          power_id: power.id,
+        };
+
+        const reqData = { data: requestData };
+        await api.delete('/powers/delete', reqData);
+
+        addToast({
+          type: 'success',
+          title: 'Poder excluído',
+          description: 'Descrição do poder excluído com sucesso!',
+        });
+
+        const newPowersList = powersList.map(myPower => {
+          const newPower = myPower;
+          if (newPower.id === power.id) {
+            newPower.id = undefined;
+            newPower.type =
+              power.type === 'Ritual' || power.type === 'Rotina'
+                ? 'Ritual'
+                : 'Poder';
+            newPower.included = false;
+          }
+
+          return newPower;
+        });
+
+        const newRawPowersList = rawPowerList.map(myPower => {
+          const newPower = myPower;
+          if (newPower.id === power.id) {
+            newPower.id = undefined;
+          }
+
+          return newPower;
+        });
+
+        setPowersList(newPowersList);
+        setRawPowerList(newRawPowersList);
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (
+            message?.indexOf('token') > 0 &&
+            parsedError.response.status === 401
+          ) {
+            addToast({
+              type: 'error',
+              title: 'Sessão Expirada',
+              description:
+                'Sessão de usuário expirada, faça o login novamente!',
+            });
+
+            signOut();
+          } else {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar exluir o poder',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+    },
+    [addToast, powersList, rawPowerList, signOut],
+  );
+
+  const handleConfirmRemove = useCallback(
+    (power: IPowerSimple) => {
+      const powerName = `${power.name}${
+        power.level !== '-' ? ` ${power.level}` : ''
+      }`;
+
+      showModal({
+        type: 'warning',
+        title: 'Confirmar exclusão',
+        description: `Você está prestes a remover a descrição do poder [${powerName}], você confirma?`,
+        btn1Title: 'Sim',
+        btn1Function: () => handleRemove(power),
+        btn2Title: 'Não',
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        btn2Function: () => {},
+      });
+    },
+    [handleRemove, showModal],
+  );
 
   const handleSort = useCallback(
     title => {
@@ -377,16 +507,16 @@ const Powers: React.FC = () => {
         setRawPowerList(newRawPowersList);
       }
 
-      setAddPowerOn(!addPowerOn);
+      setAddPowerOn(false);
     },
-    [addPowerOn, powersList, rawPowerList, translateType],
+    [powersList, rawPowerList, translateType],
   );
 
   const handleEditPower = useCallback(
     (power: IPowerSimple) => {
       const powerToFind = {
         long_name: power.name,
-        level: power.level === '-' ? 0 : power.level,
+        level: translateLevel(power.level),
       };
 
       const powerToEdit = rawPowerList.find(
@@ -400,7 +530,7 @@ const Powers: React.FC = () => {
         setAddPowerOn(true);
       }
     },
-    [rawPowerList],
+    [rawPowerList, translateLevel],
   );
 
   useEffect(() => {
@@ -519,6 +649,7 @@ const Powers: React.FC = () => {
                             <ActionButton
                               id={`delete:${power.name}-${power.level}`}
                               title="Remover"
+                              onClick={() => handleConfirmRemove(power)}
                               disabled={!power.included}
                             >
                               <FiTrash2 />

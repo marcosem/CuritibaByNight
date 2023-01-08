@@ -6,5 +6,5 @@ export const Container = styled.div`
   top: 58px;
   padding: 10px;
   overflow: hidden;
-  z-index: 1001;
+  z-index: 1500;
 `;

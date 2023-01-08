@@ -120,6 +120,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
   const [selectedType, setSelectedType] = useState<IType>({} as IType);
   const [currentLevel, setCurrentLevel] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
 
   const [validationErrors, setValidationErrors] = useState<IError>(
     {} as IError,
@@ -152,10 +153,9 @@ const AddPower: React.FC<DialogPropsEx> = ({
     return typeResult;
   }, []);
 
-  const updateLevelLabel = useCallback((level, type) => {
+  const getLevelLabel = useCallback((level, type) => {
     if (level === undefined || Number(level) === 0 || type === 'combination') {
-      setCurrentLevel('-');
-      return;
+      return '-';
     }
 
     const typesText = ['rituals', 'gift', 'routes'];
@@ -178,16 +178,17 @@ const AddPower: React.FC<DialogPropsEx> = ({
       label = `${level}`;
     }
 
-    setCurrentLevel(label);
+    return label;
   }, []);
 
   const handleTypeSelectChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const newType = getTypeByLabel(event.target.value);
-      updateLevelLabel(power.level, newType.type);
+      setCurrentLevel(getLevelLabel(power.level, newType.type));
+
       setSelectedType(newType);
     },
-    [getTypeByLabel, power.level, updateLevelLabel],
+    [getLevelLabel, getTypeByLabel, power.level],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -195,13 +196,13 @@ const AddPower: React.FC<DialogPropsEx> = ({
       formRef.current?.setErrors({});
 
       const powerData: IPower = {
-        // id: power.id,
+        id: power.id,
         long_name: power.long_name,
         short_name: shortName
           .replace(/’/gi, "'")
           .replace(/“/gi, '"')
           .replace(/”/gi, '"'),
-        level: power.level,
+        level: Number(power.level),
         type: selectedType.type,
         origin: origin
           .replace(/’/gi, "'")
@@ -243,15 +244,27 @@ const AddPower: React.FC<DialogPropsEx> = ({
 
       setSaving(true);
 
-      const response = await api.post('/powers/add', powerData);
+      let response;
+
+      if (powerData.id) {
+        response = await api.patch('/powers/update', powerData);
+
+        addToast({
+          type: 'success',
+          title: 'Poder atualizado!',
+          description: 'Poder atualizado com sucesso!',
+        });
+      } else {
+        response = await api.post('/powers/add', powerData);
+
+        addToast({
+          type: 'success',
+          title: 'Poder adicionado!',
+          description: 'Poder adicionado com sucesso!',
+        });
+      }
 
       setSaving(false);
-
-      addToast({
-        type: 'success',
-        title: 'Poder adicionado!',
-        description: 'Poder adicionado com sucesso!',
-      });
 
       handleSave(response.data);
     } catch (err) {
@@ -276,6 +289,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
     description,
     handleSave,
     origin,
+    power.id,
     power.level,
     power.long_name,
     requirements,
@@ -290,6 +304,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       const changedValue = event.target.value;
 
       setShortName(changedValue);
+      setHasChanges(true);
     },
     [],
   );
@@ -298,9 +313,11 @@ const AddPower: React.FC<DialogPropsEx> = ({
     (event: ChangeEvent<HTMLInputElement>) => {
       const changedValue = event.target.value;
 
-      const parsedValue = changedValue.replace(/\D/g, '');
+      const parsedValue = changedValue.replace(/\D-/g, '');
+      const validValue = Number(parsedValue) < 0 ? 0 : Number(parsedValue);
 
-      setCost(Number(parsedValue));
+      setCost(validValue);
+      setHasChanges(true);
     },
     [],
   );
@@ -310,6 +327,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       const changedValue = event.target.value;
 
       setOrigin(changedValue);
+      setHasChanges(true);
     },
     [],
   );
@@ -319,6 +337,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       const changedValue = event.target.value;
 
       setRequirements(changedValue);
+      setHasChanges(true);
     },
     [],
   );
@@ -328,6 +347,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       const changedValue = event.target.value;
 
       setSource(changedValue);
+      setHasChanges(true);
     },
     [],
   );
@@ -337,6 +357,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       const changedValue = event.target.value;
 
       setDescription(changedValue);
+      setHasChanges(true);
     },
     [],
   );
@@ -346,6 +367,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       const changedValue = event.target.value;
 
       setSystem(changedValue);
+      setHasChanges(true);
     },
     [],
   );
@@ -365,8 +387,8 @@ const AddPower: React.FC<DialogPropsEx> = ({
 
   useEffect(() => {
     setPower(selectedPower);
-    updateLevelLabel(selectedPower.level, selectedPower.type);
-  }, [selectedPower, updateLevelLabel]);
+    setCurrentLevel(getLevelLabel(selectedPower.level, selectedPower.type));
+  }, [getLevelLabel, selectedPower]);
 
   return (
     <Dialog TransitionComponent={Transition} fullWidth maxWidth="md" {...rest}>
@@ -539,7 +561,9 @@ const AddPower: React.FC<DialogPropsEx> = ({
 
           <ButtonsContainer>
             <ButtonBox>
-              <Button type="submit">Salvar</Button>
+              <Button type="submit" disabled={!hasChanges || saving}>
+                Salvar
+              </Button>
             </ButtonBox>
             <ButtonBox>
               <Button onClick={handleClose}>Cancelar</Button>

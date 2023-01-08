@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { TextField, withStyles } from '@material-ui/core';
-import { lighten } from 'polished';
+import { lighten, shade } from 'polished';
 
 const CssTextField = withStyles({
   root: {
@@ -102,6 +102,11 @@ export const ButtonBox = styled.div`
   }
 
   width: 100px;
+
+  button:disabled {
+    cursor: default;
+    background: ${shade(0.2, '#860209')};
+  }
 `;
 
 export const FieldBox = styled.div`
