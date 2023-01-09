@@ -159,7 +159,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       return '-';
     }
 
-    const typesText = ['rituals', 'gift', 'routes'];
+    const typesText = ['ritual', 'rituals', 'gift', 'routes'];
     const levelLabels = [
       'Básico',
       'Intermediário',
