@@ -91,6 +91,7 @@ interface IPower {
   system?: string;
   cost?: number;
   source?: string;
+  show?: boolean;
 }
 
 interface IError {

@@ -1,15 +1,10 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useState, useCallback } from 'react';
-// import { Link, useHistory } from 'react-router-dom';
 
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { FaCheckCircle, FaMinusCircle } from 'react-icons/fa';
-
 import Skeleton from '@material-ui/lab/Skeleton';
-
 import api from '../../services/api';
-
-// import Loading from '../../components/Loading';
 
 import {
   Container,
@@ -35,16 +30,7 @@ import { useMobile } from '../../hooks/mobile';
 import { useHeader } from '../../hooks/header';
 import { useModalBox } from '../../hooks/modalBox';
 
-interface IPowerSimple {
-  id?: string;
-  name: string;
-  level: number | string;
-  type: string;
-  included: boolean;
-  show: boolean;
-}
-
-interface IPowerResponse {
+interface IPower {
   id?: string;
   long_name: string;
   short_name: string;
@@ -56,6 +42,7 @@ interface IPowerResponse {
   system?: string;
   cost?: number;
   source?: string;
+  show?: boolean;
 }
 
 interface ISort {
@@ -64,14 +51,12 @@ interface ISort {
   active: boolean;
 }
 
-// using https://v4.mui.com
 const Powers: React.FC = () => {
-  const [powersList, setPowersList] = useState<IPowerSimple[]>([]);
-  const [rawPowerList, setRawPowerList] = useState<IPowerResponse[]>([]);
-  const [selectedPower, setSelectedPower] = useState<IPowerResponse>(
-    {} as IPowerResponse,
-  );
+  const [powersList, setPowersList] = useState<IPower[]>([]);
+  const [isBusy, setBusy] = useState(true);
+  const [selectedPower, setSelectedPower] = useState<IPower>({} as IPower);
   const [addPowerOn, setAddPowerOn] = useState(false);
+
   const [sortOrder, setSortOrder] = useState<ISort[]>([
     {
       title: 'power',
@@ -94,123 +79,37 @@ const Powers: React.FC = () => {
       active: false,
     },
   ]);
-  const [isBusy, setBusy] = useState(true);
+
   const { signOut } = useAuth();
   const { addToast } = useToast();
-  const { showModal } = useModalBox();
-
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
-
-  const translateType = useCallback(type => {
-    let traslatedType: string;
-
-    switch (type) {
-      case 'rituals':
-      case 'ritual':
-        traslatedType = 'Ritual';
-        break;
-      case 'powers':
-        traslatedType = 'Poder';
-        break;
-      case 'discipline':
-        traslatedType = 'Disciplina';
-        break;
-      case 'combination':
-        traslatedType = 'Combo';
-        break;
-      case 'gift':
-        traslatedType = 'Dom';
-        break;
-      case 'arcanoi':
-        traslatedType = 'Arcanoi';
-        break;
-      case 'spheres':
-        traslatedType = 'Esfera';
-        break;
-      case 'routes':
-        traslatedType = 'Rotina';
-        break;
-      case 'other':
-      default:
-        traslatedType = 'Outro';
-        break;
-    }
-
-    return traslatedType;
-  }, []);
-
-  const translateLevel = useCallback(level => {
-    let translatedLevel: number;
-
-    switch (level) {
-      case '-':
-        translatedLevel = 0;
-        break;
-      case 'Básico':
-        translatedLevel = 1;
-        break;
-      case 'Intermediário':
-        translatedLevel = 2;
-        break;
-      case 'Avançado':
-        translatedLevel = 3;
-        break;
-      case 'Mestre':
-        translatedLevel = 4;
-        break;
-      case 'Ancião':
-        translatedLevel = 5;
-        break;
-      default:
-        translatedLevel = Number(level);
-        break;
-    }
-
-    return translatedLevel;
-  }, []);
+  const { showModal } = useModalBox();
 
   const loadPowers = useCallback(async () => {
     try {
       await api.get('/powers/list').then(response => {
         const res = response.data;
-        const levelsMap = [
-          'Básico',
-          'Intermediário',
-          'Avançado',
-          'Mestre',
-          'Ancião',
-        ];
 
-        const typesWithLabels = ['rituals', 'ritual', 'gift', 'routes'];
-
-        const newArray = res.map((power: IPowerResponse) => {
-          let level;
-          const powerLevel = Number(power.level);
-
-          if (powerLevel === 0) {
-            level = '-';
-          } else if (typesWithLabels.includes(power.type)) {
-            level = powerLevel <= 5 ? levelsMap[powerLevel - 1] : powerLevel;
-          } else {
-            level = powerLevel;
-          }
-
-          const included = !!power.id;
-
+        const newArray = res.map((power: IPower) => {
           const newPower = {
             id: power.id,
-            name: power.long_name,
-            level,
-            type: translateType(power.type),
-            included,
+            long_name: power.long_name,
+            short_name: power.short_name,
+            level: Number(power.level),
+            type: power.type,
+            origin: power.origin || '',
+            requirements: power.requirements || '',
+            description: power.description || '',
+            system: power.system || '',
+            cost: power.cost || 0,
+            source: power.source || '',
             show: true,
           };
 
           return newPower;
         });
 
-        setRawPowerList(res);
         setPowersList(newArray);
       });
     } catch (error) {
@@ -240,98 +139,108 @@ const Powers: React.FC = () => {
       }
     }
     setBusy(false);
-  }, [addToast, signOut, translateType]);
+  }, [addToast, signOut]);
 
-  const handleRemove = useCallback(
-    async power => {
-      try {
-        const requestData = {
-          power_id: power.id,
-        };
+  const getLevelLabel = useCallback((power: IPower) => {
+    const typeWithLabel = ['ritual', 'rituals', 'gift', 'routes'];
+    const labels = [
+      '-',
+      'Básico',
+      'Intermediário',
+      'Avançado',
+      'Ancião',
+      'Mestre',
+      'Matusalém',
+    ];
 
-        const reqData = { data: requestData };
-        await api.delete('/powers/delete', reqData);
+    let label;
+    if (power.level === 0 || typeWithLabel.includes(power.type)) {
+      label = labels[power.level];
+    } else {
+      label = power.level;
+    }
 
-        addToast({
-          type: 'success',
-          title: 'Poder excluído',
-          description: 'Descrição do poder excluído com sucesso!',
-        });
+    return label;
+  }, []);
 
-        const newPowersList = powersList.map(myPower => {
-          const newPower = myPower;
-          if (newPower.id === power.id) {
-            newPower.id = undefined;
-            newPower.type =
-              power.type === 'Ritual' || power.type === 'Rotina'
-                ? 'Ritual'
-                : 'Poder';
-            newPower.included = false;
-          }
+  const getTypeLabel = useCallback((type: string) => {
+    let typeLabel;
+
+    switch (type) {
+      case 'rituals':
+      case 'ritual':
+        typeLabel = 'Ritual';
+        break;
+      case 'discipline':
+        typeLabel = 'Disciplina';
+        break;
+      case 'combination':
+        typeLabel = 'Combo';
+        break;
+      case 'gift':
+        typeLabel = 'Dom';
+        break;
+      case 'arcanoi':
+        typeLabel = 'Arcanoi';
+        break;
+      case 'spheres':
+        typeLabel = 'Esfera';
+        break;
+      case 'routes':
+        typeLabel = 'Rotina';
+        break;
+
+      case 'other':
+      default:
+        typeLabel = 'Outro';
+        break;
+    }
+
+    return typeLabel;
+  }, []);
+
+  const handleSearchChange = useCallback(
+    event => {
+      const inputText = event.target.value;
+      let newPowersList: IPower[];
+
+      if (inputText === '') {
+        newPowersList = powersList.map(power => {
+          const newPower = power;
+          newPower.show = true;
 
           return newPower;
         });
-
-        const newRawPowersList = rawPowerList.map(myPower => {
-          const newPower = myPower;
-          if (newPower.id === power.id) {
-            newPower.id = undefined;
-          }
+      } else if (inputText.toLowerCase() === 'incluso') {
+        newPowersList = powersList.map(power => {
+          const newPower = power;
+          newPower.show = !!power.id;
 
           return newPower;
         });
+      } else {
+        newPowersList = powersList.map(power => {
+          const newPower = power;
 
-        setPowersList(newPowersList);
-        setRawPowerList(newRawPowersList);
-      } catch (error) {
-        const parsedError: any = error;
-
-        if (parsedError.response) {
-          const { message } = parsedError.response.data;
+          const powerType = getTypeLabel(power.type);
 
           if (
-            message?.indexOf('token') > 0 &&
-            parsedError.response.status === 401
+            power.long_name.toLowerCase().indexOf(inputText.toLowerCase()) >=
+              0 ||
+            powerType.toLowerCase().indexOf(inputText.toLowerCase()) >= 0
           ) {
-            addToast({
-              type: 'error',
-              title: 'Sessão Expirada',
-              description:
-                'Sessão de usuário expirada, faça o login novamente!',
-            });
-
-            signOut();
+            newPower.show = true;
           } else {
-            addToast({
-              type: 'error',
-              title: 'Erro ao tentar exluir o poder',
-              description: `Erro: '${message}'`,
-            });
+            newPower.show = false;
           }
-        }
+
+          return newPower;
+        });
       }
-    },
-    [addToast, powersList, rawPowerList, signOut],
-  );
 
-  const handleConfirmRemove = useCallback(
-    (power: IPowerSimple) => {
-      const powerName = `${power.name}${
-        power.level !== '-' ? ` ${power.level}` : ''
-      }`;
-
-      showModal({
-        type: 'warning',
-        title: 'Confirmar exclusão',
-        description: `Você está prestes a remover a descrição do poder [${powerName}], você confirma?`,
-        btn1Title: 'Sim',
-        btn1Function: () => handleRemove(power),
-        btn2Title: 'Não',
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        btn2Function: () => {},
-      });
+      setPowersList(newPowersList);
     },
-    [handleRemove, showModal],
+    [getTypeLabel, powersList],
   );
 
   const handleSort = useCallback(
@@ -370,15 +279,21 @@ const Powers: React.FC = () => {
       switch (newSortItem.title) {
         case 'level':
           if (newSortItem.direction === 'desc') {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.level > powerB.level) return -1;
-              if (powerA.level < powerB.level) return 1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              const levelA = getLevelLabel(powerA);
+              const levelB = getLevelLabel(powerB);
+
+              if (levelA > levelB) return -1;
+              if (levelA < levelB) return 1;
               return 0;
             });
           } else {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.level > powerB.level) return 1;
-              if (powerA.level < powerB.level) return -1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              const levelA = getLevelLabel(powerA);
+              const levelB = getLevelLabel(powerB);
+
+              if (levelA > levelB) return 1;
+              if (levelA < levelB) return -1;
               return 0;
             });
           }
@@ -386,15 +301,21 @@ const Powers: React.FC = () => {
 
         case 'type':
           if (newSortItem.direction === 'desc') {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.type > powerB.type) return -1;
-              if (powerA.type < powerB.type) return 1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              const typeA = getTypeLabel(powerA.type);
+              const typeB = getTypeLabel(powerB.type);
+
+              if (typeA > typeB) return -1;
+              if (typeA < typeB) return 1;
               return 0;
             });
           } else {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.type > powerB.type) return 1;
-              if (powerA.type < powerB.type) return -1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              const typeA = getTypeLabel(powerA.type);
+              const typeB = getTypeLabel(powerB.type);
+
+              if (typeA > typeB) return 1;
+              if (typeA < typeB) return -1;
               return 0;
             });
           }
@@ -402,15 +323,21 @@ const Powers: React.FC = () => {
 
         case 'included':
           if (newSortItem.direction === 'asc') {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.included > powerB.included) return -1;
-              if (powerA.included < powerB.included) return 1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              const includedA = powerA.id ? 0 : 1;
+              const includedB = powerB.id ? 0 : 1;
+
+              if (includedA > includedB) return -1;
+              if (includedA < includedB) return 1;
               return 0;
             });
           } else {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.included > powerB.included) return 1;
-              if (powerA.included < powerB.included) return -1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              const includedA = powerA.id ? 0 : 1;
+              const includedB = powerB.id ? 0 : 1;
+
+              if (includedA > includedB) return 1;
+              if (includedA < includedB) return -1;
               return 0;
             });
           }
@@ -419,15 +346,15 @@ const Powers: React.FC = () => {
         case 'power':
         default:
           if (newSortItem.direction === 'desc') {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.name > powerB.name) return -1;
-              if (powerA.name < powerB.name) return 1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              if (powerA.long_name > powerB.long_name) return -1;
+              if (powerA.long_name < powerB.long_name) return 1;
               return 0;
             });
           } else {
-            newPowersList.sort((powerA: IPowerSimple, powerB: IPowerSimple) => {
-              if (powerA.name > powerB.name) return 1;
-              if (powerA.name < powerB.name) return -1;
+            newPowersList.sort((powerA: IPower, powerB: IPower) => {
+              if (powerA.long_name > powerB.long_name) return 1;
+              if (powerA.long_name < powerB.long_name) return -1;
               return 0;
             });
           }
@@ -435,122 +362,143 @@ const Powers: React.FC = () => {
       }
       setPowersList(newPowersList);
     },
-    [powersList, sortOrder],
+    [getLevelLabel, getTypeLabel, powersList, sortOrder],
   );
 
-  const handleSearchChange = useCallback(
-    event => {
-      const inputText = event.target.value;
-      let newPowersList: IPowerSimple[];
+  const handleRemove = useCallback(
+    async (power: IPower) => {
+      try {
+        const requestData = {
+          power_id: power.id,
+        };
 
-      if (inputText === '') {
-        newPowersList = powersList.map(power => {
-          const newPower = power;
-          newPower.show = true;
+        const reqData = { data: requestData };
+        await api.delete('/powers/delete', reqData);
 
-          return newPower;
+        addToast({
+          type: 'success',
+          title: 'Poder excluído',
+          description: 'Descrição do poder excluído com sucesso!',
         });
-      } else {
-        newPowersList = powersList.map(power => {
-          const newPower = power;
 
-          if (
-            power.name.toLowerCase().indexOf(inputText.toLowerCase()) >= 0 ||
-            power.type.toLowerCase().indexOf(inputText.toLowerCase()) >= 0
-          ) {
-            newPower.show = true;
-          } else {
-            newPower.show = false;
+        const newPowersList = powersList.map((myPower: IPower) => {
+          const newPower = myPower;
+
+          if (newPower.id === power.id) {
+            newPower.id = undefined;
+            newPower.short_name = power.long_name;
+            newPower.type =
+              power.type === 'Ritual' || power.type === 'Rotina'
+                ? 'rituals'
+                : 'power';
+            newPower.origin = '';
+            newPower.requirements = '';
+            newPower.description = '';
+            newPower.system = '';
+            newPower.cost = 0;
+            newPower.source = '';
           }
 
           return newPower;
         });
-      }
 
+        setPowersList(newPowersList);
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (
+            message?.indexOf('token') > 0 &&
+            parsedError.response.status === 401
+          ) {
+            addToast({
+              type: 'error',
+              title: 'Sessão Expirada',
+              description:
+                'Sessão de usuário expirada, faça o login novamente!',
+            });
+
+            signOut();
+          } else {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar exluir o poder',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+    },
+    [addToast, powersList, signOut],
+  );
+
+  const handleConfirmRemove = useCallback(
+    (power: IPower) => {
+      const powerName = `${power.long_name}${
+        power.level > 0 ? ` - ${getLevelLabel(power)}` : ''
+      }`;
+
+      showModal({
+        type: 'warning',
+        title: 'Confirmar exclusão',
+        description: `Você está prestes a remover a descrição do poder [${powerName}], você confirma?`,
+        btn1Title: 'Sim',
+        btn1Function: () => handleRemove(power),
+        btn2Title: 'Não',
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        btn2Function: () => {},
+      });
+    },
+    [getLevelLabel, handleRemove, showModal],
+  );
+
+  const handleClose = useCallback(() => {
+    setAddPowerOn(false);
+  }, []);
+
+  const handleUpdatePower = useCallback(
+    (updatedPower: IPower) => {
+      const newPowersList = powersList.map(power => {
+        let newPower: IPower = power;
+        if (
+          newPower.long_name === updatedPower.long_name &&
+          Number(newPower.level) === Number(updatedPower.level)
+        ) {
+          newPower = {
+            id: updatedPower.id,
+            long_name: updatedPower.long_name,
+            short_name: updatedPower.short_name,
+            level: Number(updatedPower.level),
+            type: updatedPower.type,
+            origin: updatedPower.origin || '',
+            requirements: updatedPower.requirements || '',
+            description: updatedPower.description || '',
+            system: updatedPower.system || '',
+            cost: updatedPower.cost || 0,
+            source: updatedPower.source || '',
+            show: power.show,
+          };
+        }
+        return newPower;
+      });
+
+      setAddPowerOn(false);
       setPowersList(newPowersList);
     },
     [powersList],
   );
 
-  const handleClose = useCallback(() => {
-    setAddPowerOn(!addPowerOn);
-  }, [addPowerOn]);
+  const handleEditPower = useCallback((power: IPower) => {
+    setSelectedPower(power);
+    setAddPowerOn(true);
+  }, []);
 
-  const handleUpdatePower = useCallback(
-    (updatedPower: IPowerResponse) => {
-      if (updatedPower) {
-        const levelsMap = [
-          'Básico',
-          'Intermediário',
-          'Avançado',
-          'Mestre',
-          'Ancião',
-        ];
-        const typesWithLabels = ['rituals', 'ritual', 'gift', 'routes'];
-
-        let level;
-        if (updatedPower.level === 0) {
-          level = '-';
-        } else if (typesWithLabels.includes(updatedPower.type)) {
-          level =
-            updatedPower.level <= 5
-              ? levelsMap[updatedPower.level - 1]
-              : updatedPower.level;
-        } else {
-          level = updatedPower.level;
-        }
-
-        const powerSimple: IPowerSimple = {
-          id: updatedPower.id,
-          name: updatedPower.long_name,
-          level,
-          type: translateType(updatedPower.type),
-          included: !!updatedPower.id,
-          show: true,
-        };
-
-        const newPowersList = powersList.map(power =>
-          power.name === powerSimple.name && power.level === powerSimple.level
-            ? powerSimple
-            : power,
-        );
-
-        const newRawPowersList = rawPowerList.map(power =>
-          power.long_name === updatedPower.long_name &&
-          power.level === updatedPower.level
-            ? updatedPower
-            : power,
-        );
-
-        setPowersList(newPowersList);
-        setRawPowerList(newRawPowersList);
-      }
-
-      setAddPowerOn(false);
-    },
-    [powersList, rawPowerList, translateType],
-  );
-
-  const handleEditPower = useCallback(
-    (power: IPowerSimple) => {
-      const powerToFind = {
-        long_name: power.name,
-        level: translateLevel(power.level),
-      };
-
-      const powerToEdit = rawPowerList.find(
-        myPower =>
-          myPower.long_name === powerToFind.long_name &&
-          Number(myPower.level) === Number(powerToFind.level),
-      );
-
-      if (powerToEdit) {
-        setSelectedPower(powerToEdit);
-        setAddPowerOn(true);
-      }
-    },
-    [rawPowerList, translateLevel],
-  );
+  useEffect(() => {
+    setCurrentPage('powers');
+    loadPowers();
+  }, [loadPowers, setCurrentPage]);
 
   useEffect(() => {
     setCurrentPage('powers');
@@ -633,21 +581,21 @@ const Powers: React.FC = () => {
                 powersList.map(
                   power =>
                     power.show && (
-                      <StyledTableRow key={`${power.name}-${power.level}`}>
+                      <StyledTableRow key={`${power.long_name}-${power.level}`}>
                         <StyledTableCell align="left">
-                          {power.name}
+                          {power.long_name}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {power.level}
+                          {getLevelLabel(power)}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {power.type}
+                          {getTypeLabel(power.type)}
                         </StyledTableCell>
                         <StyledTableCell
                           align="center"
-                          title={power.included ? 'Adicionado' : 'Pendente...'}
+                          title={power.id ? 'Adicionado' : 'Pendente...'}
                         >
-                          {power.included ? (
+                          {power.id ? (
                             <FaCheckCircle color="green" />
                           ) : (
                             <FaMinusCircle color="red" />
@@ -657,7 +605,7 @@ const Powers: React.FC = () => {
                           <ActionsContainer>
                             {!isMobileVersion && (
                               <ActionButton
-                                id={`edit:${power.name}-${power.level}`}
+                                id={`edit:${power.long_name}-${power.level}`}
                                 title="Editar"
                                 onClick={() => handleEditPower(power)}
                               >
@@ -666,10 +614,10 @@ const Powers: React.FC = () => {
                             )}
 
                             <ActionButton
-                              id={`delete:${power.name}-${power.level}`}
+                              id={`delete:${power.long_name}-${power.level}`}
                               title="Remover"
                               onClick={() => handleConfirmRemove(power)}
-                              disabled={!power.included}
+                              disabled={!power.id}
                             >
                               <FiTrash2 />
                             </ActionButton>
