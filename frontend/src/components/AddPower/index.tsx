@@ -119,7 +119,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
   const formRef = useRef<FormHandles>(null);
   const [power, setPower] = useState<IPower>({} as IPower);
   const [selectedType, setSelectedType] = useState<IType>({} as IType);
-  const [currentLevel, setCurrentLevel] = useState<string>('');
+  // const [currentLevel, setCurrentLevel] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
 
@@ -155,43 +155,27 @@ const AddPower: React.FC<DialogPropsEx> = ({
     return typeResult;
   }, []);
 
-  const getLevelLabel = useCallback((level, type) => {
-    if (level === undefined || Number(level) === 0 || type === 'combination') {
-      return '-';
-    }
-
-    const typesText = ['ritual', 'rituals', 'gift', 'routes'];
-    const levelLabels = [
+  const getLevelLabel = useCallback((level: number, type: string) => {
+    const typeWithLabel = ['ritual', 'rituals', 'gift', 'routes'];
+    const labels = [
+      '-',
       'Básico',
       'Intermediário',
       'Avançado',
-      'Mestre',
       'Ancião',
+      'Mestre',
+      'Matusalém',
     ];
-    let label = '';
 
-    if (typesText.includes(type)) {
-      if (Number(level) > 5) {
-        label = 'Ancião';
-      } else {
-        label = levelLabels[Number(level) - 1];
-      }
+    let label;
+    if (level === 0 || typeWithLabel.includes(type)) {
+      label = labels[level];
     } else {
-      label = `${level}`;
+      label = level;
     }
 
     return label;
   }, []);
-
-  const handleTypeSelectChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const newType = getTypeByLabel(event.target.value);
-      setCurrentLevel(getLevelLabel(power.level, newType.type));
-
-      setSelectedType(newType);
-    },
-    [getLevelLabel, getTypeByLabel, power.level],
-  );
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -301,6 +285,16 @@ const AddPower: React.FC<DialogPropsEx> = ({
     system,
   ]);
 
+  const handleTypeSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newType = getTypeByLabel(event.target.value);
+
+      setSelectedType(newType);
+      setHasChanges(true);
+    },
+    [getTypeByLabel],
+  );
+
   const handleShortNameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const changedValue = event.target.value;
@@ -389,7 +383,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
 
   useEffect(() => {
     setPower(selectedPower);
-    setCurrentLevel(getLevelLabel(selectedPower.level, selectedPower.type));
+    // setCurrentLevel(getLevelLabel(selectedPower.level, selectedPower.type));
   }, [getLevelLabel, selectedPower]);
 
   return (
@@ -452,7 +446,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
                 name="level"
                 id="level"
                 label="Nível"
-                defaultValue={currentLevel}
+                value={getLevelLabel(power.level, selectedType.type)}
                 InputProps={{ readOnly: true }}
                 align="center"
                 fullWidth
