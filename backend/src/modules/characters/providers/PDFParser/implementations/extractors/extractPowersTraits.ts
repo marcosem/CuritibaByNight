@@ -328,6 +328,9 @@ export default function extractPowersTraits(
           const newPower = myPower.level === 0;
           let isAPower = true;
 
+          let elderDiscipline = '';
+          let elderPower: CharacterTrait = {} as CharacterTrait;
+
           if (line.indexOf('(basic', powerIndex) >= 0) {
             myPower.level = myPower.level === 1 ? 2 : 1;
           } else if (line.indexOf('(int.', powerIndex) >= 0) {
@@ -335,9 +338,27 @@ export default function extractPowersTraits(
           } else if (line.indexOf('(adv.', powerIndex) >= 0) {
             myPower.level = 5;
           } else if (line.indexOf('(elder', powerIndex) >= 0) {
-            myPower.level = 6;
+            elderDiscipline = line.substring(
+              powerIndex + 1,
+              line.indexOf('(elder', powerIndex) - 1,
+            );
+            elderPower = {
+              trait: elderDiscipline,
+              level: 6,
+              type: 'powers',
+            } as CharacterTrait;
+            myPower.level = 5;
           } else if (line.indexOf('(master', powerIndex) >= 0) {
-            myPower.level = 7;
+            elderDiscipline = line.substring(
+              powerIndex + 1,
+              line.indexOf('(master', powerIndex) - 1,
+            );
+            elderPower = {
+              trait: elderDiscipline,
+              level: 7,
+              type: 'powers',
+            } as CharacterTrait;
+            myPower.level = 5;
           } else {
             isAPower = false;
           }
@@ -345,6 +366,8 @@ export default function extractPowersTraits(
           if (isAPower) {
             if (newPower) {
               currPowersList.push(myPower);
+            } else if (elderDiscipline !== '') {
+              currPowersList.push(elderPower);
             } else {
               currPowersList = currPowersList.map(disc =>
                 disc.trait === discipline ? myPower : disc,

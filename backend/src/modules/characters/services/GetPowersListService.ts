@@ -101,7 +101,8 @@ class GetPowersListService {
             myTrait.type === 'rituals' ||
             (!multiLevelCreatures.includes(myTrait.creature_type) &&
               myTrait.clan.indexOf('Ghoul') === -1) ||
-            myTrait.level === 0
+            myTrait.level === 0 ||
+            myTrait.level > 5
           ) {
             const newTrait = {
               long_name: myTrait.long_name,
