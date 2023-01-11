@@ -164,6 +164,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
       'Avançado',
       'Ancião',
       'Mestre',
+      'Ancestral',
       'Matusalém',
     ];
 

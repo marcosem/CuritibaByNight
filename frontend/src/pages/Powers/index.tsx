@@ -150,6 +150,7 @@ const Powers: React.FC = () => {
       'Avançado',
       'Ancião',
       'Mestre',
+      'Ancestral',
       'Matusalém',
     ];
 

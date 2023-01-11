@@ -16,7 +16,7 @@ interface IPowerResponse {
   id: string;
   long_name: string;
   short_name: string;
-  level: number | string;
+  level: number;
   type: string;
   origin?: string;
   requirements?: string;
@@ -30,7 +30,7 @@ interface IPower {
   id: string;
   long_name: string;
   short_name: string;
-  level: number | string;
+  level: number;
   type: string;
   origin: string;
   requirements: string;
@@ -78,27 +78,10 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
         // Discard all not included powers
         const validPowers = res.filter((power: IPowerResponse) => !!power.id);
 
-        const levelsMap = ['Básico', 'Intermediário', 'Avançado'];
         const validPowerTypes: string[] = [];
         const newArray: IPower[] = validPowers.map((power: IPowerResponse) => {
           if (validPowerTypes.indexOf(power.type) === -1) {
             validPowerTypes.push(power.type);
-          }
-
-          let level;
-          const powerLevel = Number(power.level);
-
-          switch (power.type) {
-            case 'rituals':
-              level = powerLevel <= 3 ? levelsMap[powerLevel - 1] : powerLevel;
-              break;
-            default:
-              if (powerLevel === 0) {
-                level = '';
-              } else {
-                level = powerLevel;
-              }
-              break;
           }
 
           let parsedDescription: string[] = [''];
@@ -118,7 +101,7 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
             id: power.id,
             long_name: power.long_name,
             short_name: power.short_name,
-            level,
+            level: Number(power.level),
             type: power.type,
             origin: power.origin || '',
             requirements: power.requirements || '',
@@ -200,28 +183,29 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
     return title;
   }, []);
 
-  const getLevelLabel = useCallback((level, type) => {
-    const levelsMap = [
+  const getLevelLabel = useCallback((level: number, type: string) => {
+    const typeWithLabel = ['ritual', 'rituals', 'gift', 'routes'];
+    const labels = [
+      '',
       'Básico',
       'Intermediário',
       'Avançado',
-      'Mestre',
       'Ancião',
+      'Mestre',
+      'Ancestral',
+      'Matusalém',
     ];
 
-    const typesWithLabels = ['rituals', 'ritual', 'gift', 'routes'];
-
-    let levelLabel;
-
+    let label;
     if (level === 0) {
-      levelLabel = '';
-    } else if (typesWithLabels.includes(type)) {
-      levelLabel = level <= 5 ? `(${levelsMap[level - 1]})` : level;
+      label = labels[level];
+    } else if (typeWithLabel.includes(type)) {
+      label = ` (${labels[level]})`;
     } else {
-      levelLabel = level;
+      label = ` x${level}`;
     }
 
-    return levelLabel;
+    return label;
   }, []);
 
   useEffect(() => {
@@ -250,8 +234,8 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
                   >
                     <h2>
                       {`${power.long_name}${
-                        power.level && power.level !== 0
-                          ? ` ${getLevelLabel(power.level, power.type)}`
+                        power.level !== 0
+                          ? `${getLevelLabel(power.level, power.type)}`
                           : ''
                       }`}
                     </h2>
