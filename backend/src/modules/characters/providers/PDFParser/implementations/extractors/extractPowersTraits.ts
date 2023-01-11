@@ -359,6 +359,28 @@ export default function extractPowersTraits(
               type: 'powers',
             } as CharacterTrait;
             myPower.level = 5;
+          } else if (line.indexOf('(asc.', powerIndex) >= 0) {
+            elderDiscipline = line.substring(
+              powerIndex + 1,
+              line.indexOf('(asc.', powerIndex) - 1,
+            );
+            elderPower = {
+              trait: elderDiscipline,
+              level: 8,
+              type: 'powers',
+            } as CharacterTrait;
+            myPower.level = 5;
+          } else if (line.indexOf('(meth.', powerIndex) >= 0) {
+            elderDiscipline = line.substring(
+              powerIndex + 1,
+              line.indexOf('(meth.', powerIndex) - 1,
+            );
+            elderPower = {
+              trait: elderDiscipline,
+              level: 9,
+              type: 'powers',
+            } as CharacterTrait;
+            myPower.level = 5;
           } else {
             isAPower = false;
           }
