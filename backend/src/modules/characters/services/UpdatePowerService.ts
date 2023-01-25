@@ -9,14 +9,14 @@ interface IRequestDTO {
   power_id: string;
   long_name: string;
   short_name: string;
-  level: number;
-  type: string;
-  origin: string;
-  requirements: string;
+  level?: number;
+  type?: string;
+  origin?: string;
+  requirements?: string;
   description: string;
   system: string;
-  cost: number;
-  source: string;
+  cost?: number;
+  source?: string;
 }
 
 @injectable()
@@ -70,9 +70,7 @@ class UpdatePowerService {
       throw new AppError('Power level does not match', 400);
     }
 
-    // power.long_name = long_name;
     power.short_name = short_name;
-    // power.level = level;
     power.type = type;
     power.origin = origin;
     power.requirements = requirements;

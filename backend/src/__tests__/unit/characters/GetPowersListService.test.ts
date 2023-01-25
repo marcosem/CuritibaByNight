@@ -208,7 +208,7 @@ describe('GetPowersList', () => {
     expect(validPower).toMatchObject(templatevalidPower);
   });
 
-  it('Should allow to tet the list of powers of his own character', async () => {
+  it('Should allow to get the list of powers of his own character', async () => {
     const nonSTUser = await fakeUsersRepository.create({
       name: 'A User',
       email: 'notSTuser@user.com',

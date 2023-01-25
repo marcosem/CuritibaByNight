@@ -1,6 +1,5 @@
 import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
-// import Power from '@modules/characters/infra/typeorm/entities/Power';
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
@@ -10,7 +9,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class UpdatePowerService {
+class RemovePowerService {
   constructor(
     @inject('PowersRepository')
     private powersRepository: IPowersRepository,
@@ -43,4 +42,4 @@ class UpdatePowerService {
   }
 }
 
-export default UpdatePowerService;
+export default RemovePowerService;
