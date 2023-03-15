@@ -61,9 +61,6 @@
       "last 1 safari version"
     ]
   },
-  "resolutions": {
-    "terser": "3.14.1"
-  },
   "devDependencies": {
     "@types/downloadjs": "^1.4.2",
     "@types/js-cookie": "^2.2.6",
