@@ -114,12 +114,48 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
           return newPower;
         });
 
+        const invalidPowers = res.filter((power: IPowerResponse) => !power.id);
+
+        const newArrayInvalid: IPower[] = invalidPowers.map(
+          (power: IPowerResponse, index: number) => {
+            const invalidPowerType =
+              power.type === 'rituals' ? 'ritual' : 'other';
+
+            if (validPowerTypes.indexOf(invalidPowerType) === -1) {
+              validPowerTypes.push(invalidPowerType);
+            }
+
+            const newPower: IPower = {
+              id: `InvalidPower-${index}`,
+              long_name: power.long_name,
+              short_name: power.short_name,
+              level: Number(power.level),
+              type: invalidPowerType,
+              origin: '',
+              requirements: '',
+              description: [
+                'PODER NÃO CADASTRADO',
+                'Isto pode ocorrer por 2 motivos:',
+                '1 - O narrador ainda não cadastrou o seu poder.',
+                '2 - O poder está com o nome incorreto, talvez faltando um ponto depois de um "vs.", ou com a gramática incorreta.',
+                '',
+                'Solicite ao narrador para incluir/corrigir este poder!',
+              ],
+              system: [],
+              cost: 0,
+              source: '',
+            };
+
+            return newPower;
+          },
+        );
+
         const newPowerTypes = powersTypes.filter(ptype =>
           validPowerTypes.includes(ptype),
         );
 
         setPowersTypesFound(newPowerTypes);
-        setPowersList(newArray);
+        setPowersList([...newArray, ...newArrayInvalid]);
       });
     } catch (error) {
       const parsedError: any = error;
