@@ -61,6 +61,9 @@
       "last 1 safari version"
     ]
   },
+  "resolutions": {
+    "terser-webpack-plugin": "4.2.3"
+  },
   "devDependencies": {
     "@types/downloadjs": "^1.4.2",
     "@types/js-cookie": "^2.2.6",
