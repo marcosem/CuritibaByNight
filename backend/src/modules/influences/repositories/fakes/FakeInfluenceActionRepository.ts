@@ -30,11 +30,11 @@ class FakeInfluenceActionRepository implements IInfluenceActionRepository {
     Object.assign(influenceAction, {
       id: v4(),
       action_period,
-      background: background === '' ? null : background,
+      background,
       background_level,
       influence,
       influence_level,
-      ability: ability === '' ? null : ability,
+      ability,
       ability_level,
       endeavor,
       character_id,
@@ -65,11 +65,11 @@ class FakeInfluenceActionRepository implements IInfluenceActionRepository {
   public async findById(
     action_id: string,
   ): Promise<InfluenceAction | undefined> {
-    const findAction = this.influenceActions.find(
+    const actionFound = this.influenceActions.find(
       action => action.id === action_id,
     );
 
-    return findAction;
+    return actionFound;
   }
 
   public async listAll(pending_only?: boolean): Promise<InfluenceAction[]> {
