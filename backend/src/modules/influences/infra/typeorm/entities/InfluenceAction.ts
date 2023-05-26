@@ -11,7 +11,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-Entity('influence_actions');
+@Entity('influence_actions')
 class InfluenceAction {
   @PrimaryGeneratedColumn('uuid')
   id: string;

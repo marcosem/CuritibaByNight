@@ -3,7 +3,7 @@ import InfluenceAction from '@modules/influences/infra/typeorm/entities/Influenc
 import ICreateInfluenceActionDTO from '@modules/influences/dtos/ICreateInfluenceActionDTO';
 import IInfluenceActionsRepository from '@modules/influences/repositories/IInfluenceActionsRepository';
 
-class InfluenceActionRepository implements IInfluenceActionsRepository {
+class InfluenceActionsRepository implements IInfluenceActionsRepository {
   private ormRepository: Repository<InfluenceAction>;
 
   constructor() {
@@ -146,4 +146,4 @@ class InfluenceActionRepository implements IInfluenceActionsRepository {
   }
 }
 
-export default InfluenceActionRepository;
+export default InfluenceActionsRepository;

@@ -4,7 +4,7 @@ import IInfluenceActionsRepository from '@modules/influences/repositories/IInflu
 
 import { v4 } from 'uuid';
 
-class FakeInfluenceActionRepository implements IInfluenceActionsRepository {
+class FakeInfluenceActionsRepository implements IInfluenceActionsRepository {
   private influenceActions: InfluenceAction[] = [];
 
   public async create({
@@ -151,4 +151,4 @@ class FakeInfluenceActionRepository implements IInfluenceActionsRepository {
   }
 }
 
-export default FakeInfluenceActionRepository;
+export default FakeInfluenceActionsRepository;
