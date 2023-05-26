@@ -11,7 +11,7 @@ import {
   ICharactersInfluencesDTO,
 } from '@modules/characters/dtos/ICharactersInfluencesDTO';
 import { isAfter } from 'date-fns';
-import getInfluenceAbility from '../utils/getInfluenceAbility';
+import getInfluenceAbility from '@modules/influences/utils/getInfluenceAbility';
 
 @injectable()
 class GetCharactersInfluencesService {

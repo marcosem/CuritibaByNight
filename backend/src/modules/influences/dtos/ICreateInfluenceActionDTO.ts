@@ -1,7 +1,6 @@
 export default interface ICreateInfluenceActionDTO {
   action_period: string;
-  background?: string;
-  background_level?: number;
+  backgrounds?: string;
   influence: string;
   influence_level: number;
   ability?: string;
@@ -14,5 +13,6 @@ export default interface ICreateInfluenceActionDTO {
   action_force?: number;
   status?: string;
   st_reply?: string;
+  news?: string;
   result?: string;
 }

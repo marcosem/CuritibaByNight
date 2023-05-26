@@ -20,14 +20,9 @@ export default class InfluenceActions1685036681486
             isNullable: false,
           },
           {
-            name: 'background',
+            name: 'backgrounds',
             type: 'varchar',
             isNullable: true,
-          },
-          {
-            name: 'background_level',
-            type: 'numeric',
-            default: -1,
           },
           {
             name: 'influence',
@@ -83,17 +78,21 @@ export default class InfluenceActions1685036681486
             name: 'status',
             type: 'enum',
             enum: ['sent', 'read', 'replied'],
-            default: "'sent",
+            default: "'sent'",
           },
           {
             name: 'st_reply',
             type: 'text',
           },
           {
+            name: 'news',
+            type: 'text',
+          },
+          {
             name: 'result',
             type: 'enum',
             enum: ['success', 'partial', 'fail', 'not evaluated'],
-            default: "'not evaluated",
+            default: "'not evaluated'",
           },
           {
             name: 'created_at',

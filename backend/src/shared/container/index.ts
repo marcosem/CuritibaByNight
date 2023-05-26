@@ -40,8 +40,8 @@ import LocationsTraitsRepository from '@modules/locations/infra/typeorm/reposito
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
 import PowersRepository from '@modules/characters/infra/typeorm/repositories/PowersRepository';
 
-import IInfluenceActionRepository from '@modules/influences/repositories/IInfluenceActionRepository';
-import InfluenceActionRepository from '@modules/influences/infra/typeorm/repositories/InfluenceActionRepository';
+import IInfluenceActionsRepository from '@modules/influences/repositories/IInfluenceActionsRepository';
+import InfluenceActionsRepository from '@modules/influences/infra/typeorm/repositories/InfluenceActionsRepository';
 
 // Register a container with User Repositoy in the IUsersRepository format
 // Register Singleton register a single instance
@@ -105,9 +105,9 @@ container.registerSingleton<IPowersRepository>(
   PowersRepository,
 );
 
-container.registerSingleton<IInfluenceActionRepository>(
-  'InfluenceActionRepository',
-  InfluenceActionRepository,
+container.registerSingleton<IInfluenceActionsRepository>(
+  'InfluenceActionsRepository',
+  InfluenceActionsRepository,
 );
 
 // for another repository, just duplicate

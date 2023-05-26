@@ -1,7 +1,7 @@
 import InfluenceAction from '@modules/influences/infra/typeorm/entities/InfluenceAction';
 import ICreateInfluenceActionDTO from '@modules/influences/dtos/ICreateInfluenceActionDTO';
 
-export default interface IInfluenceActionRepository {
+export default interface IInfluenceActionsRepository {
   create(data: ICreateInfluenceActionDTO): Promise<InfluenceAction>;
   update(influenceAction: InfluenceAction): Promise<InfluenceAction>;
   findById(action_id: string): Promise<InfluenceAction | undefined>;

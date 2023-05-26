@@ -4,6 +4,7 @@ import userCharactersRouter from '@modules/characters/infra/http/routes/userChar
 import charactersRouter from '@modules/characters/infra/http/routes/characters.routes';
 import domainRouter from '@modules/characters/infra/http/routes/domain.routes';
 import powersRouter from '@modules/characters/infra/http/routes/powers.routes';
+import influenceActionsRouter from '@modules/influences/infra/http/routes/influenceActions.routes';
 import locationsRouter from '@modules/locations/infra/http/routes/locations.routes';
 import locationsCharactersRouter from '@modules/locations/infra/http/routes/locationsCharacters.routes';
 import addonsRouter from '@modules/locations/infra/http/routes/addons.routes';
@@ -26,6 +27,7 @@ routes.use('/pictures', express.static(locationMulter));
 routes.use('/users', usersRouter);
 routes.use('/character', userCharactersRouter);
 routes.use('/characters', charactersRouter);
+routes.use('/influenceactions', influenceActionsRouter);
 routes.use('/powers', powersRouter);
 routes.use('/domain', domainRouter);
 routes.use('/locations', locationsRouter);

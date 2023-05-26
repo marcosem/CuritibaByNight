@@ -1,16 +1,15 @@
 import InfluenceAction from '@modules/influences/infra/typeorm/entities/InfluenceAction';
 import ICreateInfluenceActionDTO from '@modules/influences/dtos/ICreateInfluenceActionDTO';
-import IInfluenceActionRepository from '@modules/influences/repositories/IInfluenceActionRepository';
+import IInfluenceActionsRepository from '@modules/influences/repositories/IInfluenceActionsRepository';
 
 import { v4 } from 'uuid';
 
-class FakeInfluenceActionRepository implements IInfluenceActionRepository {
+class FakeInfluenceActionRepository implements IInfluenceActionsRepository {
   private influenceActions: InfluenceAction[] = [];
 
   public async create({
     action_period,
-    background = '',
-    background_level = -1,
+    backgrounds = '',
     influence,
     influence_level = 0,
     ability = '',
@@ -23,6 +22,7 @@ class FakeInfluenceActionRepository implements IInfluenceActionRepository {
     action_force = 0,
     status = 'sent',
     st_reply = '',
+    news = '',
     result = 'not evaluated',
   }: ICreateInfluenceActionDTO): Promise<InfluenceAction> {
     const influenceAction = new InfluenceAction();
@@ -30,8 +30,7 @@ class FakeInfluenceActionRepository implements IInfluenceActionRepository {
     Object.assign(influenceAction, {
       id: v4(),
       action_period,
-      background,
-      background_level,
+      backgrounds,
       influence,
       influence_level,
       ability,
@@ -44,6 +43,7 @@ class FakeInfluenceActionRepository implements IInfluenceActionRepository {
       action_force,
       status,
       st_reply,
+      news,
       result,
     });
 

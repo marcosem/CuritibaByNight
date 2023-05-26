@@ -1,9 +1,9 @@
 import { getRepository, Repository, Not } from 'typeorm';
 import InfluenceAction from '@modules/influences/infra/typeorm/entities/InfluenceAction';
 import ICreateInfluenceActionDTO from '@modules/influences/dtos/ICreateInfluenceActionDTO';
-import IInfluenceActionRepository from '@modules/influences/repositories/IInfluenceActionRepository';
+import IInfluenceActionsRepository from '@modules/influences/repositories/IInfluenceActionsRepository';
 
-class InfluenceActionRepository implements IInfluenceActionRepository {
+class InfluenceActionRepository implements IInfluenceActionsRepository {
   private ormRepository: Repository<InfluenceAction>;
 
   constructor() {
@@ -12,8 +12,7 @@ class InfluenceActionRepository implements IInfluenceActionRepository {
 
   public async create({
     action_period,
-    background = '',
-    background_level = -1,
+    backgrounds = '',
     influence,
     influence_level = 0,
     ability = '',
@@ -26,12 +25,12 @@ class InfluenceActionRepository implements IInfluenceActionRepository {
     action_force = 0,
     status = 'sent',
     st_reply = '',
+    news = '',
     result = 'not evaluated',
   }: ICreateInfluenceActionDTO): Promise<InfluenceAction> {
     const influenceAction = this.ormRepository.create({
       action_period,
-      background,
-      background_level,
+      backgrounds,
       influence,
       influence_level,
       ability,
@@ -44,6 +43,7 @@ class InfluenceActionRepository implements IInfluenceActionRepository {
       action_force,
       status,
       st_reply,
+      news,
       result,
     });
 
@@ -72,6 +72,7 @@ class InfluenceActionRepository implements IInfluenceActionRepository {
   ): Promise<InfluenceAction | undefined> {
     const actionFound = await this.ormRepository.findOne({
       where: { id: action_id },
+      relations: ['characterId', 'ownerId', 'storytellerId'],
     });
 
     // if not found, return undefined
@@ -86,6 +87,7 @@ class InfluenceActionRepository implements IInfluenceActionRepository {
 
     const actionList = await this.ormRepository.find({
       where,
+      relations: ['characterId', 'ownerId', 'storytellerId'],
       order: { action_period: 'DESC', influence: 'ASC', created_at: 'ASC' },
     });
 
@@ -104,6 +106,7 @@ class InfluenceActionRepository implements IInfluenceActionRepository {
 
     const actionList = await this.ormRepository.find({
       where,
+      relations: ['characterId', 'ownerId', 'storytellerId'],
       order: { influence: 'ASC', created_at: 'ASC' },
     });
 
@@ -125,6 +128,7 @@ class InfluenceActionRepository implements IInfluenceActionRepository {
 
     const actionList = await this.ormRepository.find({
       where,
+      relations: ['characterId', 'ownerId', 'storytellerId'],
       order: { influence: 'ASC', created_at: 'ASC' },
     });
 

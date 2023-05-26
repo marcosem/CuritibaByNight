@@ -20,10 +20,7 @@ class InfluenceAction {
   action_period: string;
 
   @Column()
-  background?: string | null;
-
-  @Column()
-  background_level?: number;
+  backgrounds?: string;
 
   @Column()
   influence: string;
@@ -72,6 +69,9 @@ class InfluenceAction {
 
   @Column()
   st_reply?: string;
+
+  @Column()
+  news?: string;
 
   @Column()
   result?: string;
