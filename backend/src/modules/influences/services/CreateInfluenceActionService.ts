@@ -102,7 +102,7 @@ class CreateInfluenceActionService {
     // Get Ability level
     let abilityLevel: number;
     let abilityUsed: string;
-    if (ability) {
+    if (ability && endeavor !== 'defend') {
       abilityUsed = ability;
       abilityLevel = ability_level || 0;
     } else {
@@ -118,10 +118,13 @@ class CreateInfluenceActionService {
           if (traitA.level < traitB.level) return 1;
           return 0;
         });
-      }
 
-      abilityUsed = infAbility;
-      abilityLevel = Number(abilitiesTraits[0].level);
+        abilityUsed = abilitiesTraits[0].trait;
+        abilityLevel = Number(abilitiesTraits[0].level);
+      } else {
+        abilityUsed = infAbility;
+        abilityLevel = 0;
+      }
     }
 
     // Get Morality Level
