@@ -1,4 +1,5 @@
 export default interface ICreateInfluenceActionDTO {
+  title: string;
   action_period: string;
   backgrounds?: string;
   influence: string;

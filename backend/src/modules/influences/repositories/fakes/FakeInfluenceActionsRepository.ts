@@ -8,6 +8,7 @@ class FakeInfluenceActionsRepository implements IInfluenceActionsRepository {
   private influenceActions: InfluenceAction[] = [];
 
   public async create({
+    title,
     action_period,
     backgrounds = '',
     influence,
@@ -29,6 +30,7 @@ class FakeInfluenceActionsRepository implements IInfluenceActionsRepository {
 
     Object.assign(influenceAction, {
       id: v4(),
+      title,
       action_period,
       backgrounds,
       influence,

@@ -11,6 +11,7 @@ class InfluenceActionsRepository implements IInfluenceActionsRepository {
   }
 
   public async create({
+    title,
     action_period,
     backgrounds = '',
     influence,
@@ -29,6 +30,7 @@ class InfluenceActionsRepository implements IInfluenceActionsRepository {
     result = 'not evaluated',
   }: ICreateInfluenceActionDTO): Promise<InfluenceAction> {
     const influenceAction = this.ormRepository.create({
+      title,
       action_period,
       backgrounds,
       influence,

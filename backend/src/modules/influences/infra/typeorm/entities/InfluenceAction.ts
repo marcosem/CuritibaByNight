@@ -17,6 +17,9 @@ class InfluenceAction {
   id: string;
 
   @Column()
+  title: string;
+
+  @Column()
   action_period: string;
 
   @Column()

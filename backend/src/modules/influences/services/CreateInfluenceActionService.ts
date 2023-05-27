@@ -11,6 +11,7 @@ import { isAfter } from 'date-fns';
 
 interface IRequestDTO {
   user_id: string;
+  title: string;
   action_period: string;
   backgrounds?: string;
   influence: string;
@@ -38,6 +39,7 @@ class CreateInfluenceActionService {
 
   public async execute({
     user_id,
+    title,
     action_period,
     backgrounds,
     influence,
@@ -169,6 +171,7 @@ class CreateInfluenceActionService {
       influence_level * (endeavor === 'defend' ? 2 : 1);
 
     const influenceAction = await this.influenceActionsRepository.create({
+      title,
       action_period,
       backgrounds,
       influence,
