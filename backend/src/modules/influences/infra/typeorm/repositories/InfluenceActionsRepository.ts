@@ -83,9 +83,11 @@ class InfluenceActionsRepository implements IInfluenceActionsRepository {
 
   public async listAll(pending_only?: boolean): Promise<InfluenceAction[]> {
     const status = pending_only ? Not('replied') : undefined;
-    const where = {
-      status,
-    };
+    const where = status
+      ? {
+          status,
+        }
+      : undefined;
 
     const actionList = await this.ormRepository.find({
       where,
@@ -100,11 +102,16 @@ class InfluenceActionsRepository implements IInfluenceActionsRepository {
     action_period: string,
     pending_only?: boolean,
   ): Promise<InfluenceAction[]> {
-    const status = pending_only ? Not('replied') : undefined;
-    const where = {
-      action_period,
-      status,
+    type Where = {
+      status?: unknown;
+      action_period: string;
     };
+
+    const status = pending_only ? Not('replied') : undefined;
+
+    const where: Where = { action_period };
+
+    if (status) where.status = status;
 
     const actionList = await this.ormRepository.find({
       where,
@@ -120,13 +127,20 @@ class InfluenceActionsRepository implements IInfluenceActionsRepository {
     action_period?: string,
     pending_only?: boolean,
   ): Promise<InfluenceAction[]> {
+    type Where = {
+      character_id: string;
+      status?: unknown;
+      action_period?: string;
+    };
+
     const status = pending_only ? Not('replied') : undefined;
 
-    const where = {
+    const where: Where = {
       character_id: char_id,
-      action_period,
-      status,
     };
+
+    if (status) where.status = status;
+    if (action_period) where.action_period = action_period;
 
     const actionList = await this.ormRepository.find({
       where,

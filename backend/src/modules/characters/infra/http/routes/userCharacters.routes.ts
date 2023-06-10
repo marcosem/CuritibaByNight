@@ -29,15 +29,6 @@ userCharactersRouter.post(
   uploadSheet.single('sheet'),
   userCharactersController.create,
 );
-/*
-  celebrate({
-    [Segments.BODY]: {
-      player_id: Joi.string().uuid().optional(),
-      is_npc: Joi.boolean().default(false).optional(),
-      regnant_id: Joi.string().uuid().optional(),
-    },
-  }),
-*/
 
 userCharactersRouter.patch(
   '/update',
@@ -45,18 +36,6 @@ userCharactersRouter.patch(
   uploadSheet.single('sheet'),
   userCharactersController.update,
 );
-/*
-  celebrate({
-    [Segments.BODY]: {
-      body: Joi.object({
-        character_id: Joi.string().uuid().required(),
-        situation: Joi.string().optional(),
-        comments: Joi.string().optional(),
-        is_npc: Joi.boolean().default(false).optional(),
-      }).required(),
-    },
-  }),
-*/
 
 userCharactersRouter.delete(
   '/remove',

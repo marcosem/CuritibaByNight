@@ -8,6 +8,7 @@ const influenceActionsRouter = Router();
 const influenceActionsController = new InfluenceActionsController();
 
 // Influence Actions routes
+// Create a new influence action
 influenceActionsRouter.post(
   '/add',
   ensureAuthenticated,
@@ -53,6 +54,19 @@ influenceActionsRouter.post(
   influenceActionsController.create,
 );
 
+// Get an influence action by its id
+influenceActionsRouter.get(
+  '/:id',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  influenceActionsController.show,
+);
+
+// Update an influence action - user level
 influenceActionsRouter.patch(
   '/update',
   ensureAuthenticated,
@@ -97,6 +111,33 @@ influenceActionsRouter.patch(
     },
   }),
   influenceActionsController.update,
+);
+
+// List all influence action - depending on user access permission
+influenceActionsRouter.post(
+  '/list',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      char_id: Joi.string().uuid().allow(null).optional(),
+      action_period: Joi.string().allow(null).optional(),
+      pending_only: Joi.boolean().optional(),
+    },
+  }),
+  influenceActionsController.index,
+);
+
+// Delete an influence action
+influenceActionsRouter.delete(
+  '/delete',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      id: Joi.string().uuid().required(),
+      character_id: Joi.string().uuid().optional(),
+    },
+  }),
+  influenceActionsController.delete,
 );
 
 export default influenceActionsRouter;
