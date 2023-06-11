@@ -3,9 +3,11 @@ import { celebrate, Segments, Joi } from 'celebrate';
 // import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import InfluenceActionsController from '@modules/influences/infra/http/controllers/InfluenceActionsController';
+import InfluenceActionsReviewsController from '@modules/influences/infra/http/controllers/InfluenceActionsReviewsController';
 
 const influenceActionsRouter = Router();
 const influenceActionsController = new InfluenceActionsController();
+const influenceActionsReviewsController = new InfluenceActionsReviewsController();
 
 // Influence Actions routes
 // Create a new influence action
@@ -138,6 +140,37 @@ influenceActionsRouter.delete(
     },
   }),
   influenceActionsController.delete,
+);
+
+// Update an influence action - user level
+influenceActionsRouter.patch(
+  '/review',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      id: Joi.string().uuid().required(),
+      st_reply: Joi.string().allow(null, '').required(),
+      result: Joi.valid(
+        'success',
+        'partial',
+        'fail',
+        'not evaluated',
+      ).required(),
+      news: Joi.string().allow(null, '').optional(),
+    },
+  }),
+  influenceActionsReviewsController.update,
+);
+
+influenceActionsRouter.get(
+  '/read/:id',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  influenceActionsReviewsController.show,
 );
 
 export default influenceActionsRouter;
