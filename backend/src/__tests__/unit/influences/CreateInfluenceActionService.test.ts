@@ -842,7 +842,7 @@ describe('CreateInfluenceAction', () => {
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
-  it('should not allow a user to create an influence action with an non existant action owner', async () => {
+  it('should not allow a user to create an influence action with a non existant action owner', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',

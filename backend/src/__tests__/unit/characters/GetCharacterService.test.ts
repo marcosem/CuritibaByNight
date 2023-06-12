@@ -101,7 +101,7 @@ describe('GetCharacter', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should not be able get an non existant retainer character sheet', async () => {
+  it('Should not be able get a non existant retainer character sheet', async () => {
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
