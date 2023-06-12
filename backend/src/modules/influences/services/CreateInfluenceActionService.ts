@@ -18,7 +18,7 @@ interface IRequestDTO {
   influence_level: number;
   ability?: string;
   ability_level?: number;
-  endeavor?: string;
+  endeavor: string;
   character_id: string;
   action_owner_id?: string;
   action?: string;
@@ -117,8 +117,7 @@ class CreateInfluenceActionService {
       if (abilitiesTraits.length > 0) {
         abilitiesTraits.sort((traitA, traitB) => {
           if (traitA.level > traitB.level) return -1;
-          if (traitA.level < traitB.level) return 1;
-          return 0;
+          return 1;
         });
 
         abilityUsed = abilitiesTraits[0].trait;

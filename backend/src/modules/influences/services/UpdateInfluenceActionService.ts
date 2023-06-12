@@ -193,6 +193,9 @@ class UpdateInfluenceActionService {
     infAction.ability_level = abilityLevel;
     if (endeavor) infAction.endeavor = endeavor;
     infAction.character_id = character_id;
+    if (actionOwnerId !== infAction.action_owner_id) {
+      infAction.ownerId = undefined;
+    }
     infAction.action_owner_id = actionOwnerId;
     infAction.action = action;
     infAction.action_force = actionForce;
