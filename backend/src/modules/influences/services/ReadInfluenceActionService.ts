@@ -11,7 +11,7 @@ interface IRequestDTO {
 }
 
 @injectable()
-class ReviewInfluenceActionService {
+class ReadInfluenceActionService {
   constructor(
     @inject('InfluenceActionsRepository')
     private influenceActionsRepository: IInfluenceActionsRepository,
@@ -54,4 +54,4 @@ class ReviewInfluenceActionService {
   }
 }
 
-export default ReviewInfluenceActionService;
+export default ReadInfluenceActionService;
