@@ -8,7 +8,6 @@ import ICharactersRepository from '@modules/characters/repositories/ICharactersR
 interface IRequestDTO {
   user_id: string;
   action_id: string;
-  char_id?: string;
 }
 
 @injectable()
@@ -22,21 +21,12 @@ class RemoveInfluenceActionService {
     private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute({
-    user_id,
-    action_id,
-    char_id = '',
-  }: IRequestDTO): Promise<void> {
+  public async execute({ user_id, action_id }: IRequestDTO): Promise<void> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError(
         'Only authenticated user can remove an influence action',
-        401,
-      );
-    } else if (char_id === '' && !user.storyteller) {
-      throw new AppError(
-        'Only authenticated Storytellers can remove an influence action for any character',
         401,
       );
     }
@@ -54,7 +44,9 @@ class RemoveInfluenceActionService {
     }
 
     if (!user.storyteller) {
-      const char = await this.charactersRepository.findById(char_id);
+      const char = await this.charactersRepository.findById(
+        infAction.character_id,
+      );
 
       if (!char) {
         throw new AppError('Character not found', 400);
@@ -62,7 +54,7 @@ class RemoveInfluenceActionService {
 
       if (user_id !== char.user_id) {
         throw new AppError(
-          'Only characters owners can remove an influence action of their character',
+          'Only authenticated Storytellers can remove an influence action for any character',
           401,
         );
       }

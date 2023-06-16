@@ -124,7 +124,7 @@ export default class InfluenceActionsController {
   }
 
   public async delete(req: Request, res: Response): Promise<Response> {
-    const { id, character_id } = req.body;
+    const { id } = req.body;
 
     const removeInfluenceActionService = container.resolve(
       RemoveInfluenceActionService,
@@ -133,7 +133,6 @@ export default class InfluenceActionsController {
     const inputData = {
       user_id: req.user.id,
       action_id: id,
-      char_id: character_id,
     };
 
     await removeInfluenceActionService.execute(inputData);

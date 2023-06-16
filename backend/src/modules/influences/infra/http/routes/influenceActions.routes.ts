@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Segments, Joi } from 'celebrate';
-// import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
+import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureSTAuthenticated';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import InfluenceActionsController from '@modules/influences/infra/http/controllers/InfluenceActionsController';
 import InfluenceActionsReviewsController from '@modules/influences/infra/http/controllers/InfluenceActionsReviewsController';
@@ -136,7 +136,6 @@ influenceActionsRouter.delete(
   celebrate({
     [Segments.BODY]: {
       id: Joi.string().uuid().required(),
-      character_id: Joi.string().uuid().optional(),
     },
   }),
   influenceActionsController.delete,
@@ -145,7 +144,7 @@ influenceActionsRouter.delete(
 // Update an influence action - user level
 influenceActionsRouter.patch(
   '/review',
-  ensureAuthenticated,
+  ensureSTAuthenticated,
   celebrate({
     [Segments.BODY]: {
       id: Joi.string().uuid().required(),
@@ -164,7 +163,7 @@ influenceActionsRouter.patch(
 
 influenceActionsRouter.get(
   '/read/:id',
-  ensureAuthenticated,
+  ensureSTAuthenticated,
   celebrate({
     [Segments.PARAMS]: {
       id: Joi.string().uuid().required(),
