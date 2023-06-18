@@ -75,7 +75,11 @@ class CreateInfluenceActionService {
 
     // Find action owner
     let actionOwnerId: string;
-    if (action_owner_id && action_owner_id !== character_id) {
+    if (
+      action_owner_id &&
+      action_owner_id !== character_id &&
+      endeavor !== 'defend'
+    ) {
       const actionChar = await this.charactersRepository.findById(
         action_owner_id,
       );
@@ -172,7 +176,7 @@ class CreateInfluenceActionService {
     const influenceAction = await this.influenceActionsRepository.create({
       title,
       action_period,
-      backgrounds,
+      backgrounds: endeavor === 'defend' ? '' : backgrounds,
       influence,
       influence_level,
       ability: abilityUsed,
@@ -180,7 +184,7 @@ class CreateInfluenceActionService {
       endeavor,
       character_id,
       action_owner_id: actionOwnerId,
-      action,
+      action: endeavor === 'defend' ? '' : action,
       action_force: actionForce,
       status: 'sent',
       result: 'not evaluated',

@@ -2,6 +2,9 @@ import 'reflect-metadata';
 import AppError from '@shared/errors/AppError';
 
 import InfluenceAction from '@modules/influences/infra/typeorm/entities/InfluenceAction';
+import User from '@modules/users/infra/typeorm/entities/User';
+import Character from '@modules/characters/infra/typeorm/entities/Character';
+
 import FakeInfluenceActionsRepository from '@modules/influences/repositories/fakes/FakeInfluenceActionsRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
@@ -16,8 +19,11 @@ let fakeUsersRepository: FakeUsersRepository;
 
 let createInfluenceAction: CreateInfluenceActionService;
 
+let user: User;
+let char: Character;
+
 describe('CreateInfluenceAction', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     fakeInfluenceActionsRepository = new FakeInfluenceActionsRepository();
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
@@ -29,24 +35,24 @@ describe('CreateInfluenceAction', () => {
       fakeCharactersTraitsRepository,
       fakeUsersRepository,
     );
-  });
 
-  it('Should be able to create an influence action', async () => {
-    const user = await fakeUsersRepository.create({
+    user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
       password: '123456',
       storyteller: false,
     });
 
-    const char = await fakeCharactersRepository.create({
+    char = await fakeCharactersRepository.create({
       user_id: user.id,
       name: 'Dracula',
       experience: 666,
       file: 'dracula.pdf',
       npc: false,
     });
+  });
 
+  it('Should be able to create an influence action', async () => {
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Humanity',
@@ -99,21 +105,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action for defense', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Humanity',
@@ -172,7 +163,7 @@ describe('CreateInfluenceAction', () => {
       id: expect.any(String),
       title: 'Action Title',
       action_period: '2023-06',
-      backgrounds: 'Resources x5',
+      backgrounds: '',
       influence: 'Occult',
       influence_level: 3,
       ability: 'Occult',
@@ -180,7 +171,7 @@ describe('CreateInfluenceAction', () => {
       endeavor: 'defend',
       character_id: char.id,
       action_owner_id: char.id,
-      action: 'Defend action',
+      action: '',
       action_force: 13,
       status: 'sent',
       result: 'not evaluated',
@@ -190,21 +181,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action for defense without key ability', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Humanity',
@@ -233,7 +209,7 @@ describe('CreateInfluenceAction', () => {
       id: expect.any(String),
       title: 'Action Title',
       action_period: '2023-06',
-      backgrounds: 'Resources x5',
+      backgrounds: '',
       influence: 'Occult',
       influence_level: 3,
       ability: 'Occult',
@@ -241,7 +217,7 @@ describe('CreateInfluenceAction', () => {
       endeavor: 'defend',
       character_id: char.id,
       action_owner_id: char.id,
-      action: 'Defend action',
+      action: '',
       action_force: 8,
       status: 'sent',
       result: 'not evaluated',
@@ -251,21 +227,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with no ability level', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Humanity',
@@ -312,21 +273,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with no ability', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Humanity',
@@ -373,21 +319,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with no morality', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Occult',
@@ -434,21 +365,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with morality other than humanity (lower than 4)', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Path of Typhon',
@@ -501,21 +417,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with morality other than humanity (higher than 3)', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Path of Typhon',
@@ -568,21 +469,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with new morality rules', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Humanity',
@@ -636,21 +522,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with new morality rules but level 1', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await fakeCharactersTraitsRepository.createList([
       {
         trait: 'Morality: Humanity',
@@ -704,21 +575,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('Should be able to create an influence action with a retainer acting', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     const charRetainer = await fakeCharactersRepository.create({
       name: 'Igor',
       experience: 20,
@@ -793,13 +649,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('should not allow non existant characters to create an influence action', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
     await expect(
       createInfluenceAction.execute({
         user_id: user.id,
@@ -814,14 +663,7 @@ describe('CreateInfluenceAction', () => {
   });
 
   it('should not allow a user to create an influence action for a character other than his own', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
+    const otherChar = await fakeCharactersRepository.create({
       user_id: 'I am not the owner',
       name: 'Dracula',
       experience: 666,
@@ -837,27 +679,12 @@ describe('CreateInfluenceAction', () => {
         influence: 'Does not matter',
         influence_level: 0,
         endeavor: 'Does not matter',
-        character_id: char.id,
+        character_id: otherChar.id,
       }),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
   it('should not allow a user to create an influence action with a non existant action owner', async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     await expect(
       createInfluenceAction.execute({
         user_id: user.id,
@@ -873,21 +700,6 @@ describe('CreateInfluenceAction', () => {
   });
 
   it("should not allow a user to create an influence action with action owner that is not his character's retainer", async () => {
-    const user = await fakeUsersRepository.create({
-      name: 'A User',
-      email: 'user@user.com',
-      password: '123456',
-      storyteller: false,
-    });
-
-    const char = await fakeCharactersRepository.create({
-      user_id: user.id,
-      name: 'Dracula',
-      experience: 666,
-      file: 'dracula.pdf',
-      npc: false,
-    });
-
     const charRetainer = await fakeCharactersRepository.create({
       name: 'Igor',
       experience: 20,
