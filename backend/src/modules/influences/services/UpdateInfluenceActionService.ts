@@ -89,7 +89,11 @@ class UpdateInfluenceActionService {
 
     // Find action owner
     let actionOwnerId: string;
-    if (action_owner_id && action_owner_id !== character_id) {
+    if (
+      action_owner_id &&
+      action_owner_id !== character_id &&
+      endeavor !== 'defend'
+    ) {
       const actionChar = await this.charactersRepository.findById(
         action_owner_id,
       );
@@ -131,8 +135,7 @@ class UpdateInfluenceActionService {
       if (abilitiesTraits.length > 0) {
         abilitiesTraits.sort((traitA, traitB) => {
           if (traitA.level > traitB.level) return -1;
-          if (traitA.level < traitB.level) return 1;
-          return 0;
+          return 1;
         });
 
         abilityUsed = abilitiesTraits[0].trait;
@@ -185,8 +188,16 @@ class UpdateInfluenceActionService {
       influence_level * (endeavor === 'defend' ? 2 : 1);
 
     infAction.title = title;
+
+    if (endeavor !== 'defend') {
+      if (backgrounds) infAction.backgrounds = backgrounds;
+      infAction.action = action;
+    } else {
+      infAction.backgrounds = '';
+      infAction.action = '';
+    }
+
     infAction.action_period = action_period;
-    if (backgrounds) infAction.backgrounds = backgrounds;
     infAction.influence = influence;
     infAction.influence_level = influence_level;
     infAction.ability = abilityUsed;
@@ -197,7 +208,6 @@ class UpdateInfluenceActionService {
       infAction.ownerId = undefined;
     }
     infAction.action_owner_id = actionOwnerId;
-    infAction.action = action;
     infAction.action_force = actionForce;
     infAction.status = 'sent';
 
