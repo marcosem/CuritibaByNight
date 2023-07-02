@@ -116,6 +116,7 @@ const AuthProvider: React.FC = ({ children }) => {
     Cookies.set('@CuritibaByNight:refreshToken', refresh_token, {
       expires: 60,
       secure: true,
+      sameSite: 'strict',
     });
 
     api.defaults.headers.Authorization = `Bearer ${token}`;
@@ -176,6 +177,7 @@ const AuthProvider: React.FC = ({ children }) => {
       Cookies.set('@CuritibaByNight:refreshToken', refresh_token, {
         expires: 60,
         secure: true,
+        sameSite: 'strict',
       });
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
