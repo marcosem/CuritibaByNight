@@ -23,6 +23,7 @@ export interface IUser {
 
 interface ICharacter {
   id: string;
+  name: string;
   clan: string;
 }
 
@@ -87,6 +88,7 @@ const AuthProvider: React.FC = ({ children }) => {
     });
     setCharacter({
       clan: '',
+      name: '',
       id: '',
     });
   }, []);

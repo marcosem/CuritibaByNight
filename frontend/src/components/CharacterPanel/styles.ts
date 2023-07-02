@@ -15,7 +15,26 @@ interface ITableCellProps {
 interface IFunctionButtonProps {
   isGreen?: boolean;
   middle?: boolean;
+  shaking?: boolean;
 }
+
+const buttonShake = keyframes`
+  1%, 9%, 26%, 34%, 51%, 59% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  2%, 8%, 27%, 33%, 52%, 58% {
+    transform: translate3d(2px, 0, 0);
+  }
+  3%, 5%, 7%, 28%, 30%, 32%, 53%, 55%, 57% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  4%, 6%, 29%, 31%, 54%, 56% {
+    transform: translate3d(4px, 0, 0);
+  }
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+`;
 
 interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
@@ -552,6 +571,15 @@ export const FunctionButton = styled.button.attrs<IButtonProps>(() => ({
             background: ${shade(0.2, '#860209')};
           }
         `}
+
+  ${props =>
+    props.shaking &&
+    css`
+      animation: ${buttonShake} 8.2s cubic-bezier(0.36, 0.07, 0.19, 0.97)
+        infinite;
+      transform: translate3d(0, 0, 0);
+      perspective: 1000px;
+    `}
 
   svg {
     width: 32px;

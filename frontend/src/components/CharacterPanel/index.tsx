@@ -14,7 +14,7 @@ import {
   FiRotateCcw,
   FiUpload,
 } from 'react-icons/fi';
-import { GiLoad, GiRollingDices } from 'react-icons/gi';
+import { GiLoad, GiDemolish /* ,GiRollingDices */ } from 'react-icons/gi';
 import api from '../../services/api';
 
 import {
@@ -409,8 +409,14 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     [history],
   );
 
+  /*
   const handleChallenges = useCallback(() => {
     history.push('/challenges');
+  }, [history]);
+  */
+
+  const handleInfluenceActions = useCallback(() => {
+    history.push('/actions');
   }, [history]);
 
   useEffect(() => {
@@ -703,13 +709,22 @@ const CharacterPanel: React.FC<IPanelProps> = ({
 
                   <FunctionsContainer>
                     {dashboard && (
-                      <FunctionButton
-                        onClick={handleChallenges}
-                        title="Rolar Jan-Ken-Po"
-                        isGreen
-                      >
-                        <GiRollingDices />
-                      </FunctionButton>
+                      <>
+                        {/* <FunctionButton
+                      onClick={handleChallenges}
+                      title="Rolar Jan-Ken-Po"
+                      isGreen
+                    >
+                      <GiRollingDices />
+                    </FunctionButton> */}
+                        <FunctionButton
+                          onClick={handleInfluenceActions}
+                          title="Ações de Influências"
+                          isGreen
+                        >
+                          <GiDemolish />
+                        </FunctionButton>
+                      </>
                     )}
 
                     {user.storyteller && showTraits && (
@@ -720,7 +735,6 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                         <FiRotateCcw />
                       </FunctionButton>
                     )}
-
                     {user.storyteller && !dashboard && (
                       <>
                         {!isMobileVersion && (
