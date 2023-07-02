@@ -2,6 +2,7 @@ import { container } from 'tsyringe';
 
 import '@modules/characters/providers';
 import '@modules/users/providers';
+import '@modules/influences/providers';
 import '@shared/container/providers';
 
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';

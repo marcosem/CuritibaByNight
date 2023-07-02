@@ -21,7 +21,7 @@ class SetDomainMasqueradeService {
 
     if (!user) {
       throw new AppError(
-        'Only authenticated users can get retainers list',
+        'Only authenticated users can get domain masquerade level',
         401,
       );
     }

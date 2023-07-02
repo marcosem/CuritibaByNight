@@ -4,10 +4,12 @@ import ensureSTAuthenticated from '@modules/users/infra/http/middlewares/ensureS
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import InfluenceActionsController from '@modules/influences/infra/http/controllers/InfluenceActionsController';
 import InfluenceActionsReviewsController from '@modules/influences/infra/http/controllers/InfluenceActionsReviewsController';
+import CurrentActionMonthController from '@modules/influences/infra/http/controllers/CurrentActionMonthController';
 
 const influenceActionsRouter = Router();
 const influenceActionsController = new InfluenceActionsController();
 const influenceActionsReviewsController = new InfluenceActionsReviewsController();
+const currentActionMonthConstroller = new CurrentActionMonthController();
 
 // Influence Actions routes
 // Create a new influence action
@@ -54,18 +56,6 @@ influenceActionsRouter.post(
     },
   }),
   influenceActionsController.create,
-);
-
-// Get an influence action by its id
-influenceActionsRouter.get(
-  '/:id',
-  ensureAuthenticated,
-  celebrate({
-    [Segments.PARAMS]: {
-      id: Joi.string().uuid().required(),
-    },
-  }),
-  influenceActionsController.show,
 );
 
 // Update an influence action - user level
@@ -170,6 +160,37 @@ influenceActionsRouter.get(
     },
   }),
   influenceActionsReviewsController.show,
+);
+
+influenceActionsRouter.get(
+  '/currentMonth',
+  ensureAuthenticated,
+  currentActionMonthConstroller.show,
+);
+
+influenceActionsRouter.patch(
+  '/setCurrentMonth',
+  ensureSTAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      action_month: Joi.string()
+        .regex(/(19|20)\d{2}-(0[1-9]|1[012])/)
+        .required(),
+    },
+  }),
+  currentActionMonthConstroller.update,
+);
+
+// Get an influence action by its id
+influenceActionsRouter.get(
+  '/:id',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.PARAMS]: {
+      id: Joi.string().uuid().required(),
+    },
+  }),
+  influenceActionsController.show,
 );
 
 export default influenceActionsRouter;
