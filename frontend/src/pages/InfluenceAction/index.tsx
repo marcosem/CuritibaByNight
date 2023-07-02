@@ -24,6 +24,7 @@ import {
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useSocket } from '../../hooks/socket';
+import { useHeader } from '../../hooks/header';
 
 import influencesAbilities from '../Influences/influencesAbilities.json';
 
@@ -131,6 +132,7 @@ const InfluenceActions: React.FC = () => {
     clearUpdatedTrait,
     clearReloadTraits,
   } = useSocket();
+  const { setCurrentPage } = useHeader();
 
   const getInfluencePT = useCallback((influence): string => {
     const infAbility = influencesAbilities.influences.find(
@@ -625,10 +627,11 @@ const InfluenceActions: React.FC = () => {
   );
 
   useEffect(() => {
+    setCurrentPage('actions');
     loadCurrentActionMonth();
     loadTraits();
     loadActions();
-  }, [loadActions, loadCurrentActionMonth, loadTraits]);
+  }, [loadActions, loadCurrentActionMonth, loadTraits, setCurrentPage]);
 
   return (
     <Container isMobile={false}>
