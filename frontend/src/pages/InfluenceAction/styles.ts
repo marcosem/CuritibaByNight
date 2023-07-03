@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { shade } from 'polished';
+import { shade, lighten } from 'polished';
 import {
   TableContainer,
   Table,
@@ -18,6 +18,10 @@ interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
 
+interface IActionBoxProps {
+  disabled?: boolean;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -28,6 +32,10 @@ export const Container = styled.div<IContainerProps>`
           height: calc(100vh - 140px);
         `}
 `;
+
+interface ITableTitleRowProps {
+  borderTop?: boolean;
+}
 
 export const TitleBox = styled.div`
   min-width: 340px;
@@ -107,14 +115,22 @@ export const ActionsInfo = styled.div`
   }
 `;
 
-export const TableTitleRow = styled.div`
+export const TableTitleRow = styled.div<ITableTitleRowProps>`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   padding: 10px;
   margin: 5px auto;
+  align-items: center;
 
   min-width: 340px;
   max-width: 1012px;
+
+  ${props =>
+    props.borderTop &&
+    css`
+      margin-top: 20px;
+      border-top: 1px solid var(--cbn-neutral-2);
+    `}
 
   > h2 {
     color: var(--cbn-neutral-2);
@@ -127,7 +143,7 @@ export const SearchBox = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: right;
-  margin: 20px auto 10px;
+  margin: 20px 0 0 auto;
 
   div {
     max-width: 340px;
@@ -231,13 +247,11 @@ export const StyledTableCell = styled(TableCell)`
         background: #560209;
       }
 
-      /*
       &:not(:last-of-type) {
         &:hover {
           cursor: pointer;
         }
       }
-      */
     }
 
     ${StyledTableBody} & {
@@ -256,11 +270,9 @@ export const StyledTableCell = styled(TableCell)`
         border-right: 1px solid #ddd;
       }
 
-      /*
       &:last-of-type {
         width: 75px;
       }
-      */
     }
   }
 `;
@@ -315,4 +327,85 @@ export const ActionButton = styled.button.attrs<IButtonProps>(() => ({
       cursor: default;
       opacity: 0.7;
     `}
+`;
+
+export const AddButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
+  width: 24px;
+  height: 24px;
+
+  margin-right: 10px;
+  // margin-right: auto;
+
+  display: flex;
+  flex-direction: space-between;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  transition: background-color 0.2s;
+
+  ${props =>
+    props.disabled
+      ? css`
+          background: #001a01;
+          cursor: default;
+        `
+      : css`
+          background: #028609;
+          &:hover {
+            background: ${shade(0.2, '#028609')};
+          }
+        `}
+
+  svg {
+    width: 20px;
+    height: 20px;
+
+    ${props =>
+      props.disabled
+        ? css`
+            color: #7f7f7f;
+          `
+        : css`
+            color: #fff;
+          `}
+  }
+`;
+
+export const AddActionBox = styled.div<IActionBoxProps>`
+  display: flex;
+  flex-direction: row;
+  margin: 10px auto 0 0;
+
+  ${props =>
+    props.disabled
+      ? css`
+          cursor: default;
+        `
+      : css`
+          cursor: pointer;
+        `}
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    margin: auto 0;
+
+    ${props =>
+      props.disabled
+        ? css`
+            color: #7f7f7f;
+          `
+        : css`
+            color: var(--cbn-neutral-2);
+            &:hover {
+              color: ${lighten(0.2, '#e0e0e0')};
+            }
+          `}
+  }
 `;

@@ -1,9 +1,11 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 
 import { isAfter } from 'date-fns';
+import { FiPlus, FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
 import Skeleton from '@material-ui/lab/Skeleton';
 import api from '../../services/api';
+import AddAction from '../../components/AddAction';
 
 import {
   Container,
@@ -19,7 +21,14 @@ import {
   StyledTableCell,
   // StyledTableSortLabel,
   StyledTableBody,
+  AddActionBox,
+  AddButton,
+  SearchBox,
+  ActionsContainer,
+  ActionButton,
 } from './styles';
+
+import SearchField from '../../components/SearchField';
 
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -64,7 +73,7 @@ interface IShortTrait {
 }
 
 interface IAction {
-  id: string;
+  id?: string;
   title: string;
   action_period: string;
   backgrounds: string;
@@ -98,6 +107,7 @@ interface IAction {
 }
 
 const InfluenceActions: React.FC = () => {
+  const loadingTraits = useRef<boolean>(false);
   const [domainMasquerade, setDomainMasquerade] = useState<number>(0);
   const [actionMonth, setActionMonth] = useState<string>('');
   const [isBusy, setBusy] = useState(true);
@@ -119,8 +129,17 @@ const InfluenceActions: React.FC = () => {
     realLevel: 0,
     validLevel: 0,
   });
+  const [personalMasqueradeLevel, setPersonalMasqueradeLevel] =
+    useState<number>(0);
   const [actionsList, setActionsList] = useState<IAction[]>([]);
   const [pastActionsList, setPastActionsList] = useState<IAction[]>([]);
+  const [showPastActionsList, setShowPastActionsList] = useState<IAction[]>([]);
+  const [actionsNumber, setActionsNumber] = useState<number>(0);
+  const [totalMasquerade, setTotalMasquerade] = useState<number>(0);
+
+  const [addActionOn, setAddActionOn] = useState(false);
+  const [selectedAction, setSelectedAction] = useState<IAction>({} as IAction);
+  const [readOnlyAction, setReadOnlyAction] = useState<boolean>(false);
 
   const { addToast } = useToast();
   const { char } = useAuth();
@@ -189,33 +208,6 @@ const InfluenceActions: React.FC = () => {
     return resultPT;
   }, []);
 
-  const getMasqueradeBackgroundPenalty = useCallback(
-    (personalMasquerade: number) => {
-      const totalMasquerade =
-        Number(domainMasquerade) + Number(personalMasquerade);
-
-      if (totalMasquerade < 3) {
-        return 0;
-      }
-
-      const masqueradePenalty = Math.floor(totalMasquerade / 3);
-
-      return masqueradePenalty;
-    },
-    [domainMasquerade],
-  );
-
-  const getActionsNumber = useCallback(() => {
-    if (morality.validLevel === 0) return '';
-
-    const actionsNumber =
-      Number(morality.validLevel) +
-      Number(retainerTrait.validLevel) -
-      Number(actionsList.length);
-
-    return actionsNumber;
-  }, [actionsList.length, morality.validLevel, retainerTrait.validLevel]);
-
   const getActionsNumberLabel = useCallback(() => {
     if (morality.validLevel === 0) return '';
 
@@ -223,8 +215,6 @@ const InfluenceActions: React.FC = () => {
 
     if (retainerTrait.realLevel > 0) {
       if (retainerTrait.realLevel !== retainerTrait.validLevel) {
-        const totalMasquerade =
-          Number(domainMasquerade) + Number(traitsList.masquerade.levelTemp);
         label = `${label} + ${retainerTrait.validLevel} [Lacaios x${retainerTrait.realLevel} - penalidade de Quebra de Máscara x${totalMasquerade}]`;
       } else {
         label = `${label} + ${retainerTrait.validLevel} [Lacaios x${retainerTrait.realLevel}]`;
@@ -238,13 +228,12 @@ const InfluenceActions: React.FC = () => {
     return label;
   }, [
     actionsList.length,
-    domainMasquerade,
     morality.realLevel,
     morality.trait,
     morality.validLevel,
     retainerTrait.realLevel,
     retainerTrait.validLevel,
-    traitsList.masquerade.levelTemp,
+    totalMasquerade,
   ]);
 
   const parseMorality = useCallback((trait: ITrait) => {
@@ -332,6 +321,9 @@ const InfluenceActions: React.FC = () => {
   }, [addToast, char.id]);
 
   const loadTraits = useCallback(async () => {
+    if (loadingTraits.current === true) return;
+    loadingTraits.current = true;
+
     clearUpdatedTrait();
     clearReloadTraits();
 
@@ -361,8 +353,6 @@ const InfluenceActions: React.FC = () => {
           realLevel: 0,
           validLevel: 0,
         };
-
-        let personalMasquerade = 0;
 
         res.forEach(trait => {
           const traitType = trait.type;
@@ -420,7 +410,7 @@ const InfluenceActions: React.FC = () => {
           switch (traitType) {
             case 'creature':
               if (newTrait.trait === 'Personal Masquerade') {
-                personalMasquerade = newTrait.levelTemp;
+                setPersonalMasqueradeLevel(newTrait.levelTemp);
                 newTraitsList.masquerade = newTrait;
               }
               break;
@@ -460,11 +450,11 @@ const InfluenceActions: React.FC = () => {
               if (newTrait.trait === 'Retainers') {
                 newRetainer = {
                   trait: newTrait.trait,
-                  realLevel: trait.level,
-                  validLevel: trait.level,
+                  realLevel: newTrait.level,
+                  validLevel: 0,
                 };
 
-                // setRetainerTrait(newRetainer);
+                setRetainerTrait(newRetainer);
               }
               break;
             case 'influences':
@@ -511,15 +501,6 @@ const InfluenceActions: React.FC = () => {
 
           setTraitsList(newTraitsList);
         }
-
-        const masqueradePenalty =
-          getMasqueradeBackgroundPenalty(personalMasquerade);
-        newRetainer.validLevel =
-          masqueradePenalty > newRetainer.realLevel
-            ? 0
-            : Number(newRetainer.realLevel) - masqueradePenalty;
-
-        setRetainerTrait(newRetainer);
       });
     } catch (error) {
       const parsedError: any = error;
@@ -536,18 +517,19 @@ const InfluenceActions: React.FC = () => {
         }
       }
     }
+
+    loadingTraits.current = false;
   }, [
     clearUpdatedTrait,
     clearReloadTraits,
     char.id,
     loadDomainMasquerade,
-    getMasqueradeBackgroundPenalty,
     parseMorality,
     addToast,
   ]);
 
   const loadActions = useCallback(async () => {
-    if (char.id === '' && actionMonth !== '') {
+    if (char.id === '' || actionMonth === '') {
       return;
     }
 
@@ -567,6 +549,7 @@ const InfluenceActions: React.FC = () => {
 
         setActionsList(currentActions);
         setPastActionsList(pastActions);
+        setShowPastActionsList(pastActions);
       });
     } catch (error) {
       const parsedError: any = error;
@@ -587,6 +570,75 @@ const InfluenceActions: React.FC = () => {
     setBusy(false);
   }, [actionMonth, addToast, char.id]);
 
+  const handleSearchChange = useCallback(
+    event => {
+      const inputText = event.target.value;
+      let newPastActionsList: IAction[];
+
+      if (inputText === '') {
+        newPastActionsList = [...pastActionsList];
+      } else {
+        newPastActionsList = pastActionsList.filter(action => {
+          if (
+            action.title.toLowerCase().indexOf(inputText.toLowerCase()) >= 0 ||
+            action.action_period.indexOf(inputText) >= 0 ||
+            getInfluencePT(action.influence)
+              .toLowerCase()
+              .indexOf(inputText.toLowerCase()) >= 0 ||
+            getStatusPT(action.status)
+              .toLowerCase()
+              .indexOf(inputText.toLowerCase()) >= 0 ||
+            getResultPT(action.result)
+              .toLowerCase()
+              .indexOf(inputText.toLowerCase()) >= 0
+          )
+            return true;
+
+          return false;
+        });
+      }
+
+      setShowPastActionsList(newPastActionsList);
+    },
+    [getInfluencePT, getResultPT, getStatusPT, pastActionsList],
+  );
+
+  const handleClose = useCallback(() => {
+    setAddActionOn(false);
+  }, []);
+
+  const handleAddNewAction = useCallback(() => {
+    const action: IAction = {
+      title: '',
+      action_period: actionMonth,
+      backgrounds: '',
+      influence: '',
+      influence_level: -1,
+      ability: '',
+      ability_level: -1,
+      endeavor: 'other',
+      character_id: char.id,
+      action: '',
+      result: 'not evaluated',
+    };
+
+    setSelectedAction(action);
+    setReadOnlyAction(false);
+    setAddActionOn(true);
+  }, [actionMonth, char.id]);
+
+  const handleViewAction = useCallback((action: IAction) => {
+    setSelectedAction(action);
+    setReadOnlyAction(true);
+    setAddActionOn(true);
+  }, []);
+
+  const handleEditAction = useCallback((action: IAction) => {
+    setSelectedAction(action);
+    setReadOnlyAction(false);
+    setAddActionOn(true);
+  }, []);
+
   const GetActionsList = useCallback(
     (list: IAction[], current: boolean) => {
       if (list.length === 0) {
@@ -597,6 +649,7 @@ const InfluenceActions: React.FC = () => {
         return (
           <StyledTableRow>
             <StyledTableCell align="left">{message}</StyledTableCell>
+            <StyledTableCell align="center" />
             <StyledTableCell align="center" />
             <StyledTableCell align="center" />
             <StyledTableCell align="center" />
@@ -620,17 +673,95 @@ const InfluenceActions: React.FC = () => {
           <StyledTableCell align="center">
             {getResultPT(action.result)}
           </StyledTableCell>
+          <StyledTableCell align="center">
+            <ActionsContainer>
+              {action.status === 'replied' ? (
+                <ActionButton
+                  title="Visualizar"
+                  onClick={() => handleViewAction(action)}
+                >
+                  <FiEye />
+                </ActionButton>
+              ) : (
+                <>
+                  <ActionButton
+                    title="Editar"
+                    onClick={() => handleEditAction(action)}
+                  >
+                    <FiEdit />
+                  </ActionButton>
+                  <ActionButton title="Remover">
+                    <FiTrash2 />
+                  </ActionButton>
+                </>
+              )}
+            </ActionsContainer>
+          </StyledTableCell>
         </StyledTableRow>
       ));
     },
-    [getInfluencePT, getResultPT, getStatusPT],
+    [
+      getInfluencePT,
+      getResultPT,
+      getStatusPT,
+      handleEditAction,
+      handleViewAction,
+    ],
   );
 
   useEffect(() => {
-    setCurrentPage('actions');
-    loadCurrentActionMonth();
-    loadTraits();
-    loadActions();
+    if (retainerTrait.trait !== '') {
+      const newTotalMasquerade =
+        Number(domainMasquerade) + Number(personalMasqueradeLevel);
+
+      setTotalMasquerade(newTotalMasquerade);
+      if (newTotalMasquerade < 3) {
+        return;
+      }
+
+      const newMasqueradePenalty = Math.floor(newTotalMasquerade / 3);
+      const retainerValidLevel =
+        retainerTrait.realLevel < newMasqueradePenalty
+          ? 0
+          : retainerTrait.realLevel - newMasqueradePenalty;
+
+      setRetainerTrait({
+        trait: retainerTrait.trait,
+        realLevel: retainerTrait.realLevel,
+        validLevel: retainerValidLevel,
+      });
+    }
+  }, [
+    domainMasquerade,
+    personalMasqueradeLevel,
+    retainerTrait.realLevel,
+    retainerTrait.trait,
+  ]);
+
+  useEffect(() => {
+    if (morality.validLevel > 0) {
+      const newActionsNumber =
+        Number(morality.validLevel) +
+        Number(retainerTrait.validLevel) -
+        Number(actionsList.length);
+
+      setActionsNumber(newActionsNumber);
+    }
+  }, [actionsList.length, morality.validLevel, retainerTrait.validLevel]);
+
+  useEffect(() => {
+    if (actionMonth !== '') {
+      loadActions();
+    }
+  }, [actionMonth, loadActions]);
+
+  useEffect(() => {
+    if (loadingTraits.current === false) {
+      setCurrentPage('actions');
+      loadCurrentActionMonth();
+      loadTraits();
+      // loadActions();
+    }
   }, [loadActions, loadCurrentActionMonth, loadTraits, setCurrentPage]);
 
   return (
@@ -641,7 +772,7 @@ const InfluenceActions: React.FC = () => {
       <ActionHeader>
         <h2>{char.name}</h2>
         <ActionsInfo>
-          <h3>{`Ações Disponíveis: ${getActionsNumber()}`}</h3>
+          <h3>{`Ações Disponíveis: ${actionsNumber}`}</h3>
           {actionMonth !== '' && <h3>{`Período atual: ${actionMonth}`}</h3>}
         </ActionsInfo>
         <ActionsInfo>
@@ -650,8 +781,21 @@ const InfluenceActions: React.FC = () => {
       </ActionHeader>
 
       <TableWrapper>
-        <TableTitleRow>
-          <h2>Ações do período atual</h2>
+        <TableTitleRow borderTop>
+          <h2>
+            {`Ações do período atual${
+              actionMonth !== '' ? `: ${actionMonth}` : ''
+            }`}
+          </h2>
+          <AddActionBox
+            onClick={() => handleAddNewAction()}
+            disabled={actionsNumber === 0}
+          >
+            <AddButton disabled={actionsNumber === 0}>
+              <FiPlus />
+            </AddButton>
+            <span>Realizar nova ação</span>
+          </AddActionBox>
         </TableTitleRow>
         <StyledTableContainer>
           <StyledTable stickyHeader>
@@ -662,12 +806,16 @@ const InfluenceActions: React.FC = () => {
                 <StyledTableCell>Período</StyledTableCell>
                 <StyledTableCell>Status</StyledTableCell>
                 <StyledTableCell>Resultado</StyledTableCell>
+                <StyledTableCell>Ações</StyledTableCell>
               </StyledTableRow>
             </StyledTableHead>
             <StyledTableBody>
               {isBusy ? (
                 <StyledTableRow>
                   <StyledTableCell align="left">
+                    <Skeleton />
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
                     <Skeleton />
                   </StyledTableCell>
                   <StyledTableCell align="center">
@@ -692,8 +840,20 @@ const InfluenceActions: React.FC = () => {
       </TableWrapper>
 
       <TableWrapper>
-        <TableTitleRow>
-          <h2>Ações passadas</h2>
+        <TableTitleRow borderTop>
+          <h2>Ações dos períodos anteriores</h2>
+          <SearchBox>
+            {isBusy ? (
+              <Skeleton variant="rect" width={340} height={51} />
+            ) : (
+              <SearchField
+                id="searching"
+                label="Procurar..."
+                placeholder="Procurar..."
+                onChange={e => handleSearchChange(e)}
+              />
+            )}
+          </SearchBox>
         </TableTitleRow>
         <StyledTableContainer>
           <StyledTable stickyHeader>
@@ -704,6 +864,7 @@ const InfluenceActions: React.FC = () => {
                 <StyledTableCell>Período</StyledTableCell>
                 <StyledTableCell>Status</StyledTableCell>
                 <StyledTableCell>Resultado</StyledTableCell>
+                <StyledTableCell>Ações</StyledTableCell>
               </StyledTableRow>
             </StyledTableHead>
             <StyledTableBody>
@@ -724,14 +885,25 @@ const InfluenceActions: React.FC = () => {
                   <StyledTableCell align="center">
                     <Skeleton />
                   </StyledTableCell>
+                  <StyledTableCell align="center">
+                    <Skeleton />
+                  </StyledTableCell>
                 </StyledTableRow>
               ) : (
-                GetActionsList(pastActionsList, false)
+                GetActionsList(showPastActionsList, false)
               )}
             </StyledTableBody>
           </StyledTable>
         </StyledTableContainer>
       </TableWrapper>
+      <AddAction
+        open={addActionOn}
+        handleClose={handleClose}
+        handleSave={handleClose}
+        selectedAction={selectedAction}
+        charTraitsList={traitsList}
+        readonly={readOnlyAction}
+      />
     </Container>
   );
 };
