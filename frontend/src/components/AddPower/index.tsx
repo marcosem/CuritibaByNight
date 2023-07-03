@@ -384,8 +384,7 @@ const AddPower: React.FC<DialogPropsEx> = ({
 
   useEffect(() => {
     setPower(selectedPower);
-    // setCurrentLevel(getLevelLabel(selectedPower.level, selectedPower.type));
-  }, [getLevelLabel, selectedPower]);
+  }, [selectedPower]);
 
   return (
     <Dialog TransitionComponent={Transition} fullWidth maxWidth="md" {...rest}>
