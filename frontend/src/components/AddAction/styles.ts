@@ -67,6 +67,10 @@ interface ITextFieldProps {
   readonly variant: 'outlined' | 'filled' | undefined;
 }
 
+interface IButtonProps {
+  readonly type: 'button' | 'submit' | 'reset' | undefined;
+}
+
 interface IFieldProps {
   align?: string;
   addmargin?: string;
@@ -74,6 +78,7 @@ interface IFieldProps {
 
 interface IFieldBoxChildProps {
   proportion?: number;
+  addmargin?: string;
 }
 
 export const AddActionContainer = styled.div`
@@ -126,6 +131,28 @@ export const FieldBoxChild = styled.div<IFieldBoxChildProps>`
       : css`
           width: 50%;
         `}
+
+  ${props =>
+    props.addmargin &&
+    props.addmargin === 'left' &&
+    css`
+      margin-right: 0;
+    `}
+
+    ${props =>
+    props.addmargin &&
+    props.addmargin === 'right' &&
+    css`
+      margin-left: 0;
+    `}
+
+      ${props =>
+    props.addmargin &&
+    props.addmargin === 'auto' &&
+    css`
+      margin-right: auto;
+      margin-left: auto;
+    `}
 `;
 
 export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
@@ -148,7 +175,6 @@ export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
         margin-right: 16px;
       `}
 
-
     ${props =>
       props.align !== undefined &&
       css`
@@ -156,5 +182,67 @@ export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
           text-align: ${props.align};
         }
       `}
+  }
+`;
+
+export const ActionButton = styled.button.attrs<IButtonProps>(() => ({
+  type: 'button',
+}))`
+  width: 24px;
+  height: 24px;
+
+  margin-top: 22px;
+  margin-bottom: auto;
+  margin-right: auto;
+
+  &:first-of-type {
+    margin-left: 16px;
+  }
+
+  &:not(:first-of-type) {
+    margin-left: 10px;
+  }
+
+  // margin: 22px auto auto 16px;
+  // margin-right: auto;
+
+  display: flex;
+  flex-direction: space-between;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  transition: background-color 0.2s;
+
+  ${props =>
+    props.disabled
+      ? css`
+          background: ${props.color === 'red' ? '#1a0001' : '#001a01'};
+          cursor: default;
+        `
+      : css`
+          background: ${props.color === 'red' ? '#860209' : '#028609'};
+          &:hover {
+            background: ${props.color === 'red'
+              ? shade(0.2, '#860209')
+              : shade(0.2, '#028609')};
+          }
+        `}
+
+  svg {
+    width: 20px;
+    height: 20px;
+
+    ${props =>
+      props.disabled
+        ? css`
+            color: #7f7f7f;
+          `
+        : css`
+            color: #fff;
+          `}
   }
 `;
