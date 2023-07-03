@@ -303,7 +303,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       maxLevel = infLevel;
     }
 
-    const levelArray = [];
+    const levelArray = [0];
     for (let i = 1; i <= maxLevel; i += 1) {
       levelArray.push(i);
     }
@@ -315,8 +315,8 @@ const AddAction: React.FC<DialogPropsEx> = ({
   useEffect(() => {
     setTitle(action.title || '');
     setInfluence(action.influence || '');
-    setBackgrounds(action.backgrounds || '');
     setInfluenceLevel(Number(action.influence_level) || 0);
+    setBackgrounds(action.backgrounds || '');
   }, [action]);
 
   useEffect(() => {
@@ -390,7 +390,9 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 name="influence_level"
                 id="influence_level"
                 label="Nível"
-                value={influenceLevel}
+                value={
+                  influenceLevelArray.length < 2 ? '0' : `${influenceLevel}`
+                }
                 InputProps={{ readOnly: readonly }}
                 // onChange={undefined}
                 select
@@ -402,7 +404,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 disabled={saving}
               >
                 {influenceLevelArray.map(level => (
-                  <MenuItem key={level} value={level}>
+                  <MenuItem key={level} value={`${level}`}>
                     {level}
                   </MenuItem>
                 ))}
