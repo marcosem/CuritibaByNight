@@ -74,11 +74,14 @@ interface IButtonProps {
 interface IFieldProps {
   align?: string;
   addmargin?: string;
+  highlight?: string;
 }
 
 interface IFieldBoxChildProps {
   proportion?: number;
   addmargin?: string;
+  flexDirection?: string;
+  invisible?: boolean;
 }
 
 export const AddActionContainer = styled.div`
@@ -121,7 +124,8 @@ export const FieldBox = styled.div`
 
 export const FieldBoxChild = styled.div<IFieldBoxChildProps>`
   display: flex;
-  flex-direction: row;
+  flex-direction: ${props =>
+    props.flexDirection === 'column' ? 'column' : 'row'};
 
   ${props =>
     props.proportion
@@ -153,6 +157,14 @@ export const FieldBoxChild = styled.div<IFieldBoxChildProps>`
       margin-right: auto;
       margin-left: auto;
     `}
+
+    ${props =>
+    props.invisible &&
+    css`
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    `}
 `;
 
 export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
@@ -182,6 +194,14 @@ export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
           text-align: ${props.align};
         }
       `}
+
+    ${props =>
+      props.highlight === 'true' &&
+      css`
+        input {
+          font-size: 20px !important;
+        }
+      `}
   }
 `;
 
@@ -191,20 +211,13 @@ export const ActionButton = styled.button.attrs<IButtonProps>(() => ({
   width: 24px;
   height: 24px;
 
-  margin-top: 22px;
-  margin-bottom: auto;
-  margin-right: auto;
-
   &:first-of-type {
-    margin-left: 16px;
+    margin: 8px auto;
   }
 
   &:not(:first-of-type) {
-    margin-left: 10px;
+    margin: 0 auto auto auto;
   }
-
-  // margin: 22px auto auto 16px;
-  // margin-right: auto;
 
   display: flex;
   flex-direction: space-between;

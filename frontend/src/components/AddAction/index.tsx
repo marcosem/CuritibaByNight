@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useRef,
   useCallback,
-  // ChangeEvent,
+  ChangeEvent,
 } from 'react';
 
 import {
@@ -34,6 +34,8 @@ import {
   FieldBoxChild,
   InputField,
   ActionButton,
+  ButtonsContainer,
+  ButtonBox,
 } from './styles';
 
 import Button from '../Button';
@@ -132,6 +134,14 @@ interface IBackground {
   force?: number;
 }
 
+interface IDefendEndeavor {
+  title: string;
+  influence_level: number;
+  ability: string;
+  ability_level: number;
+  action: string;
+}
+
 const endeadorList = [
   {
     title: 'attack',
@@ -159,6 +169,7 @@ interface DialogPropsEx extends DialogProps {
   selectedAction: IAction;
   charTraitsList: ITraitsList;
   readonly?: boolean;
+  storyteller?: boolean;
   handleSave: (savedAction: IAction) => void;
   handleClose: () => void;
 }
@@ -167,6 +178,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
   selectedAction,
   charTraitsList,
   readonly,
+  storyteller,
   handleSave,
   handleClose,
   ...rest
@@ -182,6 +194,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     influences: [],
   } as ITraitsList);
   const [saving, setSaving] = useState<boolean>(false);
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<IError>(
     {} as IError,
   );
@@ -194,9 +207,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
   const [backgroundList, setBackgroundList] = useState<IBackground[]>([]);
   const [influenceLevelMax, setInfluenceLevelMax] = useState<number>(0);
   const [influenceLevelArray, setInfluenceLevelArray] = useState<number[]>([]);
-  const [endeavor, setEndeavor] = useState<
-    'attack' | 'defend' | 'combine' | 'raise capital' | 'other'
-  >('other');
+  const [endeavor, setEndeavor] = useState<string>('other');
   const [ability, setAbility] = useState<string>('');
   const [abilityLevel, setAbilityLevel] = useState<number>(0);
   const [abilityLevelArray, setAbilityLevelArray] = useState<number[]>([0]);
@@ -209,6 +220,9 @@ const AddAction: React.FC<DialogPropsEx> = ({
   const [actionDescription, setActionDescription] = useState<string>('');
   const [stReply, setStReply] = useState<string>('');
   const [news, setNews] = useState<string>('');
+  const [defendEndeavor, setDefendEndeavor] = useState<IDefendEndeavor>(
+    {} as IDefendEndeavor,
+  );
 
   const getInfluencePT = useCallback(
     (influenceEn): string => {
@@ -223,6 +237,19 @@ const AddAction: React.FC<DialogPropsEx> = ({
     [influenceList],
   );
 
+  const getInfluenceByLabel = useCallback(
+    label => {
+      const influenceFound = influenceList.find(
+        inf => inf.influence_PT === label,
+      );
+
+      if (influenceFound) return influenceFound.influence;
+
+      return '';
+    },
+    [influenceList],
+  );
+
   const getEndeavorPT = useCallback((endeavorEn): string => {
     const endeavorItem = endeadorList.find(endea => endea.title === endeavorEn);
 
@@ -231,6 +258,16 @@ const AddAction: React.FC<DialogPropsEx> = ({
     }
 
     return '';
+  }, []);
+
+  const getEndeavorByLabel = useCallback((label): string => {
+    const endeavorItem = endeadorList.find(endea => endea.titlePT === label);
+
+    if (endeavorItem) {
+      return endeavorItem.title;
+    }
+
+    return 'other';
   }, []);
 
   const buildInfluenceList = useCallback(() => {
@@ -274,6 +311,225 @@ const AddAction: React.FC<DialogPropsEx> = ({
     [traitsList.influences],
   );
 
+  const handleChangeTitle = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setTitle(changedValue);
+      setHasChanges(true);
+    },
+    [],
+  );
+
+  const updateInfluenceLevelArray = useCallback((infLevel: number) => {
+    const levelArray = [0];
+    for (let i = 1; i <= infLevel; i += 1) {
+      levelArray.push(i);
+    }
+
+    setInfluenceLevelArray(levelArray);
+  }, []);
+
+  const updateAbilityLevelArray = useCallback(
+    newAbility => {
+      if (newAbility === '') return;
+
+      const abilityTrait = traitsList.abilities.find(
+        trait => trait.trait === newAbility,
+      );
+
+      if (abilityTrait === undefined) return;
+
+      const maxLevel = abilityTrait.level;
+
+      const levelArray = [0];
+      for (let i = 1; i <= maxLevel; i += 1) {
+        levelArray.push(i);
+      }
+
+      setAbilityLevelArray(levelArray);
+    },
+    [traitsList.abilities],
+  );
+
+  /*
+  const updateActionForce = useCallback(() => {
+    if (traitsList.morality.trait === undefined && !hasChanges) return;
+
+    const { morality } = traitsList;
+
+    let moralityTraitLevel = Math.floor(morality.level / 2);
+    let moralityLevel = 0;
+    let newActionForce: number;
+
+    if (morality.trait.indexOf('Humanity') === -1) {
+      moralityTraitLevel -= 2;
+    }
+
+    moralityLevel = moralityTraitLevel > 0 ? moralityTraitLevel : 1;
+
+    if (endeavor === 'defend') {
+      newActionForce =
+        Number(defendEndeavor.influence_level) * 2 +
+        moralityLevel +
+        Number(defendEndeavor.ability_level);
+    } else {
+      newActionForce =
+        Number(influenceLevel) + moralityLevel + Number(abilityLevel);
+    }
+
+    setActionForce(newActionForce);
+  }, [
+    abilityLevel,
+    defendEndeavor.ability_level,
+    defendEndeavor.influence_level,
+    endeavor,
+    hasChanges,
+    influenceLevel,
+    traitsList,
+  ]);
+  */
+
+  const handleDefendEndeavor = useCallback(
+    (newInfluence = '') => {
+      let newTitle = 'Defender a influência';
+      let influence_level = 0;
+      let newAbility = '';
+      let ability_level = 0;
+      const influenceToHandle = newInfluence === '' ? influence : newInfluence;
+
+      if (influenceToHandle !== '') {
+        newTitle = `${newTitle} em ${getInfluencePT(influenceToHandle)}`;
+        const charInfluence = traitsList.influences.find(
+          trait => trait.trait === influenceToHandle,
+        );
+
+        if (charInfluence) influence_level = charInfluence.level;
+
+        const infAbil = influenceList.find(
+          inf => inf.influence === influenceToHandle,
+        );
+        newAbility = infAbil ? infAbil.ability : '';
+
+        if (newAbility !== '') {
+          let charAbilityTrait: ITrait | undefined;
+
+          if (newAbility.indexOf(':') >= 0) {
+            const charAbilitiesTraitsList = traitsList.abilities.filter(
+              trait => trait.trait.indexOf(newAbility) >= 0,
+            );
+
+            if (charAbilitiesTraitsList.length === 0) {
+              newAbility = '';
+            } else {
+              charAbilityTrait = charAbilitiesTraitsList.reduce(
+                (accTrait, trait) => {
+                  return accTrait.level >= trait.level ? accTrait : trait;
+                },
+              );
+
+              newAbility = charAbilityTrait.trait;
+            }
+          } else {
+            charAbilityTrait = traitsList.abilities.find(
+              trait => trait.trait === newAbility,
+            );
+          }
+
+          if (charAbilityTrait) {
+            ability_level = charAbilityTrait.level;
+          } else {
+            newAbility = '';
+          }
+        }
+      }
+
+      const newDefendEndeavor = {
+        title: newTitle,
+        influence_level,
+        ability: newAbility,
+        ability_level,
+        action: newTitle,
+      };
+
+      updateInfluenceLevelArray(influence_level);
+      updateAbilityLevelArray(newAbility);
+      setDefendEndeavor(newDefendEndeavor);
+    },
+    [
+      getInfluencePT,
+      influence,
+      influenceList,
+      traitsList.abilities,
+      traitsList.influences,
+      updateAbilityLevelArray,
+      updateInfluenceLevelArray,
+    ],
+  );
+
+  const handleInfluenceSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newInfluence = getInfluenceByLabel(event.target.value);
+
+      if (endeavor === 'defend') {
+        handleDefendEndeavor(newInfluence);
+      }
+
+      setInfluence(newInfluence);
+      setInfluenceLevel(0);
+      setHasChanges(true);
+    },
+    [endeavor, getInfluenceByLabel, handleDefendEndeavor],
+  );
+
+  const handleInfluenceLevelSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newInfluenceLevel = Number(event.target.value);
+
+      setInfluenceLevel(newInfluenceLevel);
+      setHasChanges(true);
+    },
+    [],
+  );
+
+  const handleEndeavorSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newEndeavor = getEndeavorByLabel(event.target.value);
+
+      if (newEndeavor === 'defend') {
+        handleDefendEndeavor();
+      } else {
+        setDefendEndeavor({} as IDefendEndeavor);
+      }
+
+      setEndeavor(newEndeavor);
+      setHasChanges(true);
+    },
+    [getEndeavorByLabel, handleDefendEndeavor],
+  );
+
+  const handleAbilitySelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newAbility = event.target.value;
+
+      setAbility(newAbility);
+      updateAbilityLevelArray(newAbility);
+      setAbilityLevel(0);
+      setHasChanges(true);
+    },
+    [updateAbilityLevelArray],
+  );
+
+  const handleAbilityLevelSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newAbilityLevel = Number(event.target.value);
+
+      setAbilityLevel(newAbilityLevel);
+      setHasChanges(true);
+    },
+    [],
+  );
+
   const handleSubmit = useCallback(async () => {
     const todo = 'TODO';
 
@@ -287,6 +543,47 @@ const AddAction: React.FC<DialogPropsEx> = ({
       return 0;
     });
   }, []);
+
+  useEffect(() => {
+    if (!hasChanges) return;
+
+    const { morality } = traitsList;
+
+    let moralityTraitLevel = Math.floor(morality.level / 2);
+    let moralityLevel = 0;
+    let newActionForce: number;
+
+    if (morality.trait.indexOf('Humanity') === -1) {
+      moralityTraitLevel -= 2;
+    }
+
+    moralityLevel = moralityTraitLevel > 0 ? moralityTraitLevel : 1;
+
+    switch (endeavor) {
+      case 'defend':
+        newActionForce =
+          Number(defendEndeavor.influence_level) * 2 +
+          moralityLevel +
+          Number(defendEndeavor.ability_level);
+        break;
+      case 'combine':
+        newActionForce = Number(influenceLevel);
+        break;
+      default:
+        newActionForce =
+          Number(influenceLevel) + moralityLevel + Number(abilityLevel);
+    }
+
+    setActionForce(newActionForce);
+  }, [
+    abilityLevel,
+    defendEndeavor.ability_level,
+    defendEndeavor.influence_level,
+    endeavor,
+    hasChanges,
+    influenceLevel,
+    traitsList,
+  ]);
 
   useEffect(() => {
     if (backgrounds !== '') {
@@ -364,35 +661,17 @@ const AddAction: React.FC<DialogPropsEx> = ({
       maxLevel = infLevel;
     }
 
-    const levelArray = [0];
-    for (let i = 1; i <= maxLevel; i += 1) {
-      levelArray.push(i);
-    }
-
-    setInfluenceLevelArray(levelArray);
+    updateInfluenceLevelArray(maxLevel);
     setInfluenceLevelMax(maxLevel);
-  }, [backgroundList, getCharInfluenceLevel, influence]);
+  }, [
+    backgroundList,
+    getCharInfluenceLevel,
+    influence,
+    updateInfluenceLevelArray,
+  ]);
 
   useEffect(() => {
-    if (ability === '') return;
-
-    const abilityTrait = traitsList.abilities.find(
-      trait => trait.trait === ability,
-    );
-
-    if (abilityTrait === undefined) return;
-
-    const maxLevel = abilityTrait.level;
-
-    const levelArray = [0];
-    for (let i = 1; i <= maxLevel; i += 1) {
-      levelArray.push(i);
-    }
-
-    setAbilityLevelArray(levelArray);
-  }, [ability, abilityLevel, traitsList.abilities]);
-
-  useEffect(() => {
+    if (action.title === undefined) return;
     console.log(action);
 
     setTitle(action.title || '');
@@ -402,13 +681,16 @@ const AddAction: React.FC<DialogPropsEx> = ({
     setEndeavor(action.endeavor || 'other');
     setActionForce(action.action_force || 0);
     setAbility(action.ability || '');
+    updateAbilityLevelArray(action.ability);
     setAbilityLevel(action.ability_level || 0);
     setActionDescription(action.action || '');
     setStReply(action.st_reply || '');
     setNews(action.news || '');
-  }, [action]);
+  }, [action, updateAbilityLevelArray]);
 
   useEffect(() => {
+    if (selectedAction === undefined) return;
+
     buildInfluenceList();
     setAction(selectedAction);
     setTraitsList(charTraitsList);
@@ -425,9 +707,9 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 name="title"
                 id="title"
                 label="Título"
-                value={title}
-                InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
+                value={endeavor !== 'defend' ? title : defendEndeavor.title}
+                InputProps={{ readOnly: readonly || endeavor === 'defend' }}
+                onChange={handleChangeTitle}
                 fullWidth
                 required
                 error={!!validationErrors.title}
@@ -457,7 +739,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 label="Influência"
                 value={getInfluencePT(influence)}
                 InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
+                onChange={handleInfluenceSelectChange}
                 select
                 required
                 helperText="Selecione a influência"
@@ -480,16 +762,20 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 id="influence_level"
                 label="Nível"
                 value={
-                  influenceLevelArray.length < 2 ? '0' : `${influenceLevel}`
+                  influenceLevelArray.length < 2
+                    ? '0'
+                    : `${
+                        endeavor !== 'defend'
+                          ? influenceLevel
+                          : defendEndeavor.influence_level
+                      }`
                 }
-                InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
+                InputProps={{ readOnly: readonly || endeavor === 'defend' }}
+                onChange={handleInfluenceLevelSelectChange}
                 select
                 required
-                // helperText="Selecione o Nível"
                 align="center"
                 fullWidth
-                // addmargin="right"
                 disabled={saving}
               >
                 {influenceLevelArray.map(level => (
@@ -507,13 +793,12 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 label="Tipo"
                 value={getEndeavorPT(endeavor)}
                 InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
+                onChange={handleEndeavorSelectChange}
                 select
                 required
                 helperText="Selectione o tipo de ação"
                 align="center"
                 fullWidth
-                // addmargin="right"
                 disabled={saving}
               >
                 {endeadorList.map(endea => (
@@ -524,14 +809,14 @@ const AddAction: React.FC<DialogPropsEx> = ({
               </InputField>
             </FieldBoxChild>
 
-            <FieldBoxChild proportion={25}>
+            <FieldBoxChild proportion={25} invisible={endeavor === 'combine'}>
               <InputField
                 name="ability"
                 id="ability"
                 label="Habilidade principal"
-                value={ability}
-                InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
+                value={endeavor !== 'defend' ? ability : defendEndeavor.ability}
+                InputProps={{ readOnly: readonly || endeavor === 'defend' }}
+                onChange={handleAbilitySelectChange}
                 select
                 required
                 helperText="Selecione uma habilidade"
@@ -548,7 +833,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
               </InputField>
             </FieldBoxChild>
 
-            <FieldBoxChild proportion={10}>
+            <FieldBoxChild proportion={10} invisible={endeavor === 'combine'}>
               <InputField
                 name="ability_level"
                 id="ability_level"
@@ -556,16 +841,18 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 value={
                   abilityLevelArray.length < abilityLevel
                     ? '0'
-                    : `${abilityLevel}`
+                    : `${
+                        endeavor !== 'defend'
+                          ? abilityLevel
+                          : defendEndeavor.ability_level
+                      }`
                 }
-                InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
+                InputProps={{ readOnly: readonly || endeavor === 'defend' }}
+                onChange={handleAbilityLevelSelectChange}
                 select
                 required
-                // helperText="Selecione o Nível"
                 align="center"
                 fullWidth
-                // addmargin="right"
                 disabled={saving}
               >
                 {abilityLevelArray.map(level => (
@@ -575,98 +862,103 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 ))}
               </InputField>
             </FieldBoxChild>
-
-            {/*
-            <FieldBoxChild proportion={15} addmargin="left">
-              <InputField
-                name="action_force"
-                id="action_force"
-                label="Força"
-                value={actionForce}
-                InputProps={{ readOnly: true }}
-                helperText="Força total da ação"
-                align="center"
-                fullWidth
-                disabled={saving}
-              />
-            </FieldBoxChild>
-                */}
           </FieldBox>
 
           <FieldBox>
-            <FieldBoxChild proportion={25}>
-              <InputField
-                name="background"
-                id="background"
-                label="Incluir / Excluir Antecedente"
-                value={backgroundToAdd}
-                InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
-                select
-                helperText="Reforçar a ação com antecedente"
-                align="center"
-                fullWidth
-                addmargin="right"
-                disabled={saving}
-              >
-                {traitsList.backgrounds.map(bg => (
-                  <MenuItem key={bg.id} value={bg.trait}>
-                    {bg.trait}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
+            {endeavor !== 'defend' && (
+              <>
+                <FieldBoxChild proportion={25}>
+                  <InputField
+                    name="background"
+                    id="background"
+                    label="Incluir / Excluir Antecedente"
+                    value={backgroundToAdd}
+                    InputProps={{ readOnly: readonly }}
+                    // onChange={undefined}
+                    select
+                    helperText="Reforçar a ação com antecedente"
+                    align="center"
+                    fullWidth
+                    addmargin="right"
+                    disabled={saving}
+                  >
+                    {traitsList.backgrounds.map(bg => (
+                      <MenuItem key={bg.id} value={bg.trait}>
+                        {bg.trait}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
 
-            <FieldBoxChild proportion={10}>
+                <FieldBoxChild proportion={10}>
+                  <InputField
+                    name="background_level"
+                    id="background_level"
+                    label="Nível"
+                    value={
+                      backgroundLevelArray.length < 2
+                        ? '0'
+                        : `${backgroundToAddLevel}`
+                    }
+                    InputProps={{ readOnly: readonly }}
+                    // onChange={undefined}
+                    select
+                    align="center"
+                    fullWidth
+                    disabled={saving}
+                  >
+                    {backgroundLevelArray.map(level => (
+                      <MenuItem key={level} value={`${level}`}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+                <FieldBoxChild proportion={5} flexDirection="column">
+                  <ActionButton disabled={saving} title="Incluir Antecedente">
+                    <FiPlus />
+                  </ActionButton>
+                  <ActionButton
+                    disabled={saving}
+                    color="red"
+                    title="Excluir Antecedente"
+                  >
+                    <FiX />
+                  </ActionButton>
+                </FieldBoxChild>
+                <FieldBoxChild proportion={50}>
+                  <InputField
+                    name="backgrounds"
+                    id="backgrounds"
+                    label="Antecedentes adicionados"
+                    value={backgrounds.replaceAll('|', ', ')}
+                    InputProps={{ readOnly: true }}
+                    align="left"
+                    multiline
+                    minRows={2}
+                    maxRows={2}
+                    fullWidth
+                    addmargin="right"
+                    disabled={saving}
+                  />
+                </FieldBoxChild>
+              </>
+            )}
+
+            <FieldBoxChild
+              proportion={10}
+              addmargin={endeavor === 'defend' ? 'auto' : 'left'}
+            >
               <InputField
-                name="background_level"
-                id="background_level"
-                label="Nível"
-                value={
-                  backgroundLevelArray.length < 2
-                    ? '0'
-                    : `${backgroundToAddLevel}`
-                }
-                InputProps={{ readOnly: readonly }}
-                // onChange={undefined}
-                select
+                name="action_force"
+                id="action_force"
+                label="Força da ação"
+                value={actionForce}
+                InputProps={{ readOnly: true }}
                 align="center"
                 fullWidth
                 disabled={saving}
-              >
-                {backgroundLevelArray.map(level => (
-                  <MenuItem key={level} value={`${level}`}>
-                    {level}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
-            <FieldBoxChild proportion={8}>
-              <ActionButton disabled={saving} title="Incluir Antecedente">
-                <FiPlus />
-              </ActionButton>
-              <ActionButton
-                disabled={saving}
-                color="red"
-                title="Excluir Antecedente"
-              >
-                <FiX />
-              </ActionButton>
-            </FieldBoxChild>
-            <FieldBoxChild proportion={57}>
-              <InputField
-                name="backgrounds"
-                id="backgrounds"
-                label="Antecedentes adicionados"
-                value={backgrounds.replaceAll('|', ', ')}
-                InputProps={{ readOnly: true }}
-                align="left"
-                multiline
-                minRows={2}
-                maxRows={2}
-                fullWidth
-                addmargin="left"
-                disabled={saving}
+                highlight="true"
               />
             </FieldBoxChild>
           </FieldBox>
@@ -674,7 +966,10 @@ const AddAction: React.FC<DialogPropsEx> = ({
             name="description"
             id="description"
             label="Descrição"
-            value={actionDescription}
+            value={
+              endeavor !== 'defend' ? actionDescription : defendEndeavor.title
+            }
+            InputProps={{ readOnly: readonly || endeavor === 'defend' }}
             // onChange={handleDescriptionChange}
             multiline
             minRows={6}
@@ -685,35 +980,56 @@ const AddAction: React.FC<DialogPropsEx> = ({
             disabled={saving}
           />
 
-          <InputField
-            name="st_reply"
-            id="st_reply"
-            label="Resposta do Narrador"
-            value={stReply}
-            // onChange={handleDescriptionChange}
-            multiline
-            minRows={3}
-            maxRows={3}
-            fullWidth
-            // error={!!validationErrors.description}
-            helperText="Resposta do narrador sobre sua ação"
-            disabled={saving}
-          />
+          {action.result !== 'not evaluated' && (
+            <>
+              <InputField
+                name="st_reply"
+                id="st_reply"
+                label="Resposta do Narrador"
+                value={stReply}
+                // onChange={handleDescriptionChange}
+                InputProps={{ readOnly: !storyteller }}
+                multiline
+                minRows={3}
+                maxRows={3}
+                fullWidth
+                // error={!!validationErrors.description}
+                helperText="Resposta do narrador sobre sua ação"
+                disabled={saving}
+              />
 
-          <InputField
-            name="news"
-            id="news"
-            label="Notícias Geradas"
-            value={news || 'Esta ação não gerou nenhuma notícia ainda.'}
-            // onChange={handleDescriptionChange}
-            multiline
-            minRows={3}
-            maxRows={3}
-            fullWidth
-            // error={!!validationErrors.description}
-            helperText="Notícias geradas pela ação"
-            disabled={saving}
-          />
+              <InputField
+                name="news"
+                id="news"
+                label="Notícias Geradas"
+                value={news || 'Esta ação não gerou nenhuma notícia ainda.'}
+                // onChange={handleDescriptionChange}
+                InputProps={{ readOnly: !storyteller }}
+                multiline
+                minRows={3}
+                maxRows={3}
+                fullWidth
+                // error={!!validationErrors.description}
+                helperText="Notícias geradas pela ação"
+                disabled={saving}
+              />
+            </>
+          )}
+
+          <ButtonsContainer>
+            {!readonly && (
+              <ButtonBox>
+                <Button type="submit" disabled={!hasChanges || saving}>
+                  Salvar
+                </Button>
+              </ButtonBox>
+            )}
+            <ButtonBox>
+              <Button onClick={handleClose}>
+                {`${readonly ? 'Retornar' : 'Cancelar'}`}
+              </Button>
+            </ButtonBox>
+          </ButtonsContainer>
         </Form>
       </AddActionContainer>
     </Dialog>
