@@ -352,44 +352,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
     [traitsList.abilities],
   );
 
-  /*
-  const updateActionForce = useCallback(() => {
-    if (traitsList.morality.trait === undefined && !hasChanges) return;
-
-    const { morality } = traitsList;
-
-    let moralityTraitLevel = Math.floor(morality.level / 2);
-    let moralityLevel = 0;
-    let newActionForce: number;
-
-    if (morality.trait.indexOf('Humanity') === -1) {
-      moralityTraitLevel -= 2;
-    }
-
-    moralityLevel = moralityTraitLevel > 0 ? moralityTraitLevel : 1;
-
-    if (endeavor === 'defend') {
-      newActionForce =
-        Number(defendEndeavor.influence_level) * 2 +
-        moralityLevel +
-        Number(defendEndeavor.ability_level);
-    } else {
-      newActionForce =
-        Number(influenceLevel) + moralityLevel + Number(abilityLevel);
-    }
-
-    setActionForce(newActionForce);
-  }, [
-    abilityLevel,
-    defendEndeavor.ability_level,
-    defendEndeavor.influence_level,
-    endeavor,
-    hasChanges,
-    influenceLevel,
-    traitsList,
-  ]);
-  */
-
   const handleDefendEndeavor = useCallback(
     (newInfluence = '') => {
       let newTitle = 'Defender a influência';
