@@ -13,13 +13,11 @@ import {
   Slide,
   DialogTitle,
   MenuItem,
-  // MenuItem,
 } from '@material-ui/core';
 import { TransitionProps } from '@material-ui/core/transitions';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 // import * as Yup from 'yup';
-// import Button from '../Button';
 
 // import api from '../../services/api';
 // import { useToast } from '../../hooks/toast';
