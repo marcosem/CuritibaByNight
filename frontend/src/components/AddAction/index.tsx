@@ -183,7 +183,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
 }) => {
   const formRef = useRef<FormHandles>(null);
   const [action, setAction] = useState<IAction>({} as IAction);
-  const [traitsList, setTraitsList] = useState<ITraitsList>({
+  const traitsList = useRef<ITraitsList>({
     masquerade: {} as ITrait,
     morality: {} as ITrait,
     attributes: [],
@@ -191,6 +191,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     backgrounds: [],
     influences: [],
   } as ITraitsList);
+  const influenceList = useRef<IInfluence[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<IError>(
@@ -199,11 +200,10 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
   const [title, setTitle] = useState<string>('');
   const [influence, setInfluence] = useState<string>('');
-  const [influenceList, setInfluenceList] = useState<IInfluence[]>([]);
+
   const [influenceLevel, setInfluenceLevel] = useState<number>(0);
   const [backgrounds, setBackgrounds] = useState<string>('');
   const [backgroundList, setBackgroundList] = useState<IBackground[]>([]);
-  const [influenceLevelMax, setInfluenceLevelMax] = useState<number>(0);
   const [influenceLevelArray, setInfluenceLevelArray] = useState<number[]>([]);
   const [endeavor, setEndeavor] = useState<string>('other');
   const [ability, setAbility] = useState<string>('');
@@ -222,31 +222,27 @@ const AddAction: React.FC<DialogPropsEx> = ({
     {} as IDefendEndeavor,
   );
 
-  const getInfluencePT = useCallback(
-    (influenceEn): string => {
-      const infItem = influenceList.find(inf => inf.influence === influenceEn);
+  const getInfluencePT = useCallback((influenceEn): string => {
+    const infItem = influenceList.current.find(
+      inf => inf.influence === influenceEn,
+    );
 
-      if (infItem) {
-        return infItem.influence_PT;
-      }
+    if (infItem) {
+      return infItem.influence_PT;
+    }
 
-      return '';
-    },
-    [influenceList],
-  );
+    return '';
+  }, []);
 
-  const getInfluenceByLabel = useCallback(
-    label => {
-      const influenceFound = influenceList.find(
-        inf => inf.influence_PT === label,
-      );
+  const getInfluenceByLabel = useCallback(label => {
+    const influenceFound = influenceList.current.find(
+      inf => inf.influence_PT === label,
+    );
 
-      if (influenceFound) return influenceFound.influence;
+    if (influenceFound) return influenceFound.influence;
 
-      return '';
-    },
-    [influenceList],
-  );
+    return '';
+  }, []);
 
   const getEndeavorPT = useCallback((endeavorEn): string => {
     const endeavorItem = endeadorList.find(endea => endea.title === endeavorEn);
@@ -277,7 +273,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       },
     );
 
-    setInfluenceList(newInfluenceList);
+    influenceList.current = newInfluenceList;
   }, []);
 
   const getTitle = useCallback(() => {
@@ -293,21 +289,17 @@ const AddAction: React.FC<DialogPropsEx> = ({
     return pageTitle;
   }, [action.id, readonly]);
 
-  const getCharInfluenceLevel = useCallback(
-    charInfluence => {
-      const influenceTrait: ITrait | undefined = traitsList.influences.find(
-        inf => inf.trait === charInfluence,
-      );
+  const getCharInfluenceLevel = useCallback(charInfluence => {
+    const influenceTrait: ITrait | undefined =
+      traitsList.current.influences.find(inf => inf.trait === charInfluence);
 
-      let level = 0;
-      if (influenceTrait) {
-        level = influenceTrait.levelTemp;
-      }
+    let level = 0;
+    if (influenceTrait) {
+      level = influenceTrait.levelTemp;
+    }
 
-      return level;
-    },
-    [traitsList.influences],
-  );
+    return level;
+  }, []);
 
   const handleChangeTitle = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -328,27 +320,43 @@ const AddAction: React.FC<DialogPropsEx> = ({
     setInfluenceLevelArray(levelArray);
   }, []);
 
-  const updateAbilityLevelArray = useCallback(
-    newAbility => {
-      if (newAbility === '') return;
+  const updateAbilityLevelArray = useCallback(newAbility => {
+    if (newAbility === '') return;
 
-      const abilityTrait = traitsList.abilities.find(
-        trait => trait.trait === newAbility,
-      );
+    const abilityTrait = traitsList.current.abilities.find(
+      trait => trait.trait === newAbility,
+    );
 
-      if (abilityTrait === undefined) return;
+    if (abilityTrait === undefined) return;
 
-      const maxLevel = abilityTrait.level;
+    const maxLevel = abilityTrait.level;
 
-      const levelArray = [0];
-      for (let i = 1; i <= maxLevel; i += 1) {
-        levelArray.push(i);
-      }
+    const levelArray = [0];
+    for (let i = 1; i <= maxLevel; i += 1) {
+      levelArray.push(i);
+    }
 
-      setAbilityLevelArray(levelArray);
-    },
-    [traitsList.abilities],
-  );
+    setAbilityLevelArray(levelArray);
+  }, []);
+
+  const updateBackgroundToAddLevelArray = useCallback(newBg => {
+    if (newBg === '') return;
+
+    const bgTrait = traitsList.current.backgrounds.find(
+      trait => trait.trait === newBg,
+    );
+
+    if (bgTrait === undefined) return;
+
+    const maxLevel = bgTrait.level;
+
+    const levelArray = [0];
+    for (let i = 1; i <= maxLevel; i += 1) {
+      levelArray.push(i);
+    }
+
+    setBackgroundLevelArray(levelArray);
+  }, []);
 
   const handleDefendEndeavor = useCallback(
     (newInfluence = '') => {
@@ -356,18 +364,18 @@ const AddAction: React.FC<DialogPropsEx> = ({
       let influence_level = 0;
       let newAbility = '';
       let ability_level = 0;
-      const influenceToHandle = newInfluence === '' ? influence : newInfluence;
+      // const influenceToHandle = newInfluence;
 
-      if (influenceToHandle !== '') {
-        newTitle = `${newTitle} em ${getInfluencePT(influenceToHandle)}`;
-        const charInfluence = traitsList.influences.find(
-          trait => trait.trait === influenceToHandle,
+      if (newInfluence !== '') {
+        newTitle = `${newTitle} em ${getInfluencePT(newInfluence)}`;
+        const charInfluence = traitsList.current.influences.find(
+          trait => trait.trait === newInfluence,
         );
 
         if (charInfluence) influence_level = charInfluence.level;
 
-        const infAbil = influenceList.find(
-          inf => inf.influence === influenceToHandle,
+        const infAbil = influenceList.current.find(
+          inf => inf.influence === newInfluence,
         );
         newAbility = infAbil ? infAbil.ability : '';
 
@@ -375,7 +383,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
           let charAbilityTrait: ITrait | undefined;
 
           if (newAbility.indexOf(':') >= 0) {
-            const charAbilitiesTraitsList = traitsList.abilities.filter(
+            const charAbilitiesTraitsList = traitsList.current.abilities.filter(
               trait => trait.trait.indexOf(newAbility) >= 0,
             );
 
@@ -391,7 +399,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
               newAbility = charAbilityTrait.trait;
             }
           } else {
-            charAbilityTrait = traitsList.abilities.find(
+            charAbilityTrait = traitsList.current.abilities.find(
               trait => trait.trait === newAbility,
             );
           }
@@ -416,15 +424,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       updateAbilityLevelArray(newAbility);
       setDefendEndeavor(newDefendEndeavor);
     },
-    [
-      getInfluencePT,
-      influence,
-      influenceList,
-      traitsList.abilities,
-      traitsList.influences,
-      updateAbilityLevelArray,
-      updateInfluenceLevelArray,
-    ],
+    [getInfluencePT, updateAbilityLevelArray, updateInfluenceLevelArray],
   );
 
   const handleInfluenceSelectChange = useCallback(
@@ -457,7 +457,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       const newEndeavor = getEndeavorByLabel(event.target.value);
 
       if (newEndeavor === 'defend') {
-        handleDefendEndeavor();
+        handleDefendEndeavor(influence);
       } else {
         setDefendEndeavor({} as IDefendEndeavor);
       }
@@ -465,7 +465,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       setEndeavor(newEndeavor);
       setHasChanges(true);
     },
-    [getEndeavorByLabel, handleDefendEndeavor],
+    [getEndeavorByLabel, handleDefendEndeavor, influence],
   );
 
   const handleAbilitySelectChange = useCallback(
@@ -490,6 +490,67 @@ const AddAction: React.FC<DialogPropsEx> = ({
     [],
   );
 
+  const handleBackgroundToAddSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newBackgroundToAdd = event.target.value;
+
+      setBackgroundToAdd(newBackgroundToAdd);
+      updateBackgroundToAddLevelArray(newBackgroundToAdd);
+      setBackgroundToAddLevel(0);
+    },
+    [updateBackgroundToAddLevelArray],
+  );
+
+  const handleBackgroundToAddLevelSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newBackgroundToAddLevel = Number(event.target.value);
+
+      setBackgroundToAddLevel(newBackgroundToAddLevel);
+      // setHasChanges(true);
+    },
+    [],
+  );
+
+  const handleAddBackground = useCallback(() => {
+    const newBackgroundLabel = `${backgroundToAdd} x${backgroundToAddLevel}`;
+
+    let newBackgrounds;
+    if (backgrounds.indexOf(backgroundToAdd) >= 0) {
+      const bgList = backgrounds.split('|').map(bg => {
+        if (bg.indexOf(backgroundToAdd) >= 0) return newBackgroundLabel;
+        return bg;
+      });
+
+      newBackgrounds = bgList.join('|');
+    } else if (backgrounds === '') {
+      newBackgrounds = `${newBackgroundLabel}`;
+    } else {
+      newBackgrounds = `${backgrounds}|${newBackgroundLabel}`;
+    }
+
+    setBackgrounds(newBackgrounds);
+  }, [backgroundToAdd, backgroundToAddLevel, backgrounds]);
+
+  const handleRemoveBackground = useCallback(() => {
+    if (backgrounds.indexOf(backgroundToAdd) >= 0) {
+      const bgList = backgrounds
+        .split('|')
+        .filter(bg => bg.indexOf(backgroundToAdd) === -1);
+
+      const newBackgrounds = bgList.join('|');
+      setBackgrounds(newBackgrounds);
+    }
+  }, [backgroundToAdd, backgrounds]);
+
+  const handleDescriptionChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newDescription = event.target.value;
+
+      setActionDescription(newDescription);
+    },
+    [],
+  );
+
   const handleSubmit = useCallback(async () => {
     const todo = 'TODO';
 
@@ -504,10 +565,20 @@ const AddAction: React.FC<DialogPropsEx> = ({
     });
   }, []);
 
+  const isBgInTheList = useCallback(
+    background => {
+      const isBgInList =
+        backgroundList.findIndex(bg => bg.background === background) >= 0;
+
+      return isBgInList;
+    },
+    [backgroundList],
+  );
+
   useEffect(() => {
     if (!hasChanges) return;
 
-    const { morality } = traitsList;
+    const { morality } = traitsList.current;
 
     let moralityTraitLevel = Math.floor(morality.level / 2);
     let moralityLevel = 0;
@@ -542,7 +613,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
     endeavor,
     hasChanges,
     influenceLevel,
-    traitsList,
   ]);
 
   useEffect(() => {
@@ -622,7 +692,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
     }
 
     updateInfluenceLevelArray(maxLevel);
-    setInfluenceLevelMax(maxLevel);
   }, [
     backgroundList,
     getCharInfluenceLevel,
@@ -631,29 +700,35 @@ const AddAction: React.FC<DialogPropsEx> = ({
   ]);
 
   useEffect(() => {
-    if (action.title === undefined) return;
-    console.log(action);
+    if (selectedAction.title === undefined) return;
+    console.log(selectedAction);
 
-    setTitle(action.title || '');
-    setInfluence(action.influence || '');
-    setInfluenceLevel(Number(action.influence_level) || 0);
-    setBackgrounds(action.backgrounds || '');
-    setEndeavor(action.endeavor || 'other');
-    setActionForce(action.action_force || 0);
-    setAbility(action.ability || '');
-    updateAbilityLevelArray(action.ability);
-    setAbilityLevel(action.ability_level || 0);
-    setActionDescription(action.action || '');
-    setStReply(action.st_reply || '');
-    setNews(action.news || '');
-  }, [action, updateAbilityLevelArray]);
+    setInfluence(selectedAction.influence || '');
+    setInfluenceLevel(Number(selectedAction.influence_level) || 0);
+    setBackgrounds(selectedAction.backgrounds || '');
+    setActionForce(selectedAction.action_force || 0);
+    setActionDescription(selectedAction.action || '');
+    setStReply(selectedAction.st_reply || '');
+    setNews(selectedAction.news || '');
+
+    setEndeavor(selectedAction.endeavor || 'other');
+    if (selectedAction.endeavor !== 'defend') {
+      setTitle(selectedAction.title || '');
+      setAbility(selectedAction.ability || '');
+      updateAbilityLevelArray(selectedAction.ability);
+      setAbilityLevel(selectedAction.ability_level || 0);
+    } else {
+      handleDefendEndeavor(selectedAction.influence);
+    }
+  }, [handleDefendEndeavor, selectedAction, updateAbilityLevelArray]);
 
   useEffect(() => {
     if (selectedAction === undefined) return;
 
     buildInfluenceList();
+    traitsList.current = charTraitsList;
     setAction(selectedAction);
-    setTraitsList(charTraitsList);
+    // populateActionFields(selectedAction);
   }, [buildInfluenceList, charTraitsList, selectedAction]);
 
   return (
@@ -708,7 +783,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 addmargin="right"
                 disabled={saving}
               >
-                {influenceList.map(inf => (
+                {influenceList.current.map(inf => (
                   <MenuItem key={inf.influence} value={inf.influence_PT}>
                     {inf.influence_PT}
                   </MenuItem>
@@ -785,7 +860,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 addmargin="right"
                 disabled={saving}
               >
-                {traitsList.abilities.map(abil => (
+                {traitsList.current.abilities.map(abil => (
                   <MenuItem key={abil.id} value={abil.trait}>
                     {abil.trait}
                   </MenuItem>
@@ -834,7 +909,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                     label="Incluir / Excluir Antecedente"
                     value={backgroundToAdd}
                     InputProps={{ readOnly: readonly }}
-                    // onChange={undefined}
+                    onChange={handleBackgroundToAddSelectChange}
                     select
                     helperText="Reforçar a ação com antecedente"
                     align="center"
@@ -842,7 +917,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                     addmargin="right"
                     disabled={saving}
                   >
-                    {traitsList.backgrounds.map(bg => (
+                    {traitsList.current.backgrounds.map(bg => (
                       <MenuItem key={bg.id} value={bg.trait}>
                         {bg.trait}
                       </MenuItem>
@@ -861,7 +936,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                         : `${backgroundToAddLevel}`
                     }
                     InputProps={{ readOnly: readonly }}
-                    // onChange={undefined}
+                    onChange={handleBackgroundToAddLevelSelectChange}
                     select
                     align="center"
                     fullWidth
@@ -875,13 +950,26 @@ const AddAction: React.FC<DialogPropsEx> = ({
                   </InputField>
                 </FieldBoxChild>
                 <FieldBoxChild proportion={5} flexDirection="column">
-                  <ActionButton disabled={saving} title="Incluir Antecedente">
+                  <ActionButton
+                    disabled={
+                      saving ||
+                      backgroundToAdd === '' ||
+                      backgroundToAddLevel === 0
+                    }
+                    title="Incluir Antecedente"
+                    onClick={() => handleAddBackground()}
+                  >
                     <FiPlus />
                   </ActionButton>
                   <ActionButton
-                    disabled={saving}
+                    disabled={
+                      saving ||
+                      backgroundToAdd === '' ||
+                      !isBgInTheList(backgroundToAdd)
+                    }
                     color="red"
                     title="Excluir Antecedente"
+                    onClick={() => handleRemoveBackground()}
                   >
                     <FiX />
                   </ActionButton>
@@ -930,7 +1018,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
               endeavor !== 'defend' ? actionDescription : defendEndeavor.title
             }
             InputProps={{ readOnly: readonly || endeavor === 'defend' }}
-            // onChange={handleDescriptionChange}
+            onChange={handleDescriptionChange}
             multiline
             minRows={6}
             maxRows={6}
