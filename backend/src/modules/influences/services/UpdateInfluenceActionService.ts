@@ -17,6 +17,7 @@ interface IRequestDTO {
   backgrounds?: string;
   influence: string;
   influence_level: number;
+  influence_effetive_level: number;
   ability?: string;
   ability_level?: number;
   endeavor?: string;
@@ -46,6 +47,7 @@ class UpdateInfluenceActionService {
     backgrounds,
     influence,
     influence_level,
+    influence_effetive_level,
     ability,
     ability_level,
     endeavor,
@@ -185,7 +187,7 @@ class UpdateInfluenceActionService {
     const actionForce =
       abilityLevel +
       moralityLevel +
-      influence_level * (endeavor === 'defend' ? 2 : 1);
+      influence_effetive_level * (endeavor === 'defend' ? 2 : 1);
 
     infAction.title = title;
 
@@ -200,6 +202,7 @@ class UpdateInfluenceActionService {
     infAction.action_period = action_period;
     infAction.influence = influence;
     infAction.influence_level = influence_level;
+    infAction.influence_effetive_level = influence_effetive_level;
     infAction.ability = abilityUsed;
     infAction.ability_level = abilityLevel;
     if (endeavor) infAction.endeavor = endeavor;
