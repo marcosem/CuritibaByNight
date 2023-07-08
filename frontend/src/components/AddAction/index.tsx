@@ -17,12 +17,12 @@ import {
 import { TransitionProps } from '@material-ui/core/transitions';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-// import * as Yup from 'yup';
+import * as Yup from 'yup';
 
-// import api from '../../services/api';
-// import { useToast } from '../../hooks/toast';
-// import getValidationErrors from '../../utils/getValidationErrors';
 import { FiPlus, FiX } from 'react-icons/fi';
+import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import influencesAbilities from '../../pages/Influences/influencesAbilities.json';
 
@@ -37,6 +37,8 @@ import {
 } from './styles';
 
 import Button from '../Button';
+
+import ICharacter from '../CharacterList/ICharacter';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -83,6 +85,7 @@ export interface IAction {
   influence_level: number;
   ability: string;
   ability_level: number;
+  action_owner_id: string;
   endeavor: 'attack' | 'defend' | 'combine' | 'raise capital' | 'other';
   character_id: string;
   storyteller_id?: string;
@@ -91,7 +94,7 @@ export interface IAction {
   status?: 'sent' | 'read' | 'replied';
   st_reply?: string;
   news?: string;
-  result: 'success' | 'partial' | 'fail' | 'not evaluated';
+  result?: 'success' | 'partial' | 'fail' | 'not evaluated';
   created_at?: Date;
   updated_at?: Date;
   characterId?: {
@@ -112,11 +115,16 @@ interface IError {
   title?: string;
   backgrounds?: string;
   influence?: string;
+  influence_level?: string;
   ability?: string;
+  ability_level?: string;
+  action_owner_id?: string;
+  endeavor?: string;
+  character_id?: string;
   action?: string;
-  st_reply?: string;
-  news?: string;
-  result?: 'success' | 'partial' | 'fail' | 'not evaluated';
+  // st_reply?: string;
+  // news?: string;
+  // result?: string;
 }
 
 interface IInfluence {
@@ -168,6 +176,7 @@ interface DialogPropsEx extends DialogProps {
   charTraitsList: ITraitsList;
   readonly?: boolean;
   storyteller?: boolean;
+  retainerList?: ICharacter[];
   handleSave: (savedAction: IAction) => void;
   handleClose: () => void;
 }
@@ -177,11 +186,13 @@ const AddAction: React.FC<DialogPropsEx> = ({
   charTraitsList,
   readonly,
   storyteller,
+  retainerList,
   handleSave,
   handleClose,
   ...rest
 }) => {
   const formRef = useRef<FormHandles>(null);
+  const [myChar, setMyChar] = useState<ICharacter>({} as ICharacter);
   const [action, setAction] = useState<IAction>({} as IAction);
   const traitsList = useRef<ITraitsList>({
     masquerade: {} as ITrait,
@@ -192,6 +203,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     influences: [],
   } as ITraitsList);
   const influenceList = useRef<IInfluence[]>([]);
+  const [retainers, setRetainers] = useState<ICharacter[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<IError>(
@@ -205,7 +217,9 @@ const AddAction: React.FC<DialogPropsEx> = ({
   const [backgrounds, setBackgrounds] = useState<string>('');
   const [backgroundList, setBackgroundList] = useState<IBackground[]>([]);
   const [influenceLevelArray, setInfluenceLevelArray] = useState<number[]>([]);
-  const [endeavor, setEndeavor] = useState<string>('other');
+  const [endeavor, setEndeavor] = useState<
+    'attack' | 'defend' | 'combine' | 'raise capital' | 'other'
+  >('other');
   const [ability, setAbility] = useState<string>('');
   const [abilityLevel, setAbilityLevel] = useState<number>(0);
   const [abilityLevelArray, setAbilityLevelArray] = useState<number[]>([0]);
@@ -215,12 +229,16 @@ const AddAction: React.FC<DialogPropsEx> = ({
   const [backgroundLevelArray, setBackgroundLevelArray] = useState<number[]>([
     0,
   ]);
+  const [owner, setOwner] = useState<ICharacter>({} as ICharacter);
+  const [ownerList, setOwnerList] = useState<ICharacter[]>([]);
   const [actionDescription, setActionDescription] = useState<string>('');
   const [stReply, setStReply] = useState<string>('');
   const [news, setNews] = useState<string>('');
   const [defendEndeavor, setDefendEndeavor] = useState<IDefendEndeavor>(
     {} as IDefendEndeavor,
   );
+
+  const { addToast } = useToast();
 
   const getInfluencePT = useCallback((influenceEn): string => {
     const infItem = influenceList.current.find(
@@ -454,7 +472,12 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
   const handleEndeavorSelectChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      const newEndeavor = getEndeavorByLabel(event.target.value);
+      const newEndeavor = getEndeavorByLabel(event.target.value) as
+        | 'attack'
+        | 'defend'
+        | 'combine'
+        | 'raise capital'
+        | 'other';
 
       if (newEndeavor === 'defend') {
         handleDefendEndeavor(influence);
@@ -542,20 +565,146 @@ const AddAction: React.FC<DialogPropsEx> = ({
     }
   }, [backgroundToAdd, backgrounds]);
 
+  const handleOwnerSelectChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const newOwnerId = event.target.value;
+
+      const newOwner = ownerList.find(myOwner => myOwner.id === newOwnerId);
+
+      if (newOwner) setOwner(newOwner);
+
+      setHasChanges(true);
+    },
+    [ownerList],
+  );
+
   const handleDescriptionChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const newDescription = event.target.value;
 
       setActionDescription(newDescription);
+      setHasChanges(true);
     },
     [],
   );
 
   const handleSubmit = useCallback(async () => {
-    const todo = 'TODO';
+    try {
+      formRef.current?.setErrors({});
 
-    return todo;
-  }, []);
+      let newEndeavorData: IDefendEndeavor;
+      let myOwner: string;
+
+      if (endeavor === 'defend') {
+        newEndeavorData = defendEndeavor;
+        myOwner = myChar.id;
+      } else {
+        newEndeavorData = {
+          title,
+          influence_level: Number(influenceLevel),
+          ability,
+          ability_level: Number(abilityLevel),
+          action: actionDescription,
+        };
+        myOwner = owner.id;
+      }
+
+      const actionData: IAction = {
+        id: action.id,
+        title: newEndeavorData.title
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+        action_period: action.action_period,
+        backgrounds,
+        influence,
+        influence_level: Number(newEndeavorData.influence_level),
+        ability: newEndeavorData.ability,
+        ability_level: Number(newEndeavorData.ability_level),
+        action_owner_id: myOwner,
+        endeavor,
+        character_id: myChar.id,
+        action: newEndeavorData.action
+          .replace(/’/gi, "'")
+          .replace(/“/gi, '"')
+          .replace(/”/gi, '"'),
+      };
+
+      const schema = Yup.object().shape({
+        title: Yup.string().required('Título obrigatório'),
+        backgounds: Yup.string(),
+        influence: Yup.string().required('Influência obrigatória'),
+        influence_level: Yup.number(),
+        ability:
+          endeavor === 'defend'
+            ? Yup.string()
+            : Yup.string().required('Habilidade obrigatória'),
+        ability_level: Yup.number(),
+        action_owner_id: Yup.string(),
+        endeavor: Yup.string(),
+        character_id: Yup.string(),
+        action: Yup.string().required('Descrição obrigatória'),
+      });
+
+      await schema.validate(actionData, { abortEarly: false });
+      setValidationErrors({} as IError);
+
+      setSaving(true);
+
+      let response;
+      if (action.id) {
+        response = await api.patch('/influenceactions/update', actionData);
+
+        addToast({
+          type: 'success',
+          title: 'Ação atualizada!',
+          description: 'Ação atualizada com sucesso!',
+        });
+      } else {
+        response = await api.post('/influenceactions/add', actionData);
+
+        addToast({
+          type: 'success',
+          title: 'Ação enviada!',
+          description: 'Ação enviada com sucesso!',
+        });
+      }
+
+      setSaving(false);
+      handleSave(response.data);
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+        setValidationErrors(errors);
+
+        return;
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro no cadastro de ação',
+        description: 'Erro ao adicionar ação, tente novamente.',
+      });
+    }
+  }, [
+    ability,
+    abilityLevel,
+    action.action_period,
+    action.id,
+    actionDescription,
+    addToast,
+    backgrounds,
+    defendEndeavor,
+    endeavor,
+    handleSave,
+    influence,
+    influenceLevel,
+    myChar.id,
+    owner.id,
+    title,
+  ]);
 
   const sortBgList = useCallback((bgList: IBackground[]) => {
     return bgList.sort((bgA: IBackground, bgB: IBackground) => {
@@ -616,6 +765,12 @@ const AddAction: React.FC<DialogPropsEx> = ({
   ]);
 
   useEffect(() => {
+    if (readonly) {
+      updateInfluenceLevelArray(influenceLevel);
+      return;
+    }
+
+    let newBackgroundList: IBackground[] = [];
     if (backgrounds !== '') {
       const bgList = backgrounds.split('|');
       const parsedBgList: IBackground[] = bgList.map(bg => {
@@ -659,17 +814,16 @@ const AddAction: React.FC<DialogPropsEx> = ({
         return parsedBg;
       });
 
-      setBackgroundList(sortBgList(parsedBgList));
+      newBackgroundList = sortBgList(parsedBgList);
+      setBackgroundList(newBackgroundList);
     }
-  }, [backgrounds, sortBgList]);
 
-  useEffect(() => {
     let maxLevel: number;
     const infLevel = getCharInfluenceLevel(influence);
 
-    if (backgroundList.length > 0) {
+    if (newBackgroundList.length > 0) {
       const addedValues = [
-        ...backgroundList.map(bg => bg.validLevel),
+        ...newBackgroundList.map(bg => bg.validLevel),
         infLevel,
       ];
       const higherValue = Math.max(...addedValues);
@@ -691,11 +845,16 @@ const AddAction: React.FC<DialogPropsEx> = ({
       maxLevel = infLevel;
     }
 
+    if (influenceLevel > maxLevel) setInfluenceLevel(Math.floor(maxLevel));
+
     updateInfluenceLevelArray(maxLevel);
   }, [
-    backgroundList,
+    backgrounds,
     getCharInfluenceLevel,
     influence,
+    influenceLevel,
+    readonly,
+    sortBgList,
     updateInfluenceLevelArray,
   ]);
 
@@ -704,9 +863,13 @@ const AddAction: React.FC<DialogPropsEx> = ({
     console.log(selectedAction);
 
     setInfluence(selectedAction.influence || '');
-    setInfluenceLevel(Number(selectedAction.influence_level) || 0);
     setBackgrounds(selectedAction.backgrounds || '');
+    setInfluenceLevel(Number(selectedAction.influence_level) || 0);
     setActionForce(selectedAction.action_force || 0);
+
+    if (selectedAction.characterId)
+      setMyChar(selectedAction.characterId as ICharacter);
+    if (selectedAction.ownerId) setOwner(selectedAction.ownerId as ICharacter);
     setActionDescription(selectedAction.action || '');
     setStReply(selectedAction.st_reply || '');
     setNews(selectedAction.news || '');
@@ -721,6 +884,28 @@ const AddAction: React.FC<DialogPropsEx> = ({
       handleDefendEndeavor(selectedAction.influence);
     }
   }, [handleDefendEndeavor, selectedAction, updateAbilityLevelArray]);
+
+  useEffect(() => {
+    if (myChar.id) {
+      let newOwnerList: ICharacter[] = [];
+
+      if (myChar.id !== '') {
+        newOwnerList.push(myChar);
+      }
+
+      if (retainers) {
+        newOwnerList = [...newOwnerList, ...retainers];
+      }
+
+      setOwnerList(newOwnerList);
+    }
+  }, [retainers, myChar]);
+
+  useEffect(() => {
+    if (retainerList) {
+      setRetainers(retainerList);
+    }
+  }, [retainerList]);
 
   useEffect(() => {
     if (selectedAction === undefined) return;
@@ -741,12 +926,11 @@ const AddAction: React.FC<DialogPropsEx> = ({
               <InputField
                 name="title"
                 id="title"
-                label="Título"
+                label="Título *"
                 value={endeavor !== 'defend' ? title : defendEndeavor.title}
                 InputProps={{ readOnly: readonly || endeavor === 'defend' }}
                 onChange={handleChangeTitle}
                 fullWidth
-                required
                 error={!!validationErrors.title}
                 helperText={validationErrors.title}
                 addmargin="right"
@@ -771,13 +955,15 @@ const AddAction: React.FC<DialogPropsEx> = ({
               <InputField
                 name="influence"
                 id="influence"
-                label="Influência"
+                label="Influência *"
                 value={getInfluencePT(influence)}
                 InputProps={{ readOnly: readonly }}
                 onChange={handleInfluenceSelectChange}
                 select
-                required
-                helperText="Selecione a influência"
+                error={!!validationErrors.influence}
+                helperText={
+                  validationErrors.influence || 'Selecione a influência'
+                }
                 align="center"
                 fullWidth
                 addmargin="right"
@@ -808,13 +994,12 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 InputProps={{ readOnly: readonly || endeavor === 'defend' }}
                 onChange={handleInfluenceLevelSelectChange}
                 select
-                required
                 align="center"
                 fullWidth
                 disabled={saving}
               >
                 {influenceLevelArray.map(level => (
-                  <MenuItem key={level} value={`${level}`}>
+                  <MenuItem key={`inf-${level}`} value={`${level}`}>
                     {level}
                   </MenuItem>
                 ))}
@@ -830,7 +1015,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 InputProps={{ readOnly: readonly }}
                 onChange={handleEndeavorSelectChange}
                 select
-                required
                 helperText="Selectione o tipo de ação"
                 align="center"
                 fullWidth
@@ -848,13 +1032,15 @@ const AddAction: React.FC<DialogPropsEx> = ({
               <InputField
                 name="ability"
                 id="ability"
-                label="Habilidade principal"
+                label="Habilidade principal *"
                 value={endeavor !== 'defend' ? ability : defendEndeavor.ability}
                 InputProps={{ readOnly: readonly || endeavor === 'defend' }}
                 onChange={handleAbilitySelectChange}
                 select
-                required
-                helperText="Selecione uma habilidade"
+                error={!!validationErrors.ability}
+                helperText={
+                  validationErrors.ability || 'Selecione uma habilidade'
+                }
                 align="center"
                 fullWidth
                 addmargin="right"
@@ -885,13 +1071,12 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 InputProps={{ readOnly: readonly || endeavor === 'defend' }}
                 onChange={handleAbilityLevelSelectChange}
                 select
-                required
                 align="center"
                 fullWidth
                 disabled={saving}
               >
                 {abilityLevelArray.map(level => (
-                  <MenuItem key={level} value={`${level}`}>
+                  <MenuItem key={`abil-${level}`} value={`${level}`}>
                     {level}
                   </MenuItem>
                 ))}
@@ -943,7 +1128,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                     disabled={saving}
                   >
                     {backgroundLevelArray.map(level => (
-                      <MenuItem key={level} value={`${level}`}>
+                      <MenuItem key={`bg-${level}`} value={`${level}`}>
                         {level}
                       </MenuItem>
                     ))}
@@ -974,7 +1159,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                     <FiX />
                   </ActionButton>
                 </FieldBoxChild>
-                <FieldBoxChild proportion={50}>
+                <FieldBoxChild proportion={60}>
                   <InputField
                     name="backgrounds"
                     id="backgrounds"
@@ -986,17 +1171,44 @@ const AddAction: React.FC<DialogPropsEx> = ({
                     minRows={2}
                     maxRows={2}
                     fullWidth
-                    addmargin="right"
+                    // addmargin="right"
                     disabled={saving}
                   />
                 </FieldBoxChild>
               </>
             )}
+          </FieldBox>
+          <FieldBox>
+            <FieldBoxChild proportion={30} />
+            <FieldBoxChild proportion={40}>
+              <InputField
+                name="action_owner_id"
+                id="action_owner_id"
+                label="Autor da ação"
+                value={
+                  ownerList.length === 0
+                    ? ''
+                    : `${endeavor === 'defend' ? myChar.id : owner.id}`
+                }
+                InputProps={{ readOnly: readonly || endeavor === 'defend' }}
+                onChange={handleOwnerSelectChange}
+                select
+                helperText="Selecione quem executará esta ação no caso de ser um lacaio"
+                align="center"
+                fullWidth
+                addmargin="right"
+                disabled={saving}
+              >
+                {ownerList.map(charOwner => (
+                  <MenuItem key={charOwner.id} value={charOwner.id}>
+                    {charOwner.name}
+                  </MenuItem>
+                ))}
+              </InputField>
+            </FieldBoxChild>
+            <FieldBoxChild proportion={20} />
 
-            <FieldBoxChild
-              proportion={10}
-              addmargin={endeavor === 'defend' ? 'auto' : 'left'}
-            >
+            <FieldBoxChild proportion={10} addmargin="left">
               <InputField
                 name="action_force"
                 id="action_force"
@@ -1013,18 +1225,19 @@ const AddAction: React.FC<DialogPropsEx> = ({
           <InputField
             name="description"
             id="description"
-            label="Descrição"
+            label="Descrição *"
             value={
               endeavor !== 'defend' ? actionDescription : defendEndeavor.title
             }
             InputProps={{ readOnly: readonly || endeavor === 'defend' }}
             onChange={handleDescriptionChange}
+            // required
             multiline
-            minRows={6}
-            maxRows={6}
+            minRows={4}
+            maxRows={4}
             fullWidth
-            // error={!!validationErrors.description}
-            helperText="Descreva a sua ação"
+            error={!!validationErrors.action}
+            helperText={validationErrors.action || 'Descreva a sua ação'}
             disabled={saving}
           />
 
@@ -1042,7 +1255,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 maxRows={3}
                 fullWidth
                 // error={!!validationErrors.description}
-                helperText="Resposta do narrador sobre sua ação"
+                // helperText="Resposta do narrador sobre sua ação"
                 disabled={saving}
               />
 
@@ -1058,7 +1271,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 maxRows={3}
                 fullWidth
                 // error={!!validationErrors.description}
-                helperText="Notícias geradas pela ação"
+                // helperText="Notícias geradas pela ação"
                 disabled={saving}
               />
             </>

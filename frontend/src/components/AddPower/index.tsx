@@ -119,7 +119,6 @@ const AddPower: React.FC<DialogPropsEx> = ({
   const formRef = useRef<FormHandles>(null);
   const [power, setPower] = useState<IPower>({} as IPower);
   const [selectedType, setSelectedType] = useState<IType>({} as IType);
-  // const [currentLevel, setCurrentLevel] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
 
@@ -136,7 +135,6 @@ const AddPower: React.FC<DialogPropsEx> = ({
   const [system, setSystem] = useState<string>('');
 
   const { addToast } = useToast();
-  // const { signOut } = useAuth();
 
   const getType = useCallback(type => {
     const parsedType = type === 'rituals' ? 'ritual' : type;

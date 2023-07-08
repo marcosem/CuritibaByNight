@@ -36,6 +36,7 @@ import { useSocket } from '../../hooks/socket';
 import { useHeader } from '../../hooks/header';
 
 import influencesAbilities from '../Influences/influencesAbilities.json';
+import ICharacter from '../../components/CharacterList/ICharacter';
 
 interface ILevel {
   id: string;
@@ -81,6 +82,7 @@ interface IAction {
   influence_level: number;
   ability: string;
   ability_level: number;
+  action_owner_id: string;
   endeavor: 'attack' | 'defend' | 'combine' | 'raise capital' | 'other';
   character_id: string;
   storyteller_id?: string;
@@ -89,7 +91,7 @@ interface IAction {
   status?: 'sent' | 'read' | 'replied';
   st_reply?: string;
   news?: string;
-  result: 'success' | 'partial' | 'fail' | 'not evaluated';
+  result?: 'success' | 'partial' | 'fail' | 'not evaluated';
   created_at?: Date;
   updated_at?: Date;
   characterId?: {
@@ -108,6 +110,7 @@ interface IAction {
 
 const InfluenceActions: React.FC = () => {
   const loadingTraits = useRef<boolean>(false);
+  const [myChar, setMyChar] = useState<ICharacter>({} as ICharacter);
   const [domainMasquerade, setDomainMasquerade] = useState<number>(0);
   const [actionMonth, setActionMonth] = useState<string>('');
   const [isBusy, setBusy] = useState(true);
@@ -119,6 +122,7 @@ const InfluenceActions: React.FC = () => {
     backgrounds: [],
     influences: [],
   } as ITraitsList);
+  const [retainerList, setRetainerList] = useState<ICharacter[]>([]);
   const [morality, setMorality] = useState<IShortTrait>({
     trait: '',
     realLevel: 0,
@@ -264,7 +268,7 @@ const InfluenceActions: React.FC = () => {
   }, []);
 
   const loadDomainMasquerade = useCallback(async () => {
-    if (char.id === '') {
+    if (char.id !== '') {
       return;
     }
 
@@ -528,29 +532,95 @@ const InfluenceActions: React.FC = () => {
     addToast,
   ]);
 
-  const loadActions = useCallback(async () => {
-    if (char.id === '' || actionMonth === '') {
+  const loadActions = useCallback(
+    async (busy = true) => {
+      if (char.id === '' || actionMonth === '') {
+        return;
+      }
+
+      setBusy(busy);
+
+      try {
+        await api.post('/influenceactions/list').then(response => {
+          const res: IAction[] = response.data;
+
+          const currentActions = res.filter(
+            action => action.action_period === actionMonth,
+          );
+
+          const pastActions = res.filter(
+            action => action.action_period !== actionMonth,
+          );
+
+          setActionsList(currentActions);
+          setPastActionsList(pastActions);
+          setShowPastActionsList(pastActions);
+        });
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (parsedError.response.status !== 401) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar recuperar a lista de ações do personagem',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+
+      setBusy(false);
+    },
+    [actionMonth, addToast, char.id],
+  );
+
+  const loadRetainers = useCallback(async () => {
+    if (char.id === '') {
       return;
     }
 
-    setBusy(true);
-
     try {
-      await api.post('/influenceactions/list').then(response => {
-        const res: IAction[] = response.data;
+      await api
+        .post('/character/retainerslist', {
+          character_id: char.id,
+          situation: 'active',
+        })
+        .then(response => {
+          const res: ICharacter[] = response.data;
 
-        const currentActions = res.filter(
-          action => action.action_period === actionMonth,
-        );
+          const retList = res.map(ch => {
+            const newChar = ch;
 
-        const pastActions = res.filter(
-          action => action.action_period !== actionMonth,
-        );
+            let filteredClan: string[];
+            if (newChar.clan) {
+              filteredClan = newChar.clan.split(' (');
+              filteredClan = filteredClan[0].split(':');
+            } else {
+              filteredClan = [''];
+            }
 
-        setActionsList(currentActions);
-        setPastActionsList(pastActions);
-        setShowPastActionsList(pastActions);
-      });
+            const clanIndex = 0;
+            newChar.clan = filteredClan[clanIndex];
+
+            const retainerLevel = parseInt(newChar.retainer_level, 10);
+            let newRetainerLevel: number;
+
+            if (retainerLevel >= 10) {
+              newRetainerLevel = retainerLevel / 10;
+            } else {
+              newRetainerLevel = retainerLevel;
+            }
+
+            newChar.retainer_level = `${newRetainerLevel}`;
+
+            return newChar;
+          });
+
+          setRetainerList(retList);
+        });
     } catch (error) {
       const parsedError: any = error;
 
@@ -560,15 +630,13 @@ const InfluenceActions: React.FC = () => {
         if (parsedError.response.status !== 401) {
           addToast({
             type: 'error',
-            title: 'Erro ao tentar recuperar a lista de ações do personagem',
+            title: 'Erro ao tentar listar lacaios do personagens',
             description: `Erro: '${message}'`,
           });
         }
       }
     }
-
-    setBusy(false);
-  }, [actionMonth, addToast, char.id]);
+  }, [addToast, char.id]);
 
   const handleSearchChange = useCallback(
     event => {
@@ -603,9 +671,52 @@ const InfluenceActions: React.FC = () => {
     [getInfluencePT, getResultPT, getStatusPT, pastActionsList],
   );
 
+  const handleUpdateAction = useCallback(() => {
+    loadActions(false);
+    setAddActionOn(false);
+
+    const action: IAction = {
+      title: '',
+      action_period: actionMonth,
+      backgrounds: '',
+      influence: '',
+      influence_level: 0,
+      ability: '',
+      ability_level: 0,
+      endeavor: 'other',
+      character_id: myChar.id,
+      characterId: myChar,
+      action_owner_id: myChar.id,
+      ownerId: myChar,
+      action: '',
+      result: 'not evaluated',
+    };
+
+    setSelectedAction(action);
+  }, [actionMonth, loadActions, myChar]);
+
   const handleClose = useCallback(() => {
     setAddActionOn(false);
-  }, []);
+
+    const action: IAction = {
+      title: '',
+      action_period: actionMonth,
+      backgrounds: '',
+      influence: '',
+      influence_level: 0,
+      ability: '',
+      ability_level: 0,
+      endeavor: 'other',
+      character_id: myChar.id,
+      characterId: myChar,
+      action_owner_id: myChar.id,
+      ownerId: myChar,
+      action: '',
+      result: 'not evaluated',
+    };
+
+    setSelectedAction(action);
+  }, [actionMonth, myChar]);
 
   const handleAddNewAction = useCallback(() => {
     const action: IAction = {
@@ -617,7 +728,10 @@ const InfluenceActions: React.FC = () => {
       ability: '',
       ability_level: 0,
       endeavor: 'other',
-      character_id: char.id,
+      character_id: myChar.id,
+      characterId: myChar,
+      action_owner_id: myChar.id,
+      ownerId: myChar,
       action: '',
       result: 'not evaluated',
     };
@@ -625,7 +739,7 @@ const InfluenceActions: React.FC = () => {
     setSelectedAction(action);
     setReadOnlyAction(false);
     setAddActionOn(true);
-  }, [actionMonth, char.id]);
+  }, [actionMonth, myChar]);
 
   const handleViewAction = useCallback((action: IAction) => {
     setSelectedAction(action);
@@ -756,13 +870,26 @@ const InfluenceActions: React.FC = () => {
   }, [actionMonth, loadActions]);
 
   useEffect(() => {
+    if (char.id !== '') {
+      setMyChar(char as ICharacter);
+    }
+  }, [char]);
+
+  useEffect(() => {
     if (loadingTraits.current === false) {
       setCurrentPage('actions');
       loadCurrentActionMonth();
+      loadRetainers();
       loadTraits();
       // loadActions();
     }
-  }, [loadActions, loadCurrentActionMonth, loadTraits, setCurrentPage]);
+  }, [
+    loadActions,
+    loadCurrentActionMonth,
+    loadRetainers,
+    loadTraits,
+    setCurrentPage,
+  ]);
 
   return (
     <Container isMobile={false}>
@@ -770,7 +897,7 @@ const InfluenceActions: React.FC = () => {
         <strong>Ações de Influências e Downtime</strong>
       </TitleBox>
       <ActionHeader>
-        <h2>{char.name}</h2>
+        <h2>{myChar.name}</h2>
         <ActionsInfo>
           <h3>{`Ações Disponíveis: ${actionsNumber}`}</h3>
           {actionMonth !== '' && <h3>{`Período atual: ${actionMonth}`}</h3>}
@@ -899,9 +1026,10 @@ const InfluenceActions: React.FC = () => {
       <AddAction
         open={addActionOn}
         handleClose={handleClose}
-        handleSave={handleClose}
+        handleSave={handleUpdateAction}
         selectedAction={selectedAction}
         charTraitsList={traitsList}
+        retainerList={retainerList}
         readonly={readOnlyAction}
       />
     </Container>
