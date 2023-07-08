@@ -65,6 +65,7 @@ interface ITraitsList {
   abilities: ITrait[];
   backgrounds: ITrait[];
   influences: ITrait[];
+  populated: boolean;
 }
 
 interface IShortTrait {
@@ -121,6 +122,7 @@ const InfluenceActions: React.FC = () => {
     abilities: [],
     backgrounds: [],
     influences: [],
+    populated: false,
   } as ITraitsList);
   const [retainerList, setRetainerList] = useState<ICharacter[]>([]);
   const [morality, setMorality] = useState<IShortTrait>({
@@ -350,6 +352,7 @@ const InfluenceActions: React.FC = () => {
           abilities: [],
           backgrounds: [],
           influences: [],
+          populated: true,
         } as ITraitsList;
 
         let newRetainer: IShortTrait = {
@@ -830,6 +833,12 @@ const InfluenceActions: React.FC = () => {
 
       setTotalMasquerade(newTotalMasquerade);
       if (newTotalMasquerade < 3) {
+        setRetainerTrait({
+          trait: retainerTrait.trait,
+          realLevel: retainerTrait.realLevel,
+          validLevel: retainerTrait.realLevel,
+        });
+
         return;
       }
 
@@ -864,10 +873,10 @@ const InfluenceActions: React.FC = () => {
   }, [actionsList.length, morality.validLevel, retainerTrait.validLevel]);
 
   useEffect(() => {
-    if (actionMonth !== '') {
+    if (actionMonth !== '' && traitsList.populated) {
       loadActions();
     }
-  }, [actionMonth, loadActions]);
+  }, [actionMonth, loadActions, traitsList]);
 
   useEffect(() => {
     if (char.id !== '') {
@@ -881,15 +890,8 @@ const InfluenceActions: React.FC = () => {
       loadCurrentActionMonth();
       loadRetainers();
       loadTraits();
-      // loadActions();
     }
-  }, [
-    loadActions,
-    loadCurrentActionMonth,
-    loadRetainers,
-    loadTraits,
-    setCurrentPage,
-  ]);
+  }, [loadCurrentActionMonth, loadRetainers, loadTraits, setCurrentPage]);
 
   return (
     <Container isMobile={false}>
