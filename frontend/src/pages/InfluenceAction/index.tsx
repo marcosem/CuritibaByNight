@@ -260,6 +260,10 @@ const InfluenceActions: React.FC = () => {
       refMoralityLevel = Number(trait.level);
     }
 
+    if (moralityTrait !== 'Humanity') {
+      refMoralityLevel -= 2;
+    }
+
     const newMorality: IShortTrait = {
       trait: moralityTrait,
       realLevel: trait.level,
