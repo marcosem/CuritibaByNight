@@ -6,7 +6,7 @@ export default class AddInfluenceEffetiveLevelToInfluenceActions1688848684922
     await queryRunner.addColumns('influence_actions', [
       new TableColumn({
         name: 'influence_effetive_level',
-        type: 'numberic',
+        type: 'numeric',
         default: '0',
       }),
     ]);
