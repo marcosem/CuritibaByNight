@@ -3,6 +3,16 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 
 import { isAfter } from 'date-fns';
 import { FiPlus, FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
+import {
+  FaEnvelope,
+  FaEnvelopeOpenText,
+  FaFileSignature,
+  FaCheckCircle,
+  FaInfoCircle,
+  FaTimesCircle,
+  FaClock,
+} from 'react-icons/fa';
+// mport { IconType } from 'react-icons';
 import Skeleton from '@material-ui/lab/Skeleton';
 import api from '../../services/api';
 import AddAction from '../../components/AddAction';
@@ -26,6 +36,7 @@ import {
   SearchBox,
   ActionsContainer,
   ActionButton,
+  IconBox,
 } from './styles';
 
 import SearchField from '../../components/SearchField';
@@ -74,6 +85,17 @@ interface IShortTrait {
   validLevel: number;
 }
 
+interface IUsedTrait {
+  trait: string;
+  usedLevel: number;
+}
+
+interface IUsedTraitsList {
+  abilities: IUsedTrait[];
+  backgrounds: IUsedTrait[];
+  influences: IUsedTrait[];
+}
+
 interface IAction {
   id?: string;
   title: string;
@@ -81,6 +103,7 @@ interface IAction {
   backgrounds: string;
   influence: string;
   influence_level: number;
+  influence_effective_level: number;
   ability: string;
   ability_level: number;
   action_owner_id: string;
@@ -103,7 +126,7 @@ interface IAction {
     id: string;
     name: string;
   };
-  storytellerID?: {
+  storytellerId?: {
     id: string;
     name: string;
   };
@@ -116,6 +139,15 @@ const InfluenceActions: React.FC = () => {
   const [actionMonth, setActionMonth] = useState<string>('');
   const [isBusy, setBusy] = useState(true);
   const [traitsList, setTraitsList] = useState<ITraitsList>({
+    masquerade: {} as ITrait,
+    morality: {} as ITrait,
+    attributes: [],
+    abilities: [],
+    backgrounds: [],
+    influences: [],
+    populated: false,
+  } as ITraitsList);
+  const [parsedTaitsList, setParsedTraitsList] = useState<ITraitsList>({
     masquerade: {} as ITrait,
     morality: {} as ITrait,
     attributes: [],
@@ -149,14 +181,7 @@ const InfluenceActions: React.FC = () => {
 
   const { addToast } = useToast();
   const { char } = useAuth();
-  const {
-    // isConnected,
-    // updatedTrait,
-    // reloadCharTraits,
-    // notifyTraitUpdate,
-    clearUpdatedTrait,
-    clearReloadTraits,
-  } = useSocket();
+  const { clearUpdatedTrait, clearReloadTraits } = useSocket();
   const { setCurrentPage } = useHeader();
 
   const getInfluencePT = useCallback((influence): string => {
@@ -191,6 +216,26 @@ const InfluenceActions: React.FC = () => {
     return statusPT;
   }, []);
 
+  const getStatusIcon = useCallback(status => {
+    let MyIcon;
+
+    switch (status) {
+      case 'sent':
+        MyIcon = <FaEnvelope />;
+        break;
+      case 'read':
+        MyIcon = <FaEnvelopeOpenText />;
+        break;
+      case 'replied':
+        MyIcon = <FaFileSignature />;
+        break;
+      default:
+        MyIcon = null;
+    }
+
+    return MyIcon;
+  }, []);
+
   const getResultPT = useCallback(result => {
     let resultPT: string;
 
@@ -205,13 +250,57 @@ const InfluenceActions: React.FC = () => {
         resultPT = 'Falhou';
         break;
       case 'not evaluated':
-        resultPT = 'Não avaliado';
+        resultPT = 'Não avaliada';
         break;
       default:
         resultPT = '';
     }
 
     return resultPT;
+  }, []);
+
+  const getResultIcon = useCallback(result => {
+    let MyIcon;
+
+    switch (result) {
+      case 'success':
+        MyIcon = <FaCheckCircle />;
+        break;
+      case 'partial':
+        MyIcon = <FaInfoCircle />;
+        break;
+      case 'fail':
+        MyIcon = <FaTimesCircle />;
+        break;
+      case 'not evaluated':
+        MyIcon = <FaClock />;
+        break;
+      default:
+        MyIcon = null;
+    }
+
+    return MyIcon;
+  }, []);
+
+  const getResultColor = useCallback(result => {
+    let resultColor: string;
+
+    switch (result) {
+      case 'success':
+        resultColor = 'positive';
+        break;
+      case 'partial':
+        resultColor = 'partial';
+        break;
+      case 'fail':
+        resultColor = 'negative';
+        break;
+      case 'not evaluated':
+      default:
+        resultColor = 'weak';
+    }
+
+    return resultColor;
   }, []);
 
   const getActionsNumberLabel = useCallback(() => {
@@ -688,6 +777,7 @@ const InfluenceActions: React.FC = () => {
       backgrounds: '',
       influence: '',
       influence_level: 0,
+      influence_effective_level: 0,
       ability: '',
       ability_level: 0,
       endeavor: 'other',
@@ -711,6 +801,7 @@ const InfluenceActions: React.FC = () => {
       backgrounds: '',
       influence: '',
       influence_level: 0,
+      influence_effective_level: 0,
       ability: '',
       ability_level: 0,
       endeavor: 'other',
@@ -732,6 +823,7 @@ const InfluenceActions: React.FC = () => {
       backgrounds: '',
       influence: '',
       influence_level: 0,
+      influence_effective_level: 0,
       ability: '',
       ability_level: 0,
       endeavor: 'other',
@@ -789,10 +881,28 @@ const InfluenceActions: React.FC = () => {
             {action.action_period}
           </StyledTableCell>
           <StyledTableCell align="center">
-            {getStatusPT(action.status)}
+            <IconBox
+              colorInterface={
+                action.status === 'replied' ? 'positive' : 'neutral'
+              }
+              title={
+                action.status === 'replied' && action.storytellerId?.name
+                  ? `${getStatusPT(action.status)} por ${
+                      action.storytellerId?.name
+                    }`
+                  : getStatusPT(action.status)
+              }
+            >
+              {getStatusIcon(action.status)}
+            </IconBox>
           </StyledTableCell>
           <StyledTableCell align="center">
-            {getResultPT(action.result)}
+            <IconBox
+              colorInterface={getResultColor(action.result)}
+              title={getResultPT(action.result)}
+            >
+              {getResultIcon(action.result)}
+            </IconBox>
           </StyledTableCell>
           <StyledTableCell align="center">
             <ActionsContainer>
@@ -823,12 +933,113 @@ const InfluenceActions: React.FC = () => {
     },
     [
       getInfluencePT,
+      getResultColor,
+      getResultIcon,
       getResultPT,
+      getStatusIcon,
       getStatusPT,
       handleEditAction,
       handleViewAction,
     ],
   );
+
+  /*
+  useEffect(() => {
+    if(( actionsList.length === 0 ) || (!traitsList.populated)) return;
+
+    const usedAbilities: IUsedTrait[] = [];
+    const usedBackgrounds: IUsedTrait[] = [];
+    const usedInfluences: IUsedTrait[] = [];
+
+    actionsList.forEach(myAction => {
+      if( !!myAction.ability ) {
+        const usedAbility: IUsedTrait = {
+          trait: myAction.ability,
+          usedLevel: Number(myAction.ability_level),
+        }
+
+        usedAbilities.push(usedAbility);
+      }
+
+      if( myAction.endeavor === 'defend') {
+        const usedInfluence: IUsedTrait = {
+          trait: myAction.influence,
+          usedLevel: Math.floor(Number(myAction.influence_level) / 2);
+        }
+
+        usedInfluences.push(usedInfluence);
+        return;
+      }
+
+      const myUsedBgs: IShortTrait[] = [];
+
+      if( !!myAction.backgrounds ) {
+        myAction.backgrounds.split('|').forEach(bgTrait => {
+          const newBgTrait = bgTrait.split(' x');
+          const usedBackground: IUsedTrait = {
+            trait: newBgTrait[0],
+            usedLevel: Number(newBgTrait[1]) || 0,
+          }
+
+          usedBackgrounds.push(usedBackground);
+
+          let validLevel: number;
+          switch (usedBackground.trait) {
+            case 'Allies':
+            case 'Cult':
+              validLevel = usedBackground.usedLevel - 1;
+              break;
+            case 'Contacts':
+            case 'Assamite: Web of Influence':
+            case 'Followers of Set: Fellowship':
+              validLevel = usedBackground.usedLevel;
+              break;
+            case 'Resources':
+              validLevel = Math.floor(usedBackground.usedLevel / 2);
+              break;
+            default:
+              validLevel = 0;
+          }
+
+          const parsedBg: IShortTrait = {
+            trait: usedBackground.trait,
+            realLevel: usedBackground.usedLevel,
+            validLevel,
+          };
+
+          myUsedBgs.push(parsedBg);
+        });
+      }
+
+      let usedInfluence: IUsedTrait;
+      if( myUsedBgs.length > 0 ) {
+        const infEffetiveLevel = myAction.influence_level;
+        const charInfluence = traitsList.influences.find(trait => trait.trait === myAction.influence);
+
+        if( charInfluence ) {
+
+
+
+
+        }
+      } else {
+        usedInfluence = {
+          trait: myAction.influence,
+          usedLevel: myAction.influence_level,
+        }
+      }
+
+
+
+
+
+
+    });
+
+
+
+  }, [actionsList, traitsList.populated]);
+  */
 
   useEffect(() => {
     if (retainerTrait.trait !== '') {

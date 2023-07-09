@@ -22,6 +22,10 @@ interface IActionBoxProps {
   disabled?: boolean;
 }
 
+interface IIconBoxProps {
+  colorInterface?: string;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -407,5 +411,48 @@ export const AddActionBox = styled.div<IActionBoxProps>`
               color: ${lighten(0.2, '#e0e0e0')};
             }
           `}
+  }
+`;
+
+export const IconBox = styled.div<IIconBoxProps>`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  > svg {
+    margin: auto;
+    width: 20px;
+    height: 20px;
+
+    ${props =>
+      props.colorInterface === 'positive' &&
+      css`
+        color: #075202;
+      `}
+
+    ${props =>
+      props.colorInterface === 'negative' &&
+      css`
+        color: #860209;
+      `}
+
+    ${props =>
+      props.colorInterface === 'partial' &&
+      css`
+        color: #2196f3;
+      `}
+
+    ${props =>
+      props.colorInterface === 'weak' &&
+      css`
+        color: #888;
+      `}
+
+    ${props =>
+      (!props.colorInterface || props.colorInterface === 'neutral') &&
+      css`
+        color: #333;
+      `}
   }
 `;

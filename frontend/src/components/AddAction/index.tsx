@@ -83,6 +83,7 @@ export interface IAction {
   backgrounds: string;
   influence: string;
   influence_level: number;
+  influence_effective_level: number;
   ability: string;
   ability_level: number;
   action_owner_id: string;
@@ -142,7 +143,6 @@ interface IBackground {
 
 interface IDefendEndeavor {
   title: string;
-  influence_level: number;
   ability: string;
   ability_level: number;
   action: string;
@@ -214,6 +214,8 @@ const AddAction: React.FC<DialogPropsEx> = ({
   const [influence, setInfluence] = useState<string>('');
 
   const [influenceLevel, setInfluenceLevel] = useState<number>(0);
+  const [influenceEffectiveLevel, setInfluenceEffectiveLevel] =
+    useState<number>(0);
   const [backgrounds, setBackgrounds] = useState<string>('');
   const [backgroundList, setBackgroundList] = useState<IBackground[]>([]);
   const [influenceLevelArray, setInfluenceLevelArray] = useState<number[]>([]);
@@ -240,48 +242,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
   const { addToast } = useToast();
 
-  const getInfluencePT = useCallback((influenceEn): string => {
-    const infItem = influenceList.current.find(
-      inf => inf.influence === influenceEn,
-    );
-
-    if (infItem) {
-      return infItem.influence_PT;
-    }
-
-    return '';
-  }, []);
-
-  const getInfluenceByLabel = useCallback(label => {
-    const influenceFound = influenceList.current.find(
-      inf => inf.influence_PT === label,
-    );
-
-    if (influenceFound) return influenceFound.influence;
-
-    return '';
-  }, []);
-
-  const getEndeavorPT = useCallback((endeavorEn): string => {
-    const endeavorItem = endeadorList.find(endea => endea.title === endeavorEn);
-
-    if (endeavorItem) {
-      return endeavorItem.titlePT;
-    }
-
-    return '';
-  }, []);
-
-  const getEndeavorByLabel = useCallback((label): string => {
-    const endeavorItem = endeadorList.find(endea => endea.titlePT === label);
-
-    if (endeavorItem) {
-      return endeavorItem.title;
-    }
-
-    return 'other';
-  }, []);
-
   const buildInfluenceList = useCallback(() => {
     const newInfluenceList = [...influencesAbilities.influences].sort(
       (infA: IInfluence, infB: IInfluence) => {
@@ -294,42 +254,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     influenceList.current = newInfluenceList;
   }, []);
 
-  const getTitle = useCallback(() => {
-    let pageTitle: string;
-    if (readonly) {
-      pageTitle = 'Visualizar Ação';
-    } else if (action.id) {
-      pageTitle = 'Editar Ação';
-    } else {
-      pageTitle = 'Nova Ação';
-    }
-
-    return pageTitle;
-  }, [action.id, readonly]);
-
-  const getCharInfluenceLevel = useCallback(charInfluence => {
-    const influenceTrait: ITrait | undefined =
-      traitsList.current.influences.find(inf => inf.trait === charInfluence);
-
-    let level = 0;
-    if (influenceTrait) {
-      level = influenceTrait.levelTemp;
-    }
-
-    return level;
-  }, []);
-
-  const handleChangeTitle = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const changedValue = event.target.value;
-
-      setTitle(changedValue);
-      setHasChanges(true);
-    },
-    [],
-  );
-
-  const updateInfluenceLevelArray = useCallback((infLevel: number) => {
+  const updateInfluenceLevelArrayByLevel = useCallback((infLevel: number) => {
     const levelArray = [0];
     for (let i = 1; i <= infLevel; i += 1) {
       levelArray.push(i);
@@ -337,6 +262,23 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
     setInfluenceLevelArray(levelArray);
   }, []);
+
+  const updateInfluenceLevelArray = useCallback(
+    newInfluence => {
+      if (newInfluence === '') return;
+
+      const influenceTrait = traitsList.current.influences.find(
+        trait => trait.trait === newInfluence,
+      );
+
+      if (influenceTrait) {
+        updateInfluenceLevelArrayByLevel(influenceTrait.level);
+      } else {
+        updateInfluenceLevelArrayByLevel(0);
+      }
+    },
+    [updateInfluenceLevelArrayByLevel],
+  );
 
   const updateAbilityLevelArray = useCallback(newAbility => {
     if (newAbility === '') return;
@@ -376,21 +318,114 @@ const AddAction: React.FC<DialogPropsEx> = ({
     setBackgroundLevelArray(levelArray);
   }, []);
 
+  const getTitle = useCallback(() => {
+    let pageTitle: string;
+    if (readonly) {
+      pageTitle = 'Visualizar Ação';
+    } else if (action.id) {
+      pageTitle = 'Editar Ação';
+    } else {
+      pageTitle = 'Nova Ação';
+    }
+
+    return pageTitle;
+  }, [action.id, readonly]);
+
+  const getInfluencePT = useCallback((influenceEn): string => {
+    const infItem = influenceList.current.find(
+      inf => inf.influence === influenceEn,
+    );
+
+    if (infItem) {
+      return infItem.influence_PT;
+    }
+
+    return '';
+  }, []);
+
+  const getEndeavorPT = useCallback((endeavorEn): string => {
+    const endeavorItem = endeadorList.find(endea => endea.title === endeavorEn);
+
+    if (endeavorItem) {
+      return endeavorItem.titlePT;
+    }
+
+    return '';
+  }, []);
+
+  const getResultPT = useCallback(result => {
+    let resultPT: string;
+
+    switch (result) {
+      case 'success':
+        resultPT = 'Sucesso';
+        break;
+      case 'partial':
+        resultPT = 'Parcial';
+        break;
+      case 'fail':
+        resultPT = 'Falhou';
+        break;
+      case 'not evaluated':
+        resultPT = 'Não avaliada';
+        break;
+      default:
+        resultPT = '';
+    }
+
+    return resultPT;
+  }, []);
+
+  const getEndeavorByLabel = useCallback((label): string => {
+    const endeavorItem = endeadorList.find(endea => endea.titlePT === label);
+
+    if (endeavorItem) {
+      return endeavorItem.title;
+    }
+
+    return 'other';
+  }, []);
+
+  const getInfluenceByLabel = useCallback(label => {
+    const influenceFound = influenceList.current.find(
+      inf => inf.influence_PT === label,
+    );
+
+    if (influenceFound) return influenceFound.influence;
+
+    return '';
+  }, []);
+
+  const getCharInfluenceLevel = useCallback(charInfluence => {
+    const influenceTrait: ITrait | undefined =
+      traitsList.current.influences.find(inf => inf.trait === charInfluence);
+
+    let level = 0;
+    if (influenceTrait) {
+      level = influenceTrait.levelTemp;
+    }
+
+    return level;
+  }, []);
+
+  const isBgInTheList = useCallback(
+    background => {
+      const isBgInList =
+        backgroundList.findIndex(bg => bg.background === background) >= 0;
+
+      return isBgInList;
+    },
+    [backgroundList],
+  );
+
   const handleDefendEndeavor = useCallback(
     (newInfluence = '') => {
       let newTitle = 'Defender a influência';
-      let influence_level = 0;
       let newAbility = '';
       let ability_level = 0;
-      // const influenceToHandle = newInfluence;
 
       if (newInfluence !== '') {
         newTitle = `${newTitle} em ${getInfluencePT(newInfluence)}`;
-        const charInfluence = traitsList.current.influences.find(
-          trait => trait.trait === newInfluence,
-        );
-
-        if (charInfluence) influence_level = charInfluence.level;
 
         const infAbil = influenceList.current.find(
           inf => inf.influence === newInfluence,
@@ -432,17 +467,69 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
       const newDefendEndeavor = {
         title: newTitle,
-        influence_level,
         ability: newAbility,
         ability_level,
         action: newTitle,
       };
 
-      updateInfluenceLevelArray(influence_level);
       updateAbilityLevelArray(newAbility);
       setDefendEndeavor(newDefendEndeavor);
     },
-    [getInfluencePT, updateAbilityLevelArray, updateInfluenceLevelArray],
+    [getInfluencePT, updateAbilityLevelArray],
+  );
+
+  /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  */
+
+  const handleChangeTitle = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const changedValue = event.target.value;
+
+      setTitle(changedValue);
+      setHasChanges(true);
+    },
+    [],
   );
 
   const handleInfluenceSelectChange = useCallback(
@@ -453,11 +540,17 @@ const AddAction: React.FC<DialogPropsEx> = ({
         handleDefendEndeavor(newInfluence);
       }
 
+      updateInfluenceLevelArray(newInfluence);
       setInfluence(newInfluence);
       setInfluenceLevel(0);
       setHasChanges(true);
     },
-    [endeavor, getInfluenceByLabel, handleDefendEndeavor],
+    [
+      endeavor,
+      getInfluenceByLabel,
+      handleDefendEndeavor,
+      updateInfluenceLevelArray,
+    ],
   );
 
   const handleInfluenceLevelSelectChange = useCallback(
@@ -601,7 +694,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
       } else {
         newEndeavorData = {
           title,
-          influence_level: Number(influenceLevel),
           ability,
           ability_level: Number(abilityLevel),
           action: actionDescription,
@@ -618,7 +710,8 @@ const AddAction: React.FC<DialogPropsEx> = ({
         action_period: action.action_period,
         backgrounds,
         influence,
-        influence_level: Number(newEndeavorData.influence_level),
+        influence_level: Number(influenceLevel),
+        influence_effective_level: Number(influenceEffectiveLevel),
         ability: newEndeavorData.ability,
         ability_level: Number(newEndeavorData.ability_level),
         action_owner_id: myOwner,
@@ -635,6 +728,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
         backgounds: Yup.string(),
         influence: Yup.string().required('Influência obrigatória'),
         influence_level: Yup.number(),
+        influence_effective_level: Yup.number(),
         ability:
           endeavor === 'defend'
             ? Yup.string()
@@ -648,6 +742,8 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
       await schema.validate(actionData, { abortEarly: false });
       setValidationErrors({} as IError);
+
+      console.log(actionData);
 
       setSaving(true);
 
@@ -671,6 +767,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       }
 
       setSaving(false);
+      setHasChanges(false);
       handleSave(response.data);
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -700,6 +797,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     endeavor,
     handleSave,
     influence,
+    influenceEffectiveLevel,
     influenceLevel,
     myChar.id,
     owner.id,
@@ -713,16 +811,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
       return 0;
     });
   }, []);
-
-  const isBgInTheList = useCallback(
-    background => {
-      const isBgInList =
-        backgroundList.findIndex(bg => bg.background === background) >= 0;
-
-      return isBgInList;
-    },
-    [backgroundList],
-  );
 
   useEffect(() => {
     if (!hasChanges) return;
@@ -742,34 +830,30 @@ const AddAction: React.FC<DialogPropsEx> = ({
     switch (endeavor) {
       case 'defend':
         newActionForce =
-          Number(defendEndeavor.influence_level) * 2 +
+          Number(influenceEffectiveLevel) * 2 +
           moralityLevel +
           Number(defendEndeavor.ability_level);
         break;
       case 'combine':
-        newActionForce = Number(influenceLevel);
+        newActionForce = Number(influenceEffectiveLevel);
         break;
       default:
         newActionForce =
-          Number(influenceLevel) + moralityLevel + Number(abilityLevel);
+          Number(influenceEffectiveLevel) +
+          moralityLevel +
+          Number(abilityLevel);
     }
 
     setActionForce(newActionForce);
   }, [
     abilityLevel,
     defendEndeavor.ability_level,
-    defendEndeavor.influence_level,
     endeavor,
     hasChanges,
-    influenceLevel,
+    influenceEffectiveLevel,
   ]);
 
   useEffect(() => {
-    if (readonly) {
-      updateInfluenceLevelArray(influenceLevel);
-      return;
-    }
-
     let newBackgroundList: IBackground[] = [];
     if (backgrounds !== '') {
       const bgList = backgrounds.split('|');
@@ -819,7 +903,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     }
 
     let maxLevel: number;
-    const infLevel = getCharInfluenceLevel(influence);
+    const infLevel = Number(influenceLevel);
 
     if (newBackgroundList.length > 0) {
       const addedValues = [
@@ -845,45 +929,16 @@ const AddAction: React.FC<DialogPropsEx> = ({
       maxLevel = infLevel;
     }
 
-    if (influenceLevel > maxLevel) setInfluenceLevel(Math.floor(maxLevel));
-
-    updateInfluenceLevelArray(maxLevel);
-  }, [
-    backgrounds,
-    getCharInfluenceLevel,
-    influence,
-    influenceLevel,
-    readonly,
-    sortBgList,
-    updateInfluenceLevelArray,
-  ]);
+    setInfluenceEffectiveLevel(maxLevel);
+  }, [backgrounds, influence, influenceLevel, readonly, sortBgList]);
 
   useEffect(() => {
-    if (selectedAction.title === undefined) return;
-    console.log(selectedAction);
+    if (selectedAction === undefined) return;
 
-    setInfluence(selectedAction.influence || '');
-    setBackgrounds(selectedAction.backgrounds || '');
-    setInfluenceLevel(Number(selectedAction.influence_level) || 0);
-    setActionForce(selectedAction.action_force || 0);
-
-    if (selectedAction.characterId)
-      setMyChar(selectedAction.characterId as ICharacter);
-    if (selectedAction.ownerId) setOwner(selectedAction.ownerId as ICharacter);
-    setActionDescription(selectedAction.action || '');
-    setStReply(selectedAction.st_reply || '');
-    setNews(selectedAction.news || '');
-
-    setEndeavor(selectedAction.endeavor || 'other');
-    if (selectedAction.endeavor !== 'defend') {
-      setTitle(selectedAction.title || '');
-      setAbility(selectedAction.ability || '');
-      updateAbilityLevelArray(selectedAction.ability);
-      setAbilityLevel(selectedAction.ability_level || 0);
-    } else {
-      handleDefendEndeavor(selectedAction.influence);
-    }
-  }, [handleDefendEndeavor, selectedAction, updateAbilityLevelArray]);
+    buildInfluenceList();
+    traitsList.current = charTraitsList;
+    setAction(selectedAction);
+  }, [buildInfluenceList, charTraitsList, selectedAction]);
 
   useEffect(() => {
     if (myChar.id) {
@@ -902,18 +957,74 @@ const AddAction: React.FC<DialogPropsEx> = ({
   }, [retainers, myChar]);
 
   useEffect(() => {
+    if (selectedAction.title === undefined) return;
+    console.log(selectedAction);
+
+    if (selectedAction.characterId)
+      setMyChar(selectedAction.characterId as ICharacter);
+    if (selectedAction.ownerId) setOwner(selectedAction.ownerId as ICharacter);
+
+    setInfluence(selectedAction.influence || '');
+    if (readonly) {
+      updateInfluenceLevelArrayByLevel(Number(selectedAction.influence_level));
+      setInfluenceLevel(Number(selectedAction.influence_level) || 0);
+      setActionForce(selectedAction.action_force || 0);
+      setInfluenceEffectiveLevel(
+        Number(selectedAction.influence_effective_level) || 0,
+      );
+    } else {
+      updateAbilityLevelArray(selectedAction.ability);
+      updateInfluenceLevelArray(selectedAction.influence);
+
+      const infLevel = getCharInfluenceLevel(selectedAction.influence);
+      let actLevel = Number(selectedAction.influence_level) || 0;
+      if (infLevel < actLevel) {
+        actLevel = infLevel;
+        setHasChanges(true);
+      } else {
+        setActionForce(selectedAction.action_force || 0);
+      }
+
+      setInfluenceLevel(actLevel);
+    }
+
+    setBackgrounds(selectedAction.backgrounds || '');
+    setActionDescription(selectedAction.action || '');
+    setStReply(selectedAction.st_reply || '');
+    setNews(selectedAction.news || '');
+
+    setEndeavor(selectedAction.endeavor || 'other');
+    if (selectedAction.endeavor !== 'defend') {
+      setTitle(selectedAction.title || '');
+      setAbility(selectedAction.ability || '');
+      updateAbilityLevelArray(selectedAction.ability);
+      setAbilityLevel(selectedAction.ability_level || 0);
+    } else {
+      handleDefendEndeavor(selectedAction.influence);
+    }
+  }, [
+    getCharInfluenceLevel,
+    handleDefendEndeavor,
+    readonly,
+    selectedAction,
+    updateAbilityLevelArray,
+    updateInfluenceLevelArray,
+    updateInfluenceLevelArrayByLevel,
+  ]);
+
+  useEffect(() => {
     if (retainerList) {
       setRetainers(retainerList);
     }
   }, [retainerList]);
 
   useEffect(() => {
-    if (selectedAction === undefined) return;
+    if (!selectedAction) return;
 
     buildInfluenceList();
     traitsList.current = charTraitsList;
+
     setAction(selectedAction);
-    // populateActionFields(selectedAction);
   }, [buildInfluenceList, charTraitsList, selectedAction]);
 
   return (
@@ -922,7 +1033,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       <AddActionContainer>
         <Form onSubmit={handleSubmit} ref={formRef}>
           <FieldBox>
-            <FieldBoxChild proportion={85}>
+            <FieldBoxChild proportion={70}>
               <InputField
                 name="title"
                 id="title"
@@ -943,6 +1054,19 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 id="action_period"
                 label="Período"
                 defaultValue={action.action_period}
+                InputProps={{ readOnly: true }}
+                align="center"
+                fullWidth
+                addmargin="right"
+                disabled={saving}
+              />
+            </FieldBoxChild>
+            <FieldBoxChild proportion={15}>
+              <InputField
+                name="result"
+                id="result"
+                label="Resultado"
+                defaultValue={getResultPT(action.result)}
                 InputProps={{ readOnly: true }}
                 align="center"
                 fullWidth
@@ -982,21 +1106,14 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 name="influence_level"
                 id="influence_level"
                 label="Nível"
-                value={
-                  influenceLevelArray.length < 2
-                    ? '0'
-                    : `${
-                        endeavor !== 'defend'
-                          ? influenceLevel
-                          : defendEndeavor.influence_level
-                      }`
-                }
+                value={influenceLevelArray.length < 2 ? '0' : influenceLevel}
                 InputProps={{ readOnly: readonly || endeavor === 'defend' }}
                 onChange={handleInfluenceLevelSelectChange}
                 select
                 align="center"
                 fullWidth
                 disabled={saving}
+                addmargin="right"
               >
                 {influenceLevelArray.map(level => (
                   <MenuItem key={`inf-${level}`} value={`${level}`}>
@@ -1006,7 +1123,22 @@ const AddAction: React.FC<DialogPropsEx> = ({
               </InputField>
             </FieldBoxChild>
 
-            <FieldBoxChild proportion={20} addmargin="auto">
+            <FieldBoxChild proportion={10}>
+              <InputField
+                name="influence_effective_level"
+                id="influence_effective_level"
+                label="Nível Efetivo"
+                value={Math.floor(Number(influenceEffectiveLevel))}
+                InputProps={{ readOnly: true }}
+                align="center"
+                fullWidth
+                disabled={saving}
+                addmargin="right"
+                highlight="true"
+              />
+            </FieldBoxChild>
+
+            <FieldBoxChild proportion={20}>
               <InputField
                 name="endeavor"
                 id="endeavor"
@@ -1018,6 +1150,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 helperText="Selectione o tipo de ação"
                 align="center"
                 fullWidth
+                // addmargin="right"
                 disabled={saving}
               >
                 {endeadorList.map(endea => (
@@ -1043,7 +1176,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 }
                 align="center"
                 fullWidth
-                addmargin="right"
+                addmargin="left"
                 disabled={saving}
               >
                 {traitsList.current.abilities.map(abil => (
@@ -1073,6 +1206,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
                 select
                 align="center"
                 fullWidth
+                addmargin="left"
                 disabled={saving}
               >
                 {abilityLevelArray.map(level => (
