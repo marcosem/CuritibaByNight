@@ -16,7 +16,7 @@ interface IRequestDTO {
   backgrounds?: string;
   influence: string;
   influence_level: number;
-  influence_effetive_level: number;
+  influence_effective_level: number;
   ability?: string;
   ability_level?: number;
   endeavor: string;
@@ -45,7 +45,7 @@ class CreateInfluenceActionService {
     backgrounds,
     influence,
     influence_level,
-    influence_effetive_level,
+    influence_effective_level,
     ability,
     ability_level,
     endeavor,
@@ -173,7 +173,7 @@ class CreateInfluenceActionService {
     const actionForce =
       abilityLevel +
       moralityLevel +
-      influence_effetive_level * (endeavor === 'defend' ? 2 : 1);
+      influence_effective_level * (endeavor === 'defend' ? 2 : 1);
 
     const influenceAction = await this.influenceActionsRepository.create({
       title,
@@ -181,7 +181,7 @@ class CreateInfluenceActionService {
       backgrounds: endeavor === 'defend' ? '' : backgrounds,
       influence,
       influence_level,
-      influence_effetive_level,
+      influence_effective_level,
       ability: abilityUsed,
       ability_level: abilityLevel,
       endeavor,

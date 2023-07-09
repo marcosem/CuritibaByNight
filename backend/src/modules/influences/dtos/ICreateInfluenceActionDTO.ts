@@ -4,7 +4,7 @@ export default interface ICreateInfluenceActionDTO {
   backgrounds?: string;
   influence: string;
   influence_level: number;
-  influence_effetive_level: number;
+  influence_effective_level: number;
   ability?: string;
   ability_level?: number;
   endeavor?: string;

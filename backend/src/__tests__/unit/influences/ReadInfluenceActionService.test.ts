@@ -36,7 +36,7 @@ describe('ReadInfluenceAction', () => {
       backgrounds: 'Resources x5',
       influence: 'Occult',
       influence_level: 3,
-      influence_effetive_level: 5,
+      influence_effective_level: 5,
       ability: 'Investigation',
       ability_level: 2,
       endeavor: 'attack',

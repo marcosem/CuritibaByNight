@@ -32,7 +32,7 @@ class InfluenceAction {
   influence_level: number;
 
   @Column()
-  influence_effetive_level: number;
+  influence_effective_level: number;
 
   @Column()
   ability?: string;
