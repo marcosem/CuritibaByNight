@@ -90,12 +90,6 @@ interface IUsedTrait {
   usedLevel: number;
 }
 
-interface IUsedTraitsList {
-  abilities: IUsedTrait[];
-  backgrounds: IUsedTrait[];
-  influences: IUsedTrait[];
-}
-
 interface IAction {
   id?: string;
   title: string;
@@ -628,6 +622,88 @@ const InfluenceActions: React.FC = () => {
     addToast,
   ]);
 
+  const parseUsedTraits = useCallback(
+    (oldTraits: ITrait[], usedTraits: IUsedTrait[]) => {
+      const newTraits = oldTraits.map(myTrait => {
+        const newTrait = { ...myTrait };
+        const myUsedTraits = usedTraits.filter(
+          myUsedTrait => myUsedTrait.trait === myTrait.trait,
+        );
+        if (myUsedTraits.length > 0) {
+          const usedLevel = myUsedTraits.reduce(
+            (acc, cur) => acc + cur.usedLevel,
+            0,
+          );
+
+          const auxLevel = Number(myTrait.level) - usedLevel;
+          const currentLevel = auxLevel < 0 ? 0 : auxLevel;
+          newTrait.level = currentLevel;
+        }
+
+        return newTrait;
+      });
+
+      return newTraits;
+    },
+    [],
+  );
+
+  const parseTraitsList = useCallback(
+    currentActions => {
+      if (traitsList.populated && currentActions.length > 0) {
+        let usedInfluences: IUsedTrait[] = [];
+        let usedBackgrounds: IUsedTrait[] = [];
+        let usedAbilities: IUsedTrait[] = [];
+
+        currentActions.forEach((myAction: IAction) => {
+          const bgs = myAction.backgrounds;
+          const splittedBgs = bgs.split('|');
+          const newUsedBackgrounds = splittedBgs.map(myBg => {
+            const bgWithLevel = myBg.split(' x');
+            const newBg: IUsedTrait = {
+              trait: bgWithLevel[0],
+              usedLevel: Number(bgWithLevel[1]),
+            };
+
+            return newBg;
+          });
+
+          const newUsedInfluence: IUsedTrait = {
+            trait: myAction.influence,
+            usedLevel: Number(myAction.influence_level),
+          };
+
+          const newUsedAbility: IUsedTrait = {
+            trait: myAction.ability,
+            usedLevel: Number(myAction.ability_level),
+          };
+
+          usedInfluences = [...usedInfluences, newUsedInfluence];
+          usedBackgrounds = [...usedBackgrounds, ...newUsedBackgrounds];
+          usedAbilities = [...usedAbilities, newUsedAbility];
+        });
+
+        const oldAbilities = [...traitsList.abilities];
+        const oldBackgrounds = [...traitsList.backgrounds];
+        const oldInfluences = [...traitsList.influences];
+
+        const newAbilities = parseUsedTraits(oldAbilities, usedAbilities);
+        const newBackgrounds = parseUsedTraits(oldBackgrounds, usedBackgrounds);
+        const newInfluences = parseUsedTraits(oldInfluences, usedInfluences);
+
+        const newParsedTraitsList = {
+          ...traitsList,
+          abilities: newAbilities,
+          backgrounds: newBackgrounds,
+          influences: newInfluences,
+        };
+
+        setParsedTraitsList(newParsedTraitsList);
+      }
+    },
+    [parseUsedTraits, traitsList],
+  );
+
   const loadActions = useCallback(
     async (busy = true) => {
       if (char.id === '' || actionMonth === '') {
@@ -649,6 +725,7 @@ const InfluenceActions: React.FC = () => {
           );
 
           setActionsList(currentActions);
+          parseTraitsList(currentActions);
           setPastActionsList(pastActions);
           setShowPastActionsList(pastActions);
         });
@@ -670,7 +747,7 @@ const InfluenceActions: React.FC = () => {
 
       setBusy(false);
     },
-    [actionMonth, addToast, char.id],
+    [actionMonth, addToast, char.id, parseTraitsList],
   );
 
   const loadRetainers = useCallback(async () => {
@@ -943,104 +1020,6 @@ const InfluenceActions: React.FC = () => {
     ],
   );
 
-  /*
-  useEffect(() => {
-    if(( actionsList.length === 0 ) || (!traitsList.populated)) return;
-
-    const usedAbilities: IUsedTrait[] = [];
-    const usedBackgrounds: IUsedTrait[] = [];
-    const usedInfluences: IUsedTrait[] = [];
-
-    actionsList.forEach(myAction => {
-      if( !!myAction.ability ) {
-        const usedAbility: IUsedTrait = {
-          trait: myAction.ability,
-          usedLevel: Number(myAction.ability_level),
-        }
-
-        usedAbilities.push(usedAbility);
-      }
-
-      if( myAction.endeavor === 'defend') {
-        const usedInfluence: IUsedTrait = {
-          trait: myAction.influence,
-          usedLevel: Math.floor(Number(myAction.influence_level) / 2);
-        }
-
-        usedInfluences.push(usedInfluence);
-        return;
-      }
-
-      const myUsedBgs: IShortTrait[] = [];
-
-      if( !!myAction.backgrounds ) {
-        myAction.backgrounds.split('|').forEach(bgTrait => {
-          const newBgTrait = bgTrait.split(' x');
-          const usedBackground: IUsedTrait = {
-            trait: newBgTrait[0],
-            usedLevel: Number(newBgTrait[1]) || 0,
-          }
-
-          usedBackgrounds.push(usedBackground);
-
-          let validLevel: number;
-          switch (usedBackground.trait) {
-            case 'Allies':
-            case 'Cult':
-              validLevel = usedBackground.usedLevel - 1;
-              break;
-            case 'Contacts':
-            case 'Assamite: Web of Influence':
-            case 'Followers of Set: Fellowship':
-              validLevel = usedBackground.usedLevel;
-              break;
-            case 'Resources':
-              validLevel = Math.floor(usedBackground.usedLevel / 2);
-              break;
-            default:
-              validLevel = 0;
-          }
-
-          const parsedBg: IShortTrait = {
-            trait: usedBackground.trait,
-            realLevel: usedBackground.usedLevel,
-            validLevel,
-          };
-
-          myUsedBgs.push(parsedBg);
-        });
-      }
-
-      let usedInfluence: IUsedTrait;
-      if( myUsedBgs.length > 0 ) {
-        const infEffetiveLevel = myAction.influence_level;
-        const charInfluence = traitsList.influences.find(trait => trait.trait === myAction.influence);
-
-        if( charInfluence ) {
-
-
-
-
-        }
-      } else {
-        usedInfluence = {
-          trait: myAction.influence,
-          usedLevel: myAction.influence_level,
-        }
-      }
-
-
-
-
-
-
-    });
-
-
-
-  }, [actionsList, traitsList.populated]);
-  */
-
   useEffect(() => {
     if (retainerTrait.trait !== '') {
       const newTotalMasquerade =
@@ -1245,7 +1224,7 @@ const InfluenceActions: React.FC = () => {
         handleClose={handleClose}
         handleSave={handleUpdateAction}
         selectedAction={selectedAction}
-        charTraitsList={traitsList}
+        charTraitsList={parsedTaitsList} // traitsList}
         retainerList={retainerList}
         readonly={readOnlyAction}
       />

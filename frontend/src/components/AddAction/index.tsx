@@ -218,7 +218,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     useState<number>(0);
   const [backgrounds, setBackgrounds] = useState<string>('');
   const [backgroundList, setBackgroundList] = useState<IBackground[]>([]);
-  const [influenceLevelArray, setInfluenceLevelArray] = useState<number[]>([]);
+  const [influenceLevelArray, setInfluenceLevelArray] = useState<number[]>([0]);
   const [endeavor, setEndeavor] = useState<
     'attack' | 'defend' | 'combine' | 'raise capital' | 'other'
   >('other');
@@ -478,50 +478,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
     [getInfluencePT, updateAbilityLevelArray],
   );
 
-  /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  */
-
   const handleChangeTitle = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const changedValue = event.target.value;
@@ -743,7 +699,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       await schema.validate(actionData, { abortEarly: false });
       setValidationErrors({} as IError);
 
-      console.log(actionData);
+      // console.log(actionData);
 
       setSaving(true);
 
@@ -958,7 +914,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
   useEffect(() => {
     if (selectedAction.title === undefined) return;
-    console.log(selectedAction);
+    // console.log(selectedAction);
 
     if (selectedAction.characterId)
       setMyChar(selectedAction.characterId as ICharacter);
