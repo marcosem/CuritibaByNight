@@ -650,55 +650,62 @@ const InfluenceActions: React.FC = () => {
 
   const parseTraitsList = useCallback(
     currentActions => {
-      if (traitsList.populated && currentActions.length > 0) {
-        let usedInfluences: IUsedTrait[] = [];
-        let usedBackgrounds: IUsedTrait[] = [];
-        let usedAbilities: IUsedTrait[] = [];
+      if (traitsList.populated) {
+        if (currentActions.length === 0) {
+          setParsedTraitsList(traitsList);
+        } else {
+          let usedInfluences: IUsedTrait[] = [];
+          let usedBackgrounds: IUsedTrait[] = [];
+          let usedAbilities: IUsedTrait[] = [];
 
-        currentActions.forEach((myAction: IAction) => {
-          const bgs = myAction.backgrounds;
-          const splittedBgs = bgs.split('|');
-          const newUsedBackgrounds = splittedBgs.map(myBg => {
-            const bgWithLevel = myBg.split(' x');
-            const newBg: IUsedTrait = {
-              trait: bgWithLevel[0],
-              usedLevel: Number(bgWithLevel[1]),
+          currentActions.forEach((myAction: IAction) => {
+            const bgs = myAction.backgrounds;
+            const splittedBgs = bgs.split('|');
+            const newUsedBackgrounds = splittedBgs.map(myBg => {
+              const bgWithLevel = myBg.split(' x');
+              const newBg: IUsedTrait = {
+                trait: bgWithLevel[0],
+                usedLevel: Number(bgWithLevel[1]),
+              };
+
+              return newBg;
+            });
+
+            const newUsedInfluence: IUsedTrait = {
+              trait: myAction.influence,
+              usedLevel: Number(myAction.influence_level),
             };
 
-            return newBg;
+            const newUsedAbility: IUsedTrait = {
+              trait: myAction.ability,
+              usedLevel: Number(myAction.ability_level),
+            };
+
+            usedInfluences = [...usedInfluences, newUsedInfluence];
+            usedBackgrounds = [...usedBackgrounds, ...newUsedBackgrounds];
+            usedAbilities = [...usedAbilities, newUsedAbility];
           });
 
-          const newUsedInfluence: IUsedTrait = {
-            trait: myAction.influence,
-            usedLevel: Number(myAction.influence_level),
+          const oldAbilities = [...traitsList.abilities];
+          const oldBackgrounds = [...traitsList.backgrounds];
+          const oldInfluences = [...traitsList.influences];
+
+          const newAbilities = parseUsedTraits(oldAbilities, usedAbilities);
+          const newBackgrounds = parseUsedTraits(
+            oldBackgrounds,
+            usedBackgrounds,
+          );
+          const newInfluences = parseUsedTraits(oldInfluences, usedInfluences);
+
+          const newParsedTraitsList = {
+            ...traitsList,
+            abilities: newAbilities,
+            backgrounds: newBackgrounds,
+            influences: newInfluences,
           };
 
-          const newUsedAbility: IUsedTrait = {
-            trait: myAction.ability,
-            usedLevel: Number(myAction.ability_level),
-          };
-
-          usedInfluences = [...usedInfluences, newUsedInfluence];
-          usedBackgrounds = [...usedBackgrounds, ...newUsedBackgrounds];
-          usedAbilities = [...usedAbilities, newUsedAbility];
-        });
-
-        const oldAbilities = [...traitsList.abilities];
-        const oldBackgrounds = [...traitsList.backgrounds];
-        const oldInfluences = [...traitsList.influences];
-
-        const newAbilities = parseUsedTraits(oldAbilities, usedAbilities);
-        const newBackgrounds = parseUsedTraits(oldBackgrounds, usedBackgrounds);
-        const newInfluences = parseUsedTraits(oldInfluences, usedInfluences);
-
-        const newParsedTraitsList = {
-          ...traitsList,
-          abilities: newAbilities,
-          backgrounds: newBackgrounds,
-          influences: newInfluences,
-        };
-
-        setParsedTraitsList(newParsedTraitsList);
+          setParsedTraitsList(newParsedTraitsList);
+        }
       }
     },
     [parseUsedTraits, traitsList],
@@ -713,22 +720,24 @@ const InfluenceActions: React.FC = () => {
       setBusy(busy);
 
       try {
-        await api.post('/influenceactions/list').then(response => {
-          const res: IAction[] = response.data;
+        await api
+          .post('/influenceactions/list', { char_id: char.id })
+          .then(response => {
+            const res: IAction[] = response.data;
 
-          const currentActions = res.filter(
-            action => action.action_period === actionMonth,
-          );
+            const currentActions = res.filter(
+              action => action.action_period === actionMonth,
+            );
 
-          const pastActions = res.filter(
-            action => action.action_period !== actionMonth,
-          );
+            const pastActions = res.filter(
+              action => action.action_period !== actionMonth,
+            );
 
-          setActionsList(currentActions);
-          parseTraitsList(currentActions);
-          setPastActionsList(pastActions);
-          setShowPastActionsList(pastActions);
-        });
+            setActionsList(currentActions);
+            parseTraitsList(currentActions);
+            setPastActionsList(pastActions);
+            setShowPastActionsList(pastActions);
+          });
       } catch (error) {
         const parsedError: any = error;
 

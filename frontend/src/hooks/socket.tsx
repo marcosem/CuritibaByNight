@@ -71,6 +71,7 @@ interface ISocketContextData {
   challengeReady: string;
   challengeResult: IChallengeResult;
   challengeDoRetest: boolean;
+  notifications: number;
   clearUpdatedTrait(): void;
   clearReloadTraits(): void;
   clearChallengeOpponent(): void;
@@ -85,6 +86,8 @@ interface ISocketContextData {
   challengePlay(char_id: string, play: string): void;
   challengeRetest(char1: ICharacter, char2: ICharacter): void;
   enterChallengeMode(mode: boolean): void;
+  updateNotifications(): void;
+  notifyNewAction(): void;
 }
 
 const SocketContext = createContext<ISocketContextData>(
@@ -106,6 +109,8 @@ const SocketProvider: React.FC = ({ children }) => {
     {} as IChallengeResult,
   );
   const [challengeDoRetest, setChallengeDoRetest] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<number>(0);
+
   // const [challengeMode, setChallengeMode] = useState<boolean>(false);
   const challengeMode = useRef<boolean>(false);
 
@@ -113,6 +118,7 @@ const SocketProvider: React.FC = ({ children }) => {
   const socket = useRef<WebSocket>();
   const serverPing = useRef<NodeJS.Timeout | null>(null);
   const serverGetUsers = useRef<NodeJS.Timeout | null>(null);
+  const serverGetNotifications = useRef<NodeJS.Timeout | null>(null);
   const token = useRef<string>('');
   const blockDuplicatedMessage = useRef<string[]>([]);
 
@@ -155,6 +161,20 @@ const SocketProvider: React.FC = ({ children }) => {
     },
     [sendSocketMessage],
   );
+
+  const updateNotifications = useCallback(() => {
+    if (!user.storyteller) return;
+
+    serverGetNotifications.current = setTimeout(() => {
+      sendSocketMessage({ type: 'get:actions:number' });
+      serverGetNotifications.current = null;
+      updateNotifications();
+    }, 10000);
+  }, [sendSocketMessage, user.storyteller]);
+
+  const notifyNewAction = useCallback(() => {
+    sendSocketMessage({ type: 'update:actions' });
+  }, [sendSocketMessage]);
 
   const clearUpdatedTrait = useCallback(() => {
     setUpdatedTrait({} as ITrait);
@@ -377,6 +397,17 @@ const SocketProvider: React.FC = ({ children }) => {
               }
               break;
 
+            case 'update:actions':
+              updateNotifications();
+              break;
+
+            case 'actions:number':
+              if (!Number.isNaN(myMsg.result)) {
+                const newNotifications = Number(myMsg.result);
+                setNotifications(newNotifications);
+              }
+              break;
+
             case 'masquerade:decreased':
               if (myMsg.masquerade_level) {
                 addToast({
@@ -472,11 +503,11 @@ const SocketProvider: React.FC = ({ children }) => {
     }
   }, [
     addToast,
-    challengeMode,
     char,
     notifyUserConnection,
     sendSocketMessage,
     startPing,
+    updateNotifications,
     updateOnLineUsersList,
     user,
   ]);
@@ -503,6 +534,7 @@ const SocketProvider: React.FC = ({ children }) => {
         challengeReady,
         challengeResult,
         challengeDoRetest,
+        notifications,
         notifyTraitUpdate,
         clearUpdatedTrait,
         clearReloadTraits,
@@ -517,6 +549,8 @@ const SocketProvider: React.FC = ({ children }) => {
         challengePlay,
         challengeRetest,
         enterChallengeMode,
+        updateNotifications,
+        notifyNewAction,
       }}
     >
       {children}

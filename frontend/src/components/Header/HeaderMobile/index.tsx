@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPower } from 'react-icons/fi';
+import { FiPower, FiBell } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import {
   FaHome,
@@ -25,6 +25,9 @@ import imgProfile from '../../../assets/profile.jpg';
 import {
   Container,
   HeaderContent,
+  LogoutButton,
+  NotificationButton,
+  NotificationCount,
   Navigation,
   NavSpan,
   Profile,
@@ -40,7 +43,11 @@ interface IHeaderProps {
 const HeaderMobile: React.FC<IHeaderProps> = ({ page }) => {
   const { signOut, user } = useAuth();
   const [firstName, setFirstName] = useState<string>();
-  const { isConnected } = useSocket();
+  const { isConnected, notifications, updateNotifications } = useSocket();
+
+  useEffect(() => {
+    updateNotifications();
+  }, [updateNotifications]);
 
   useEffect(() => {
     const userNames = user.name.split(' ');
@@ -114,9 +121,22 @@ const HeaderMobile: React.FC<IHeaderProps> = ({ page }) => {
           <ConnectionStatus isConnected={isConnected} />
         </Profile>
 
-        <button type="button" onClick={signOut}>
+        <NotificationButton
+          type="button"
+          // onClick={signOut}
+          hasNotification={notifications > 0}
+        >
+          <FiBell />
+          {notifications > 0 && (
+            <NotificationCount>
+              <span>{notifications}</span>
+            </NotificationCount>
+          )}
+        </NotificationButton>
+
+        <LogoutButton type="button" onClick={signOut}>
           <FiPower />
-        </button>
+        </LogoutButton>
       </HeaderContent>
       <Navigation>
         <table>

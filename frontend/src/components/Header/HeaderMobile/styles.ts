@@ -1,7 +1,18 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { lighten, shade } from 'polished';
 import bgImg from '../../../assets/header_bg.png';
 import navBgImg from '../../../assets/nav_bg.png';
+
+const ringingBell = keyframes`
+  0% {transform: rotate(35deg);}
+  12.5% {transform: rotate(-30deg);}
+  25% {transform: rotate(25deg);}
+  37.5% {transform: rotate(-20deg);}
+  50% {transform: rotate(15deg);}
+  62.5% {transform: rotate(-10deg)}
+  75% {transform: rotate(5deg)}
+  100% {transform: rotate(0);}
+`;
 
 interface IProfileProps {
   isST: boolean;
@@ -9,6 +20,10 @@ interface IProfileProps {
 
 interface IConnectionProps {
   isConnected: boolean;
+}
+
+interface INotificationButtonProps {
+  hasNotification: boolean;
 }
 
 export const Container = styled.header`
@@ -36,24 +51,72 @@ export const HeaderContent = styled.div`
       height: 60px;
     }
   }
+`;
 
-  button {
-    margin-right: 35px;
-    background: transparent;
-    width: 42px;
-    border: 0;
+export const LogoutButton = styled.button`
+  margin-right: 35px;
+  background: transparent;
+  width: 42px;
+  border: 0;
 
-    svg {
-      color: #cc030e;
-      width: 28px;
-      height: 28px;
+  svg {
+    color: #cc030e;
+    width: 28px;
+    height: 28px;
 
-      transition: color 0.3s;
+    transition: color 0.3s;
 
-      &:hover {
-        color: ${lighten(0.14, '#cc030e')};
-      }
+    &:hover {
+      color: ${lighten(0.14, '#cc030e')};
     }
+  }
+`;
+
+export const NotificationButton = styled.button<INotificationButtonProps>`
+  position: relative;
+  background: transparent;
+  border: 0;
+
+  svg {
+    color: #cc030e;
+    width: 28px;
+    height: 28px;
+
+    transition: color 0.3s;
+
+    ${props =>
+      props.hasNotification &&
+      css`
+        animation: ${ringingBell} 1s ease-in-out 3;
+      `}
+
+    &:hover {
+      color: ${lighten(1, '#cc030e')};
+    }
+  }
+`;
+
+export const NotificationCount = styled.div`
+  position: absolute;
+  bottom: 24px;
+  left: 18px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #860209;
+
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > span {
+    cursor: default;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 7px;
+    line-height: 7px;
+    color: #fff;
   }
 `;
 

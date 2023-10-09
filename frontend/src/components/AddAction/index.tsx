@@ -24,6 +24,8 @@ import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErrors';
 
+import { useSocket } from '../../hooks/socket';
+
 import influencesAbilities from '../../pages/Influences/influencesAbilities.json';
 
 import {
@@ -241,6 +243,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
   );
 
   const { addToast } = useToast();
+  const { notifyNewAction } = useSocket();
 
   const buildInfluenceList = useCallback(() => {
     const newInfluenceList = [...influencesAbilities.influences].sort(
@@ -720,6 +723,8 @@ const AddAction: React.FC<DialogPropsEx> = ({
           title: 'Ação enviada!',
           description: 'Ação enviada com sucesso!',
         });
+
+        notifyNewAction();
       }
 
       setSaving(false);
@@ -756,6 +761,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     influenceEffectiveLevel,
     influenceLevel,
     myChar.id,
+    notifyNewAction,
     owner.id,
     title,
   ]);
