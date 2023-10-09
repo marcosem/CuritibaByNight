@@ -22,12 +22,12 @@ class SetCurrentActionMonthService {
 
     if (!user) {
       throw new AppError(
-        'Only authenticated Storytellers can upload character sheets',
+        'Only authenticated Storytellers can set the current action month',
         401,
       );
     } else if (!user.storyteller) {
       throw new AppError(
-        'Only authenticated Storytellers can upload character sheets',
+        'Only authenticated Storytellers can set the current action month',
         401,
       );
     }
