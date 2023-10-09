@@ -5,6 +5,7 @@ import { container } from 'tsyringe';
 import validateToken from '@modules/users/infra/http/middlewares/validateToken';
 import GetUserService from '@modules/users/services/GetUserService';
 import GetCharacterService from '@modules/characters/services/GetCharacterService';
+import GetInfluenceActionsListService from '@modules/influences/services/GetInfluenceActionsListService';
 import { compareJanKenPo } from 'rolld20';
 
 interface IMyConnection {
@@ -78,6 +79,8 @@ class WebSocketServer {
   private usersService: GetUserService;
 
   private charactersService: GetCharacterService;
+
+  private influenceActionsListService: GetInfluenceActionsListService;
 
   constructor() {
     this.sockets = [];
@@ -722,6 +725,48 @@ class WebSocketServer {
                         message: 'masquerade:decreased',
                         masquerade_level: parsedMsg.masquerade_level,
                       });
+                    });
+                  }
+                }
+                break;
+
+              case 'update:actions':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else {
+                  this.sendMsgToSts({
+                    message: 'update:actions',
+                  });
+                }
+                break;
+
+              case 'get:actions:number':
+                if (!socket) {
+                  isError = true;
+                  errorMsg = 'User not Authenticated';
+                  closeMe = true;
+                } else {
+                  this.influenceActionsListService = container.resolve(
+                    GetInfluenceActionsListService,
+                  );
+
+                  if (socket.user_id !== undefined && socket.st) {
+                    const inputData = {
+                      user_id: socket.user_id,
+                      char_id: 'all',
+                      pending_only: true,
+                    };
+
+                    const actionList = await this.influenceActionsListService.execute(
+                      inputData,
+                    );
+
+                    this.sendMsgToSts({
+                      message: 'actions:number',
+                      user_id: socket.user_id,
+                      result: `${actionList.length}`,
                     });
                   }
                 }
