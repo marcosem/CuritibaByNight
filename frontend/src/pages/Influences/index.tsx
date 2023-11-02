@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiCopy, FiArrowLeft } from 'react-icons/fi';
+import { GiDemolish } from 'react-icons/gi';
 import { FaRegChartBar } from 'react-icons/fa';
 import InfluenceCard from '../../components/InfluenceCard';
 
@@ -19,6 +20,8 @@ import {
   TableLevels,
   TableLevelsCell,
   GoBackButton,
+  FunctionsContainer,
+  ActionsReviewLink,
   StatisticsLink,
 } from './styles';
 import { useAuth } from '../../hooks/auth';
@@ -215,11 +218,21 @@ const Influences: React.FC = () => {
             </Table>
           </TableWrapper>
           {user.storyteller && !isMobileVersion && (
-            <StatisticsLink>
-              <Link to="/influences/stat" title="Estatísticas das Influências">
-                <FaRegChartBar />
-              </Link>
-            </StatisticsLink>
+            <FunctionsContainer>
+              <ActionsReviewLink>
+                <Link to="/actionsreview" title="Revisar Ações de Influências">
+                  <GiDemolish />
+                </Link>
+              </ActionsReviewLink>
+              <StatisticsLink>
+                <Link
+                  to="/influences/stat"
+                  title="Estatísticas das Influências"
+                >
+                  <FaRegChartBar />
+                </Link>
+              </StatisticsLink>
+            </FunctionsContainer>
           )}
         </>
       )}

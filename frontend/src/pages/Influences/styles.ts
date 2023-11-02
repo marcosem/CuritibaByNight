@@ -499,10 +499,55 @@ export const GoBackButton = styled.button.attrs<IButtonProps>(() => ({
   }
 `;
 
-export const StatisticsLink = styled.div`
+export const FunctionsContainer = styled.div`
   position: fixed;
   right: 40px;
   bottom: 40px;
+
+  width: 64px;
+  height: 140px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  z-index: 10;
+`;
+
+export const ActionsReviewLink = styled.div`
+  /*position: fixed;
+  right: 40px;
+  bottom: 40px;*/
+
+  background: #025609;
+  border-radius: 20px;
+
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: ${shade(0.2, '#025609')};
+  }
+
+  a {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      color: #ccc;
+    }
+  }
+`;
+
+export const StatisticsLink = styled.div`
+  /*position: fixed;
+  right: 40px;
+  bottom: 40px;*/
 
   background: #090266;
   border-radius: 20px;

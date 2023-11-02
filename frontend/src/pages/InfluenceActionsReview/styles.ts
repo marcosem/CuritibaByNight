@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-import { shade, lighten } from 'polished';
-import {
+// import { shade, lighten } from 'polished';
+/* import {
   TableContainer,
   Table,
   TableHead,
@@ -9,11 +9,13 @@ import {
   TableCell,
   TableSortLabel,
 } from '@material-ui/core';
+*/
 
 interface IContainerProps {
   isMobile: boolean;
 }
 
+/*
 interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
@@ -29,6 +31,7 @@ interface IIconBoxProps {
 interface ITableTitleRowProps {
   borderTop?: boolean;
 }
+*/
 
 export const Container = styled.div<IContainerProps>`
   ${props =>
@@ -66,6 +69,7 @@ export const TitleBox = styled.div`
   }
 `;
 
+/*
 export const TableWrapper = styled.div`
   margin: 10px auto;
   min-width: 340px;
@@ -456,3 +460,4 @@ export const IconBox = styled.div<IIconBoxProps>`
       `}
   }
 `;
+*/

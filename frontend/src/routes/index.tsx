@@ -28,6 +28,8 @@ import InfluencesStat from '../pages/InfluencesStat';
 import Powers from '../pages/Powers';
 import Rules from '../pages/Rules';
 import InfluenceActions from '../pages/InfluenceAction';
+import InfluenceActionsReview from '../pages/InfluenceActionsReview';
+
 import Page404 from '../pages/Page404';
 
 const Routes: React.FC = () => (
@@ -116,6 +118,7 @@ const Routes: React.FC = () => (
     <Route path="/character/:charId" component={CharacterDetails} isPrivate />
     <Route path="/challenges" component={Challenges} isPrivate />
     <Route path="/actions" component={InfluenceActions} isPrivate />
+    <Route path="/actionsreview" component={InfluenceActionsReview} isPrivate />
     <Route path="*" isPrivate component={Page404} />
   </Switch>
 );

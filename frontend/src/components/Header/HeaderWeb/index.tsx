@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { FiPower, FiBell } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import {
   FaHome,
   FaFacebook,
@@ -43,6 +43,11 @@ interface IHeaderProps {
 const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
   const { signOut, user } = useAuth();
   const { isConnected, notifications, updateNotifications } = useSocket();
+  const history = useHistory();
+
+  const handleInfluenceActionsReview = useCallback(() => {
+    history.push('/actionsreview');
+  }, [history]);
 
   useEffect(() => {
     updateNotifications();
@@ -119,13 +124,13 @@ const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
 
         <NotificationButton
           type="button"
-          // onClick={signOut}
+          onClick={notifications > 0 ? handleInfluenceActionsReview : undefined}
           hasNotification={notifications > 0}
         >
           <FiBell />
           {notifications > 0 && (
             <NotificationCount>
-              <span>{notifications}</span>
+              <span>{`${notifications > 99 ? '99' : notifications}`}</span>
             </NotificationCount>
           )}
         </NotificationButton>

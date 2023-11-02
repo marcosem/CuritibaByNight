@@ -12,7 +12,6 @@ import {
   FaTimesCircle,
   FaClock,
 } from 'react-icons/fa';
-// mport { IconType } from 'react-icons';
 import Skeleton from '@material-ui/lab/Skeleton';
 import api from '../../services/api';
 import AddAction from '../../components/AddAction';
@@ -29,7 +28,6 @@ import {
   StyledTableHead,
   StyledTableRow,
   StyledTableCell,
-  // StyledTableSortLabel,
   StyledTableBody,
   AddActionBox,
   AddButton,

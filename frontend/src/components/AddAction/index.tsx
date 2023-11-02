@@ -745,6 +745,8 @@ const AddAction: React.FC<DialogPropsEx> = ({
         title: 'Erro no cadastro de ação',
         description: 'Erro ao adicionar ação, tente novamente.',
       });
+
+      setSaving(false);
     }
   }, [
     ability,
@@ -893,14 +895,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
     setInfluenceEffectiveLevel(maxLevel);
   }, [backgrounds, influence, influenceLevel, readonly, sortBgList]);
-
-  useEffect(() => {
-    if (selectedAction === undefined) return;
-
-    buildInfluenceList();
-    traitsList.current = charTraitsList;
-    setAction(selectedAction);
-  }, [buildInfluenceList, charTraitsList, selectedAction]);
 
   useEffect(() => {
     if (myChar.id) {
