@@ -40,8 +40,8 @@ influenceActionsRouter.post(
         'Underworld',
         'University',
       ).required(),
-      influence_level: Joi.number().min(1).max(7).required(),
-      influence_effective_level: Joi.number().min(1).max(20).required(),
+      influence_level: Joi.number().min(0).max(7).required(),
+      influence_effective_level: Joi.number().min(0).max(20).required(),
       ability: Joi.string().allow(null, '').optional(),
       ability_level: Joi.number().default(0).optional(),
       endeavor: Joi.valid(
