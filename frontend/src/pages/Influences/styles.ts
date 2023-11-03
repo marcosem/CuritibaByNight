@@ -515,10 +515,6 @@ export const FunctionsContainer = styled.div`
 `;
 
 export const ActionsReviewLink = styled.div`
-  /*position: fixed;
-  right: 40px;
-  bottom: 40px;*/
-
   background: #025609;
   border-radius: 20px;
 
@@ -545,10 +541,6 @@ export const ActionsReviewLink = styled.div`
 `;
 
 export const StatisticsLink = styled.div`
-  /*position: fixed;
-  right: 40px;
-  bottom: 40px;*/
-
   background: #090266;
   border-radius: 20px;
 

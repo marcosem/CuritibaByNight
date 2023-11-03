@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-// import { shade, lighten } from 'polished';
-/* import {
+import { shade, lighten } from 'polished';
+import {
   TableContainer,
   Table,
   TableHead,
@@ -9,13 +9,15 @@ import styled, { css } from 'styled-components';
   TableCell,
   TableSortLabel,
 } from '@material-ui/core';
-*/
+
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import './datepicker.css';
 
 interface IContainerProps {
   isMobile: boolean;
 }
 
-/*
 interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
@@ -31,7 +33,6 @@ interface IIconBoxProps {
 interface ITableTitleRowProps {
   borderTop?: boolean;
 }
-*/
 
 export const Container = styled.div<IContainerProps>`
   ${props =>
@@ -65,17 +66,60 @@ export const TitleBox = styled.div`
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
     font-size: 14px;
     font-weight: 500;
-    margin: auto;
+    margin: auto 0;
   }
 `;
 
-/*
+export const PeriodContainer = styled.div`
+  display: flex;
+  flex-direction: space-between;
+  margin-left: auto;
+
+  align-items: center;
+  justify-content: center;
+
+  span {
+    color: #eee !important;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5) !important;
+    font-size: 14px !important;
+    font-weight: 500px !important;
+  }
+`;
+
+export const StyledDatePicker = styled(DatePicker)`
+  && {
+    margin-left: 8px;
+    padding: 4px;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+    background: #028609;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: ${shade(0.2, '#028609')};
+    }
+
+    color: #fff !important;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5) !important;
+    font-size: 14px !important;
+    font-weight: 500px !important;
+    text-align: center;
+
+    .react-datepicker-popper {
+      z-index: 2 !important;
+    }
+  }
+`;
+
 export const TableWrapper = styled.div`
   margin: 10px auto;
   min-width: 340px;
   max-width: 1012px;
 `;
 
+/*
 export const ActionHeader = styled.div`
   display: flex;
   flex-direction: column;
@@ -122,6 +166,7 @@ export const ActionsInfo = styled.div`
     font-weight: 400;
   }
 `;
+*/
 
 export const TableTitleRow = styled.div<ITableTitleRowProps>`
   display: flex;
@@ -270,6 +315,10 @@ export const StyledTableCell = styled(TableCell)`
       line-height: 24px;
       color: rgba(0, 0, 0, 0.87);
 
+      &:first-of-type {
+        max-width: 170px;
+      }
+
       &:not(:first-of-type) {
         border-left: 1px solid #ddd;
       }
@@ -281,6 +330,10 @@ export const StyledTableCell = styled(TableCell)`
       &:last-of-type {
         width: 75px;
       }
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 `;
@@ -460,4 +513,3 @@ export const IconBox = styled.div<IIconBoxProps>`
       `}
   }
 `;
-*/
