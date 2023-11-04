@@ -14,7 +14,7 @@ import {
 } from 'react-icons/fa';
 import Skeleton from '@material-ui/lab/Skeleton';
 import api from '../../services/api';
-import AddAction from '../../components/AddAction';
+import Action from '../../components/Action';
 
 import {
   Container,
@@ -167,7 +167,7 @@ const InfluenceActions: React.FC = () => {
   const [actionsNumber, setActionsNumber] = useState<number>(0);
   const [totalMasquerade, setTotalMasquerade] = useState<number>(0);
 
-  const [addActionOn, setAddActionOn] = useState(false);
+  const [addActionOn, setActionOn] = useState<boolean>(false);
   const [selectedAction, setSelectedAction] = useState<IAction>({} as IAction);
   const [readOnlyAction, setReadOnlyAction] = useState<boolean>(false);
 
@@ -853,7 +853,7 @@ const InfluenceActions: React.FC = () => {
 
   const handleUpdateAction = useCallback(() => {
     loadActions(false);
-    setAddActionOn(false);
+    setActionOn(false);
 
     const action: IAction = {
       title: '',
@@ -877,7 +877,7 @@ const InfluenceActions: React.FC = () => {
   }, [actionMonth, loadActions, myChar]);
 
   const handleClose = useCallback(() => {
-    setAddActionOn(false);
+    setActionOn(false);
 
     const action: IAction = {
       title: '',
@@ -921,20 +921,55 @@ const InfluenceActions: React.FC = () => {
 
     setSelectedAction(action);
     setReadOnlyAction(false);
-    setAddActionOn(true);
+    setActionOn(true);
   }, [actionMonth, myChar]);
 
   const handleViewAction = useCallback((action: IAction) => {
     setSelectedAction(action);
     setReadOnlyAction(true);
-    setAddActionOn(true);
+    setActionOn(true);
   }, []);
 
   const handleEditAction = useCallback((action: IAction) => {
     setSelectedAction(action);
     setReadOnlyAction(false);
-    setAddActionOn(true);
+    setActionOn(true);
   }, []);
+
+  const handleRemoveAction = useCallback(
+    async (action: IAction) => {
+      if (action.id === undefined) return;
+
+      try {
+        await api.delete('/influenceactions/delete', {
+          data: { id: action.id },
+        });
+
+        addToast({
+          type: 'success',
+          title: 'Ação removida!',
+          description: 'Ação removida com sucesso!',
+        });
+
+        await loadActions();
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (parsedError.response.status !== 401) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao deletar ação',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+    },
+    [addToast, loadActions],
+  );
 
   const GetActionsList = useCallback(
     (list: IAction[], current: boolean) => {
@@ -1005,7 +1040,10 @@ const InfluenceActions: React.FC = () => {
                   >
                     <FiEdit />
                   </ActionButton>
-                  <ActionButton title="Remover">
+                  <ActionButton
+                    title="Remover"
+                    onClick={() => handleRemoveAction(action)}
+                  >
                     <FiTrash2 />
                   </ActionButton>
                 </>
@@ -1023,6 +1061,7 @@ const InfluenceActions: React.FC = () => {
       getStatusIcon,
       getStatusPT,
       handleEditAction,
+      handleRemoveAction,
       handleViewAction,
     ],
   );
@@ -1226,7 +1265,7 @@ const InfluenceActions: React.FC = () => {
           </StyledTable>
         </StyledTableContainer>
       </TableWrapper>
-      <AddAction
+      <Action
         open={addActionOn}
         handleClose={handleClose}
         handleSave={handleUpdateAction}

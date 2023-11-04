@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
 import Skeleton from '@material-ui/lab/Skeleton';
+import { FiCheck, FiEye } from 'react-icons/fi';
 import {
   FaEnvelope,
   FaEnvelopeOpenText,
@@ -13,6 +14,7 @@ import {
 } from 'react-icons/fa';
 import { format } from 'date-fns';
 import api from '../../services/api';
+import Action from '../../components/Action';
 
 import {
   Container,
@@ -29,6 +31,8 @@ import {
   StyledTableCell,
   IconBox,
   StyledTableBody,
+  ActionsContainer,
+  ActionButton,
 } from './styles';
 
 import SearchField from '../../components/SearchField';
@@ -80,6 +84,9 @@ const InfluenceActionsReview: React.FC = () => {
 
   const [actionsList, setActionsList] = useState<IAction[]>([]);
   const [showActionsList, setShowActionsList] = useState<IAction[]>([]);
+  const [actionOn, setActionOn] = useState<boolean>(false);
+  const [selectedAction, setSelectedAction] = useState<IAction>({} as IAction);
+  const [readOnlyAction, setReadOnlyAction] = useState<boolean>(false);
 
   const { addToast } = useToast();
 
@@ -326,6 +333,59 @@ const InfluenceActionsReview: React.FC = () => {
     [addToast, getPendingActionsList, updateCurrentActionMonth],
   );
 
+  const setActionAsRead = useCallback(
+    async action => {
+      if (!!action.id === false) return;
+      let newAction: IAction = action;
+
+      try {
+        await api.get(`/influenceactions/read/${action.id}`).then(response => {
+          newAction = response.data;
+        });
+      } catch (error) {
+        const parsedError: any = error;
+
+        if (parsedError.response) {
+          const { message } = parsedError.response.data;
+
+          if (parsedError.response.status !== 401) {
+            addToast({
+              type: 'error',
+              title: 'Erro ao tentar definir ação como lida',
+              description: `Erro: '${message}'`,
+            });
+          }
+        }
+      }
+
+      setSelectedAction(newAction);
+    },
+    [addToast],
+  );
+
+  const handleViewAction = useCallback((action: IAction) => {
+    setSelectedAction(action);
+    setReadOnlyAction(true);
+    setActionOn(true);
+  }, []);
+
+  const handleEditAction = useCallback(
+    (action: IAction) => {
+      setActionAsRead(action);
+      setReadOnlyAction(false);
+      setActionOn(true);
+    },
+    [setActionAsRead],
+  );
+
+  const handleClose = useCallback(() => {
+    setActionOn(false);
+
+    const action: IAction = {} as IAction;
+
+    setSelectedAction(action);
+  }, []);
+
   const GetActionsList = useCallback(() => {
     if (showActionsList.length === 0) {
       return (
@@ -378,29 +438,25 @@ const InfluenceActionsReview: React.FC = () => {
         </StyledTableCell>
         <StyledTableCell align="center">{action.action_period}</StyledTableCell>
         <StyledTableCell align="center">
-          {/* <ActionsContainer>
-              {action.status === 'replied' ? (
+          <ActionsContainer>
+            {action.status === 'replied' ? (
+              <ActionButton
+                title="Visualizar"
+                onClick={() => handleViewAction(action)}
+              >
+                <FiEye />
+              </ActionButton>
+            ) : (
+              <>
                 <ActionButton
-                  title="Visualizar"
-                  onClick={() => handleViewAction(action)}
+                  title="Revisar / Avaliar ação"
+                  onClick={() => handleEditAction(action)}
                 >
-                  <FiEye />
+                  <FiCheck />
                 </ActionButton>
-              ) : (
-                <>
-                  <ActionButton
-                    title="Editar"
-                    onClick={() => handleEditAction(action)}
-                  >
-                    <FiEdit />
-                  </ActionButton>
-                  <ActionButton title="Remover">
-                    <FiTrash2 />
-                  </ActionButton>
-                </>
-              )}
-            </ActionsContainer>
-              */}
+              </>
+            )}
+          </ActionsContainer>
         </StyledTableCell>
       </StyledTableRow>
     ));
@@ -411,6 +467,8 @@ const InfluenceActionsReview: React.FC = () => {
     getResultPT,
     getStatusIcon,
     getStatusPT,
+    handleEditAction,
+    handleViewAction,
     showActionsList,
   ]);
 
@@ -529,6 +587,16 @@ const InfluenceActionsReview: React.FC = () => {
           </StyledTable>
         </StyledTableContainer>
       </TableWrapper>
+      <Action
+        open={actionOn}
+        handleClose={handleClose}
+        handleSave={() => {}}
+        selectedAction={selectedAction}
+        // charTraitsList={parsedTaitsList} // traitsList}
+        // retainerList={retainerList}
+        readonly={readOnlyAction}
+        storyteller
+      />
     </Container>
   );
 };

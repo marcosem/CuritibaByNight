@@ -7,6 +7,8 @@ import React, {
   ChangeEvent,
 } from 'react';
 
+import { isAfter } from 'date-fns';
+
 import {
   Dialog,
   DialogProps,
@@ -29,7 +31,7 @@ import { useSocket } from '../../hooks/socket';
 import influencesAbilities from '../../pages/Influences/influencesAbilities.json';
 
 import {
-  AddActionContainer,
+  ActionContainer,
   FieldBox,
   FieldBoxChild,
   InputField,
@@ -175,7 +177,7 @@ const endeadorList = [
 
 interface DialogPropsEx extends DialogProps {
   selectedAction: IAction;
-  charTraitsList: ITraitsList;
+  charTraitsList?: ITraitsList;
   readonly?: boolean;
   storyteller?: boolean;
   retainerList?: ICharacter[];
@@ -183,9 +185,9 @@ interface DialogPropsEx extends DialogProps {
   handleClose: () => void;
 }
 
-const AddAction: React.FC<DialogPropsEx> = ({
+const Action: React.FC<DialogPropsEx> = ({
   selectedAction,
-  charTraitsList,
+  charTraitsList = {} as ITraitsList,
   readonly,
   storyteller,
   retainerList,
@@ -275,7 +277,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
       );
 
       if (influenceTrait) {
-        updateInfluenceLevelArrayByLevel(influenceTrait.level);
+        updateInfluenceLevelArrayByLevel(Number(influenceTrait.level));
       } else {
         updateInfluenceLevelArrayByLevel(0);
       }
@@ -292,7 +294,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
     if (abilityTrait === undefined) return;
 
-    const maxLevel = abilityTrait.level;
+    const maxLevel = abilityTrait.levelTemp;
 
     const levelArray = [0];
     for (let i = 1; i <= maxLevel; i += 1) {
@@ -326,13 +328,17 @@ const AddAction: React.FC<DialogPropsEx> = ({
     if (readonly) {
       pageTitle = 'Visualizar Ação';
     } else if (action.id) {
-      pageTitle = 'Editar Ação';
+      if (storyteller) {
+        pageTitle = 'Avaliar Ação';
+      } else {
+        pageTitle = 'Editar Ação';
+      }
     } else {
       pageTitle = 'Nova Ação';
     }
 
     return pageTitle;
-  }, [action.id, readonly]);
+  }, [action.id, readonly, storyteller]);
 
   const getInfluencePT = useCallback((influenceEn): string => {
     const infItem = influenceList.current.find(
@@ -404,8 +410,9 @@ const AddAction: React.FC<DialogPropsEx> = ({
       traitsList.current.influences.find(inf => inf.trait === charInfluence);
 
     let level = 0;
+
     if (influenceTrait) {
-      level = influenceTrait.levelTemp;
+      level = Number(influenceTrait.level) || influenceTrait.levelTemp;
     }
 
     return level;
@@ -702,8 +709,6 @@ const AddAction: React.FC<DialogPropsEx> = ({
       await schema.validate(actionData, { abortEarly: false });
       setValidationErrors({} as IError);
 
-      // console.log(actionData);
-
       setSaving(true);
 
       let response;
@@ -781,31 +786,47 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
     const { morality } = traitsList.current;
 
-    let moralityTraitLevel = Math.floor(morality.level / 2);
-    let moralityLevel = 0;
     let newActionForce: number;
+    if (morality) {
+      let moralityTraitLevel = Math.floor(morality.level / 2);
+      if (
+        morality.updated_at === undefined ||
+        isAfter(
+          new Date(morality.updated_at),
+          new Date('2022-11-01T00:00:00.000Z'),
+        )
+      ) {
+        moralityTraitLevel = Math.floor(morality.level / 2);
+      } else {
+        moralityTraitLevel = Number(morality.level);
+      }
 
-    if (morality.trait.indexOf('Humanity') === -1) {
-      moralityTraitLevel -= 2;
-    }
+      let moralityLevel = 0;
 
-    moralityLevel = moralityTraitLevel > 0 ? moralityTraitLevel : 1;
+      if (morality.trait.indexOf('Humanity') === -1) {
+        moralityTraitLevel -= 2;
+      }
 
-    switch (endeavor) {
-      case 'defend':
-        newActionForce =
-          Number(influenceEffectiveLevel) * 2 +
-          moralityLevel +
-          Number(defendEndeavor.ability_level);
-        break;
-      case 'combine':
-        newActionForce = Number(influenceEffectiveLevel);
-        break;
-      default:
-        newActionForce =
-          Number(influenceEffectiveLevel) +
-          moralityLevel +
-          Number(abilityLevel);
+      moralityLevel = moralityTraitLevel > 0 ? moralityTraitLevel : 1;
+
+      switch (endeavor) {
+        case 'defend':
+          newActionForce =
+            Number(influenceEffectiveLevel) * 2 +
+            moralityLevel +
+            Number(defendEndeavor.ability_level);
+          break;
+        case 'combine':
+          newActionForce = Number(influenceEffectiveLevel);
+          break;
+        default:
+          newActionForce =
+            Number(influenceEffectiveLevel) +
+            moralityLevel +
+            Number(abilityLevel);
+      }
+    } else {
+      newActionForce = action.action_force || 0;
     }
 
     setActionForce(newActionForce);
@@ -815,6 +836,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     endeavor,
     hasChanges,
     influenceEffectiveLevel,
+    action.action_force,
   ]);
 
   useEffect(() => {
@@ -894,7 +916,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     }
 
     setInfluenceEffectiveLevel(maxLevel);
-  }, [backgrounds, influence, influenceLevel, readonly, sortBgList]);
+  }, [backgrounds, influence, influenceLevel, sortBgList]);
 
   useEffect(() => {
     if (myChar.id) {
@@ -914,14 +936,13 @@ const AddAction: React.FC<DialogPropsEx> = ({
 
   useEffect(() => {
     if (selectedAction.title === undefined) return;
-    // console.log(selectedAction);
 
     if (selectedAction.characterId)
       setMyChar(selectedAction.characterId as ICharacter);
     if (selectedAction.ownerId) setOwner(selectedAction.ownerId as ICharacter);
 
     setInfluence(selectedAction.influence || '');
-    if (readonly) {
+    if (readonly || storyteller) {
       updateInfluenceLevelArrayByLevel(Number(selectedAction.influence_level));
       setInfluenceLevel(Number(selectedAction.influence_level) || 0);
       setActionForce(selectedAction.action_force || 0);
@@ -940,6 +961,8 @@ const AddAction: React.FC<DialogPropsEx> = ({
       } else {
         setActionForce(selectedAction.action_force || 0);
       }
+
+      console.log({ selectedAction, infLevel, actLevel });
 
       setInfluenceLevel(actLevel);
     }
@@ -963,6 +986,7 @@ const AddAction: React.FC<DialogPropsEx> = ({
     handleDefendEndeavor,
     readonly,
     selectedAction,
+    storyteller,
     updateAbilityLevelArray,
     updateInfluenceLevelArray,
     updateInfluenceLevelArrayByLevel,
@@ -978,15 +1002,49 @@ const AddAction: React.FC<DialogPropsEx> = ({
     if (!selectedAction) return;
 
     buildInfluenceList();
-    traitsList.current = charTraitsList;
+    const newCharTraitsList = charTraitsList;
+    if (storyteller) {
+      const abilityTrait: ITrait = {
+        id: selectedAction.ability,
+        trait: selectedAction.ability,
+        level: selectedAction.ability_level,
+      } as ITrait;
+
+      const influenceTrait: ITrait = {
+        id: selectedAction.influence,
+        trait: selectedAction.influence,
+        level: selectedAction.influence_level,
+      } as ITrait;
+
+      let backgroundTraits: ITrait[];
+      if (selectedAction.backgrounds) {
+        backgroundTraits = selectedAction.backgrounds.split(',').map(trait => {
+          const parsedTrait = trait.split(' x');
+          const newTrait: ITrait = {
+            id: parsedTrait[0],
+            trait: parsedTrait[0],
+            level: Number(parsedTrait[1]),
+          } as ITrait;
+
+          return newTrait;
+        });
+      } else {
+        backgroundTraits = [];
+      }
+
+      newCharTraitsList.abilities = [abilityTrait];
+      newCharTraitsList.influences = [influenceTrait];
+      newCharTraitsList.backgrounds = [...backgroundTraits];
+    }
+    traitsList.current = newCharTraitsList;
 
     setAction(selectedAction);
-  }, [buildInfluenceList, charTraitsList, selectedAction]);
+  }, [buildInfluenceList, charTraitsList, selectedAction, storyteller]);
 
   return (
     <Dialog TransitionComponent={Transition} fullWidth maxWidth="md" {...rest}>
       <DialogTitle>{getTitle()}</DialogTitle>
-      <AddActionContainer>
+      <ActionContainer>
         <Form onSubmit={handleSubmit} ref={formRef}>
           <FieldBox>
             <FieldBoxChild proportion={70}>
@@ -1382,9 +1440,9 @@ const AddAction: React.FC<DialogPropsEx> = ({
             </ButtonBox>
           </ButtonsContainer>
         </Form>
-      </AddActionContainer>
+      </ActionContainer>
     </Dialog>
   );
 };
 
-export default AddAction;
+export default Action;

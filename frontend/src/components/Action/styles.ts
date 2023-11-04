@@ -84,7 +84,7 @@ interface IFieldBoxChildProps {
   invisible?: boolean;
 }
 
-export const AddActionContainer = styled.div`
+export const ActionContainer = styled.div`
   padding: 8px 24px 24px 24px;
   width: 100%;
 
