@@ -163,14 +163,14 @@ const SocketProvider: React.FC = ({ children }) => {
   );
 
   const updateNotifications = useCallback(() => {
-    if (!user.storyteller) return;
+    // if (!user.storyteller) return;
 
     serverGetNotifications.current = setTimeout(() => {
       sendSocketMessage({ type: 'get:actions:number' });
       serverGetNotifications.current = null;
       updateNotifications();
     }, 10000);
-  }, [sendSocketMessage, user.storyteller]);
+  }, [sendSocketMessage]);
 
   const notifyNewAction = useCallback(() => {
     sendSocketMessage({ type: 'update:actions' });

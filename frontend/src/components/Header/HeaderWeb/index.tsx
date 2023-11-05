@@ -45,9 +45,13 @@ const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
   const { isConnected, notifications, updateNotifications } = useSocket();
   const history = useHistory();
 
-  const handleInfluenceActionsReview = useCallback(() => {
-    history.push('/actionsreview');
-  }, [history]);
+  const handleInfluenceActions = useCallback(() => {
+    if (user.storyteller) {
+      history.push('/actionsreview');
+    } else {
+      history.push('/actions');
+    }
+  }, [history, user.storyteller]);
 
   useEffect(() => {
     updateNotifications();
@@ -124,7 +128,7 @@ const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
 
         <NotificationButton
           type="button"
-          onClick={notifications > 0 ? handleInfluenceActionsReview : undefined}
+          onClick={notifications > 0 ? handleInfluenceActions : undefined}
           hasNotification={notifications > 0}
         >
           <FiBell />
