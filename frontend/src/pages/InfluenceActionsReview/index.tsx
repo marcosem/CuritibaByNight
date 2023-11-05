@@ -107,13 +107,13 @@ const InfluenceActionsReview: React.FC = () => {
 
     switch (status) {
       case 'sent':
-        statusPT = 'Enviado';
+        statusPT = 'Enviada';
         break;
       case 'read':
-        statusPT = 'Lido';
+        statusPT = 'Lida';
         break;
       case 'replied':
-        statusPT = 'Respondido';
+        statusPT = 'Respondida';
         break;
       default:
         statusPT = '';
@@ -378,6 +378,15 @@ const InfluenceActionsReview: React.FC = () => {
     [setActionAsRead],
   );
 
+  const handleReviewAction = useCallback(() => {
+    setActionOn(false);
+
+    const action: IAction = {} as IAction;
+
+    setSelectedAction(action);
+    loadActions();
+  }, [loadActions]);
+
   const handleClose = useCallback(() => {
     setActionOn(false);
 
@@ -567,6 +576,9 @@ const InfluenceActionsReview: React.FC = () => {
                   <StyledTableCell align="center">
                     <Skeleton />
                   </StyledTableCell>
+                  <StyledTableCell align="left">
+                    <Skeleton />
+                  </StyledTableCell>
                   <StyledTableCell align="center">
                     <Skeleton />
                   </StyledTableCell>
@@ -590,10 +602,8 @@ const InfluenceActionsReview: React.FC = () => {
       <Action
         open={actionOn}
         handleClose={handleClose}
-        handleSave={() => {}}
+        handleSave={handleReviewAction}
         selectedAction={selectedAction}
-        // charTraitsList={parsedTaitsList} // traitsList}
-        // retainerList={retainerList}
         readonly={readOnlyAction}
         storyteller
       />

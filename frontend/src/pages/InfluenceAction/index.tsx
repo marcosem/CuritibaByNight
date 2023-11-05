@@ -193,13 +193,13 @@ const InfluenceActions: React.FC = () => {
 
     switch (status) {
       case 'sent':
-        statusPT = 'Enviado';
+        statusPT = 'Enviada';
         break;
       case 'read':
-        statusPT = 'Lido';
+        statusPT = 'Lida';
         break;
       case 'replied':
-        statusPT = 'Respondido';
+        statusPT = 'Respondida';
         break;
       default:
         statusPT = '';
@@ -635,7 +635,7 @@ const InfluenceActions: React.FC = () => {
 
           const auxLevel = Number(myTrait.level) - usedLevel;
           const currentLevel = auxLevel < 0 ? 0 : auxLevel;
-          newTrait.level = currentLevel;
+          newTrait.levelTemp = currentLevel;
         }
 
         return newTrait;
@@ -689,6 +689,7 @@ const InfluenceActions: React.FC = () => {
           const oldInfluences = [...traitsList.influences];
 
           const newAbilities = parseUsedTraits(oldAbilities, usedAbilities);
+
           const newBackgrounds = parseUsedTraits(
             oldBackgrounds,
             usedBackgrounds,
