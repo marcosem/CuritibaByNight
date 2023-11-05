@@ -6,6 +6,7 @@ import validateToken from '@modules/users/infra/http/middlewares/validateToken';
 import GetUserService from '@modules/users/services/GetUserService';
 import GetCharacterService from '@modules/characters/services/GetCharacterService';
 import GetInfluenceActionsListService from '@modules/influences/services/GetInfluenceActionsListService';
+import GetCurrentActionMonthService from '@modules/influences/services/GetCurrentActionMonthService';
 import { compareJanKenPo } from 'rolld20';
 
 interface IMyConnection {
@@ -81,6 +82,8 @@ class WebSocketServer {
   private charactersService: GetCharacterService;
 
   private influenceActionsListService: GetInfluenceActionsListService;
+
+  private currentActionMonthService: GetCurrentActionMonthService;
 
   constructor() {
     this.sockets = [];
@@ -752,22 +755,50 @@ class WebSocketServer {
                     GetInfluenceActionsListService,
                   );
 
-                  if (socket.user_id !== undefined && socket.st) {
-                    const inputData = {
-                      user_id: socket.user_id,
-                      char_id: 'all',
-                      pending_only: true,
-                    };
+                  if (socket.user_id !== undefined) {
+                    let actionList;
+                    if (socket.st) {
+                      const inputData = {
+                        user_id: socket.user_id,
+                        char_id: 'all',
+                        pending_only: true,
+                      };
 
-                    const actionList = await this.influenceActionsListService.execute(
-                      inputData,
-                    );
+                      actionList = await this.influenceActionsListService.execute(
+                        inputData,
+                      );
 
-                    this.sendMsgToSts({
-                      message: 'actions:number',
-                      user_id: socket.user_id,
-                      result: `${actionList.length}`,
-                    });
+                      this.sendMsgToSts({
+                        message: 'actions:number',
+                        user_id: socket.user_id,
+                        result: `${actionList.length}`,
+                      });
+                    } else {
+                      this.currentActionMonthService = container.resolve(
+                        GetCurrentActionMonthService,
+                      );
+
+                      const currentPeriod = await this.currentActionMonthService.execute(
+                        { user_id: socket.user_id },
+                      );
+
+                      const inputData = {
+                        user_id: socket.user_id,
+                        char_id: socket.char_id,
+                        action_period: currentPeriod,
+                        pending_only: false,
+                      };
+
+                      actionList = await this.influenceActionsListService.execute(
+                        inputData,
+                      );
+
+                      this.sendMsg(ws, {
+                        message: 'actions:number',
+                        user_id: socket.user_id,
+                        result: `${actionList.length}`,
+                      });
+                    }
                   }
                 }
                 break;
