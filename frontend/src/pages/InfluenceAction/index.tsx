@@ -902,6 +902,8 @@ const InfluenceActions: React.FC = () => {
   }, [actionMonth, myChar]);
 
   const handleAddNewAction = useCallback(() => {
+    if (actionsNumber === 0 || actionMonth === '') return;
+
     const action: IAction = {
       title: '',
       action_period: actionMonth,
@@ -923,7 +925,7 @@ const InfluenceActions: React.FC = () => {
     setSelectedAction(action);
     setReadOnlyAction(false);
     setActionOn(true);
-  }, [actionMonth, myChar]);
+  }, [actionMonth, actionsNumber, myChar]);
 
   const handleViewAction = useCallback((action: IAction) => {
     setSelectedAction(action);
