@@ -1161,7 +1161,7 @@ const InfluenceActions: React.FC = () => {
             onClick={() => handleAddNewAction()}
             disabled={actionsNumber === 0 || actionMonth === ''}
           >
-            <AddButton disabled={actionsNumber === 0}>
+            <AddButton disabled={actionsNumber === 0 || actionMonth === ''}>
               <FiPlus />
             </AddButton>
             <span>Realizar nova ação</span>
