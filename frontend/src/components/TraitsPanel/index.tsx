@@ -305,6 +305,9 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           }
 
           const newTrait = trait;
+          const traitName = trait.trait.trim();
+          newTrait.trait = traitName;
+
           newTrait.levelArray = levelArray;
 
           // Initial point for temporary level
@@ -502,7 +505,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
             return 0;
           });
 
-          console.log(newTraitsList.abilities);
+          // console.log(newTraitsList.abilities);
 
           if (myChar.creature_type === 'Werewolf') {
             newTraitsList.powers.sort((traitA: ITrait, traitB: ITrait) => {
