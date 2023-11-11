@@ -284,7 +284,7 @@ const PowersList: React.FC<IPanelProps> = ({ myChar }) => {
                         {power.origin}
                       </p>
                     )}
-                    {power.requirements && power.cost > 0 && (
+                    {power.requirements && Number(power.cost) > 0 && (
                       <p>
                         <strong>Requisitos: </strong>
                         {`${power.cost}xp - ${power.requirements}`}
