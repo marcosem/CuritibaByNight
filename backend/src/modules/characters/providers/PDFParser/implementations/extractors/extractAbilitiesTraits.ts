@@ -150,7 +150,7 @@ export default function extractAbilitiesTraits(
             }
           }
 
-          ability = line.substring(startAbility, endAbility);
+          ability = line.substring(startAbility, endAbility).trim();
 
           abilityTrait = {
             trait: ability,

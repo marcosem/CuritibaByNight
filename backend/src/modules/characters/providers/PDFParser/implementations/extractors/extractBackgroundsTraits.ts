@@ -266,7 +266,7 @@ export default function extractBackgroundsTraits(
           }
         }
 
-        background = line.substring(startBackground, endBackground);
+        background = line.substring(startBackground, endBackground).trim();
 
         backgroundTrait = {
           trait: background,
