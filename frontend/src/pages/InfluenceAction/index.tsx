@@ -448,6 +448,7 @@ const InfluenceActions: React.FC = () => {
 
         res.forEach(trait => {
           const traitType = trait.type;
+          const traitName = trait.trait.trim();
 
           if (traitTypeList.indexOf(traitType) === -1) {
             traitTypeList.push(traitType);
@@ -465,7 +466,7 @@ const InfluenceActions: React.FC = () => {
             while (traitLevel > 0) {
               const status = tempLevels[traitLevel - 1];
               const level: ILevel = {
-                id: `${trait.type}|${trait.trait}|${traitLevel}`,
+                id: `${trait.type}|${traitName}|${traitLevel}`,
                 enabled: false,
                 level: traitLevel,
                 status,
@@ -477,7 +478,7 @@ const InfluenceActions: React.FC = () => {
           } else {
             while (traitLevel > 0) {
               const level: ILevel = {
-                id: `${trait.type}|${trait.trait}|${traitLevel}`,
+                id: `${trait.type}|${traitName}|${traitLevel}`,
                 enabled: false,
                 level: traitLevel,
                 status: 'full',
@@ -489,6 +490,7 @@ const InfluenceActions: React.FC = () => {
           }
 
           const newTrait = trait;
+          newTrait.trait = traitName;
           newTrait.levelArray = levelArray;
 
           // Initial point for temporary level

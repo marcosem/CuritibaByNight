@@ -232,6 +232,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
 
         res.forEach(trait => {
           const traitType = trait.type;
+          const traitName = trait.trait.trim();
 
           if (traitTypeList.indexOf(traitType) === -1) {
             traitTypeList.push(traitType);
@@ -278,7 +279,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
               }
 
               const level: ILevel = {
-                id: `${trait.type}|${trait.trait}|${traitLevel}`,
+                id: `${trait.type}|${traitName}|${traitLevel}`,
                 enabled,
                 level: traitLevel,
                 status,
@@ -290,7 +291,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           } else {
             while (traitLevel > 0) {
               const level: ILevel = {
-                id: `${trait.type}|${trait.trait}|${traitLevel}`,
+                id: `${trait.type}|${traitName}|${traitLevel}`,
                 enabled:
                   user.storyteller &&
                   (trait.type === 'health' ? true : traitLevel === 1),
@@ -305,9 +306,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
           }
 
           const newTrait = trait;
-          const traitName = trait.trait.trim();
           newTrait.trait = traitName;
-
           newTrait.levelArray = levelArray;
 
           // Initial point for temporary level
