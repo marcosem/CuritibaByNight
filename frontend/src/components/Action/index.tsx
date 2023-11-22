@@ -256,7 +256,7 @@ const Action: React.FC<DialogPropsEx> = ({
   const [influenceEffectiveLevel, setInfluenceEffectiveLevel] =
     useState<number>(0);
   const [backgrounds, setBackgrounds] = useState<string>('');
-  const [backgroundList, setBackgroundList] = useState<IBackground[]>([]);
+  // const [backgroundList, setBackgroundList] = useState<IBackground[]>([]);
   const [influenceLevelArray, setInfluenceLevelArray] = useState<number[]>([0]);
   const [endeavor, setEndeavor] = useState<
     'attack' | 'defend' | 'combine' | 'raise capital' | 'other'
@@ -914,6 +914,14 @@ const Action: React.FC<DialogPropsEx> = ({
     });
   }, []);
 
+  const getBackgrounds = useCallback(() => {
+    return backgrounds.split('|').sort((bgA, bgB) => {
+      if (bgA < bgB) return -1;
+      if (bgA > bgB) return 1;
+      return 0;
+    });
+  }, [backgrounds]);
+
   useEffect(() => {
     if (!hasChanges) return;
 
@@ -1018,7 +1026,7 @@ const Action: React.FC<DialogPropsEx> = ({
       });
 
       newBackgroundList = sortBgList(parsedBgList);
-      setBackgroundList(newBackgroundList);
+      // setBackgroundList(newBackgroundList);
     }
 
     let maxLevel: number;
@@ -1482,17 +1490,15 @@ const Action: React.FC<DialogPropsEx> = ({
 
                 <FieldBoxChild proportion={60} addborder>
                   {backgrounds !== '' &&
-                    backgrounds
-                      .split('|')
-                      .map(bg => (
-                        <Chip
-                          key={bg}
-                          label={bg}
-                          variant="outlined"
-                          disabled={readonly || storyteller}
-                          onDelete={() => handleRemoveBackground(bg)}
-                        />
-                      ))}
+                    getBackgrounds().map(bg => (
+                      <Chip
+                        key={bg}
+                        label={bg}
+                        variant="outlined"
+                        disabled={readonly || storyteller}
+                        onDelete={() => handleRemoveBackground(bg)}
+                      />
+                    ))}
                 </FieldBoxChild>
               </>
             )}
