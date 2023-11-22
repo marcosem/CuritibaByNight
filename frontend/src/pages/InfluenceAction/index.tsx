@@ -883,7 +883,7 @@ const InfluenceActions: React.FC = () => {
     setActionOn(false);
 
     const action: IAction = {
-      title: '',
+      title: ' ',
       action_period: actionMonth,
       backgrounds: '',
       influence: '',

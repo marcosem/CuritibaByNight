@@ -1150,7 +1150,7 @@ const Action: React.FC<DialogPropsEx> = ({
     if (
       !selectedAction.action_period ||
       opened.current ||
-      !!selectedAction.title === false
+      selectedAction.title === ' '
     )
       return;
     opened.current = true;
@@ -1192,6 +1192,7 @@ const Action: React.FC<DialogPropsEx> = ({
     }
 
     traitsList.current = newCharTraitsList;
+
     setPeriod(selectedAction.action_period);
     setActionResult(
       selectedAction.result ? selectedAction.result : 'not evaluated',
