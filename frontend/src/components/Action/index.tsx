@@ -894,8 +894,8 @@ const Action: React.FC<DialogPropsEx> = ({
   ]);
 
   const handleCloseDialog = useCallback(() => {
-    opened.current = false;
     handleClose();
+    opened.current = false;
   }, [handleClose]);
 
   const sortBgList = useCallback((bgList: IBackground[]) => {
@@ -1131,7 +1131,12 @@ const Action: React.FC<DialogPropsEx> = ({
   }, [retainerList, selectedAction, storyteller]);
 
   useEffect(() => {
-    if (!selectedAction.action_period || opened.current) return;
+    if (
+      !selectedAction.action_period ||
+      opened.current ||
+      !!selectedAction.title === false
+    )
+      return;
     opened.current = true;
 
     buildInfluenceList();
@@ -1172,8 +1177,6 @@ const Action: React.FC<DialogPropsEx> = ({
 
     traitsList.current = newCharTraitsList;
     setPeriod(selectedAction.action_period);
-
-    // setPeriod(selectedAction.action_period);
     setActionResult(
       selectedAction.result ? selectedAction.result : 'not evaluated',
     );
@@ -1568,7 +1571,7 @@ const Action: React.FC<DialogPropsEx> = ({
             disabled={saving}
           />
 
-          {(action.result !== 'not evaluated' || storyteller) && (
+          {(!!stReply || storyteller) && (
             <>
               <InputField
                 name="st_reply"
@@ -1576,7 +1579,7 @@ const Action: React.FC<DialogPropsEx> = ({
                 label={`Resposta do Narrador${storyteller ? ' *' : ''}`}
                 value={stReply}
                 onChange={handleStorytellerReplyChange}
-                InputProps={{ readOnly: readonly }}
+                InputProps={{ readOnly: readonly || !storyteller }}
                 multiline
                 minRows={3}
                 maxRows={3}
@@ -1596,7 +1599,7 @@ const Action: React.FC<DialogPropsEx> = ({
                   !readonly ? news : news || 'Esta ação não gerou notícias.'
                 }
                 onChange={handleNewsChange}
-                InputProps={{ readOnly: readonly }}
+                InputProps={{ readOnly: readonly || !storyteller }}
                 multiline
                 minRows={3}
                 maxRows={3}
