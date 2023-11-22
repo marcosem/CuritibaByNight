@@ -69,9 +69,12 @@ class UpdateInfluenceActionService {
       throw new AppError('Influence action not found', 400);
     }
 
-    if (infAction.result !== 'not evaluated') {
+    if (
+      infAction.result !== 'not evaluated' &&
+      infAction.result !== 'partial'
+    ) {
       throw new AppError(
-        'Only not evaluated influence action can be updated',
+        'Only not evaluated or partially evaluated influence action can be updated',
         400,
       );
     }
@@ -192,7 +195,7 @@ class UpdateInfluenceActionService {
     infAction.title = title;
 
     if (endeavor !== 'defend') {
-      if (backgrounds) infAction.backgrounds = backgrounds;
+      if (backgrounds !== undefined) infAction.backgrounds = backgrounds;
       infAction.action = action;
     } else {
       infAction.backgrounds = '';
@@ -213,6 +216,7 @@ class UpdateInfluenceActionService {
     infAction.action_owner_id = actionOwnerId;
     infAction.action_force = actionForce;
     infAction.status = 'sent';
+    infAction.result = 'not evaluated';
 
     const influenceAction = await this.influenceActionsRepository.update(
       infAction,

@@ -1030,7 +1030,9 @@ const InfluenceActions: React.FC = () => {
           </StyledTableCell>
           <StyledTableCell align="center">
             <ActionsContainer>
-              {action.status === 'replied' ? (
+              {action.status === 'replied' &&
+              action.result !== 'partial' &&
+              action.result !== 'not evaluated' ? (
                 <ActionButton
                   title="Visualizar"
                   onClick={() => handleViewAction(action)}

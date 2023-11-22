@@ -15,13 +15,14 @@ import {
   Slide,
   DialogTitle,
   MenuItem,
+  Chip,
 } from '@material-ui/core';
 import { TransitionProps } from '@material-ui/core/transitions';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
-import { FiPlus, FiX } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -462,6 +463,7 @@ const Action: React.FC<DialogPropsEx> = ({
     return level;
   }, []);
 
+  /*
   const isBgInTheList = useCallback(
     background => {
       const isBgInList =
@@ -471,6 +473,7 @@ const Action: React.FC<DialogPropsEx> = ({
     },
     [backgroundList],
   );
+  */
 
   const handleDefendEndeavor = useCallback(
     (newInfluence = '') => {
@@ -669,18 +672,23 @@ const Action: React.FC<DialogPropsEx> = ({
     }
 
     setBackgrounds(newBackgrounds);
+    setHasChanges(true);
   }, [backgroundToAdd, backgroundToAddLevel, backgrounds]);
 
-  const handleRemoveBackground = useCallback(() => {
-    if (backgrounds.indexOf(backgroundToAdd) >= 0) {
-      const bgList = backgrounds
-        .split('|')
-        .filter(bg => bg.indexOf(backgroundToAdd) === -1);
+  const handleRemoveBackground = useCallback(
+    bgToRemove => {
+      if (backgrounds.indexOf(bgToRemove) >= 0) {
+        const bgList = backgrounds
+          .split('|')
+          .filter(bg => bg.indexOf(bgToRemove) === -1);
 
-      const newBackgrounds = bgList.join('|');
-      setBackgrounds(newBackgrounds);
-    }
-  }, [backgroundToAdd, backgrounds]);
+        const newBackgrounds = bgList.join('|');
+        setBackgrounds(newBackgrounds);
+        setHasChanges(true);
+      }
+    },
+    [backgrounds],
+  );
 
   const handleOwnerSelectChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -1067,7 +1075,7 @@ const Action: React.FC<DialogPropsEx> = ({
       setMyChar(selectedAction.characterId as ICharacter);
 
     setInfluence(selectedAction.influence || '');
-    if (readonly || storyteller) {
+    if (readonly || storyteller || selectedAction.st_reply) {
       updateInfluenceLevelArrayByLevel(Number(selectedAction.influence_level));
       setInfluenceLevel(Number(selectedAction.influence_level) || 0);
       setActionForce(selectedAction.action_force || 0);
@@ -1470,35 +1478,21 @@ const Action: React.FC<DialogPropsEx> = ({
                   >
                     <FiPlus />
                   </ActionButton>
-                  <ActionButton
-                    disabled={
-                      saving ||
-                      backgroundToAdd === '' ||
-                      !isBgInTheList(backgroundToAdd)
-                    }
-                    color="red"
-                    title="Excluir Antecedente"
-                    onClick={() => handleRemoveBackground()}
-                  >
-                    <FiX />
-                  </ActionButton>
                 </FieldBoxChild>
 
-                <FieldBoxChild proportion={60}>
-                  <InputField
-                    name="backgrounds"
-                    id="backgrounds"
-                    label="Antecedentes adicionados"
-                    value={backgrounds.replaceAll('|', ', ')}
-                    InputProps={{ readOnly: true }}
-                    align="left"
-                    multiline
-                    minRows={2}
-                    maxRows={2}
-                    fullWidth
-                    // addmargin="right"
-                    disabled={saving}
-                  />
+                <FieldBoxChild proportion={60} addborder>
+                  {backgrounds !== '' &&
+                    backgrounds
+                      .split('|')
+                      .map(bg => (
+                        <Chip
+                          key={bg}
+                          label={bg}
+                          variant="outlined"
+                          disabled={readonly || storyteller}
+                          onDelete={() => handleRemoveBackground(bg)}
+                        />
+                      ))}
                 </FieldBoxChild>
               </>
             )}

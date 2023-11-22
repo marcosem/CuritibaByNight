@@ -82,6 +82,7 @@ interface IFieldBoxChildProps {
   addmargin?: string;
   flexDirection?: string;
   invisible?: boolean;
+  addborder?: boolean;
 }
 
 export const ActionContainer = styled.div`
@@ -165,6 +166,16 @@ export const FieldBoxChild = styled.div<IFieldBoxChildProps>`
       pointer-events: none;
       visibility: hidden;
     `}
+
+    ${props =>
+    props.addborder &&
+    css`
+      border: solid 1px;
+      border-radius: 4px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding: 4px;
+    `}
 `;
 
 export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
@@ -212,11 +223,7 @@ export const ActionButton = styled.button.attrs<IButtonProps>(() => ({
   height: 24px;
 
   &:first-of-type {
-    margin: 8px auto;
-  }
-
-  &:not(:first-of-type) {
-    margin: 0 auto auto auto;
+    margin: 24px auto;
   }
 
   display: flex;
