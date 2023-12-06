@@ -2,6 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -15,6 +16,8 @@ class RemovePowerService {
     private powersRepository: IPowersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({ user_id, power_id }: IRequestDTO): Promise<void> {
@@ -37,6 +40,9 @@ class RemovePowerService {
     if (!power) {
       throw new AppError('Power not found', 400);
     }
+
+    // Remove route result when reset a character traits
+    this.saveRouteResult.remove('PowersList');
 
     await this.powersRepository.delete(power_id);
   }

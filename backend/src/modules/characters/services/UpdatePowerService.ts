@@ -3,6 +3,7 @@ import AppError from '@shared/errors/AppError';
 import Power from '@modules/characters/infra/typeorm/entities/Power';
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -26,6 +27,8 @@ class UpdatePowerService {
     private powersRepository: IPowersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -80,6 +83,9 @@ class UpdatePowerService {
     power.source = source;
 
     const savedPower = await this.powersRepository.update(power);
+
+    // Remove route result when reset a character traits
+    this.saveRouteResult.remove('PowersList');
 
     return savedPower;
   }

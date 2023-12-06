@@ -1,25 +1,31 @@
 import 'reflect-metadata';
 import FakePowersRepository from '@modules/characters/repositories/fakes/FakePowersRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import RemovePowerService from '@modules/characters/services/RemovePowerService';
 import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakePowersRepository: FakePowersRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let removePower: RemovePowerService;
 
 describe('RemovePower', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakePowersRepository = new FakePowersRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     removePower = new RemovePowerService(
       fakePowersRepository,
       fakeUsersRepository,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to remove a power', async () => {
+    const removeSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -47,6 +53,7 @@ describe('RemovePower', () => {
     const findPower = await fakePowersRepository.findById(power.id);
     expect(finalListSize).toHaveLength(initialListSize.length - 1);
     expect(findPower).toBeUndefined();
+    expect(removeSavedResult).toHaveBeenCalledWith('PowersList');
   });
 
   it('Should not allow invalid users to remove powers', async () => {
