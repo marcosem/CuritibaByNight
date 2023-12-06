@@ -104,8 +104,6 @@ describe('GetPowersList', () => {
       user_id: user.id,
     });
 
-    console.log(traitsListOutput);
-
     expect(traitsListOutput).toHaveLength(16);
     expect(
       traitsListOutput.filter(power => power.long_name === 'Animalism'),
