@@ -165,7 +165,13 @@ class GetPowersListService {
           if (charId) {
             // eslint-disable-next-line no-await-in-loop
             const charTrait = await this.charactersRepository.findById(charId);
-            if (charTrait?.name && chars.indexOf(charTrait.name) === -1) {
+            if (
+              charTrait?.name &&
+              ['transfered', 'dead', 'destroyed'].includes(
+                charTrait.situation,
+              ) === false &&
+              chars.indexOf(charTrait.name) === -1
+            ) {
               chars.push(charTrait.name);
             }
           }
