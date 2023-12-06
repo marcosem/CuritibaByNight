@@ -1,7 +1,7 @@
 import ICreateCharacterTraitDTO from '@modules/characters/dtos/ICreateCharacterTraitDTO';
 
 interface IMockedArgument {
-  id: string;
+  id: string | undefined;
   creature_type: string;
   clan: string;
 }

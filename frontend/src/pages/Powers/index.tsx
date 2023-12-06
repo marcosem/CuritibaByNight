@@ -43,6 +43,7 @@ interface IPower {
   cost?: number;
   source?: string;
   show?: boolean;
+  chars?: string[];
 }
 
 interface ISort {
@@ -105,6 +106,7 @@ const Powers: React.FC = () => {
             cost: power.cost || 0,
             source: power.source || '',
             show: true,
+            chars: power.chars || [],
           };
 
           return newPower;
@@ -582,7 +584,10 @@ const Powers: React.FC = () => {
                 powersList.map(
                   power =>
                     power.show && (
-                      <StyledTableRow key={`${power.long_name}-${power.level}`}>
+                      <StyledTableRow
+                        key={`${power.long_name}-${power.level}`}
+                        title={power.chars?.join('\n')}
+                      >
                         <StyledTableCell align="left">
                           {power.long_name}
                         </StyledTableCell>

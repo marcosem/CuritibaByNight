@@ -1,6 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
-import Power from '@modules/characters/infra/typeorm/entities/Power';
+// import Power from '@modules/characters/infra/typeorm/entities/Power';
+import PowerExtended from '@modules/characters/infra/typeorm/entities/PowerExtended';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
@@ -27,7 +28,7 @@ class GetPowersListService {
   public async execute({
     user_id,
     char_id = 'all',
-  }: IRequestDTO): Promise<Power[]> {
+  }: IRequestDTO): Promise<PowerExtended[]> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
@@ -78,7 +79,7 @@ class GetPowersListService {
       return newTrait;
     });
 
-    let filteredTraitsList: Power[] = [];
+    let filteredTraitsList: PowerExtended[] = [];
 
     // Removing duplicated and adding all discipline levels
     for (let i = 0; i < parsedTraitsList.length; i += 1) {
@@ -92,7 +93,9 @@ class GetPowersListService {
       ) {
         if (
           filteredTraitsList.find(
-            fTrait => fTrait.long_name === myTrait.long_name,
+            fTrait =>
+              fTrait.long_name === myTrait.long_name &&
+              Number(fTrait.level) === Number(myTrait.level),
           ) === undefined
         ) {
           const multiLevelCreatures = ['Vampire', 'Mage', 'Wraith'];
@@ -109,19 +112,19 @@ class GetPowersListService {
               short_name: myTrait.short_name,
               level: myTrait.level,
               type: myTrait.type,
-            } as Power;
+            } as PowerExtended;
 
             filteredTraitsList.push(newTrait);
           } else {
-            const newTraitsList: Power[] = [];
+            const newTraitsList: PowerExtended[] = [];
 
             for (let j = 0; j <= myTrait.level; j += 1) {
-              const newTrait: Power = {
+              const newTrait: PowerExtended = {
                 long_name: myTrait.long_name,
                 short_name: myTrait.short_name,
                 level: j,
                 type: myTrait.type,
-              } as Power;
+              } as PowerExtended;
 
               newTraitsList.push(newTrait);
             }
@@ -136,16 +139,45 @@ class GetPowersListService {
       filteredTraitsList,
     );
 
-    const powersList = filteredTraitsList.map(myTrait => {
-      const newTrait =
+    const powersList: PowerExtended[] = [];
+
+    for (let k = 0; k < filteredTraitsList.length; k += 1) {
+      const myTrait = filteredTraitsList[k];
+
+      const newTrait: PowerExtended =
         existantPowersList.find(
           eTrait =>
             eTrait.long_name === myTrait.long_name &&
             Number(eTrait.level) === Number(myTrait.level),
         ) || myTrait;
 
-      return newTrait;
-    });
+      if (char_id === 'all') {
+        const newTraitsList = traitsList.filter(
+          fTrait =>
+            fTrait.trait === newTrait.long_name &&
+            Number(fTrait.level) >= Number(newTrait.level),
+        );
+
+        const chars: string[] = [];
+        for (let j = 0; j < newTraitsList.length; j += 1) {
+          const charId = newTraitsList[j].character_id;
+
+          if (charId) {
+            // eslint-disable-next-line no-await-in-loop
+            const charTrait = await this.charactersRepository.findById(charId);
+            if (charTrait?.name && chars.indexOf(charTrait.name) === -1) {
+              chars.push(charTrait.name);
+            }
+          }
+        }
+
+        newTrait.chars = chars.sort();
+      } else {
+        newTrait.chars = [];
+      }
+
+      powersList.push(newTrait);
+    }
 
     return powersList;
   }

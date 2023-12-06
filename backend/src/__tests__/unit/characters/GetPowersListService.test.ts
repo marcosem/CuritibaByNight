@@ -87,12 +87,24 @@ describe('GetPowersList', () => {
       char3,
       char4,
       char5,
+      {
+        id: 'invalid',
+        creature_type: 'Invalid',
+        clan: 'invalid',
+      },
+      {
+        id: undefined,
+        creature_type: 'Invalid',
+        clan: 'invalid',
+      },
     ]);
     await fakeCharactersTraitsRepository.createList(traitsListInput);
 
     const traitsListOutput = await getPowersFullList.execute({
       user_id: user.id,
     });
+
+    console.log(traitsListOutput);
 
     expect(traitsListOutput).toHaveLength(16);
     expect(
