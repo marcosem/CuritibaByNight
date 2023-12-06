@@ -46,6 +46,7 @@ class RemoveCharacterService {
 
     // Remove saved route results when remove a character
     this.saveRouteResult.remove('CharactersInfluences');
+    this.saveRouteResult.remove('PowersList');
 
     this.storageProvider.deleteFile(char.file, 'sheet');
 

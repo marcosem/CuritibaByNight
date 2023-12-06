@@ -57,6 +57,7 @@ describe('RemoveCharacter', () => {
     expect(finalListSize).toHaveLength(initialListSize.length - 1);
     expect(findChar).toBeUndefined();
     expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
+    expect(removeSavedResult).toHaveBeenCalledWith('PowersList');
   });
 
   it('Should delete avatar when removing character', async () => {

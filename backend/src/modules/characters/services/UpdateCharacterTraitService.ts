@@ -66,6 +66,7 @@ class UpdateCharacterTraitService {
 
     // Remove route result when changed any trait
     this.saveRouteResult.remove('CharactersInfluences');
+    this.saveRouteResult.remove('PowersList');
 
     trait.trait = trait_name;
     trait.type = trait_type;

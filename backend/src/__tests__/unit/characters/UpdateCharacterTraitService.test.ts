@@ -106,6 +106,7 @@ describe('UpdateCharacterTrait', () => {
       expect(updatedTrait).toMatchObject(updatedBloodTrait);
     }
     expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
+    expect(removeSavedResult).toHaveBeenCalledWith('PowersList');
   });
 
   it('Should not be able to update a invalid trait', async () => {

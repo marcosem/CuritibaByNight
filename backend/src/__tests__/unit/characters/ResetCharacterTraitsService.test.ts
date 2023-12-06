@@ -86,6 +86,7 @@ describe('ResetCharactersTraits', () => {
       'empty|empty|empty|empty|empty|empty|empty|empty|empty|empty',
     );
     expect(removeSavedResult).toHaveBeenCalledWith('CharactersInfluences');
+    expect(removeSavedResult).toHaveBeenCalledWith('PowersList');
   });
 
   it('Should be able to reset traits of character keeping Personal Masquerade', async () => {

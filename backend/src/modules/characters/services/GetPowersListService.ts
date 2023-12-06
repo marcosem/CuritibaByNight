@@ -6,6 +6,7 @@ import ICharactersTraitsRepository from '@modules/characters/repositories/IChara
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -23,6 +24,8 @@ class GetPowersListService {
     private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -40,6 +43,16 @@ class GetPowersListService {
           'Only authenticated Storytellers can get full powers list',
           401,
         );
+      }
+
+      const routeResult = await this.saveRouteResult.get('PowersList');
+
+      if (routeResult !== '') {
+        const myResult: PowerExtended[] = JSON.parse(
+          routeResult,
+        ) as PowerExtended[];
+
+        return myResult;
       }
     } else {
       const char = await this.charactersRepository.findById(char_id);
@@ -183,6 +196,10 @@ class GetPowersListService {
       }
 
       powersList.push(newTrait);
+    }
+
+    if (char_id === 'all') {
+      this.saveRouteResult.set('PowersList', JSON.stringify(powersList));
     }
 
     return powersList;

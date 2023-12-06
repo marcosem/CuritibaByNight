@@ -51,6 +51,7 @@ class ResetCharacterTraitsService {
 
     // Remove route result when reset a character traits
     this.saveRouteResult.remove('CharactersInfluences');
+    this.saveRouteResult.remove('PowersList');
 
     await this.charactersTraitsRepository.resetTraitsLevel(
       char_id,

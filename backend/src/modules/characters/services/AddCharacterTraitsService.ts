@@ -56,6 +56,7 @@ class AddCharacterTraitsService {
 
     // Remove routes results when adding new traits
     this.saveRouteResult.remove('CharactersInfluences');
+    this.saveRouteResult.remove('PowersList');
 
     // Save Personal Masquerade if exist
     const masqueradeTrait = await this.charactersTraitsRepository.findTraitByCharId(

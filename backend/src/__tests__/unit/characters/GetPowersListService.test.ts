@@ -3,6 +3,7 @@ import FakePowersRepository from '@modules/characters/repositories/fakes/FakePow
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import GetPowersListService from '@modules/characters/services/GetPowersListService';
 import Power from '@modules/characters/infra/typeorm/entities/Power';
 import AppError from '@shared/errors/AppError';
@@ -13,6 +14,7 @@ let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
 let fakePowersRepository: FakePowersRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let getPowersFullList: GetPowersListService;
 
 describe('GetPowersList', () => {
@@ -21,16 +23,20 @@ describe('GetPowersList', () => {
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
     fakePowersRepository = new FakePowersRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     getPowersFullList = new GetPowersListService(
       fakePowersRepository,
       fakeCharactersTraitsRepository,
       fakeCharactersRepository,
       fakeUsersRepository,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to list all powers and rituals from CharactersTraits', async () => {
+    const saveResult = jest.spyOn(fakeSaveRouteResultProvider, 'set');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -130,6 +136,121 @@ describe('GetPowersList', () => {
     expect(
       traitsListOutput.filter(power => power.long_name === 'Willpower'),
     ).toHaveLength(0);
+
+    expect(saveResult).toHaveBeenCalledWith(
+      'PowersList',
+      JSON.stringify(traitsListOutput),
+    );
+  });
+
+  it('Should be able to list all powers and rituals from CharactersTraits from redis', async () => {
+    const getSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'get');
+
+    const user = await fakeUsersRepository.create({
+      name: 'A User',
+      email: 'user@user.com',
+      password: '123456',
+      storyteller: true,
+    });
+
+    const char1 = await fakeCharactersRepository.create({
+      name: 'Dracula',
+      experience: 666,
+      file: 'dracula.pdf',
+      clan: 'Ventrue',
+      creature_type: 'Vampire',
+      npc: true,
+    });
+
+    const char2 = await fakeCharactersRepository.create({
+      user_id: user.id,
+      name: 'Gaspar',
+      experience: 999,
+      file: 'gaspar.pdf',
+      creature_type: 'Wraith',
+      npc: false,
+    });
+
+    const char3 = await fakeCharactersRepository.create({
+      name: 'Unknown',
+      experience: 333,
+      file: 'unknown.pdf',
+      creature_type: 'Unknown',
+      npc: true,
+    });
+
+    const char4 = await fakeCharactersRepository.create({
+      name: 'Retainer',
+      experience: 111,
+      file: 'retainer.pdf',
+      creature_type: 'Mortal',
+      clan: 'Ghoul: Ventrue',
+      npc: true,
+    });
+
+    const char5 = await fakeCharactersRepository.create({
+      name: 'Lupine',
+      experience: 111,
+      file: 'lupine.pdf',
+      creature_type: 'Werewolf',
+      npc: true,
+    });
+
+    const traitsListInput = getMockedTraitsList([
+      char1,
+      char2,
+      char3,
+      char4,
+      char5,
+      {
+        id: 'invalid',
+        creature_type: 'Invalid',
+        clan: 'invalid',
+      },
+      {
+        id: undefined,
+        creature_type: 'Invalid',
+        clan: 'invalid',
+      },
+    ]);
+    await fakeCharactersTraitsRepository.createList(traitsListInput);
+
+    await getPowersFullList.execute({
+      user_id: user.id,
+    });
+
+    const traitsListOutput = await getPowersFullList.execute({
+      user_id: user.id,
+    });
+
+    expect(traitsListOutput).toHaveLength(16);
+    expect(
+      traitsListOutput.filter(power => power.long_name === 'Animalism'),
+    ).toHaveLength(4);
+    expect(
+      traitsListOutput.filter(power => power.long_name === 'Argos'),
+    ).toHaveLength(3);
+    expect(
+      traitsListOutput.filter(power => power.long_name === 'Auspex'),
+    ).toHaveLength(3);
+    expect(
+      traitsListOutput.filter(power => power.long_name === 'Custom Power'),
+    ).toHaveLength(1);
+    expect(
+      traitsListOutput.filter(
+        power => power.long_name === 'Alter Simple Creature',
+      ),
+    ).toHaveLength(1);
+    expect(
+      traitsListOutput.filter(
+        power => power.long_name === "Ventrue: Denial of Aphrodite's Favor",
+      ),
+    ).toHaveLength(1);
+    expect(
+      traitsListOutput.filter(power => power.long_name === 'Willpower'),
+    ).toHaveLength(0);
+
+    expect(getSavedResult).toHaveBeenCalledWith('PowersList');
   });
 
   it('Should be able to list valid powers together with the ones from CharactersTraits', async () => {
