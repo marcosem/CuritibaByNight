@@ -340,6 +340,8 @@ const SocketProvider: React.FC = ({ children }) => {
       };
 
       socket.current.onmessage = msg => {
+        if (user === undefined || user.id === '') return;
+
         const myMsg = JSON.parse(msg.data);
 
         if (myMsg.message) {
