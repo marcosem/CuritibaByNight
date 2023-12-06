@@ -167,9 +167,9 @@ class GetPowersListService {
             const charTrait = await this.charactersRepository.findById(charId);
             if (
               charTrait?.name &&
-              ['transfered', 'dead', 'destroyed'].includes(
-                charTrait.situation,
-              ) === false &&
+              charTrait.situation !== 'transfered' &&
+              charTrait.situation !== 'dead' &&
+              charTrait.situation !== 'destroyed' &&
               chars.indexOf(charTrait.name) === -1
             ) {
               chars.push(charTrait.name);
