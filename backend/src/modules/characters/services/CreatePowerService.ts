@@ -4,6 +4,7 @@ import Power from '@modules/characters/infra/typeorm/entities/Power';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
 import IPowersRepository from '@modules/characters/repositories/IPowersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ISaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/models/ISaveRouteResultProvider';
 
 interface IRequestDTO {
   user_id: string;
@@ -28,6 +29,8 @@ class CreatePowerService {
     private charactersTraitsRepository: ICharactersTraitsRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('SaveRouteResultProvider')
+    private saveRouteResult: ISaveRouteResultProvider,
   ) {}
 
   public async execute({
@@ -80,6 +83,9 @@ class CreatePowerService {
     };
 
     const savedPower = await this.powersRepository.create(newPower);
+
+    // Remove route result when reset a character traits
+    this.saveRouteResult.remove('PowersList');
 
     return savedPower;
   }

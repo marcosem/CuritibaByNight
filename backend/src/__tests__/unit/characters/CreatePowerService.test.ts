@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import FakePowersRepository from '@modules/characters/repositories/fakes/FakePowersRepository';
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeSaveRouteResultProvider from '@shared/container/providers/SaveRouteResultProvider/fakes/FakeSaveRouteResultProvider';
 import CreatePowerService from '@modules/characters/services/CreatePowerService';
 import Power from '@modules/characters/infra/typeorm/entities/Power';
 import AppError from '@shared/errors/AppError';
@@ -9,6 +10,7 @@ import AppError from '@shared/errors/AppError';
 let fakeUsersRepository: FakeUsersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
 let fakePowersRepository: FakePowersRepository;
+let fakeSaveRouteResultProvider: FakeSaveRouteResultProvider;
 let createPower: CreatePowerService;
 
 describe('CreatePower', () => {
@@ -16,15 +18,19 @@ describe('CreatePower', () => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
     fakePowersRepository = new FakePowersRepository();
+    fakeSaveRouteResultProvider = new FakeSaveRouteResultProvider();
 
     createPower = new CreatePowerService(
       fakePowersRepository,
       fakeCharactersTraitsRepository,
       fakeUsersRepository,
+      fakeSaveRouteResultProvider,
     );
   });
 
   it('Should be able to create a power', async () => {
+    const removeSavedResult = jest.spyOn(fakeSaveRouteResultProvider, 'remove');
+
     const user = await fakeUsersRepository.create({
       name: 'A User',
       email: 'user@user.com',
@@ -82,6 +88,7 @@ describe('CreatePower', () => {
     } as Power;
 
     expect(power).toMatchObject(powerTemplate);
+    expect(removeSavedResult).toHaveBeenCalledWith('PowersList');
   });
 
   it('Should not allow invalid users to create powers', async () => {
