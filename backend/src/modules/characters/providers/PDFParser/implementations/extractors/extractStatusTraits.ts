@@ -14,8 +14,9 @@ export default function extractStatusTraits(
       return currStatusList;
     }
 
-    const endStatus = line.indexOf(' ', startStatus + 1);
-    const status = line.substring(startStatus, endStatus);
+    const endTag = quantity > 1 ? ' x' : ' ';
+    const endStatus = line.indexOf(endTag, startStatus + 1);
+    const status = line.substring(startStatus, endStatus).trim();
 
     const startNotes = line.indexOf('(', endStatus) + 1;
 
