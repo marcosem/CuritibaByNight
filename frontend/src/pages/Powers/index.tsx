@@ -482,6 +482,7 @@ const Powers: React.FC = () => {
             cost: updatedPower.cost || 0,
             source: updatedPower.source || '',
             show: power.show,
+            chars: power.chars,
           };
         }
         return newPower;
