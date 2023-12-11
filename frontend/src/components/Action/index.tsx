@@ -1205,27 +1205,6 @@ const Action: React.FC<DialogPropsEx> = ({
           {isMobileVersion ? (
             <>
               <FieldBox>
-                <FieldBoxChild proportion={100}>
-                  <InputField
-                    name="title"
-                    id="title"
-                    label="Título *"
-                    value={endeavor !== 'defend' ? title : defendEndeavor.title}
-                    InputProps={{
-                      readOnly:
-                        readonly || endeavor === 'defend' || storyteller,
-                    }}
-                    onChange={handleChangeTitle}
-                    fullWidth
-                    error={!!validationErrors.title}
-                    helperText={validationErrors.title}
-                    isMobile
-                    disabled={saving}
-                  />
-                </FieldBoxChild>
-              </FieldBox>
-
-              <FieldBox>
                 <FieldBoxChild proportion={40}>
                   <InputField
                     name="action_period"
@@ -1276,6 +1255,27 @@ const Action: React.FC<DialogPropsEx> = ({
                       ))}
                     </InputField>
                   )}
+                </FieldBoxChild>
+              </FieldBox>
+
+              <FieldBox>
+                <FieldBoxChild proportion={100}>
+                  <InputField
+                    name="title"
+                    id="title"
+                    label="Título *"
+                    value={endeavor !== 'defend' ? title : defendEndeavor.title}
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleChangeTitle}
+                    fullWidth
+                    error={!!validationErrors.title}
+                    helperText={validationErrors.title}
+                    isMobile
+                    disabled={saving}
+                  />
                 </FieldBoxChild>
               </FieldBox>
 
