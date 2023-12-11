@@ -1193,7 +1193,8 @@ const Action: React.FC<DialogPropsEx> = ({
   return (
     <Dialog
       TransitionComponent={Transition}
-      fullWidth
+      fullWidth={!isMobileVersion}
+      fullScreen={isMobileVersion}
       maxWidth={isMobileVersion ? undefined : 'md'}
       // maxWidth="false"
       {...rest}
