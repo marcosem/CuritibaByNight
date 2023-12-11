@@ -1200,12 +1200,12 @@ const Action: React.FC<DialogPropsEx> = ({
       {...rest}
     >
       <DialogTitle>{getTitle()}</DialogTitle>
-      <ActionContainer>
+      <ActionContainer isMobile>
         <Form onSubmit={handleSubmit} ref={formRef}>
           {isMobileVersion ? (
             <>
               <FieldBox>
-                <FieldBoxChild proportion={60}>
+                <FieldBoxChild proportion={100}>
                   <InputField
                     name="title"
                     id="title"
@@ -1219,11 +1219,14 @@ const Action: React.FC<DialogPropsEx> = ({
                     fullWidth
                     error={!!validationErrors.title}
                     helperText={validationErrors.title}
-                    addmargin="right"
+                    isMobile
                     disabled={saving}
                   />
                 </FieldBoxChild>
-                <FieldBoxChild proportion={20}>
+              </FieldBox>
+
+              <FieldBox>
+                <FieldBoxChild proportion={40}>
                   <InputField
                     name="action_period"
                     id="action_period"
@@ -1234,10 +1237,11 @@ const Action: React.FC<DialogPropsEx> = ({
                     align="center"
                     fullWidth
                     addmargin="right"
+                    isMobile
                     disabled={saving}
                   />
                 </FieldBoxChild>
-                <FieldBoxChild proportion={20}>
+                <FieldBoxChild proportion={60}>
                   {readonly || !storyteller ? (
                     <InputField
                       name="result"
@@ -1247,6 +1251,7 @@ const Action: React.FC<DialogPropsEx> = ({
                       InputProps={{ readOnly: true }}
                       align="center"
                       fullWidth
+                      isMobile
                       disabled={saving}
                     />
                   ) : (
@@ -1261,6 +1266,7 @@ const Action: React.FC<DialogPropsEx> = ({
                       error={!!validationErrors.result}
                       align="center"
                       fullWidth
+                      isMobile
                       disabled={saving}
                     >
                       {actionResultList.map(result => (
@@ -1284,12 +1290,11 @@ const Action: React.FC<DialogPropsEx> = ({
                     onChange={handleInfluenceSelectChange}
                     select
                     error={!!validationErrors.influence}
-                    helperText={
-                      validationErrors.influence || 'Selecione a influência'
-                    }
+                    helperText={validationErrors.influence || 'Influência'}
                     align="center"
                     fullWidth
                     addmargin="right"
+                    isMobile
                     disabled={saving}
                   >
                     {influenceList.current.map(inf => (
@@ -1316,6 +1321,7 @@ const Action: React.FC<DialogPropsEx> = ({
                     select
                     align="center"
                     fullWidth
+                    isMobile
                     disabled={saving}
                     addmargin="right"
                   >
@@ -1327,15 +1333,16 @@ const Action: React.FC<DialogPropsEx> = ({
                   </InputField>
                 </FieldBoxChild>
 
-                <FieldBoxChild proportion={20}>
+                <FieldBoxChild proportion={20} addmargin="left">
                   <InputField
                     name="influence_effective_level"
                     id="influence_effective_level"
-                    label="Nível Efetivo"
+                    label="Total"
                     value={Math.floor(Number(influenceEffectiveLevel))}
                     InputProps={{ readOnly: true }}
                     align="center"
                     fullWidth
+                    isMobile
                     disabled={saving}
                     // addmargin="right"
                     highlight="true"
@@ -1353,9 +1360,10 @@ const Action: React.FC<DialogPropsEx> = ({
                     InputProps={{ readOnly: readonly || storyteller }}
                     onChange={handleEndeavorSelectChange}
                     select
-                    helperText="Selectione o tipo de ação"
+                    helperText="Tipo de ação"
                     align="center"
                     fullWidth
+                    isMobile
                     // addmargin="right"
                     disabled={saving}
                   >
@@ -1385,11 +1393,10 @@ const Action: React.FC<DialogPropsEx> = ({
                     onChange={handleAbilitySelectChange}
                     select
                     error={!!validationErrors.ability}
-                    helperText={
-                      validationErrors.ability || 'Selecione uma habilidade'
-                    }
+                    helperText={validationErrors.ability || 'Habilidade'}
                     align="center"
                     fullWidth
+                    isMobile
                     addmargin="left"
                     disabled={saving}
                   >
@@ -1426,6 +1433,7 @@ const Action: React.FC<DialogPropsEx> = ({
                     select
                     align="center"
                     fullWidth
+                    isMobile
                     addmargin="left"
                     disabled={saving}
                   >
@@ -1441,8 +1449,7 @@ const Action: React.FC<DialogPropsEx> = ({
               <FieldBox>
                 {endeavor !== 'defend' && (
                   <>
-                    <FieldBoxChild proportion={5} />
-                    <FieldBoxChild proportion={60}>
+                    <FieldBoxChild proportion={70}>
                       <InputField
                         name="background"
                         id="background"
@@ -1456,6 +1463,7 @@ const Action: React.FC<DialogPropsEx> = ({
                         helperText="Reforçar a ação com antecedente"
                         align="center"
                         fullWidth
+                        isMobile
                         addmargin="right"
                         disabled={saving}
                       >
@@ -1482,6 +1490,7 @@ const Action: React.FC<DialogPropsEx> = ({
                         select
                         align="center"
                         fullWidth
+                        isMobile
                         disabled={saving}
                       >
                         {backgroundLevelArray.map(level => (
@@ -1505,7 +1514,6 @@ const Action: React.FC<DialogPropsEx> = ({
                         <FiPlus />
                       </ActionButton>
                     </FieldBoxChild>
-                    <FieldBoxChild proportion={5} />
                   </>
                 )}
               </FieldBox>
@@ -1527,7 +1535,7 @@ const Action: React.FC<DialogPropsEx> = ({
                 )}
               </FieldBox>
               <FieldBox>
-                <FieldBoxChild proportion={60}>
+                <FieldBoxChild proportion={80}>
                   <InputField
                     name="action_owner_id"
                     id="action_owner_id"
@@ -1543,9 +1551,10 @@ const Action: React.FC<DialogPropsEx> = ({
                     }}
                     onChange={handleOwnerSelectChange}
                     select
-                    helperText="Selecione quem executará esta ação no caso de ser um lacaio"
+                    helperText="Quem executará esta ação"
                     align="center"
                     fullWidth
+                    isMobile
                     addmargin="right"
                     disabled={saving}
                   >
@@ -1556,17 +1565,17 @@ const Action: React.FC<DialogPropsEx> = ({
                     ))}
                   </InputField>
                 </FieldBoxChild>
-                <FieldBoxChild proportion={20} />
 
                 <FieldBoxChild proportion={20} addmargin="left">
                   <InputField
                     name="action_force"
                     id="action_force"
-                    label="Força da ação"
+                    label="Força"
                     value={actionForce}
                     InputProps={{ readOnly: true }}
                     align="center"
                     fullWidth
+                    isMobile
                     disabled={saving}
                     highlight="true"
                   />
