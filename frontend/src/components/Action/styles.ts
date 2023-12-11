@@ -71,10 +71,15 @@ interface IButtonProps {
   readonly type: 'button' | 'submit' | 'reset' | undefined;
 }
 
+interface IActionContainerProps {
+  isMobile?: boolean;
+}
+
 interface IFieldProps {
   align?: string;
   addmargin?: string;
   highlight?: string;
+  isMobile?: boolean;
 }
 
 interface IFieldBoxChildProps {
@@ -86,8 +91,9 @@ interface IFieldBoxChildProps {
   isMobile?: boolean;
 }
 
-export const ActionContainer = styled.div`
-  padding: 8px 24px 24px 24px;
+export const ActionContainer = styled.div<IActionContainerProps>`
+  padding: ${props =>
+    props.isMobile ? '8px 8px 24px 8px' : '8px 24px 24px 24px'};
   width: 100%;
 
   border-top: 1px solid #888;
@@ -200,14 +206,14 @@ export const InputField = styled(CssTextField).attrs<ITextFieldProps>(() => ({
       props.addmargin &&
       props.addmargin === 'left' &&
       css`
-        margin-left: 16px;
+        margin-left: ${props.isMobile ? '4px' : '16px'};
       `}
 
     ${props =>
       props.addmargin &&
       props.addmargin === 'right' &&
       css`
-        margin-right: 16px;
+        margin-right: ${props.isMobile ? '4px' : '16px'};
       `}
 
     ${props =>
