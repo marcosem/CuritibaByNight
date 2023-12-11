@@ -43,6 +43,7 @@ import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import { useSocket } from '../../hooks/socket';
 import { useHeader } from '../../hooks/header';
+import { useMobile } from '../../hooks/mobile';
 
 import influencesAbilities from '../Influences/influencesAbilities.json';
 import ICharacter from '../../components/CharacterList/ICharacter';
@@ -175,6 +176,7 @@ const InfluenceActions: React.FC = () => {
   const { char } = useAuth();
   const { clearUpdatedTrait, clearReloadTraits } = useSocket();
   const { setCurrentPage } = useHeader();
+  const { isMobileVersion } = useMobile();
 
   const getInfluencePT = useCallback((influence): string => {
     const infAbility = influencesAbilities.influences.find(
@@ -986,8 +988,19 @@ const InfluenceActions: React.FC = () => {
         return (
           <StyledTableRow>
             <StyledTableCell align="left">{message}</StyledTableCell>
-            <StyledTableCell align="center" />
-            <StyledTableCell align="center" />
+            {current ? (
+              !isMobileVersion && (
+                <>
+                  <StyledTableCell align="center" />
+                  <StyledTableCell align="center" />
+                </>
+              )
+            ) : (
+              <>
+                {!isMobileVersion && <StyledTableCell align="center" />}
+                <StyledTableCell align="center" />
+              </>
+            )}
             <StyledTableCell align="center" />
             <StyledTableCell align="center" />
             <StyledTableCell align="center" />
@@ -998,12 +1011,30 @@ const InfluenceActions: React.FC = () => {
       return list.map(action => (
         <StyledTableRow key={action.id}>
           <StyledTableCell align="left">{action.title}</StyledTableCell>
-          <StyledTableCell align="center">
-            {getInfluencePT(action.influence)}
-          </StyledTableCell>
-          <StyledTableCell align="center">
-            {action.action_period}
-          </StyledTableCell>
+          {current ? (
+            !isMobileVersion && (
+              <>
+                <StyledTableCell align="center">
+                  {getInfluencePT(action.influence)}
+                </StyledTableCell>
+                <StyledTableCell align="center">
+                  {action.action_period}
+                </StyledTableCell>
+              </>
+            )
+          ) : (
+            <>
+              {!isMobileVersion && (
+                <StyledTableCell align="center">
+                  {getInfluencePT(action.influence)}
+                </StyledTableCell>
+              )}
+              <StyledTableCell align="center">
+                {action.action_period}
+              </StyledTableCell>
+            </>
+          )}
+
           <StyledTableCell align="center">
             <IconBox
               colorInterface={
@@ -1070,6 +1101,7 @@ const InfluenceActions: React.FC = () => {
       handleEditAction,
       handleRemoveAction,
       handleViewAction,
+      isMobileVersion,
     ],
   );
 
@@ -1178,10 +1210,18 @@ const InfluenceActions: React.FC = () => {
             <StyledTableHead>
               <StyledTableRow>
                 <StyledTableCell>Ação</StyledTableCell>
-                <StyledTableCell>Influência</StyledTableCell>
-                <StyledTableCell>Período</StyledTableCell>
-                <StyledTableCell>Status</StyledTableCell>
-                <StyledTableCell>Resultado</StyledTableCell>
+                {!isMobileVersion && (
+                  <>
+                    <StyledTableCell>Influência</StyledTableCell>
+                    <StyledTableCell>Período</StyledTableCell>
+                  </>
+                )}
+                <StyledTableCell>
+                  {isMobileVersion ? 'Stat.' : 'Status'}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {isMobileVersion ? 'Res.' : 'Resultado'}
+                </StyledTableCell>
                 <StyledTableCell>Ações</StyledTableCell>
               </StyledTableRow>
             </StyledTableHead>
@@ -1191,12 +1231,16 @@ const InfluenceActions: React.FC = () => {
                   <StyledTableCell align="left">
                     <Skeleton />
                   </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Skeleton />
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Skeleton />
-                  </StyledTableCell>
+                  {!isMobileVersion && (
+                    <>
+                      <StyledTableCell align="center">
+                        <Skeleton />
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Skeleton />
+                      </StyledTableCell>
+                    </>
+                  )}
                   <StyledTableCell align="center">
                     <Skeleton />
                   </StyledTableCell>
@@ -1236,10 +1280,16 @@ const InfluenceActions: React.FC = () => {
             <StyledTableHead>
               <StyledTableRow>
                 <StyledTableCell>Ação</StyledTableCell>
-                <StyledTableCell>Influência</StyledTableCell>
+                {!isMobileVersion && (
+                  <StyledTableCell>Influência</StyledTableCell>
+                )}
                 <StyledTableCell>Período</StyledTableCell>
-                <StyledTableCell>Status</StyledTableCell>
-                <StyledTableCell>Resultado</StyledTableCell>
+                <StyledTableCell>
+                  {isMobileVersion ? 'Stat.' : 'Status'}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {isMobileVersion ? 'Res.' : 'Resultado'}
+                </StyledTableCell>
                 <StyledTableCell>Ações</StyledTableCell>
               </StyledTableRow>
             </StyledTableHead>
@@ -1249,9 +1299,11 @@ const InfluenceActions: React.FC = () => {
                   <StyledTableCell align="left">
                     <Skeleton />
                   </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Skeleton />
-                  </StyledTableCell>
+                  {!isMobileVersion && (
+                    <StyledTableCell align="center">
+                      <Skeleton />
+                    </StyledTableCell>
+                  )}
                   <StyledTableCell align="center">
                     <Skeleton />
                   </StyledTableCell>

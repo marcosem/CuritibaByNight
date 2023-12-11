@@ -83,6 +83,7 @@ interface IFieldBoxChildProps {
   flexDirection?: string;
   invisible?: boolean;
   addborder?: boolean;
+  isMobile?: boolean;
 }
 
 export const ActionContainer = styled.div`
@@ -172,9 +173,20 @@ export const FieldBoxChild = styled.div<IFieldBoxChildProps>`
     css`
       border: solid 1px;
       border-radius: 4px;
-      margin-top: 8px;
+
+      ${!props.isMobile &&
+      css`
+        margin-top: 8px;
+      `}
+
       margin-bottom: 8px;
       padding: 4px;
+    `}
+
+    ${props =>
+    props.isMobile &&
+    css`
+      height: 75px;
     `}
 `;
 

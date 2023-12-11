@@ -28,6 +28,7 @@ import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import { useSocket } from '../../hooks/socket';
+import { useMobile } from '../../hooks/mobile';
 
 import influencesAbilities from '../../pages/Influences/influencesAbilities.json';
 
@@ -281,6 +282,7 @@ const Action: React.FC<DialogPropsEx> = ({
 
   const { addToast } = useToast();
   const { notifyNewAction } = useSocket();
+  const { isMobileVersion } = useMobile();
 
   const buildInfluenceList = useCallback(() => {
     const newInfluenceList = [...influencesAbilities.influences].sort(
@@ -462,18 +464,6 @@ const Action: React.FC<DialogPropsEx> = ({
 
     return level;
   }, []);
-
-  /*
-  const isBgInTheList = useCallback(
-    background => {
-      const isBgInList =
-        backgroundList.findIndex(bg => bg.background === background) >= 0;
-
-      return isBgInList;
-    },
-    [backgroundList],
-  );
-  */
 
   const handleDefendEndeavor = useCallback(
     (newInfluence = '') => {
@@ -1201,250 +1191,479 @@ const Action: React.FC<DialogPropsEx> = ({
   }, [buildInfluenceList, charTraitsList, selectedAction, storyteller]);
 
   return (
-    <Dialog TransitionComponent={Transition} fullWidth maxWidth="md" {...rest}>
+    <Dialog
+      TransitionComponent={Transition}
+      fullWidth
+      maxWidth={isMobileVersion ? undefined : 'md'}
+      // maxWidth="false"
+      {...rest}
+    >
       <DialogTitle>{getTitle()}</DialogTitle>
       <ActionContainer>
         <Form onSubmit={handleSubmit} ref={formRef}>
-          <FieldBox>
-            <FieldBoxChild proportion={70}>
-              <InputField
-                name="title"
-                id="title"
-                label="Título *"
-                value={endeavor !== 'defend' ? title : defendEndeavor.title}
-                InputProps={{
-                  readOnly: readonly || endeavor === 'defend' || storyteller,
-                }}
-                onChange={handleChangeTitle}
-                fullWidth
-                error={!!validationErrors.title}
-                helperText={validationErrors.title}
-                addmargin="right"
-                disabled={saving}
-              />
-            </FieldBoxChild>
-            <FieldBoxChild proportion={15}>
-              <InputField
-                name="action_period"
-                id="action_period"
-                label="Período"
-                value={period}
-                // defaultValue={period}
-                InputProps={{ readOnly: true }}
-                align="center"
-                fullWidth
-                addmargin="right"
-                disabled={saving}
-              />
-            </FieldBoxChild>
-            <FieldBoxChild proportion={15}>
-              {readonly || !storyteller ? (
-                <InputField
-                  name="result"
-                  id="result"
-                  label="Resultado"
-                  defaultValue={getResultPT(actionResult)}
-                  InputProps={{ readOnly: true }}
-                  align="center"
-                  fullWidth
-                  disabled={saving}
-                />
-              ) : (
-                <InputField
-                  name="result"
-                  id="result"
-                  label="Resultado *"
-                  value={getResultPT(actionResult)}
-                  // InputProps={{ readOnly: readonly }}
-                  onChange={handleResultSelectChange}
-                  select
-                  error={!!validationErrors.result}
-                  align="center"
-                  fullWidth
-                  disabled={saving}
-                >
-                  {actionResultList.map(result => (
-                    <MenuItem key={result.title} value={result.titlePT}>
-                      {result.titlePT}
-                    </MenuItem>
-                  ))}
-                </InputField>
-              )}
-            </FieldBoxChild>
-          </FieldBox>
-          <FieldBox>
-            <FieldBoxChild proportion={25}>
-              <InputField
-                name="influence"
-                id="influence"
-                label="Influência *"
-                value={getInfluencePT(influence)}
-                InputProps={{ readOnly: readonly || storyteller }}
-                onChange={handleInfluenceSelectChange}
-                select
-                error={!!validationErrors.influence}
-                helperText={
-                  validationErrors.influence || 'Selecione a influência'
-                }
-                align="center"
-                fullWidth
-                addmargin="right"
-                disabled={saving}
-              >
-                {influenceList.current.map(inf => (
-                  <MenuItem key={inf.influence} value={inf.influence_PT}>
-                    {inf.influence_PT}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
-
-            <FieldBoxChild proportion={10}>
-              <InputField
-                name="influence_level"
-                id="influence_level"
-                label="Nível"
-                value={influenceLevelArray.length < 2 ? '0' : influenceLevel}
-                InputProps={{
-                  readOnly: readonly || endeavor === 'defend' || storyteller,
-                }}
-                onChange={handleInfluenceLevelSelectChange}
-                select
-                align="center"
-                fullWidth
-                disabled={saving}
-                addmargin="right"
-              >
-                {influenceLevelArray.map(level => (
-                  <MenuItem key={`inf-${level}`} value={`${level}`}>
-                    {level}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
-
-            <FieldBoxChild proportion={10}>
-              <InputField
-                name="influence_effective_level"
-                id="influence_effective_level"
-                label="Nível Efetivo"
-                value={Math.floor(Number(influenceEffectiveLevel))}
-                InputProps={{ readOnly: true }}
-                align="center"
-                fullWidth
-                disabled={saving}
-                addmargin="right"
-                highlight="true"
-              />
-            </FieldBoxChild>
-
-            <FieldBoxChild proportion={20}>
-              <InputField
-                name="endeavor"
-                id="endeavor"
-                label="Tipo"
-                value={getEndeavorPT(endeavor)}
-                InputProps={{ readOnly: readonly || storyteller }}
-                onChange={handleEndeavorSelectChange}
-                select
-                helperText="Selectione o tipo de ação"
-                align="center"
-                fullWidth
-                // addmargin="right"
-                disabled={saving}
-              >
-                {endeavorList.map(endea => (
-                  <MenuItem key={endea.title} value={endea.titlePT}>
-                    {endea.titlePT}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
-
-            <FieldBoxChild proportion={25} invisible={endeavor === 'combine'}>
-              <InputField
-                name="ability"
-                id="ability"
-                label="Habilidade principal *"
-                value={endeavor !== 'defend' ? ability : defendEndeavor.ability}
-                InputProps={{
-                  readOnly: readonly || endeavor === 'defend' || storyteller,
-                }}
-                onChange={handleAbilitySelectChange}
-                select
-                error={!!validationErrors.ability}
-                helperText={
-                  validationErrors.ability || 'Selecione uma habilidade'
-                }
-                align="center"
-                fullWidth
-                addmargin="left"
-                disabled={saving}
-              >
-                {traitsList.current.abilities.map(abil => (
-                  <MenuItem key={abil.id} value={abil.trait}>
-                    {abil.trait}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
-
-            <FieldBoxChild proportion={10} invisible={endeavor === 'combine'}>
-              <InputField
-                name="ability_level"
-                id="ability_level"
-                label="Nível"
-                value={
-                  abilityLevelArray.length - 1 < abilityLevel
-                    ? '0'
-                    : `${
-                        endeavor !== 'defend'
-                          ? abilityLevel
-                          : defendEndeavor.ability_level
-                      }`
-                }
-                InputProps={{
-                  readOnly: readonly || endeavor === 'defend' || storyteller,
-                }}
-                onChange={handleAbilityLevelSelectChange}
-                select
-                align="center"
-                fullWidth
-                addmargin="left"
-                disabled={saving}
-              >
-                {abilityLevelArray.map(level => (
-                  <MenuItem key={`abil-${level}`} value={`${level}`}>
-                    {level}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
-          </FieldBox>
-
-          <FieldBox>
-            {endeavor !== 'defend' && (
-              <>
-                <FieldBoxChild proportion={25}>
+          {isMobileVersion ? (
+            <>
+              <FieldBox>
+                <FieldBoxChild proportion={60}>
                   <InputField
-                    name="background"
-                    id="background"
-                    label="Incluir / Excluir Antecedente"
-                    value={backgroundToAdd}
+                    name="title"
+                    id="title"
+                    label="Título *"
+                    value={endeavor !== 'defend' ? title : defendEndeavor.title}
                     InputProps={{
-                      readOnly: readonly || storyteller,
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
                     }}
-                    onChange={handleBackgroundToAddSelectChange}
+                    onChange={handleChangeTitle}
+                    fullWidth
+                    error={!!validationErrors.title}
+                    helperText={validationErrors.title}
+                    addmargin="right"
+                    disabled={saving}
+                  />
+                </FieldBoxChild>
+                <FieldBoxChild proportion={20}>
+                  <InputField
+                    name="action_period"
+                    id="action_period"
+                    label="Período"
+                    value={period}
+                    // defaultValue={period}
+                    InputProps={{ readOnly: true }}
+                    align="center"
+                    fullWidth
+                    addmargin="right"
+                    disabled={saving}
+                  />
+                </FieldBoxChild>
+                <FieldBoxChild proportion={20}>
+                  {readonly || !storyteller ? (
+                    <InputField
+                      name="result"
+                      id="result"
+                      label="Resultado"
+                      defaultValue={getResultPT(actionResult)}
+                      InputProps={{ readOnly: true }}
+                      align="center"
+                      fullWidth
+                      disabled={saving}
+                    />
+                  ) : (
+                    <InputField
+                      name="result"
+                      id="result"
+                      label="Resultado *"
+                      value={getResultPT(actionResult)}
+                      // InputProps={{ readOnly: readonly }}
+                      onChange={handleResultSelectChange}
+                      select
+                      error={!!validationErrors.result}
+                      align="center"
+                      fullWidth
+                      disabled={saving}
+                    >
+                      {actionResultList.map(result => (
+                        <MenuItem key={result.title} value={result.titlePT}>
+                          {result.titlePT}
+                        </MenuItem>
+                      ))}
+                    </InputField>
+                  )}
+                </FieldBoxChild>
+              </FieldBox>
+
+              <FieldBox>
+                <FieldBoxChild proportion={60}>
+                  <InputField
+                    name="influence"
+                    id="influence"
+                    label="Influência *"
+                    value={getInfluencePT(influence)}
+                    InputProps={{ readOnly: readonly || storyteller }}
+                    onChange={handleInfluenceSelectChange}
                     select
-                    helperText="Reforçar a ação com antecedente"
+                    error={!!validationErrors.influence}
+                    helperText={
+                      validationErrors.influence || 'Selecione a influência'
+                    }
                     align="center"
                     fullWidth
                     addmargin="right"
                     disabled={saving}
                   >
-                    {traitsList.current.backgrounds.map(bg => (
-                      <MenuItem key={bg.id} value={bg.trait}>
-                        {bg.trait}
+                    {influenceList.current.map(inf => (
+                      <MenuItem key={inf.influence} value={inf.influence_PT}>
+                        {inf.influence_PT}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+
+                <FieldBoxChild proportion={20}>
+                  <InputField
+                    name="influence_level"
+                    id="influence_level"
+                    label="Nível"
+                    value={
+                      influenceLevelArray.length < 2 ? '0' : influenceLevel
+                    }
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleInfluenceLevelSelectChange}
+                    select
+                    align="center"
+                    fullWidth
+                    disabled={saving}
+                    addmargin="right"
+                  >
+                    {influenceLevelArray.map(level => (
+                      <MenuItem key={`inf-${level}`} value={`${level}`}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+
+                <FieldBoxChild proportion={20}>
+                  <InputField
+                    name="influence_effective_level"
+                    id="influence_effective_level"
+                    label="Nível Efetivo"
+                    value={Math.floor(Number(influenceEffectiveLevel))}
+                    InputProps={{ readOnly: true }}
+                    align="center"
+                    fullWidth
+                    disabled={saving}
+                    // addmargin="right"
+                    highlight="true"
+                  />
+                </FieldBoxChild>
+              </FieldBox>
+
+              <FieldBox>
+                <FieldBoxChild proportion={30}>
+                  <InputField
+                    name="endeavor"
+                    id="endeavor"
+                    label="Tipo"
+                    value={getEndeavorPT(endeavor)}
+                    InputProps={{ readOnly: readonly || storyteller }}
+                    onChange={handleEndeavorSelectChange}
+                    select
+                    helperText="Selectione o tipo de ação"
+                    align="center"
+                    fullWidth
+                    // addmargin="right"
+                    disabled={saving}
+                  >
+                    {endeavorList.map(endea => (
+                      <MenuItem key={endea.title} value={endea.titlePT}>
+                        {endea.titlePT}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+
+                <FieldBoxChild
+                  proportion={50}
+                  invisible={endeavor === 'combine'}
+                >
+                  <InputField
+                    name="ability"
+                    id="ability"
+                    label="Habilidade principal *"
+                    value={
+                      endeavor !== 'defend' ? ability : defendEndeavor.ability
+                    }
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleAbilitySelectChange}
+                    select
+                    error={!!validationErrors.ability}
+                    helperText={
+                      validationErrors.ability || 'Selecione uma habilidade'
+                    }
+                    align="center"
+                    fullWidth
+                    addmargin="left"
+                    disabled={saving}
+                  >
+                    {traitsList.current.abilities.map(abil => (
+                      <MenuItem key={abil.id} value={abil.trait}>
+                        {abil.trait}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+
+                <FieldBoxChild
+                  proportion={20}
+                  invisible={endeavor === 'combine'}
+                >
+                  <InputField
+                    name="ability_level"
+                    id="ability_level"
+                    label="Nível"
+                    value={
+                      abilityLevelArray.length - 1 < abilityLevel
+                        ? '0'
+                        : `${
+                            endeavor !== 'defend'
+                              ? abilityLevel
+                              : defendEndeavor.ability_level
+                          }`
+                    }
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleAbilityLevelSelectChange}
+                    select
+                    align="center"
+                    fullWidth
+                    addmargin="left"
+                    disabled={saving}
+                  >
+                    {abilityLevelArray.map(level => (
+                      <MenuItem key={`abil-${level}`} value={`${level}`}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+              </FieldBox>
+
+              <FieldBox>
+                {endeavor !== 'defend' && (
+                  <>
+                    <FieldBoxChild proportion={5} />
+                    <FieldBoxChild proportion={60}>
+                      <InputField
+                        name="background"
+                        id="background"
+                        label="Incluir / Excluir Antecedente"
+                        value={backgroundToAdd}
+                        InputProps={{
+                          readOnly: readonly || storyteller,
+                        }}
+                        onChange={handleBackgroundToAddSelectChange}
+                        select
+                        helperText="Reforçar a ação com antecedente"
+                        align="center"
+                        fullWidth
+                        addmargin="right"
+                        disabled={saving}
+                      >
+                        {traitsList.current.backgrounds.map(bg => (
+                          <MenuItem key={bg.id} value={bg.trait}>
+                            {bg.trait}
+                          </MenuItem>
+                        ))}
+                      </InputField>
+                    </FieldBoxChild>
+
+                    <FieldBoxChild proportion={20}>
+                      <InputField
+                        name="background_level"
+                        id="background_level"
+                        label="Nível"
+                        value={
+                          backgroundLevelArray.length < 2
+                            ? '0'
+                            : `${backgroundToAddLevel}`
+                        }
+                        InputProps={{ readOnly: readonly || storyteller }}
+                        onChange={handleBackgroundToAddLevelSelectChange}
+                        select
+                        align="center"
+                        fullWidth
+                        disabled={saving}
+                      >
+                        {backgroundLevelArray.map(level => (
+                          <MenuItem key={`bg-${level}`} value={`${level}`}>
+                            {level}
+                          </MenuItem>
+                        ))}
+                      </InputField>
+                    </FieldBoxChild>
+
+                    <FieldBoxChild proportion={10} flexDirection="column">
+                      <ActionButton
+                        disabled={
+                          saving ||
+                          backgroundToAdd === '' ||
+                          backgroundToAddLevel === 0
+                        }
+                        title="Incluir Antecedente"
+                        onClick={() => handleAddBackground()}
+                      >
+                        <FiPlus />
+                      </ActionButton>
+                    </FieldBoxChild>
+                    <FieldBoxChild proportion={5} />
+                  </>
+                )}
+              </FieldBox>
+
+              <FieldBox>
+                {endeavor !== 'defend' && (
+                  <FieldBoxChild proportion={100} addborder isMobile>
+                    {backgrounds !== '' &&
+                      getBackgrounds().map(bg => (
+                        <Chip
+                          key={bg}
+                          label={bg}
+                          variant="outlined"
+                          disabled={readonly || storyteller}
+                          onDelete={() => handleRemoveBackground(bg)}
+                        />
+                      ))}
+                  </FieldBoxChild>
+                )}
+              </FieldBox>
+              <FieldBox>
+                <FieldBoxChild proportion={60}>
+                  <InputField
+                    name="action_owner_id"
+                    id="action_owner_id"
+                    label="Autor da ação"
+                    value={
+                      ownerList.length === 0
+                        ? ''
+                        : `${endeavor === 'defend' ? myChar.id : owner.id}`
+                    }
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleOwnerSelectChange}
+                    select
+                    helperText="Selecione quem executará esta ação no caso de ser um lacaio"
+                    align="center"
+                    fullWidth
+                    addmargin="right"
+                    disabled={saving}
+                  >
+                    {ownerList.map(charOwner => (
+                      <MenuItem key={charOwner.id} value={charOwner.id}>
+                        {charOwner.name}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+                <FieldBoxChild proportion={20} />
+
+                <FieldBoxChild proportion={20} addmargin="left">
+                  <InputField
+                    name="action_force"
+                    id="action_force"
+                    label="Força da ação"
+                    value={actionForce}
+                    InputProps={{ readOnly: true }}
+                    align="center"
+                    fullWidth
+                    disabled={saving}
+                    highlight="true"
+                  />
+                </FieldBoxChild>
+              </FieldBox>
+            </>
+          ) : (
+            <>
+              <FieldBox>
+                <FieldBoxChild proportion={70}>
+                  <InputField
+                    name="title"
+                    id="title"
+                    label="Título *"
+                    value={endeavor !== 'defend' ? title : defendEndeavor.title}
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleChangeTitle}
+                    fullWidth
+                    error={!!validationErrors.title}
+                    helperText={validationErrors.title}
+                    addmargin="right"
+                    disabled={saving}
+                  />
+                </FieldBoxChild>
+                <FieldBoxChild proportion={15}>
+                  <InputField
+                    name="action_period"
+                    id="action_period"
+                    label="Período"
+                    value={period}
+                    // defaultValue={period}
+                    InputProps={{ readOnly: true }}
+                    align="center"
+                    fullWidth
+                    addmargin="right"
+                    disabled={saving}
+                  />
+                </FieldBoxChild>
+                <FieldBoxChild proportion={15}>
+                  {readonly || !storyteller ? (
+                    <InputField
+                      name="result"
+                      id="result"
+                      label="Resultado"
+                      defaultValue={getResultPT(actionResult)}
+                      InputProps={{ readOnly: true }}
+                      align="center"
+                      fullWidth
+                      disabled={saving}
+                    />
+                  ) : (
+                    <InputField
+                      name="result"
+                      id="result"
+                      label="Resultado *"
+                      value={getResultPT(actionResult)}
+                      // InputProps={{ readOnly: readonly }}
+                      onChange={handleResultSelectChange}
+                      select
+                      error={!!validationErrors.result}
+                      align="center"
+                      fullWidth
+                      disabled={saving}
+                    >
+                      {actionResultList.map(result => (
+                        <MenuItem key={result.title} value={result.titlePT}>
+                          {result.titlePT}
+                        </MenuItem>
+                      ))}
+                    </InputField>
+                  )}
+                </FieldBoxChild>
+              </FieldBox>
+              <FieldBox>
+                <FieldBoxChild proportion={25}>
+                  <InputField
+                    name="influence"
+                    id="influence"
+                    label="Influência *"
+                    value={getInfluencePT(influence)}
+                    InputProps={{ readOnly: readonly || storyteller }}
+                    onChange={handleInfluenceSelectChange}
+                    select
+                    error={!!validationErrors.influence}
+                    helperText={
+                      validationErrors.influence || 'Selecione a influência'
+                    }
+                    align="center"
+                    fullWidth
+                    addmargin="right"
+                    disabled={saving}
+                  >
+                    {influenceList.current.map(inf => (
+                      <MenuItem key={inf.influence} value={inf.influence_PT}>
+                        {inf.influence_PT}
                       </MenuItem>
                     ))}
                   </InputField>
@@ -1452,104 +1671,271 @@ const Action: React.FC<DialogPropsEx> = ({
 
                 <FieldBoxChild proportion={10}>
                   <InputField
-                    name="background_level"
-                    id="background_level"
+                    name="influence_level"
+                    id="influence_level"
                     label="Nível"
                     value={
-                      backgroundLevelArray.length < 2
-                        ? '0'
-                        : `${backgroundToAddLevel}`
+                      influenceLevelArray.length < 2 ? '0' : influenceLevel
                     }
-                    InputProps={{ readOnly: readonly || storyteller }}
-                    onChange={handleBackgroundToAddLevelSelectChange}
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleInfluenceLevelSelectChange}
                     select
                     align="center"
                     fullWidth
                     disabled={saving}
+                    addmargin="right"
                   >
-                    {backgroundLevelArray.map(level => (
-                      <MenuItem key={`bg-${level}`} value={`${level}`}>
+                    {influenceLevelArray.map(level => (
+                      <MenuItem key={`inf-${level}`} value={`${level}`}>
                         {level}
                       </MenuItem>
                     ))}
                   </InputField>
                 </FieldBoxChild>
 
-                <FieldBoxChild proportion={5} flexDirection="column">
-                  <ActionButton
-                    disabled={
-                      saving ||
-                      backgroundToAdd === '' ||
-                      backgroundToAddLevel === 0
-                    }
-                    title="Incluir Antecedente"
-                    onClick={() => handleAddBackground()}
+                <FieldBoxChild proportion={10}>
+                  <InputField
+                    name="influence_effective_level"
+                    id="influence_effective_level"
+                    label="Nível Efetivo"
+                    value={Math.floor(Number(influenceEffectiveLevel))}
+                    InputProps={{ readOnly: true }}
+                    align="center"
+                    fullWidth
+                    disabled={saving}
+                    addmargin="right"
+                    highlight="true"
+                  />
+                </FieldBoxChild>
+
+                <FieldBoxChild proportion={20}>
+                  <InputField
+                    name="endeavor"
+                    id="endeavor"
+                    label="Tipo"
+                    value={getEndeavorPT(endeavor)}
+                    InputProps={{ readOnly: readonly || storyteller }}
+                    onChange={handleEndeavorSelectChange}
+                    select
+                    helperText="Selectione o tipo de ação"
+                    align="center"
+                    fullWidth
+                    // addmargin="right"
+                    disabled={saving}
                   >
-                    <FiPlus />
-                  </ActionButton>
-                </FieldBoxChild>
-
-                <FieldBoxChild proportion={60} addborder>
-                  {backgrounds !== '' &&
-                    getBackgrounds().map(bg => (
-                      <Chip
-                        key={bg}
-                        label={bg}
-                        variant="outlined"
-                        disabled={readonly || storyteller}
-                        onDelete={() => handleRemoveBackground(bg)}
-                      />
+                    {endeavorList.map(endea => (
+                      <MenuItem key={endea.title} value={endea.titlePT}>
+                        {endea.titlePT}
+                      </MenuItem>
                     ))}
+                  </InputField>
                 </FieldBoxChild>
-              </>
-            )}
-          </FieldBox>
-          <FieldBox>
-            <FieldBoxChild proportion={30} />
-            <FieldBoxChild proportion={40}>
-              <InputField
-                name="action_owner_id"
-                id="action_owner_id"
-                label="Autor da ação"
-                value={
-                  ownerList.length === 0
-                    ? ''
-                    : `${endeavor === 'defend' ? myChar.id : owner.id}`
-                }
-                InputProps={{
-                  readOnly: readonly || endeavor === 'defend' || storyteller,
-                }}
-                onChange={handleOwnerSelectChange}
-                select
-                helperText="Selecione quem executará esta ação no caso de ser um lacaio"
-                align="center"
-                fullWidth
-                addmargin="right"
-                disabled={saving}
-              >
-                {ownerList.map(charOwner => (
-                  <MenuItem key={charOwner.id} value={charOwner.id}>
-                    {charOwner.name}
-                  </MenuItem>
-                ))}
-              </InputField>
-            </FieldBoxChild>
-            <FieldBoxChild proportion={20} />
 
-            <FieldBoxChild proportion={10} addmargin="left">
-              <InputField
-                name="action_force"
-                id="action_force"
-                label="Força da ação"
-                value={actionForce}
-                InputProps={{ readOnly: true }}
-                align="center"
-                fullWidth
-                disabled={saving}
-                highlight="true"
-              />
-            </FieldBoxChild>
-          </FieldBox>
+                <FieldBoxChild
+                  proportion={25}
+                  invisible={endeavor === 'combine'}
+                >
+                  <InputField
+                    name="ability"
+                    id="ability"
+                    label="Habilidade principal *"
+                    value={
+                      endeavor !== 'defend' ? ability : defendEndeavor.ability
+                    }
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleAbilitySelectChange}
+                    select
+                    error={!!validationErrors.ability}
+                    helperText={
+                      validationErrors.ability || 'Selecione uma habilidade'
+                    }
+                    align="center"
+                    fullWidth
+                    addmargin="left"
+                    disabled={saving}
+                  >
+                    {traitsList.current.abilities.map(abil => (
+                      <MenuItem key={abil.id} value={abil.trait}>
+                        {abil.trait}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+
+                <FieldBoxChild
+                  proportion={10}
+                  invisible={endeavor === 'combine'}
+                >
+                  <InputField
+                    name="ability_level"
+                    id="ability_level"
+                    label="Nível"
+                    value={
+                      abilityLevelArray.length - 1 < abilityLevel
+                        ? '0'
+                        : `${
+                            endeavor !== 'defend'
+                              ? abilityLevel
+                              : defendEndeavor.ability_level
+                          }`
+                    }
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleAbilityLevelSelectChange}
+                    select
+                    align="center"
+                    fullWidth
+                    addmargin="left"
+                    disabled={saving}
+                  >
+                    {abilityLevelArray.map(level => (
+                      <MenuItem key={`abil-${level}`} value={`${level}`}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+              </FieldBox>
+
+              <FieldBox>
+                {endeavor !== 'defend' && (
+                  <>
+                    <FieldBoxChild proportion={25}>
+                      <InputField
+                        name="background"
+                        id="background"
+                        label="Incluir / Excluir Antecedente"
+                        value={backgroundToAdd}
+                        InputProps={{
+                          readOnly: readonly || storyteller,
+                        }}
+                        onChange={handleBackgroundToAddSelectChange}
+                        select
+                        helperText="Reforçar a ação com antecedente"
+                        align="center"
+                        fullWidth
+                        addmargin="right"
+                        disabled={saving}
+                      >
+                        {traitsList.current.backgrounds.map(bg => (
+                          <MenuItem key={bg.id} value={bg.trait}>
+                            {bg.trait}
+                          </MenuItem>
+                        ))}
+                      </InputField>
+                    </FieldBoxChild>
+
+                    <FieldBoxChild proportion={10}>
+                      <InputField
+                        name="background_level"
+                        id="background_level"
+                        label="Nível"
+                        value={
+                          backgroundLevelArray.length < 2
+                            ? '0'
+                            : `${backgroundToAddLevel}`
+                        }
+                        InputProps={{ readOnly: readonly || storyteller }}
+                        onChange={handleBackgroundToAddLevelSelectChange}
+                        select
+                        align="center"
+                        fullWidth
+                        disabled={saving}
+                      >
+                        {backgroundLevelArray.map(level => (
+                          <MenuItem key={`bg-${level}`} value={`${level}`}>
+                            {level}
+                          </MenuItem>
+                        ))}
+                      </InputField>
+                    </FieldBoxChild>
+
+                    <FieldBoxChild proportion={5} flexDirection="column">
+                      <ActionButton
+                        disabled={
+                          saving ||
+                          backgroundToAdd === '' ||
+                          backgroundToAddLevel === 0
+                        }
+                        title="Incluir Antecedente"
+                        onClick={() => handleAddBackground()}
+                      >
+                        <FiPlus />
+                      </ActionButton>
+                    </FieldBoxChild>
+
+                    <FieldBoxChild proportion={60} addborder>
+                      {backgrounds !== '' &&
+                        getBackgrounds().map(bg => (
+                          <Chip
+                            key={bg}
+                            label={bg}
+                            variant="outlined"
+                            disabled={readonly || storyteller}
+                            onDelete={() => handleRemoveBackground(bg)}
+                          />
+                        ))}
+                    </FieldBoxChild>
+                  </>
+                )}
+              </FieldBox>
+              <FieldBox>
+                <FieldBoxChild proportion={30} />
+                <FieldBoxChild proportion={40}>
+                  <InputField
+                    name="action_owner_id"
+                    id="action_owner_id"
+                    label="Autor da ação"
+                    value={
+                      ownerList.length === 0
+                        ? ''
+                        : `${endeavor === 'defend' ? myChar.id : owner.id}`
+                    }
+                    InputProps={{
+                      readOnly:
+                        readonly || endeavor === 'defend' || storyteller,
+                    }}
+                    onChange={handleOwnerSelectChange}
+                    select
+                    helperText="Selecione quem executará esta ação no caso de ser um lacaio"
+                    align="center"
+                    fullWidth
+                    addmargin="right"
+                    disabled={saving}
+                  >
+                    {ownerList.map(charOwner => (
+                      <MenuItem key={charOwner.id} value={charOwner.id}>
+                        {charOwner.name}
+                      </MenuItem>
+                    ))}
+                  </InputField>
+                </FieldBoxChild>
+                <FieldBoxChild proportion={20} />
+
+                <FieldBoxChild proportion={10} addmargin="left">
+                  <InputField
+                    name="action_force"
+                    id="action_force"
+                    label="Força da ação"
+                    value={actionForce}
+                    InputProps={{ readOnly: true }}
+                    align="center"
+                    fullWidth
+                    disabled={saving}
+                    highlight="true"
+                  />
+                </FieldBoxChild>
+              </FieldBox>
+            </>
+          )}
 
           <InputField
             name="description"
