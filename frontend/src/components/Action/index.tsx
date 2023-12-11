@@ -1960,8 +1960,8 @@ const Action: React.FC<DialogPropsEx> = ({
             onChange={handleDescriptionChange}
             // required
             multiline
-            minRows={4}
-            maxRows={4}
+            minRows={isMobileVersion ? 8 : 4}
+            maxRows={isMobileVersion ? 8 : 4}
             fullWidth
             error={!!validationErrors.action}
             helperText={validationErrors.action || 'Descreva a sua ação'}
@@ -1978,8 +1978,8 @@ const Action: React.FC<DialogPropsEx> = ({
                 onChange={handleStorytellerReplyChange}
                 InputProps={{ readOnly: readonly || !storyteller }}
                 multiline
-                minRows={3}
-                maxRows={3}
+                minRows={isMobileVersion ? 6 : 3}
+                maxRows={isMobileVersion ? 6 : 3}
                 fullWidth
                 error={!!validationErrors.st_reply}
                 helperText={
@@ -1998,8 +1998,8 @@ const Action: React.FC<DialogPropsEx> = ({
                 onChange={handleNewsChange}
                 InputProps={{ readOnly: readonly || !storyteller }}
                 multiline
-                minRows={3}
-                maxRows={3}
+                minRows={isMobileVersion ? 6 : 3}
+                maxRows={isMobileVersion ? 6 : 3}
                 fullWidth
                 error={!!validationErrors.news}
                 helperText={
