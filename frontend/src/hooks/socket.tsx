@@ -487,7 +487,11 @@ const SocketProvider: React.FC = ({ children }) => {
 
             case 'error':
               if (myMsg.error) {
-                if (myMsg.error !== 'Invalid JWT token') {
+                if (
+                  myMsg.error !== 'Invalid JWT token' &&
+                  myMsg.error.indexOf('invalid input syntax for type uuid') ===
+                    -1
+                ) {
                   addToast({
                     type: 'error',
                     title: 'Erro de comunicação com servidor',
