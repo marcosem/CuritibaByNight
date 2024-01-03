@@ -365,3 +365,13 @@ export const NavSpan = styled.span`
     width: 24px;
   }
 `;
+
+export const NewNavigation = styled.div`
+  position: relative;
+  background: url(${navBgImg}) repeat-x;
+  height: 39px;
+  padding-bottom: 25px;
+
+  border-top: 1px #888 solid;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+`;

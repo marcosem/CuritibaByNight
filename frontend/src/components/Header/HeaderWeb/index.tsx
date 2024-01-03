@@ -1,46 +1,36 @@
 import React, { useEffect, useCallback } from 'react';
 import { FiPower, FiBell } from 'react-icons/fi';
 import { useHistory, Link } from 'react-router-dom';
-import {
-  FaHome,
-  FaFacebook,
-  FaInstagram,
-  FaDiscord,
-  FaSpotify,
-} from 'react-icons/fa';
-import {
-  GiDarkSquad,
-  GiVampireDracula,
-  GiMinions,
-  GiPositionMarker,
-  GiStoneTower,
-  GiStabbedNote,
-  GiSpikedHalo,
-} from 'react-icons/gi';
+import { FaFacebook, FaInstagram, FaDiscord, FaSpotify } from 'react-icons/fa';
+
 import { useAuth } from '../../../hooks/auth';
 import { useSocket } from '../../../hooks/socket';
 
 import imgLogoHeader from '../../../assets/logo_header.svg';
 import imgProfile from '../../../assets/profile.jpg';
+
+import Sidebar from '../../Sidebar';
+
 import {
   Container,
   HeaderContent,
   NotificationButton,
   NotificationCount,
   LogoutButton,
-  Navigation,
-  NavSpan,
+  // Navigation,
+  // NavSpan,
   Profile,
   ConnectionStatus,
   MyPages,
-  ToolTip,
+  // ToolTip,
+  NewNavigation,
 } from './styles';
 
 interface IHeaderProps {
   page?: string;
 }
 
-const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
+const HeaderWeb: React.FC<IHeaderProps> = () => {
   const { signOut, user } = useAuth();
   const { isConnected, notifications, updateNotifications } = useSocket();
   const history = useHistory();
@@ -143,7 +133,7 @@ const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
           <FiPower />
         </LogoutButton>
       </HeaderContent>
-      <Navigation>
+      {/* <Navigation>
         <table>
           <tbody>
             <tr>
@@ -265,7 +255,10 @@ const HeaderWeb: React.FC<IHeaderProps> = ({ page }) => {
             )}
           </tbody>
         </table>
-      </Navigation>
+                    </Navigation> */}
+      <NewNavigation>
+        <Sidebar />
+      </NewNavigation>
     </Container>
   );
 };
