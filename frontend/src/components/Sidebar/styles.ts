@@ -17,7 +17,7 @@ export const SidebarButton = styled.button`
   line-height: 1;
   padding: 0 16px;
   color: #fff;
-  transition: 0.3s;
+  // transition: 0.3s;
 
   &:is(.active, :hover) {
     background: #004fee;
@@ -77,6 +77,8 @@ export const SidebarWrapper = styled.aside`
       background: #888;
       border-right: 1px solid #2e303e;
     }
+
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
   }
 `;
 
@@ -113,6 +115,7 @@ export const SidebarSubNav = styled.div`
 
   > div {
     padding: 4px;
-    transition: 0.5s;
+    // height: 100%;
+    // transition: 0.5s;
   }
 `;

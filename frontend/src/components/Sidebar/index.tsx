@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { FaHome, FaUser, FaMap } from 'react-icons/fa';
@@ -42,7 +42,6 @@ const Sidebar: React.FC = () => {
   const { user } = useAuth();
   const history = useHistory();
   const [opened, setOpened] = useState<boolean>(false);
-  const navRef = useRef<HTMLDivElement>(null);
   const [activeItem, setActiveItem] = useState<string>('');
 
   const menuItems: IMenuItem[] = [
@@ -220,11 +219,19 @@ const Sidebar: React.FC = () => {
                   <SidebarSubNav
                     style={{
                       height: isSubNavOpen(item)
-                        ? navRef.current?.clientHeight
+                        ? `${
+                            item.items.filter(
+                              subItem =>
+                                !subItem.stOnly ||
+                                (subItem.stOnly && user.storyteller),
+                            ).length *
+                              39 +
+                            8
+                          }px`
                         : 0,
                     }}
                   >
-                    <div ref={navRef}>
+                    <div>
                       {item.items
                         .filter(
                           subItem =>
