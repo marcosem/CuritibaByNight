@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-export const SidebarButton = styled.button`
+interface IButtonProps {
+  isMobile?: boolean;
+}
+
+export const SidebarButton = styled.button<IButtonProps>`
   background: transparent;
   border: 0;
   padding: 0;
@@ -12,16 +16,14 @@ export const SidebarButton = styled.button`
   width: 100%;
   border-radius: 6px;
   font-family: inherit;
-  font-size: 16px;
+  font-size: ${props => (props.isMobile ? '14px' : '16px')};
   font-weight: 400;
   line-height: 1;
   padding: 0 16px;
-  color: #fff;
-  // transition: 0.3s;
+  color: var(--cbn-new-neutral-1); // #eee
 
   &:is(.active, :hover) {
-    background: #004fee;
-    color: #elecff;
+    background: var(--cbn-new-red-1); // #870202
   }
 
   &.active {
@@ -33,7 +35,7 @@ export const SidebarButton = styled.button`
   }
 
   &:not(.active):hover {
-    background: #2e303e;
+    background: var(--cbn-new-red-2); // #4f0007
   }
 
   > span {
@@ -47,9 +49,9 @@ export const SidebarButton = styled.button`
 
   svg {
     transition: 0.3s;
-    color: #fff;
-    height: 20px;
-    width: 20px;
+    color: var(--cbn-new-neutral-1); // #eee
+    height: ${props => (props.isMobile ? '18px' : '20px')};
+    width: ${props => (props.isMobile ? '18px' : '20px')};
   }
 `;
 
@@ -74,8 +76,8 @@ export const SidebarWrapper = styled.aside`
     padding: 4px;
 
     &:not(:nth-child(1)) {
-      background: #888;
-      border-right: 1px solid #2e303e;
+      background: var(--cbn-new-dark-3); // #474747
+      border-right: 1px solid var(--cbn-new-dark-1); // #0a0a0a
     }
 
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
@@ -92,10 +94,6 @@ export const SidebarHeader = styled.header`
     width: 54px;
     height: 39px;
   }
-`;
-
-export const SidebarLogo = styled.div`
-  height: 20px;
 `;
 
 export const SidebarSubNav = styled.div`
@@ -115,7 +113,5 @@ export const SidebarSubNav = styled.div`
 
   > div {
     padding: 4px;
-    // height: 100%;
-    // transition: 0.5s;
   }
 `;

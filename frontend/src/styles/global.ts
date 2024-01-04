@@ -54,5 +54,15 @@ export default createGlobalStyle`
     --level-rare: #032fc9;
     --level-very-rare: #5d0798;
     --level-epic: #ff5733;
+
+    --cbn-new-neutral-1: #eeeeee;
+    --cbn-new-neutral-2: #dddddd;
+    --cbn-new-red-1: #870202;
+    --cbn-new-red-2: #4f0007;
+    --cbn-new-red-3: #270000;
+    --cbn-new-dark-1: #0a0a0a;
+    --cbn-new-dark-2: #2e2e2e;
+    --cbn-new-dark-3: #474747;
+    --cbn-new-green: #0C3607;
   }
 `;

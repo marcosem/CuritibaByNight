@@ -1,175 +1,23 @@
 import React, { useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-
-import { FaHome, FaUser, FaMap } from 'react-icons/fa';
-import {
-  GiPositionMarker,
-  GiSwordSpade,
-  GiDarkSquad,
-  GiVampireDracula,
-  GiSpikedHalo,
-  GiStoneTower,
-  GiStabbedNote,
-} from 'react-icons/gi';
-import { FiFlag, FiMenu, FiChevronDown } from 'react-icons/fi';
-import { IconType } from 'react-icons';
-
+import { FiMenu, FiChevronDown } from 'react-icons/fi';
 import { useAuth } from '../../hooks/auth';
+import { ISubMenuItem, IMenuItem, menuItems } from './menuItems';
+import { useMobile } from '../../hooks/mobile';
 
 import {
   SidebarWrapper,
   SidebarButton,
   SidebarHeader,
-  // SidebarLogo,
   SidebarSubNav,
 } from './styles';
-
-interface ISubMenuItem {
-  name: string;
-  link: string;
-  stOnly: boolean;
-}
-
-interface IMenuItem {
-  name: string;
-  Icon: IconType;
-  link: string;
-  stOnly: boolean;
-  items?: ISubMenuItem[];
-}
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
   const history = useHistory();
+  const { isMobileVersion } = useMobile();
   const [opened, setOpened] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<string>('');
-
-  const menuItems: IMenuItem[] = [
-    {
-      name: 'Home',
-      Icon: FaHome,
-      link: '/dashboard',
-      stOnly: false,
-    },
-    {
-      name: 'Perfil',
-      Icon: FaUser,
-      link: '/profile',
-      stOnly: false,
-    },
-    {
-      name: 'Mapa',
-      Icon: FaMap,
-      link: '/locals',
-      stOnly: false,
-    },
-    {
-      name: 'Locais',
-      Icon: GiPositionMarker,
-      link: '',
-      stOnly: false,
-      items: [
-        {
-          name: 'Locais conhecidos',
-          link: '',
-          stOnly: false,
-        },
-        {
-          name: 'Adicionar local',
-          link: '/addlocal',
-          stOnly: true,
-        },
-        {
-          name: 'Editar local',
-          link: '/updatelocal',
-          stOnly: true,
-        },
-        {
-          name: 'Definir conhecido',
-          link: '/localchars',
-          stOnly: true,
-        },
-      ],
-    },
-    {
-      name: 'Territórios',
-      link: '/territories',
-      Icon: FiFlag,
-      stOnly: true,
-    },
-    {
-      name: 'Ações',
-      Icon: GiSwordSpade,
-      link: '',
-      stOnly: false,
-      items: [
-        {
-          name: 'Minhas ações',
-          link: '/actions',
-          stOnly: false,
-        },
-        {
-          name: 'Revisar ações',
-          link: '/actionsreview',
-          stOnly: true,
-        },
-      ],
-    },
-    {
-      name: 'Jogadores',
-      Icon: GiDarkSquad,
-      link: '/players',
-      stOnly: true,
-    },
-    {
-      name: 'Personagens',
-      Icon: GiVampireDracula,
-      link: '',
-      stOnly: true,
-      items: [
-        {
-          name: 'PCs',
-          link: '/characters/pc',
-          stOnly: true,
-        },
-        {
-          name: 'NPCs',
-          link: '/characters/npc',
-          stOnly: true,
-        },
-      ],
-    },
-    {
-      name: 'Poderes',
-      Icon: GiSpikedHalo,
-      link: '/powers',
-      stOnly: true,
-    },
-    {
-      name: 'Influências',
-      Icon: GiStoneTower,
-      link: '',
-      stOnly: false,
-      items: [
-        {
-          name: 'Descrições',
-          link: '/influences',
-          stOnly: false,
-        },
-        {
-          name: 'Estatísticas',
-          link: '/influences/stat',
-          stOnly: true,
-        },
-      ],
-    },
-    {
-      name: 'Regras',
-      Icon: GiStabbedNote,
-      link: '/rules',
-      stOnly: false,
-    },
-  ];
 
   const handleClick = useCallback(
     (item: IMenuItem | ISubMenuItem) => {
@@ -194,10 +42,13 @@ const Sidebar: React.FC = () => {
   return (
     <SidebarWrapper>
       <SidebarHeader>
-        <SidebarButton type="button" onClick={() => setOpened(!opened)}>
+        <SidebarButton
+          type="button"
+          onClick={() => setOpened(!opened)}
+          isMobile={isMobileVersion}
+        >
           <FiMenu />
         </SidebarButton>
-        {activeItem !== 'Home' && <span>{activeItem}</span>}
       </SidebarHeader>
       {opened &&
         menuItems
@@ -209,6 +60,7 @@ const Sidebar: React.FC = () => {
                   type="button"
                   onClick={() => handleClick(item)}
                   className={activeItem === item.name ? 'active' : ''}
+                  isMobile={isMobileVersion}
                 >
                   <item.Icon />
                   <span>{item.name}</span>
@@ -245,6 +97,7 @@ const Sidebar: React.FC = () => {
                             className={
                               activeItem === subItem.name ? 'active' : ''
                             }
+                            isMobile={isMobileVersion}
                             key={subItem.name}
                           >
                             <span>{subItem.name}</span>

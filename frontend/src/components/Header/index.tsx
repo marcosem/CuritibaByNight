@@ -5,22 +5,10 @@ import HeaderWeb from './HeaderWeb';
 // import HeaderWeb from './HeaderNew';
 import HeaderMobile from './HeaderMobile';
 
-interface IHeaderProps {
-  page?: string;
-}
-
-const Header: React.FC<IHeaderProps> = ({ page }) => {
+const Header: React.FC = () => {
   const { isMobileVersion } = useMobile();
 
-  return (
-    <>
-      {isMobileVersion ? (
-        <HeaderMobile page={page} />
-      ) : (
-        <HeaderWeb page={page} />
-      )}
-    </>
-  );
+  return <>{isMobileVersion ? <HeaderMobile /> : <HeaderWeb />}</>;
 };
 
 export default Header;

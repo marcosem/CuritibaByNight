@@ -17,20 +17,13 @@ import {
   NotificationButton,
   NotificationCount,
   LogoutButton,
-  // Navigation,
-  // NavSpan,
+  Navigation,
   Profile,
   ConnectionStatus,
   MyPages,
-  // ToolTip,
-  NewNavigation,
 } from './styles';
 
-interface IHeaderProps {
-  page?: string;
-}
-
-const HeaderWeb: React.FC<IHeaderProps> = () => {
+const HeaderWeb: React.FC = () => {
   const { signOut, user } = useAuth();
   const { isConnected, notifications, updateNotifications } = useSocket();
   const history = useHistory();
@@ -256,9 +249,9 @@ const HeaderWeb: React.FC<IHeaderProps> = () => {
           </tbody>
         </table>
                     </Navigation> */}
-      <NewNavigation>
+      <Navigation>
         <Sidebar />
-      </NewNavigation>
+      </Navigation>
     </Container>
   );
 };

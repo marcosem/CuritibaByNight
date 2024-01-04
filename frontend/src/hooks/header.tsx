@@ -5,6 +5,7 @@ import { useAuth } from './auth';
 
 interface IHeaderContextData {
   setCurrentPage(myPage: string, hidden?: boolean): void;
+  getCurrentPage(): string;
 }
 
 const HeaderContext = createContext<IHeaderContextData>(
@@ -21,9 +22,13 @@ const HeaderProvider: React.FC = ({ children }) => {
     setDisabled(hidden);
   }, []);
 
+  const getCurrentPage = useCallback(() => {
+    return page;
+  }, [page]);
+
   return (
-    <HeaderContext.Provider value={{ setCurrentPage }}>
-      {user !== undefined && !disabled && <Header page={page} />}
+    <HeaderContext.Provider value={{ setCurrentPage, getCurrentPage }}>
+      {user !== undefined && !disabled && <Header />}
       {children}
     </HeaderContext.Provider>
   );

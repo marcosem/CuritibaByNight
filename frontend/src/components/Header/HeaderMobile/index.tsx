@@ -1,22 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiPower, FiBell } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import {
-  FaHome,
-  FaFacebook,
-  FaInstagram,
-  FaDiscord,
-  FaSpotify,
-} from 'react-icons/fa';
-import {
-  GiDarkSquad,
-  GiVampireDracula,
-  GiMinions,
-  GiPositionMarker,
-  GiStoneTower,
-  GiStabbedNote,
-  GiSpikedHalo,
-} from 'react-icons/gi';
+import { FaFacebook, FaInstagram, FaDiscord, FaSpotify } from 'react-icons/fa';
 import { useAuth } from '../../../hooks/auth';
 import { useSocket } from '../../../hooks/socket';
 
@@ -29,18 +14,14 @@ import {
   NotificationButton,
   NotificationCount,
   Navigation,
-  NavSpan,
   Profile,
   ConnectionStatus,
   MyPages,
-  ToolTip,
 } from './styles';
 
-interface IHeaderProps {
-  page?: string;
-}
+import Sidebar from '../../Sidebar';
 
-const HeaderMobile: React.FC<IHeaderProps> = ({ page }) => {
+const HeaderMobile: React.FC = () => {
   const { signOut, user } = useAuth();
   const [firstName, setFirstName] = useState<string>();
   const { isConnected, notifications, updateNotifications } = useSocket();
@@ -138,6 +119,10 @@ const HeaderMobile: React.FC<IHeaderProps> = ({ page }) => {
           <FiPower />
         </LogoutButton>
       </HeaderContent>
+      <Navigation>
+        <Sidebar />
+      </Navigation>
+      {/*
       <Navigation>
         <table>
           <tbody>
@@ -261,6 +246,7 @@ const HeaderMobile: React.FC<IHeaderProps> = ({ page }) => {
           </tbody>
         </table>
       </Navigation>
+                    */}
     </Container>
   );
 };

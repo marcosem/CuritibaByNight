@@ -1,7 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import { lighten, shade } from 'polished';
 import bgImg from '../../../assets/header_bg.png';
-import navBgImg from '../../../assets/nav_bg.png';
 
 const ringingBell = keyframes`
   0% {transform: rotate(35deg);}
@@ -246,105 +245,13 @@ export const MyPages = styled.div`
   }
 `;
 
-export const ToolTip = styled.span`
-  visibility: hidden;
-  width: 80px;
-  height: 30px;
-  top: 112%;
-  left: 50%;
-  margin-left: -40px;
-  font-size: 12px;
-  font-weight: 400;
-
-  background-color: #000;
-  color: #fff;
-  border-radius: 6px;
-  text-align: center;
-  padding: 8px 0;
-
-  opacity: 0;
-  position: absolute;
-  z-index: 1;
-
-  transition: opacity 0.5s;
-`;
-
 export const Navigation = styled.div`
-  background: url(${navBgImg}) repeat-x;
+  position: relative;
+  background: var(--cbn-new-dark-2); // #2e2e2e
   height: 39px;
-  padding-top: 3px;
   padding-bottom: 25px;
+  padding-top: 3px;
 
-  border-top: 1px #888 solid;
+  border-top: 1px var(--cbn-new-dark-3) solid; // #474747
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-
-  table {
-    border: none;
-    tbody {
-      border: none;
-      display: flex;
-      flex-direction: row;
-
-      td {
-        padding: 2px 5px;
-        width: 50px;
-        height: 30px;
-        position: relative;
-        display: flex;
-        border-radius: 6px;
-
-        a {
-          color: #999;
-          text-decoration: none;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          transition: background-color 0.3s;
-
-          svg {
-            margin-top: 3px;
-            color: #999;
-            height: 20px;
-            width: 20px;
-
-            transition: color 0.3s;
-          }
-
-          &:hover {
-            color: ${lighten(0.3, '#999')};
-            svg {
-              color: ${lighten(0.3, '#999')};
-            }
-          }
-        }
-
-        &:hover {
-          background-color: #333;
-
-          ${ToolTip} {
-            visibility: visible;
-            opacity: 0.8;
-          }
-        }
-      }
-    }
-  }
-`;
-
-export const NavSpan = styled.span`
-  cursor: default;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  border-bottom: 2px #fff solid;
-
-  svg {
-    margin-top: 2px;
-    color: #fff;
-    height: 20px;
-    width: 20px;
-  }
 `;
