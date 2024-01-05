@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { IconType } from 'react-icons';
+import { Tooltip } from '@material-ui/core';
 
 import Skeleton from '@material-ui/lab/Skeleton';
 import {
@@ -115,13 +116,11 @@ const CbNTable: React.FC<ICbNTable> = ({
             >
               <ActionsContainer>
                 {row.actions.map(action => (
-                  <ActionButton
-                    title={action.title}
-                    onClick={() => handleActionFunction(action)}
-                    key={action.title}
-                  >
-                    <action.Icon />
-                  </ActionButton>
+                  <Tooltip title={action.title} key={action.title} arrow>
+                    <ActionButton onClick={() => handleActionFunction(action)}>
+                      <action.Icon />
+                    </ActionButton>
+                  </Tooltip>
                 ))}
               </ActionsContainer>
             </StyledTableCell>
