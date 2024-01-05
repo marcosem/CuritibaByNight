@@ -1,11 +1,5 @@
 /* eslint-disable camelcase */
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  MouseEvent,
-  HTMLAttributes,
-} from 'react';
+import React, { useState, useCallback, useEffect, HTMLAttributes } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import {
   FiTrash2,
@@ -13,8 +7,10 @@ import {
   FiChevronDown,
   FiRotateCcw,
   FiUpload,
+  FiEye,
 } from 'react-icons/fi';
-import { GiLoad, GiDemolish /* ,GiRollingDices */ } from 'react-icons/gi';
+import { GiLoad, GiPositionMarker /* ,GiRollingDices */ } from 'react-icons/gi';
+
 import api from '../../services/api';
 
 import {
@@ -26,8 +22,6 @@ import {
   CharacterSheet,
   DataContainer,
   TableWrapper,
-  Table,
-  TableCell,
   ButtonBox,
   FunctionsContainer,
   FunctionLink,
@@ -46,6 +40,7 @@ import CharacterCard from '../CharacterCard';
 import ICharacter from '../CharacterList/ICharacter';
 import TraitsPanel from '../TraitsPanel';
 import Button from '../Button';
+import CbNTable, { ICbNTable, ICbNRow, ICbNAction } from '../CbNTable';
 
 interface ILocation {
   id: string;
@@ -376,8 +371,8 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   }, [handleRemove, myChar, showModal]);
 
   const handleRetainerSelection = useCallback(
-    async (e: MouseEvent<HTMLTableRowElement>) => {
-      const retainerId = e.currentTarget.id;
+    async rtId => {
+      const retainerId = rtId;
       setRetainerList([]);
 
       const retainerChar = retainerList.find(ch => ch.id === retainerId);
@@ -396,15 +391,20 @@ const CharacterPanel: React.FC<IPanelProps> = ({
     [dashboard, history, myChar, retainerList, setChar],
   );
 
-  const handleLocationJump = useCallback(
-    async (e: MouseEvent<HTMLTableRowElement>, ownership: boolean) => {
-      const locationId = e.currentTarget.id;
+  const handleLocationPosition = useCallback(
+    (e: string) => {
+      const locationId = e;
 
-      if (ownership) {
-        history.push(`/localdetails/${locationId}`);
-      } else {
-        history.push(`/locals/${locationId}`);
-      }
+      history.push(`/locals/${locationId}`);
+    },
+    [history],
+  );
+
+  const handleLocationDetails = useCallback(
+    (e: string) => {
+      const locationId = e;
+
+      history.push(`/localdetails/${locationId}`);
     },
     [history],
   );
@@ -415,9 +415,137 @@ const CharacterPanel: React.FC<IPanelProps> = ({
   }, [history]);
   */
 
-  const handleInfluenceActions = useCallback(() => {
-    history.push('/actions');
-  }, [history]);
+  const drawRetainerTable = useCallback(
+    (rtList: ICharacter[]) => {
+      const tableData: ICbNTable = {
+        header: [
+          {
+            title: 'Lacaios',
+            align: 'left',
+          },
+          {
+            title: 'Tipo',
+            align: 'center',
+          },
+          {
+            title: 'Pontos',
+            align: 'center',
+          },
+        ],
+        rows: rtList.map(rt => {
+          let rtType;
+
+          if (rt.creature_type === 'Mortal') {
+            rtType = rt.clan;
+          } else if (rt.clan) {
+            rtType = `${rt.creature_type}: ${rt.clan}`;
+          } else {
+            rtType = rt.creature_type;
+          }
+
+          const newRow: ICbNRow = {
+            id: rt.id,
+            columns: [rt.name, rtType, rt.retainer_level],
+            onClick: () => handleRetainerSelection(rt.id),
+          };
+
+          return newRow;
+        }),
+        haveActions: false,
+        isBusy,
+      };
+
+      return (
+        <CbNTable
+          header={tableData.header}
+          rows={tableData.rows}
+          haveActions={tableData.haveActions}
+          isBusy={tableData.isBusy}
+        />
+      );
+    },
+    [handleRetainerSelection, isBusy],
+  );
+
+  const drawLocationTable = useCallback(
+    (locList: ILocation[]) => {
+      const tableData: ICbNTable = {
+        header: [
+          {
+            title: 'Local',
+            align: 'left',
+          },
+          {
+            title: 'Descrição',
+            align: 'left',
+          },
+          {
+            title: 'Ações',
+            align: 'center',
+          },
+        ],
+        rows: locList.map(loc => {
+          let rowTitle;
+          let bold;
+          if (loc.responsible === myChar.id) {
+            rowTitle = 'Proprietário';
+          } else if (loc.shared) {
+            rowTitle = 'Co-Proprietário';
+          } else {
+            rowTitle = 'Conhece o Local';
+          }
+
+          let actions: ICbNAction[];
+          if (loc.responsible === myChar.id || loc.shared) {
+            bold = true;
+            actions = [
+              {
+                title: 'Ver no mapa',
+                Icon: GiPositionMarker,
+                onClick: () => handleLocationPosition(loc.id),
+              },
+              {
+                title: 'Detalhes',
+                Icon: FiEye,
+                onClick: () => handleLocationDetails(loc.id),
+              },
+            ];
+          } else {
+            bold = false;
+            actions = [
+              {
+                title: 'Ver no mapa',
+                Icon: GiPositionMarker,
+                onClick: () => handleLocationPosition(loc.id),
+              },
+            ];
+          }
+
+          const newLoc: ICbNRow = {
+            id: loc.id,
+            title: rowTitle,
+            bold,
+            columns: [loc.name, loc.description],
+            actions,
+          };
+
+          return newLoc;
+        }),
+        haveActions: true,
+        isBusy,
+      };
+
+      return (
+        <CbNTable
+          header={tableData.header}
+          rows={tableData.rows}
+          haveActions={tableData.haveActions}
+          isBusy={tableData.isBusy}
+        />
+      );
+    },
+    [handleLocationDetails, handleLocationPosition, isBusy, myChar.id],
+  );
 
   useEffect(() => {
     loadLocations();
@@ -570,56 +698,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                         isMobile={isMobileVersion}
                         isVisible={showRetainers}
                       >
-                        <Table isMobile={isMobileVersion}>
-                          <thead>
-                            <tr>
-                              <th>Lacaio</th>
-                              <th>Tipo</th>
-                              <th>Pontos</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {retainerList.map(retainer => (
-                              <tr
-                                key={retainer.id}
-                                id={retainer.id}
-                                onClick={handleRetainerSelection}
-                              >
-                                <td>
-                                  <TableCell isMobile={isMobileVersion}>
-                                    <span>{retainer.name}</span>
-                                  </TableCell>
-                                </td>
-                                <td>
-                                  <TableCell
-                                    centered
-                                    isMobile={isMobileVersion}
-                                  >
-                                    {retainer.creature_type === 'Mortal' ? (
-                                      <span>{retainer.clan}</span>
-                                    ) : (
-                                      <>
-                                        {retainer.clan ? (
-                                          <span>{`${retainer.creature_type}: ${retainer.clan}`}</span>
-                                        ) : (
-                                          <span>{retainer.creature_type}</span>
-                                        )}
-                                      </>
-                                    )}
-                                  </TableCell>
-                                </td>
-                                <td>
-                                  <TableCell
-                                    centered
-                                    isMobile={isMobileVersion}
-                                  >
-                                    <span>{retainer.retainer_level}</span>
-                                  </TableCell>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
+                        {drawRetainerTable(retainerList)}
                       </TableWrapper>
                     </DataContainer>
                   )}
@@ -634,69 +713,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                         isMobile={isMobileVersion}
                         isVisible={showLocals}
                       >
-                        <Table isMobile={isMobileVersion}>
-                          <thead>
-                            <tr>
-                              <th>Local</th>
-                              <th>Descrição</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {locationsList.map(local => (
-                              <tr
-                                key={local.id}
-                                id={local.id}
-                                onClick={
-                                  e =>
-                                    handleLocationJump(
-                                      e,
-                                      local.responsible === myChar.id ||
-                                        local.shared,
-                                    )
-                                  // eslint-disable-next-line react/jsx-curly-newline
-                                }
-                                title={`${
-                                  local.responsible === myChar.id
-                                    ? 'Proprietário'
-                                    : `${
-                                        local.shared
-                                          ? 'Co-Proprietário'
-                                          : 'Conhece o Local'
-                                      }`
-                                }`}
-                              >
-                                {local.responsible === myChar.id ||
-                                local.shared ? (
-                                  <>
-                                    <td>
-                                      <TableCell isMobile={isMobileVersion}>
-                                        <strong>{local.name}</strong>
-                                      </TableCell>
-                                    </td>
-                                    <td>
-                                      <TableCell isMobile={isMobileVersion}>
-                                        <strong>{local.description}</strong>
-                                      </TableCell>
-                                    </td>
-                                  </>
-                                ) : (
-                                  <>
-                                    <td>
-                                      <TableCell isMobile={isMobileVersion}>
-                                        <span>{local.name}</span>
-                                      </TableCell>
-                                    </td>
-                                    <td>
-                                      <TableCell isMobile={isMobileVersion}>
-                                        <span>{local.description}</span>
-                                      </TableCell>
-                                    </td>
-                                  </>
-                                )}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
+                        {drawLocationTable(locationsList)}
                       </TableWrapper>
                     </DataContainer>
                   )}
@@ -717,13 +734,6 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     >
                       <GiRollingDices />
                     </FunctionButton> */}
-                        <FunctionButton
-                          onClick={handleInfluenceActions}
-                          title="Ações de Influências"
-                          isGreen
-                        >
-                          <GiDemolish />
-                        </FunctionButton>
                       </>
                     )}
 

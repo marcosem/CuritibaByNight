@@ -57,6 +57,7 @@ export default createGlobalStyle`
 
     --cbn-new-neutral-1: #eeeeee;
     --cbn-new-neutral-2: #dddddd;
+    --cbn-new-neutral-3: #c2c2c2;
     --cbn-new-red-1: #870202;
     --cbn-new-red-2: #4f0007;
     --cbn-new-red-3: #270000;
