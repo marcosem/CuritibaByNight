@@ -1,9 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { FiCopy, FiArrowLeft } from 'react-icons/fi';
-import { GiDemolish } from 'react-icons/gi';
-import { FaRegChartBar } from 'react-icons/fa';
 import InfluenceCard from '../../components/InfluenceCard';
 
 import { influences } from './influences.json';
@@ -20,11 +17,7 @@ import {
   TableLevels,
   TableLevelsCell,
   GoBackButton,
-  FunctionsContainer,
-  ActionsReviewLink,
-  StatisticsLink,
 } from './styles';
-import { useAuth } from '../../hooks/auth';
 import { useMobile } from '../../hooks/mobile';
 import { useToast } from '../../hooks/toast';
 import { useHeader } from '../../hooks/header';
@@ -41,7 +34,6 @@ const Influences: React.FC = () => {
   const [influencesList, setInfluencesList] = useState<IInfluence[]>([]);
   const [selInfluence, setSelInfluence] = useState<IInfluence>();
   const { addToast } = useToast();
-  const { user } = useAuth();
   const { isMobileVersion } = useMobile();
   const { setCurrentPage } = useHeader();
 
@@ -217,23 +209,6 @@ const Influences: React.FC = () => {
               </tbody>
             </Table>
           </TableWrapper>
-          {user.storyteller && !isMobileVersion && (
-            <FunctionsContainer>
-              <ActionsReviewLink>
-                <Link to="/actionsreview" title="Revisar Ações de Influências">
-                  <GiDemolish />
-                </Link>
-              </ActionsReviewLink>
-              <StatisticsLink>
-                <Link
-                  to="/influences/stat"
-                  title="Estatísticas das Influências"
-                >
-                  <FaRegChartBar />
-                </Link>
-              </StatisticsLink>
-            </FunctionsContainer>
-          )}
         </>
       )}
     </Container>
