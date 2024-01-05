@@ -10,6 +10,7 @@ import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import Players from '../pages/Players';
 import Characters from '../pages/Characters';
+import MyCharacters from '../pages/MyCharacters';
 import Locals from '../pages/Locals';
 import Territories from '../pages/Territories';
 import CreatePlayer from '../pages/CreatePlayer';
@@ -66,6 +67,7 @@ const Routes: React.FC = () => (
       isPrivate
       isStoryteller
     />
+    <Route path="/mycharacters" component={MyCharacters} isPrivate />
     <Route
       path="/updatechar/:filter/:charId"
       component={CharacterUpdate}
