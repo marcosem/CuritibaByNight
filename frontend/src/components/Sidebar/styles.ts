@@ -16,7 +16,7 @@ export const SidebarButton = styled.button<IButtonProps>`
   width: 100%;
   border-radius: 6px;
   font-family: inherit;
-  font-size: ${props => (props.isMobile ? '14px' : '16px')};
+  font-size: ${props => (props.isMobile ? '12px' : '14px')};
   font-weight: 400;
   line-height: 1;
   padding: 0 16px;

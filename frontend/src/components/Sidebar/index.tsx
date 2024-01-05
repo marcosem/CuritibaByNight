@@ -39,12 +39,20 @@ const Sidebar: React.FC = () => {
     [activeItem],
   );
 
+  const handleOpenMenu = useCallback(open => {
+    if (!open) {
+      setActiveItem('');
+    }
+
+    setOpened(open);
+  }, []);
+
   return (
     <SidebarWrapper>
       <SidebarHeader>
         <SidebarButton
           type="button"
-          onClick={() => setOpened(!opened)}
+          onClick={() => handleOpenMenu(!opened)}
           isMobile={isMobileVersion}
         >
           <FiMenu />

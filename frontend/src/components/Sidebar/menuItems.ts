@@ -8,6 +8,8 @@ import {
   GiSpikedHalo,
   GiStoneTower,
   GiStabbedNote,
+  GiMinions,
+  GiOrganigram,
 } from 'react-icons/gi';
 import { FiFlag } from 'react-icons/fi';
 
@@ -39,6 +41,74 @@ export const menuItems: IMenuItem[] = [
     stOnly: false,
   },
   {
+    name: 'Meus personagens',
+    Icon: GiOrganigram,
+    link: '/mycharacters',
+    stOnly: false,
+  },
+  {
+    name: 'Jogadores',
+    Icon: GiDarkSquad,
+    link: '/players',
+    stOnly: true,
+  },
+  {
+    name: 'PCs',
+    Icon: GiVampireDracula,
+    link: '',
+    stOnly: true,
+    items: [
+      {
+        name: 'Todos PCs',
+        link: '/characters/pc',
+        stOnly: true,
+      },
+      {
+        name: 'Adicionar um PC',
+        link: '/addchar/pc',
+        stOnly: true,
+      },
+      {
+        name: 'Atualizar um PC',
+        link: '/updatechar/pc',
+        stOnly: true,
+      },
+      {
+        name: 'Atualizar vários PCs',
+        link: '/updatemultichars/pc',
+        stOnly: true,
+      },
+    ],
+  },
+  {
+    name: 'NPCs',
+    Icon: GiMinions,
+    link: '',
+    stOnly: true,
+    items: [
+      {
+        name: 'Todos NPCs',
+        link: '/characters/npc',
+        stOnly: true,
+      },
+      {
+        name: 'Adicionar um NPC',
+        link: '/addchar/npc',
+        stOnly: true,
+      },
+      {
+        name: 'Atualizar um NPC',
+        link: '/updatechar/npc',
+        stOnly: true,
+      },
+      {
+        name: 'Atualizar vários NPCs',
+        link: '/updatemultichars/npc',
+        stOnly: true,
+      },
+    ],
+  },
+  {
     name: 'Mapa',
     Icon: FaMap,
     link: '/locals',
@@ -48,13 +118,8 @@ export const menuItems: IMenuItem[] = [
     name: 'Locais',
     Icon: GiPositionMarker,
     link: '',
-    stOnly: false,
+    stOnly: true,
     items: [
-      {
-        name: 'Locais conhecidos',
-        link: '',
-        stOnly: false,
-      },
       {
         name: 'Adicionar local',
         link: '/addlocal',
@@ -97,34 +162,16 @@ export const menuItems: IMenuItem[] = [
     ],
   },
   {
-    name: 'Jogadores',
-    Icon: GiDarkSquad,
-    link: '/players',
-    stOnly: true,
-  },
-  {
-    name: 'Personagens',
-    Icon: GiVampireDracula,
-    link: '',
-    stOnly: true,
-    items: [
-      {
-        name: 'PCs',
-        link: '/characters/pc',
-        stOnly: true,
-      },
-      {
-        name: 'NPCs',
-        link: '/characters/npc',
-        stOnly: true,
-      },
-    ],
-  },
-  {
     name: 'Poderes',
     Icon: GiSpikedHalo,
     link: '/powers',
     stOnly: true,
+  },
+  {
+    name: 'Regras',
+    Icon: GiStabbedNote,
+    link: '/rules',
+    stOnly: false,
   },
   {
     name: 'Influências',
@@ -143,11 +190,5 @@ export const menuItems: IMenuItem[] = [
         stOnly: true,
       },
     ],
-  },
-  {
-    name: 'Regras',
-    Icon: GiStabbedNote,
-    link: '/rules',
-    stOnly: false,
   },
 ];
