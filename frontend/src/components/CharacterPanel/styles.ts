@@ -7,11 +7,6 @@ interface ICharPanelProps {
   isVisible?: boolean;
 }
 
-interface ITableCellProps {
-  centered?: boolean;
-  isMobile?: boolean;
-}
-
 interface IFunctionButtonProps {
   isGreen?: boolean;
   middle?: boolean;
@@ -273,6 +268,7 @@ export const TableWrapper = styled.div<ICharPanelProps>`
   margin: 5px auto;
   min-width: 320px;
   border-radius: 11px;
+  width: 100%;
 
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
