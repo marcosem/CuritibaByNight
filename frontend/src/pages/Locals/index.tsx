@@ -534,6 +534,7 @@ const Locals: React.FC = () => {
                   fill
                   positions={border.coordinates}
                   opacity={0.5}
+                  key={border.name}
                 >
                   <Popup>{`${border.name}, pop. ${border.population} hab., ${border.sect}`}</Popup>
                 </Polyline>
