@@ -206,45 +206,6 @@ export const ConnectionStatus = styled.div<IConnectionProps>`
         `}
 `;
 
-export const MyPages = styled.div`
-  margin: auto;
-  background: transparent;
-  border: 0;
-  display: flex;
-  flex-direction: row;
-
-  a {
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-
-    span {
-      margin: 3px auto auto auto;
-      font-size: 9px;
-      color: #999;
-    }
-
-    svg {
-      width: 26px;
-      height: 26px;
-      margin: 0 10px;
-      color: #999;
-
-      transition: color 0.3s;
-    }
-
-    &:hover {
-      span {
-        color: ${lighten(0.3, '#999')};
-      }
-
-      svg {
-        color: ${lighten(0.3, '#999')};
-      }
-    }
-  }
-`;
-
 export const Navigation = styled.div`
   position: relative;
   background: var(--cbn-new-dark-2); // #2e2e2e

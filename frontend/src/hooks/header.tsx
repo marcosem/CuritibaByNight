@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 import { useAuth } from './auth';
 
@@ -30,6 +31,7 @@ const HeaderProvider: React.FC = ({ children }) => {
     <HeaderContext.Provider value={{ setCurrentPage, getCurrentPage }}>
       {user !== undefined && !disabled && <Header />}
       {children}
+      {user !== undefined && !disabled && <Footer />}
     </HeaderContext.Provider>
   );
 };
