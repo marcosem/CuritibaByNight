@@ -9,8 +9,10 @@ import {
   InfoBox,
   CbNPages,
 } from './styles';
+import { useMobile } from '../../hooks/mobile';
 
 const Footer: React.FC = () => {
+  const { isMobileVersion } = useMobile();
   const NUM_BUBBLES = 128;
 
   const getBubbles = useCallback(() => {
@@ -25,7 +27,7 @@ const Footer: React.FC = () => {
         '--bubble-delay': `${-1 * (2 + Math.random() * 2)}s`,
       } as React.CSSProperties;
 
-      bubblesArray.push(<Bubble style={newStyle} />);
+      bubblesArray.push(<Bubble style={newStyle} key={`bubble-#${i + 1}`} />);
     }
 
     return bubblesArray;
@@ -35,12 +37,12 @@ const Footer: React.FC = () => {
     <FooterBox>
       <FooterWrapper>
         <Bubbles>{getBubbles()}</Bubbles>
-        <FooterContent>
-          <InfoBox align="left">
+        <FooterContent isMobile={isMobileVersion}>
+          <InfoBox align={isMobileVersion ? 'center' : 'left'}>
             <strong>Curitiba By Night</strong>
 
             <a href="mailto:owbn.curitiba@gmail.com">
-              <strong>Contato - </strong>
+              {!isMobileVersion && <strong>Contato - </strong>}
               <span>owbn.curitiba@gmail.com</span>
             </a>
           </InfoBox>
@@ -78,13 +80,23 @@ const Footer: React.FC = () => {
               <FaSpotify />
             </a>
           </CbNPages>
-          <InfoBox align="right">
-            <span>Desenvolvido por Marcos Mathias</span>
-
-            <a href="mailto:marcos@memathias.com">
-              <strong>Contato - </strong>
-              <span>marcos@memathias.com</span>
-            </a>
+          <InfoBox align={isMobileVersion ? 'center' : 'right'}>
+            {isMobileVersion ? (
+              <>
+                <span>Feito por Marcos Mathias</span>
+                <a href="mailto:marcos@memathias.com">
+                  <span>marcos@memathias.com</span>
+                </a>
+              </>
+            ) : (
+              <>
+                <span>Desenvolvido por Marcos Mathias</span>
+                <a href="mailto:marcos@memathias.com">
+                  <strong>Contato - </strong>
+                  <span>marcos@memathias.com</span>
+                </a>
+              </>
+            )}
 
             <a
               href="https://github.com/marcosem/CuritibaByNight"

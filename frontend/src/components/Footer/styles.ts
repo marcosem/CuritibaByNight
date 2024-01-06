@@ -22,6 +22,10 @@ const bubbleMove = keyframes`
   }
 `;
 
+interface IFooterContentProps {
+  isMobile?: boolean;
+}
+
 interface IInfoBoxProps {
   align?: string;
 }
@@ -63,18 +67,21 @@ export const Bubble = styled.div`
   transform: translate(-50%, 100%);
 `;
 
-export const FooterContent = styled.div`
+export const FooterContent = styled.div<IFooterContentProps>`
   z-index: 2;
   padding: 2rem;
   background: var(--cbn-new-red-2);
 
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
 
-  // display: flex;
-  // flex-direction: row;
-  // justify-content: center;
-  // align-items: center;
+  ${props =>
+    props.isMobile
+      ? css`
+          grid-template-rows: 1fr 1fr 1fr;
+        `
+      : css`
+          grid-template-columns: 1fr 1fr 1fr;
+        `}
 `;
 
 export const InfoBox = styled.div<IInfoBoxProps>`
@@ -99,6 +106,7 @@ export const InfoBox = styled.div<IInfoBoxProps>`
     props.align !== 'right' &&
     css`
       margin: auto;
+      align-items: center;
     `}
 
   font-size: 14px;
