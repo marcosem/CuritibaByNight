@@ -24,9 +24,13 @@ const Sidebar: React.FC = () => {
       setActiveItem(item.name !== activeItem ? item.name : '');
       if (item.link !== '') {
         history.push(item.link);
+
+        if (isMobileVersion) {
+          setOpened(false);
+        }
       }
     },
-    [activeItem, history],
+    [activeItem, history, isMobileVersion],
   );
 
   const isSubNavOpen = useCallback(
