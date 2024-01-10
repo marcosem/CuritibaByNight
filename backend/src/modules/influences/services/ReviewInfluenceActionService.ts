@@ -3,7 +3,10 @@ import AppError from '@shared/errors/AppError';
 
 import InfluenceAction from '@modules/influences/infra/typeorm/entities/InfluenceAction';
 import IInfluenceActionsRepository from '@modules/influences/repositories/IInfluenceActionsRepository';
+import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import { resolve } from 'path';
 
 interface IRequestDTO {
   user_id: string;
@@ -18,8 +21,12 @@ class ReviewInfluenceActionService {
   constructor(
     @inject('InfluenceActionsRepository')
     private influenceActionsRepository: IInfluenceActionsRepository,
+    @inject('CharactersRepository')
+    private charactersRepository: ICharactersRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   public async execute({
@@ -58,6 +65,44 @@ class ReviewInfluenceActionService {
     const influenceAction = await this.influenceActionsRepository.update(
       infAction,
     );
+
+    const char = await this.charactersRepository.findById(
+      infAction.character_id,
+    );
+    let player;
+    if (char && char.user_id) {
+      player = await this.usersRepository.findById(char.user_id);
+
+      if (player) {
+        const actionReviewTemplate = resolve(
+          __dirname,
+          '..',
+          'views',
+          'action_review.hbs',
+        );
+
+        // getting user first name.
+        const userNames = player.name.split(' ');
+        await this.mailProvider.sendMail({
+          to: {
+            name: player.name,
+            email: player.email,
+          },
+          subject: `Resposta: [Ação de Influência] - ${char.name} - ${infAction.action_period}`,
+          templateData: {
+            file: actionReviewTemplate,
+            variables: {
+              name: userNames[0],
+              char_name: char.name,
+              action_title: infAction.title,
+              link: `${process.env.APP_WEB_URL}`,
+              imgLogo: 'curitibabynight.png',
+              imgManipulation: 'manipulation.jpg',
+            },
+          },
+        });
+      }
+    }
 
     return influenceAction;
   }

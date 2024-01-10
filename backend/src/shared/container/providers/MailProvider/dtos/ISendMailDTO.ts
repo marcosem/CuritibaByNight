@@ -3,6 +3,7 @@ import IParseMailTemplateProvider from '@shared/container/providers/MailTemplate
 interface IMailContact {
   name: string;
   email: string;
+  copyMySelf?: boolean;
 }
 
 interface IMailAttachment {

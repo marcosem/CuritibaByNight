@@ -6,8 +6,10 @@ import IInfluenceActionsRepository from '@modules/influences/repositories/IInflu
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICharactersRepository from '@modules/characters/repositories/ICharactersRepository';
 import ICharactersTraitsRepository from '@modules/characters/repositories/ICharactersTraitsRepository';
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import getInfluenceAbility from '@modules/influences/utils/getInfluenceAbility';
 import { isAfter } from 'date-fns';
+import { resolve } from 'path';
 
 interface IRequestDTO {
   user_id: string;
@@ -36,6 +38,8 @@ class CreateInfluenceActionService {
     private charactersTraitsRepository: ICharactersTraitsRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   public async execute({
@@ -191,6 +195,35 @@ class CreateInfluenceActionService {
       action_force: actionForce,
       status: 'sent',
       result: 'not evaluated',
+    });
+
+    const actionCreateTemplate = resolve(
+      __dirname,
+      '..',
+      'views',
+      'action_create.hbs',
+    );
+
+    // getting user first name.
+    const userNames = user.name.split(' ');
+    await this.mailProvider.sendMail({
+      to: {
+        name: user.name,
+        email: user.email,
+        copyMySelf: true,
+      },
+      subject: `[Ação de Influência] - ${char.name} - ${action_period}`,
+      templateData: {
+        file: actionCreateTemplate,
+        variables: {
+          name: userNames[0],
+          char_name: char.name,
+          action_title: title,
+          link: `${process.env.APP_WEB_URL}`,
+          imgLogo: 'curitibabynight.png',
+          imgManipulation: 'manipulation.jpg',
+        },
+      },
     });
 
     return influenceAction;

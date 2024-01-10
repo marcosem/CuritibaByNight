@@ -9,12 +9,14 @@ import FakeInfluenceActionsRepository from '@modules/influences/repositories/fak
 import FakeCharactersRepository from '@modules/characters/repositories/fakes/FakeCharactersRepository';
 import FakeCharactersTraitsRepository from '@modules/characters/repositories/fakes/FakeCharactersTraitsRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
 
 import CreateInfluenceActionService from '@modules/influences/services/CreateInfluenceActionService';
 
 let fakeInfluenceActionsRepository: FakeInfluenceActionsRepository;
 let fakeCharactersRepository: FakeCharactersRepository;
 let fakeCharactersTraitsRepository: FakeCharactersTraitsRepository;
+let fakeMailProvider: FakeMailProvider;
 let fakeUsersRepository: FakeUsersRepository;
 
 let createInfluenceAction: CreateInfluenceActionService;
@@ -28,12 +30,14 @@ describe('CreateInfluenceAction', () => {
     fakeCharactersRepository = new FakeCharactersRepository();
     fakeCharactersTraitsRepository = new FakeCharactersTraitsRepository();
     fakeUsersRepository = new FakeUsersRepository();
+    fakeMailProvider = new FakeMailProvider();
 
     createInfluenceAction = new CreateInfluenceActionService(
       fakeInfluenceActionsRepository,
       fakeCharactersRepository,
       fakeCharactersTraitsRepository,
       fakeUsersRepository,
+      fakeMailProvider,
     );
 
     user = await fakeUsersRepository.create({

@@ -45,15 +45,31 @@ class EtherealMailProvider implements IMailProvider {
 
     templateData.variables = this.parseVariables(templateData.variables);
 
+    let destination;
+    if (to.copyMySelf) {
+      destination = [
+        {
+          name: 'Curitiba By Night',
+          address: `${process.env.APP_EMAIL}`,
+        },
+        {
+          name: to.name,
+          address: to.email,
+        },
+      ];
+    } else {
+      destination = {
+        name: to.name,
+        address: to.email,
+      };
+    }
+
     const massage = await this.client.sendMail({
       from: {
         name: from?.name || name,
         address: from?.email || email,
       },
-      to: {
-        name: to.name,
-        address: to.email,
-      },
+      to: destination,
       subject,
       html: await this.mailTemplateProvider.parse(templateData),
       attachments: attachments || [],
