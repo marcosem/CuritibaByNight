@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import styled from 'styled-components';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -12,6 +13,15 @@ interface IHeaderContextData {
 const HeaderContext = createContext<IHeaderContextData>(
   {} as IHeaderContextData,
 );
+
+const Container = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'header'
+    'main'
+    'footer';
+`;
 
 const HeaderProvider: React.FC = ({ children }) => {
   const [page, setPage] = useState<string>('dashboard');
@@ -29,9 +39,11 @@ const HeaderProvider: React.FC = ({ children }) => {
 
   return (
     <HeaderContext.Provider value={{ setCurrentPage, getCurrentPage }}>
-      {user !== undefined && !disabled && <Header />}
-      {children}
-      {user !== undefined && !disabled && <Footer />}
+      <Container>
+        {user !== undefined && !disabled && <Header />}
+        {children}
+        {user !== undefined && !disabled && <Footer />}
+      </Container>
     </HeaderContext.Provider>
   );
 };

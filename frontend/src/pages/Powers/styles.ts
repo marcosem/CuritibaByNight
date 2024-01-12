@@ -22,10 +22,10 @@ export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
       ? css`
-          height: calc(100vh - 110px);
+          min-height: calc(100vh - 110px);
         `
       : css`
-          height: calc(100vh - 140px);
+          min-height: calc(100vh - 140px);
         `}
 `;
 

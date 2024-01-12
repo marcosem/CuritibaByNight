@@ -32,6 +32,8 @@ export const Container = styled.header`
 
   z-index: 1000;
 
+  grid-area: header;
+
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */

@@ -31,16 +31,20 @@ interface IInfoBoxProps {
 }
 
 export const FooterBox = styled.div`
+  // display: grid;
   overflow: hidden;
   min-height: 350px;
+  grid-area: footer;
+  z-index: 1;
+  margin-top: auto;
+  margin-bottom: 0;
 `;
 
 export const FooterWrapper = styled.div`
-  z-index: 1;
   background: var(--cbn-new-red-2);
   display: grid;
   position: relative;
-  grid-area: footer;
+
   min-height: 12rem;
   margin-top: 12rem;
 `;
