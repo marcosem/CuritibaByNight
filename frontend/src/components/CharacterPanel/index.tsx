@@ -5,7 +5,6 @@ import {
   FiTrash2,
   FiChevronRight,
   FiChevronDown,
-  FiRotateCcw,
   FiUpload,
   FiEye,
 } from 'react-icons/fi';
@@ -680,13 +679,19 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       )}
                     </>
                   )}
-                  <DataContainer>
-                    <button type="button" onClick={handleShowTraits}>
-                      {showTraits ? <FiChevronDown /> : <FiChevronRight />}
-                      <strong>Traits:</strong>
-                    </button>
-                    {showTraits && <TraitsPanel myChar={myChar} />}
-                  </DataContainer>
+
+                  <ButtonBox isMobile={isMobileVersion} small>
+                    <Button onClick={handleShowTraits} disabled={showTraits}>
+                      Mostrar Traits
+                    </Button>
+                  </ButtonBox>
+
+                  <TraitsPanel
+                    myChar={myChar}
+                    open={showTraits}
+                    handleClose={handleShowTraits}
+                    handleReset={handleConfirmResetTraits}
+                  />
 
                   {retainerList.length > 0 && (
                     <DataContainer>
@@ -737,14 +742,6 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       </>
                     )}
 
-                    {user.storyteller && showTraits && (
-                      <FunctionButton
-                        onClick={handleConfirmResetTraits}
-                        title="Resetar Traits"
-                      >
-                        <FiRotateCcw />
-                      </FunctionButton>
-                    )}
                     {user.storyteller && !dashboard && (
                       <>
                         {!isMobileVersion && (

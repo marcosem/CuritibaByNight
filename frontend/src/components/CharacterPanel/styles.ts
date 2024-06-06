@@ -13,6 +13,11 @@ interface IFunctionButtonProps {
   shaking?: boolean;
 }
 
+interface IButtonBoxProps {
+  isMobile: boolean;
+  small?: boolean;
+}
+
 const buttonShake = keyframes`
   1%, 9%, 26%, 34%, 51%, 59% {
     transform: translate3d(-1px, 0, 0);
@@ -296,7 +301,7 @@ export const TableWrapper = styled.div<ICharPanelProps>`
         `}
 `;
 
-export const ButtonBox = styled.div<ICharPanelProps>`
+export const ButtonBox = styled.div<IButtonBoxProps>`
   margin: auto;
   padding: 16px 0;
   width: 100%;
@@ -304,10 +309,10 @@ export const ButtonBox = styled.div<ICharPanelProps>`
   ${props =>
     props.isMobile
       ? css`
-          max-width: 320px;
+          max-width: ${props.small ? '160px' : '320px'};
         `
       : css`
-          max-width: 340px;
+          max-width: ${props.small ? '160px' : '340px'};
         `}
 `;
 

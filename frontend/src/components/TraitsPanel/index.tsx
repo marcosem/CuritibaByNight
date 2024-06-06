@@ -16,7 +16,18 @@ import {
   GiPrettyFangs,
 } from 'react-icons/gi';
 
-import { FiCopy } from 'react-icons/fi';
+import {
+  Dialog,
+  Slide,
+  DialogTitle,
+  IconButton,
+  DialogContent,
+  DialogActions,
+} from '@material-ui/core';
+
+import { TransitionProps } from '@material-ui/core/transitions';
+
+import { FiCopy, FiX } from 'react-icons/fi';
 
 import { isAfter, parseISO } from 'date-fns';
 import api from '../../services/api';
@@ -36,12 +47,15 @@ import {
   TraitButton,
   MoralityContainer,
   MoralityLabel,
+  ButtonsContainer,
+  ButtonBox,
 } from './styles';
 
 import PowersList from './PowersList';
 
 import ICharacter from '../CharacterList/ICharacter';
 import Loading from '../Loading';
+import Button from '../Button';
 
 import influenceAbilities from '../../pages/Influences/influencesAbilities.json';
 
@@ -49,6 +63,13 @@ import { useToast } from '../../hooks/toast';
 import { useMobile } from '../../hooks/mobile';
 import { useAuth } from '../../hooks/auth';
 import { useSocket } from '../../hooks/socket';
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & { children?: React.ReactElement<any, any> },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 interface ILevel {
   id: string;
@@ -107,9 +128,17 @@ interface IActions {
 
 type IPanelProps = HTMLAttributes<HTMLDivElement> & {
   myChar: ICharacter;
+  open: boolean;
+  handleClose: () => void;
+  handleReset: () => void;
 };
 
-const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
+const TraitsPanel: React.FC<IPanelProps> = ({
+  myChar,
+  open,
+  handleClose,
+  handleReset,
+}) => {
   const [traitsList, setTraitsList] = useState<ITraitsList>({
     creature: [],
     virtues: [],
@@ -1570,1020 +1599,570 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
   }, [loadTraits, myChar]);
 
   return (
-    <Container>
-      {isBusy ? (
-        <Loading />
-      ) : (
-        <>
-          <TypeContainer isMobile={isMobileVersion}>
-            {typeList.indexOf('creature') >= 0 ? (
-              <>
-                <h1>Características Comuns:</h1>
-                {buildOrdinaryTraitsList(traitsList.creature, 'creature')}
-              </>
-            ) : (
-              <h1>Ficha não atualizada!</h1>
-            )}
-          </TypeContainer>
-          {isMobileVersion ? (
-            <>
-              {typeList.indexOf('virtues') >= 0 && (
-                <TypeContainer
-                  borderTop
-                  key="virtues"
-                  isMobile={isMobileVersion}
-                >
-                  <h1>Virtudes:</h1>
-                  {traitsList.virtues.map((trait: ITrait) => (
-                    <VirtuesContainer key={trait.id}>
-                      {trait.trait === 'Willpower' ? (
-                        <TraitsRow key={`Row:${trait.trait}`}>
-                          <TraitContainer
-                            alignment="left"
-                            key={`Container:${trait.trait}`}
-                            isMobile={isMobileVersion}
-                          >
-                            <strong>{`${trait.trait}:`}</strong>
-                            <span>{`${trait.levelTemp}/${trait.level}`}</span>
-                            <TraitsList key={`List:${trait.trait}`}>
-                              {trait.levelArray.map(level => (
-                                <TraitButton
-                                  id={level.id}
-                                  key={level.id}
-                                  disabled={!level.enabled}
-                                  title={`${
-                                    level.enabled
-                                      ? `${
-                                          level.status === 'full'
-                                            ? `Remover [${trait.trait} Trait]`
-                                            : `${
-                                                level.status === 'empty'
-                                                  ? `Remover [${trait.trait} Trait] Permanente`
-                                                  : `Adicionar [${trait.trait} Trait]`
-                                              }`
-                                        }`
-                                      : `${trait.trait} x${trait.levelTemp}`
-                                  }`}
-                                  traitColor="black"
-                                  isMobile={isMobileVersion}
-                                  onClick={handleTraitClick}
-                                >
-                                  {level.status === 'full' ? (
-                                    <GiPlainCircle />
-                                  ) : (
-                                    <>
-                                      {level.status === 'permanent' ? (
-                                        <GiCancel />
-                                      ) : (
-                                        ''
-                                      )}
-                                    </>
-                                  )}
-                                </TraitButton>
-                              ))}
-                            </TraitsList>
-                          </TraitContainer>
-                        </TraitsRow>
-                      ) : (
-                        <>
-                          {trait.trait.startsWith('Morality') ? (
-                            <MoralityContainer
-                              key={`Container:${trait.trait}`}
-                              isMobile={isMobileVersion}
-                            >
-                              <MoralityLabel>
-                                <strong>{`${trait.trait}`}</strong>
-                                <span>{`(${trait.level}/${maxMorality})`}</span>
-                              </MoralityLabel>
+    <Dialog
+      TransitionComponent={Transition}
+      fullWidth={!isMobileVersion}
+      fullScreen={isMobileVersion}
+      maxWidth={isMobileVersion ? undefined : 'md'}
+      // maxWidth="false"
+      open={open}
+      scroll="paper"
+      onClose={handleClose}
+    >
+      <DialogTitle>
+        {`${myChar.name} - ${myChar.clan}`}
 
-                              <SingleTraitsList
-                                key={`List:${trait.trait}`}
-                                isMobile={isMobileVersion}
-                                maxTraits={trait.level}
-                              >
-                                {trait.levelArray.map(level => (
-                                  <TraitButton
-                                    id={level.id}
-                                    key={level.id}
-                                    disabled={!level.enabled}
-                                    title={`${
-                                      level.enabled
-                                        ? `${
-                                            level.status === 'full'
-                                              ? `Remover [${trait.trait} Trait]`
-                                              : `${
-                                                  level.status === 'empty'
-                                                    ? `Remover [${trait.trait} Trait] Permanente`
-                                                    : `Adicionar [${trait.trait} Trait]`
-                                                }`
-                                          }`
-                                        : `${trait.trait} x${trait.levelTemp}`
-                                    }`}
-                                    traitColor="black"
-                                    isMobile={isMobileVersion}
-                                    onClick={handleTraitClick}
-                                  >
-                                    {level.status === 'full' ? (
-                                      <GiPlainCircle />
-                                    ) : (
-                                      <>
-                                        {level.status === 'permanent' ? (
-                                          <GiCancel />
-                                        ) : (
-                                          ''
-                                        )}
-                                      </>
-                                    )}
-                                  </TraitButton>
-                                ))}
-                              </SingleTraitsList>
-                            </MoralityContainer>
-                          ) : (
-                            <SingleTraitContainer
-                              key={`Container:${trait.trait}`}
-                              isMobile={isMobileVersion}
-                            >
-                              <SingleTraitsList
-                                key={`List:${trait.trait}`}
-                                isMobile={isMobileVersion}
-                                maxTraits={5}
-                              >
-                                {trait.levelArray.map(level => (
-                                  <TraitButton
-                                    id={level.id}
-                                    key={level.id}
-                                    disabled={!level.enabled}
-                                    title={`${
-                                      level.enabled
-                                        ? `${
-                                            level.status === 'full'
-                                              ? `Remover [${trait.trait} Trait]`
-                                              : `${
-                                                  level.status === 'empty'
-                                                    ? `Remover [${trait.trait} Trait] Permanente`
-                                                    : `Adicionar [${trait.trait} Trait]`
-                                                }`
-                                          }`
-                                        : `${trait.trait} x${trait.levelTemp}`
-                                    }`}
-                                    traitColor="black"
-                                    isMobile={isMobileVersion}
-                                    onClick={handleTraitClick}
-                                  >
-                                    {level.status === 'full' ? (
-                                      <GiPlainCircle />
-                                    ) : (
-                                      <>
-                                        {level.status === 'permanent' ? (
-                                          <GiCancel />
-                                        ) : (
-                                          ''
-                                        )}
-                                      </>
-                                    )}
-                                  </TraitButton>
-                                ))}
-                              </SingleTraitsList>
-                              <strong>{`${trait.trait}`}</strong>
-                              <span>{`x${trait.level}`}</span>
-                            </SingleTraitContainer>
-                          )}
-                        </>
-                      )}
-                    </VirtuesContainer>
-                  ))}
-                </TypeContainer>
-              )}
-              {typeList.indexOf('health') >= 0 && (
-                <TypeContainer
-                  borderTop
-                  key="health"
-                  isMobile={isMobileVersion}
-                >
-                  <h1>Vitalidade:</h1>
-                  {traitsList.health.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={`Container:${trait.trait}`}
-                      isMobile={isMobileVersion}
-                    >
-                      <SingleTraitsList
-                        key={`List:${trait.trait}`}
-                        isMobile={isMobileVersion}
-                        maxTraits={5}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? 'Causar Dano de Contusão'
-                                      : `${
-                                          level.status === 'bashing'
-                                            ? 'Causar Dano Letal'
-                                            : `${
-                                                level.status === 'lethal'
-                                                  ? 'Causar Dano Agravado'
-                                                  : 'Curar Dano'
-                                              }`
-                                        }`
-                                  }`
-                                : `${
-                                    level.status === 'full'
-                                      ? 'Sem Dano'
-                                      : `${
-                                          level.status === 'bashing'
-                                            ? 'Dano de Contusão'
-                                            : `${
-                                                level.status === 'lethal'
-                                                  ? 'Dano Letal'
-                                                  : 'Dano Agravado'
-                                              }`
-                                        }`
-                                  }`
-                            }`}
-                            traitColor="red"
-                            isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
-                          >
-                            {level.status === 'full' ? (
-                              <GiHearts />
-                            ) : (
-                              <>
-                                {level.status === 'bashing' ? (
-                                  <GiHeartMinus />
-                                ) : (
-                                  <>
-                                    {level.status === 'lethal' ? (
-                                      ''
-                                    ) : (
-                                      <GiCancel />
-                                    )}
-                                  </>
-                                )}
-                              </>
-                            )}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{`${trait.trait}`}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              )}
-            </>
+        <IconButton
+          style={{
+            position: 'absolute',
+            top: '8px',
+            right: '8px',
+          }}
+          onClick={handleClose}
+        >
+          <FiX />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Container>
+          {isBusy ? (
+            <Loading />
           ) : (
-            <DoubleTypeContainer key="virtues:health">
-              {typeList.indexOf('virtues') >= 0 && (
-                <TypeContainer
-                  borderTop
-                  key="virtues"
-                  isMobile={isMobileVersion}
-                >
-                  <h1>Virtudes:</h1>
-                  {traitsList.virtues.map((trait: ITrait) => (
-                    <VirtuesContainer key={trait.id}>
-                      {trait.trait === 'Willpower' ? (
-                        <TraitsRow key={`Row:${trait.trait}`}>
-                          <TraitContainer
-                            alignment="left"
-                            key={`Container:${trait.trait}`}
-                            isMobile={isMobileVersion}
-                          >
-                            <strong>{`${trait.trait}:`}</strong>
-                            <span>{`${trait.levelTemp}/${trait.level}`}</span>
-                            <TraitsList key={`List:${trait.trait}`}>
-                              {trait.levelArray.map(level => (
-                                <TraitButton
-                                  id={level.id}
-                                  key={level.id}
-                                  disabled={!level.enabled}
-                                  title={`${
-                                    level.enabled
-                                      ? `${
-                                          level.status === 'full'
-                                            ? `Remover [${trait.trait} Trait]`
-                                            : `${
-                                                level.status === 'empty'
-                                                  ? `Remover [${trait.trait} Trait] Permanente`
-                                                  : `Adicionar [${trait.trait} Trait]`
-                                              }`
-                                        }`
-                                      : `${trait.trait} x${trait.levelTemp}`
-                                  }`}
-                                  traitColor="black"
-                                  isMobile={isMobileVersion}
-                                  onClick={handleTraitClick}
-                                >
-                                  {level.status === 'full' ? (
-                                    <GiPlainCircle />
-                                  ) : (
-                                    <>
-                                      {level.status === 'permanent' ? (
-                                        <GiCancel />
-                                      ) : (
-                                        ''
-                                      )}
-                                    </>
-                                  )}
-                                </TraitButton>
-                              ))}
-                            </TraitsList>
-                          </TraitContainer>
-                        </TraitsRow>
-                      ) : (
-                        <>
-                          {trait.trait.startsWith('Morality') ? (
-                            <MoralityContainer
-                              key={`Container:${trait.trait}`}
-                              isMobile={isMobileVersion}
-                            >
-                              <MoralityLabel>
-                                <strong>{`${trait.trait}`}</strong>
-                                <span>{`(${trait.level}/${maxMorality})`}</span>
-                              </MoralityLabel>
-
-                              <SingleTraitsList
-                                key={`List:${trait.trait}`}
-                                isMobile={isMobileVersion}
-                                maxTraits={trait.level}
-                              >
-                                {trait.levelArray.map(level => (
-                                  <TraitButton
-                                    id={level.id}
-                                    key={level.id}
-                                    disabled={!level.enabled}
-                                    title={`${
-                                      level.enabled
-                                        ? `${
-                                            level.status === 'full'
-                                              ? `Remover [${trait.trait} Trait]`
-                                              : `${
-                                                  level.status === 'empty'
-                                                    ? `Remover [${trait.trait} Trait] Permanente`
-                                                    : `Adicionar [${trait.trait} Trait]`
-                                                }`
-                                          }`
-                                        : `${trait.trait} x${trait.levelTemp}`
-                                    }`}
-                                    traitColor="black"
-                                    isMobile={isMobileVersion}
-                                    onClick={handleTraitClick}
-                                  >
-                                    {level.status === 'full' ? (
-                                      <GiPlainCircle />
-                                    ) : (
-                                      <>
-                                        {level.status === 'permanent' ? (
-                                          <GiCancel />
-                                        ) : (
-                                          ''
-                                        )}
-                                      </>
-                                    )}
-                                  </TraitButton>
-                                ))}
-                              </SingleTraitsList>
-                            </MoralityContainer>
-                          ) : (
-                            <SingleTraitContainer
-                              key={`Container:${trait.trait}`}
-                              isMobile={isMobileVersion}
-                            >
-                              <SingleTraitsList
-                                key={`List:${trait.trait}`}
-                                isMobile={isMobileVersion}
-                                maxTraits={5}
-                              >
-                                {trait.levelArray.map(level => (
-                                  <TraitButton
-                                    id={level.id}
-                                    key={level.id}
-                                    disabled={!level.enabled}
-                                    title={`${
-                                      level.enabled
-                                        ? `${
-                                            level.status === 'full'
-                                              ? `Remover [${trait.trait} Trait]`
-                                              : `${
-                                                  level.status === 'empty'
-                                                    ? `Remover [${trait.trait} Trait] Permanente`
-                                                    : `Adicionar [${trait.trait} Trait]`
-                                                }`
-                                          }`
-                                        : `${trait.trait} x${trait.levelTemp}`
-                                    }`}
-                                    traitColor="black"
-                                    isMobile={isMobileVersion}
-                                    onClick={handleTraitClick}
-                                  >
-                                    {level.status === 'full' ? (
-                                      <GiPlainCircle />
-                                    ) : (
-                                      <>
-                                        {level.status === 'permanent' ? (
-                                          <GiCancel />
-                                        ) : (
-                                          ''
-                                        )}
-                                      </>
-                                    )}
-                                  </TraitButton>
-                                ))}
-                              </SingleTraitsList>
-                              <strong>{`${trait.trait}`}</strong>
-                              <span>{`x${trait.level}`}</span>
-                            </SingleTraitContainer>
-                          )}
-                        </>
-                      )}
-                    </VirtuesContainer>
-                  ))}
-                </TypeContainer>
-              )}
-              {typeList.indexOf('health') >= 0 && (
-                <TypeContainer
-                  borderTop
-                  borderLeft
-                  key="health"
-                  isMobile={isMobileVersion}
-                >
-                  <h1>Vitalidade:</h1>
-                  {traitsList.health.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={`Container:${trait.trait}`}
+            <>
+              <TypeContainer isMobile={isMobileVersion}>
+                {typeList.indexOf('creature') >= 0 ? (
+                  <>
+                    <h1>Características Comuns:</h1>
+                    {buildOrdinaryTraitsList(traitsList.creature, 'creature')}
+                  </>
+                ) : (
+                  <h1>Ficha não atualizada!</h1>
+                )}
+              </TypeContainer>
+              {isMobileVersion ? (
+                <>
+                  {typeList.indexOf('virtues') >= 0 && (
+                    <TypeContainer
+                      borderTop
+                      key="virtues"
                       isMobile={isMobileVersion}
                     >
-                      <SingleTraitsList
-                        key={`List:${trait.trait}`}
-                        isMobile={isMobileVersion}
-                        maxTraits={5}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? 'Causar Dano de Contusão'
-                                      : `${
-                                          level.status === 'bashing'
-                                            ? 'Causar Dano Letal'
-                                            : `${
-                                                level.status === 'lethal'
-                                                  ? 'Causar Dano Agravado'
-                                                  : 'Curar Dano'
+                      <h1>Virtudes:</h1>
+                      {traitsList.virtues.map((trait: ITrait) => (
+                        <VirtuesContainer key={trait.id}>
+                          {trait.trait === 'Willpower' ? (
+                            <TraitsRow key={`Row:${trait.trait}`}>
+                              <TraitContainer
+                                alignment="left"
+                                key={`Container:${trait.trait}`}
+                                isMobile={isMobileVersion}
+                              >
+                                <strong>{`${trait.trait}:`}</strong>
+                                <span>{`${trait.levelTemp}/${trait.level}`}</span>
+                                <TraitsList key={`List:${trait.trait}`}>
+                                  {trait.levelArray.map(level => (
+                                    <TraitButton
+                                      id={level.id}
+                                      key={level.id}
+                                      disabled={!level.enabled}
+                                      title={`${
+                                        level.enabled
+                                          ? `${
+                                              level.status === 'full'
+                                                ? `Remover [${trait.trait} Trait]`
+                                                : `${
+                                                    level.status === 'empty'
+                                                      ? `Remover [${trait.trait} Trait] Permanente`
+                                                      : `Adicionar [${trait.trait} Trait]`
+                                                  }`
+                                            }`
+                                          : `${trait.trait} x${trait.levelTemp}`
+                                      }`}
+                                      traitColor="black"
+                                      isMobile={isMobileVersion}
+                                      onClick={handleTraitClick}
+                                    >
+                                      {level.status === 'full' ? (
+                                        <GiPlainCircle />
+                                      ) : (
+                                        <>
+                                          {level.status === 'permanent' ? (
+                                            <GiCancel />
+                                          ) : (
+                                            ''
+                                          )}
+                                        </>
+                                      )}
+                                    </TraitButton>
+                                  ))}
+                                </TraitsList>
+                              </TraitContainer>
+                            </TraitsRow>
+                          ) : (
+                            <>
+                              {trait.trait.startsWith('Morality') ? (
+                                <MoralityContainer
+                                  key={`Container:${trait.trait}`}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <MoralityLabel>
+                                    <strong>{`${trait.trait}`}</strong>
+                                    <span>{`(${trait.level}/${maxMorality})`}</span>
+                                  </MoralityLabel>
+
+                                  <SingleTraitsList
+                                    key={`List:${trait.trait}`}
+                                    isMobile={isMobileVersion}
+                                    maxTraits={trait.level}
+                                  >
+                                    {trait.levelArray.map(level => (
+                                      <TraitButton
+                                        id={level.id}
+                                        key={level.id}
+                                        disabled={!level.enabled}
+                                        title={`${
+                                          level.enabled
+                                            ? `${
+                                                level.status === 'full'
+                                                  ? `Remover [${trait.trait} Trait]`
+                                                  : `${
+                                                      level.status === 'empty'
+                                                        ? `Remover [${trait.trait} Trait] Permanente`
+                                                        : `Adicionar [${trait.trait} Trait]`
+                                                    }`
                                               }`
-                                        }`
-                                  }`
-                                : `${
-                                    level.status === 'full'
-                                      ? 'Sem Dano'
-                                      : `${
-                                          level.status === 'bashing'
-                                            ? 'Dano de Contusão'
-                                            : `${
-                                                level.status === 'lethal'
-                                                  ? 'Dano Letal'
-                                                  : 'Dano Agravado'
+                                            : `${trait.trait} x${trait.levelTemp}`
+                                        }`}
+                                        traitColor="black"
+                                        isMobile={isMobileVersion}
+                                        onClick={handleTraitClick}
+                                      >
+                                        {level.status === 'full' ? (
+                                          <GiPlainCircle />
+                                        ) : (
+                                          <>
+                                            {level.status === 'permanent' ? (
+                                              <GiCancel />
+                                            ) : (
+                                              ''
+                                            )}
+                                          </>
+                                        )}
+                                      </TraitButton>
+                                    ))}
+                                  </SingleTraitsList>
+                                </MoralityContainer>
+                              ) : (
+                                <SingleTraitContainer
+                                  key={`Container:${trait.trait}`}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <SingleTraitsList
+                                    key={`List:${trait.trait}`}
+                                    isMobile={isMobileVersion}
+                                    maxTraits={5}
+                                  >
+                                    {trait.levelArray.map(level => (
+                                      <TraitButton
+                                        id={level.id}
+                                        key={level.id}
+                                        disabled={!level.enabled}
+                                        title={`${
+                                          level.enabled
+                                            ? `${
+                                                level.status === 'full'
+                                                  ? `Remover [${trait.trait} Trait]`
+                                                  : `${
+                                                      level.status === 'empty'
+                                                        ? `Remover [${trait.trait} Trait] Permanente`
+                                                        : `Adicionar [${trait.trait} Trait]`
+                                                    }`
                                               }`
-                                        }`
-                                  }`
-                            }`}
-                            traitColor="red"
+                                            : `${trait.trait} x${trait.levelTemp}`
+                                        }`}
+                                        traitColor="black"
+                                        isMobile={isMobileVersion}
+                                        onClick={handleTraitClick}
+                                      >
+                                        {level.status === 'full' ? (
+                                          <GiPlainCircle />
+                                        ) : (
+                                          <>
+                                            {level.status === 'permanent' ? (
+                                              <GiCancel />
+                                            ) : (
+                                              ''
+                                            )}
+                                          </>
+                                        )}
+                                      </TraitButton>
+                                    ))}
+                                  </SingleTraitsList>
+                                  <strong>{`${trait.trait}`}</strong>
+                                  <span>{`x${trait.level}`}</span>
+                                </SingleTraitContainer>
+                              )}
+                            </>
+                          )}
+                        </VirtuesContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                  {typeList.indexOf('health') >= 0 && (
+                    <TypeContainer
+                      borderTop
+                      key="health"
+                      isMobile={isMobileVersion}
+                    >
+                      <h1>Vitalidade:</h1>
+                      {traitsList.health.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={`Container:${trait.trait}`}
+                          isMobile={isMobileVersion}
+                        >
+                          <SingleTraitsList
+                            key={`List:${trait.trait}`}
                             isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
+                            maxTraits={5}
                           >
-                            {level.status === 'full' ? (
-                              <GiHearts />
-                            ) : (
-                              <>
-                                {level.status === 'bashing' ? (
-                                  <GiHeartMinus />
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? 'Causar Dano de Contusão'
+                                          : `${
+                                              level.status === 'bashing'
+                                                ? 'Causar Dano Letal'
+                                                : `${
+                                                    level.status === 'lethal'
+                                                      ? 'Causar Dano Agravado'
+                                                      : 'Curar Dano'
+                                                  }`
+                                            }`
+                                      }`
+                                    : `${
+                                        level.status === 'full'
+                                          ? 'Sem Dano'
+                                          : `${
+                                              level.status === 'bashing'
+                                                ? 'Dano de Contusão'
+                                                : `${
+                                                    level.status === 'lethal'
+                                                      ? 'Dano Letal'
+                                                      : 'Dano Agravado'
+                                                  }`
+                                            }`
+                                      }`
+                                }`}
+                                traitColor="red"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiHearts />
                                 ) : (
                                   <>
-                                    {level.status === 'lethal' ? (
-                                      ''
+                                    {level.status === 'bashing' ? (
+                                      <GiHeartMinus />
                                     ) : (
-                                      <GiCancel />
+                                      <>
+                                        {level.status === 'lethal' ? (
+                                          ''
+                                        ) : (
+                                          <GiCancel />
+                                        )}
+                                      </>
                                     )}
                                   </>
                                 )}
-                              </>
-                            )}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{trait.trait}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              )}
-            </DoubleTypeContainer>
-          )}
-          {typeList.indexOf('attributes') >= 0 && (
-            <TypeContainer borderTop isMobile={isMobileVersion}>
-              <h1>Atributos:</h1>
-              {buildAttributesTraitsList(traitsList.attributes)}
-            </TypeContainer>
-          )}
-
-          {isMobileVersion ? (
-            <>
-              {typeList.indexOf('abilities') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Habilidades:</h1>
-                  {traitsList.abilities.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={trait.id}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                          <strong>{`${trait.trait}`}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                </>
+              ) : (
+                <DoubleTypeContainer key="virtues:health">
+                  {typeList.indexOf('virtues') >= 0 && (
+                    <TypeContainer
+                      borderTop
+                      key="virtues"
                       isMobile={isMobileVersion}
                     >
-                      <SingleTraitsList
-                        isMobile={isMobileVersion}
-                        maxTraits={7}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? `Remover [${trait.trait} Trait]`
-                                      : `Adicionar [${trait.trait} Trait]`
-                                  }`
-                                : `${trait.trait} x${trait.levelTemp}`
-                            }`}
-                            traitColor="black"
+                      <h1>Virtudes:</h1>
+                      {traitsList.virtues.map((trait: ITrait) => (
+                        <VirtuesContainer key={trait.id}>
+                          {trait.trait === 'Willpower' ? (
+                            <TraitsRow key={`Row:${trait.trait}`}>
+                              <TraitContainer
+                                alignment="left"
+                                key={`Container:${trait.trait}`}
+                                isMobile={isMobileVersion}
+                              >
+                                <strong>{`${trait.trait}:`}</strong>
+                                <span>{`${trait.levelTemp}/${trait.level}`}</span>
+                                <TraitsList key={`List:${trait.trait}`}>
+                                  {trait.levelArray.map(level => (
+                                    <TraitButton
+                                      id={level.id}
+                                      key={level.id}
+                                      disabled={!level.enabled}
+                                      title={`${
+                                        level.enabled
+                                          ? `${
+                                              level.status === 'full'
+                                                ? `Remover [${trait.trait} Trait]`
+                                                : `${
+                                                    level.status === 'empty'
+                                                      ? `Remover [${trait.trait} Trait] Permanente`
+                                                      : `Adicionar [${trait.trait} Trait]`
+                                                  }`
+                                            }`
+                                          : `${trait.trait} x${trait.levelTemp}`
+                                      }`}
+                                      traitColor="black"
+                                      isMobile={isMobileVersion}
+                                      onClick={handleTraitClick}
+                                    >
+                                      {level.status === 'full' ? (
+                                        <GiPlainCircle />
+                                      ) : (
+                                        <>
+                                          {level.status === 'permanent' ? (
+                                            <GiCancel />
+                                          ) : (
+                                            ''
+                                          )}
+                                        </>
+                                      )}
+                                    </TraitButton>
+                                  ))}
+                                </TraitsList>
+                              </TraitContainer>
+                            </TraitsRow>
+                          ) : (
+                            <>
+                              {trait.trait.startsWith('Morality') ? (
+                                <MoralityContainer
+                                  key={`Container:${trait.trait}`}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <MoralityLabel>
+                                    <strong>{`${trait.trait}`}</strong>
+                                    <span>{`(${trait.level}/${maxMorality})`}</span>
+                                  </MoralityLabel>
+
+                                  <SingleTraitsList
+                                    key={`List:${trait.trait}`}
+                                    isMobile={isMobileVersion}
+                                    maxTraits={trait.level}
+                                  >
+                                    {trait.levelArray.map(level => (
+                                      <TraitButton
+                                        id={level.id}
+                                        key={level.id}
+                                        disabled={!level.enabled}
+                                        title={`${
+                                          level.enabled
+                                            ? `${
+                                                level.status === 'full'
+                                                  ? `Remover [${trait.trait} Trait]`
+                                                  : `${
+                                                      level.status === 'empty'
+                                                        ? `Remover [${trait.trait} Trait] Permanente`
+                                                        : `Adicionar [${trait.trait} Trait]`
+                                                    }`
+                                              }`
+                                            : `${trait.trait} x${trait.levelTemp}`
+                                        }`}
+                                        traitColor="black"
+                                        isMobile={isMobileVersion}
+                                        onClick={handleTraitClick}
+                                      >
+                                        {level.status === 'full' ? (
+                                          <GiPlainCircle />
+                                        ) : (
+                                          <>
+                                            {level.status === 'permanent' ? (
+                                              <GiCancel />
+                                            ) : (
+                                              ''
+                                            )}
+                                          </>
+                                        )}
+                                      </TraitButton>
+                                    ))}
+                                  </SingleTraitsList>
+                                </MoralityContainer>
+                              ) : (
+                                <SingleTraitContainer
+                                  key={`Container:${trait.trait}`}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <SingleTraitsList
+                                    key={`List:${trait.trait}`}
+                                    isMobile={isMobileVersion}
+                                    maxTraits={5}
+                                  >
+                                    {trait.levelArray.map(level => (
+                                      <TraitButton
+                                        id={level.id}
+                                        key={level.id}
+                                        disabled={!level.enabled}
+                                        title={`${
+                                          level.enabled
+                                            ? `${
+                                                level.status === 'full'
+                                                  ? `Remover [${trait.trait} Trait]`
+                                                  : `${
+                                                      level.status === 'empty'
+                                                        ? `Remover [${trait.trait} Trait] Permanente`
+                                                        : `Adicionar [${trait.trait} Trait]`
+                                                    }`
+                                              }`
+                                            : `${trait.trait} x${trait.levelTemp}`
+                                        }`}
+                                        traitColor="black"
+                                        isMobile={isMobileVersion}
+                                        onClick={handleTraitClick}
+                                      >
+                                        {level.status === 'full' ? (
+                                          <GiPlainCircle />
+                                        ) : (
+                                          <>
+                                            {level.status === 'permanent' ? (
+                                              <GiCancel />
+                                            ) : (
+                                              ''
+                                            )}
+                                          </>
+                                        )}
+                                      </TraitButton>
+                                    ))}
+                                  </SingleTraitsList>
+                                  <strong>{`${trait.trait}`}</strong>
+                                  <span>{`x${trait.level}`}</span>
+                                </SingleTraitContainer>
+                              )}
+                            </>
+                          )}
+                        </VirtuesContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                  {typeList.indexOf('health') >= 0 && (
+                    <TypeContainer
+                      borderTop
+                      borderLeft
+                      key="health"
+                      isMobile={isMobileVersion}
+                    >
+                      <h1>Vitalidade:</h1>
+                      {traitsList.health.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={`Container:${trait.trait}`}
+                          isMobile={isMobileVersion}
+                        >
+                          <SingleTraitsList
+                            key={`List:${trait.trait}`}
                             isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
+                            maxTraits={5}
                           >
-                            {level.status === 'full' ? <GiPlainCircle /> : ''}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{trait.trait}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? 'Causar Dano de Contusão'
+                                          : `${
+                                              level.status === 'bashing'
+                                                ? 'Causar Dano Letal'
+                                                : `${
+                                                    level.status === 'lethal'
+                                                      ? 'Causar Dano Agravado'
+                                                      : 'Curar Dano'
+                                                  }`
+                                            }`
+                                      }`
+                                    : `${
+                                        level.status === 'full'
+                                          ? 'Sem Dano'
+                                          : `${
+                                              level.status === 'bashing'
+                                                ? 'Dano de Contusão'
+                                                : `${
+                                                    level.status === 'lethal'
+                                                      ? 'Dano Letal'
+                                                      : 'Dano Agravado'
+                                                  }`
+                                            }`
+                                      }`
+                                }`}
+                                traitColor="red"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiHearts />
+                                ) : (
+                                  <>
+                                    {level.status === 'bashing' ? (
+                                      <GiHeartMinus />
+                                    ) : (
+                                      <>
+                                        {level.status === 'lethal' ? (
+                                          ''
+                                        ) : (
+                                          <GiCancel />
+                                        )}
+                                      </>
+                                    )}
+                                  </>
+                                )}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                          <strong>{trait.trait}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                </DoubleTypeContainer>
+              )}
+              {typeList.indexOf('attributes') >= 0 && (
+                <TypeContainer borderTop isMobile={isMobileVersion}>
+                  <h1>Atributos:</h1>
+                  {buildAttributesTraitsList(traitsList.attributes)}
                 </TypeContainer>
               )}
-              {typeList.indexOf('powers') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>{`${creaturePower}:`}</h1>
-                  {creaturePower === 'Dons' ? (
-                    <>
-                      {traitsList.powers.map(
-                        (trait: ITrait, index, traitArray: ITrait[]) => (
-                          <div key={trait.id}>
-                            {index === 0 && Number(trait.level) === 1 && (
-                              <h2>Básico</h2>
-                            )}
 
-                            {(index === 0 && Number(trait.level) === 2) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 2 &&
-                                Number(trait.level) === 2 && (
-                                  <h2>Intermediário</h2>
-                                ))}
-
-                            {(index === 0 && Number(trait.level) === 3) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 3 &&
-                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
-
-                            <SingleTraitContainer
-                              key={trait.id}
-                              isMobile={isMobileVersion}
-                            >
-                              <a
-                                href={`#power-${trait.trait}`}
-                                id={`power-trait-${trait.trait}`}
-                              >
-                                <strong>{trait.trait}</strong>
-                              </a>
-                            </SingleTraitContainer>
-                          </div>
-                        ),
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {traitsList.powers.map((trait: ITrait) => (
+              {isMobileVersion ? (
+                <>
+                  {typeList.indexOf('abilities') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Habilidades:</h1>
+                      {traitsList.abilities.map((trait: ITrait) => (
                         <SingleTraitContainer
                           key={trait.id}
                           isMobile={isMobileVersion}
                         >
-                          <a
-                            href={`#power-${trait.trait}`}
-                            id={`power-trait-${trait.trait}`}
-                          >
-                            <strong>{trait.trait}</strong>
-                          </a>
-                          {trait.level > 0 && <span>{`x${trait.level}`}</span>}
-                        </SingleTraitContainer>
-                      ))}
-                    </>
-                  )}
-                  {typeList.indexOf('rituals') >= 0 && (
-                    <>
-                      <h1>
-                        <br />
-                        {`${creatureRituals}`}
-                      </h1>
-                      {traitsList.rituals.map(
-                        (trait: ITrait, index, traitArray: ITrait[]) => (
-                          <div key={trait.id}>
-                            {index === 0 && Number(trait.level) === 1 && (
-                              <h2>Básico</h2>
-                            )}
-
-                            {(index === 0 && Number(trait.level) === 2) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 2 &&
-                                Number(trait.level) === 2 && (
-                                  <h2>Intermediário</h2>
-                                ))}
-
-                            {(index === 0 && Number(trait.level) === 3) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 3 &&
-                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
-
-                            {(index === 0 && Number(trait.level) >= 4) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 4 &&
-                                Number(trait.level) >= 4 && <h2>Ancião</h2>)}
-
-                            <SingleTraitContainer
-                              key={trait.id}
-                              isMobile={isMobileVersion}
-                            >
-                              <a
-                                href={`#power-${trait.trait}`}
-                                id={`power-trait-${trait.trait}`}
-                              >
-                                <strong>{trait.trait}</strong>
-                              </a>
-                            </SingleTraitContainer>
-                          </div>
-                        ),
-                      )}
-                    </>
-                  )}
-                </TypeContainer>
-              )}
-            </>
-          ) : (
-            <DoubleTypeContainer>
-              {typeList.indexOf('abilities') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Habilidades:</h1>
-                  {traitsList.abilities.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={trait.id}
-                      isMobile={isMobileVersion}
-                    >
-                      <SingleTraitsList
-                        isMobile={isMobileVersion}
-                        maxTraits={7}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? `Remover [${trait.trait} Trait]`
-                                      : `Adicionar [${trait.trait} Trait]`
-                                  }`
-                                : `${trait.trait} x${trait.levelTemp}`
-                            }`}
-                            traitColor="black"
-                            isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
-                          >
-                            {level.status === 'full' ? <GiPlainCircle /> : ''}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{trait.trait}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              )}
-
-              {typeList.indexOf('powers') >= 0 && (
-                <TypeContainer borderTop borderLeft isMobile={isMobileVersion}>
-                  <h1>{`${creaturePower}:`}</h1>
-                  {creaturePower === 'Dons' ? (
-                    <>
-                      {traitsList.powers.map(
-                        (trait: ITrait, index, traitArray: ITrait[]) => (
-                          <div key={trait.id}>
-                            {index === 0 && Number(trait.level) === 1 && (
-                              <h2>Básico</h2>
-                            )}
-
-                            {(index === 0 && Number(trait.level) === 2) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 2 &&
-                                Number(trait.level) === 2 && (
-                                  <h2>Intermediário</h2>
-                                ))}
-
-                            {(index === 0 && Number(trait.level) === 3) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 3 &&
-                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
-
-                            <SingleTraitContainer
-                              key={trait.id}
-                              isMobile={isMobileVersion}
-                            >
-                              <a
-                                href={`#power-${trait.trait}`}
-                                id={`power-trait-${trait.trait}`}
-                              >
-                                <strong>{trait.trait}</strong>
-                              </a>
-                            </SingleTraitContainer>
-                          </div>
-                        ),
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {traitsList.powers.map((trait: ITrait) => (
-                        <SingleTraitContainer
-                          key={trait.id}
-                          isMobile={isMobileVersion}
-                        >
-                          <a
-                            href={`#power-${trait.trait}`}
-                            id={`power-trait-${trait.trait}`}
-                          >
-                            <strong>{trait.trait}</strong>
-                          </a>
-                          {trait.level > 0 && <span>{`x${trait.level}`}</span>}
-                        </SingleTraitContainer>
-                      ))}
-                    </>
-                  )}
-                  {typeList.indexOf('rituals') >= 0 && (
-                    <>
-                      <h1>
-                        <br />
-                        {`${creatureRituals}`}
-                      </h1>
-                      {traitsList.rituals.map(
-                        (trait: ITrait, index, traitArray: ITrait[]) => (
-                          <div key={trait.id}>
-                            {index === 0 && Number(trait.level) === 1 && (
-                              <h2>Básico</h2>
-                            )}
-
-                            {(index === 0 && Number(trait.level) === 2) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 2 &&
-                                Number(trait.level) === 2 && (
-                                  <h2>Intermediário</h2>
-                                ))}
-
-                            {(index === 0 && Number(trait.level) === 3) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 3 &&
-                                Number(trait.level) === 3 && <h2>Avançado</h2>)}
-
-                            {(index === 0 && Number(trait.level) >= 4) ||
-                              (index > 0 &&
-                                Number(traitArray[index - 1].level) < 4 &&
-                                Number(trait.level) >= 4 && <h2>Ancião</h2>)}
-
-                            <SingleTraitContainer
-                              key={trait.id}
-                              isMobile={isMobileVersion}
-                            >
-                              <a
-                                href={`#power-${trait.trait}`}
-                                id={`power-trait-${trait.trait}`}
-                              >
-                                <strong>{trait.trait}</strong>
-                              </a>
-                            </SingleTraitContainer>
-                          </div>
-                        ),
-                      )}
-                    </>
-                  )}
-                </TypeContainer>
-              )}
-            </DoubleTypeContainer>
-          )}
-
-          {isMobileVersion ? (
-            <>
-              {typeList.indexOf('backgrounds') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Antecedentes:</h1>
-                  {traitsList.backgrounds.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={trait.id}
-                      isMobile={isMobileVersion}
-                    >
-                      <SingleTraitsList
-                        isMobile={isMobileVersion}
-                        maxTraits={7}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? `Remover [${trait.trait} Trait]`
-                                      : `Adicionar [${trait.trait} Trait]`
-                                  }`
-                                : `${trait.trait} x${trait.levelTemp}`
-                            }`}
-                            traitColor="black"
-                            isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
-                          >
-                            {level.status === 'full' ? <GiPlainCircle /> : ''}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{`${trait.trait}`}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              )}
-              {typeList.indexOf('influences') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Influências:</h1>
-                  {traitsList.influences.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={trait.id}
-                      isMobile={isMobileVersion}
-                    >
-                      <SingleTraitsList
-                        isMobile={isMobileVersion}
-                        maxTraits={7}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? `Remover [${trait.trait} Trait]`
-                                      : `Adicionar [${trait.trait} Trait]`
-                                  }`
-                                : `${trait.trait} x${trait.levelTemp}`
-                            }`}
-                            traitColor="black"
-                            isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
-                          >
-                            {level.status === 'full' ? <GiPlainCircle /> : ''}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{`${trait.trait}`}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              )}
-            </>
-          ) : (
-            <DoubleTypeContainer>
-              {typeList.indexOf('backgrounds') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Antecedentes:</h1>
-                  {traitsList.backgrounds.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={trait.id}
-                      isMobile={isMobileVersion}
-                    >
-                      <SingleTraitsList
-                        isMobile={isMobileVersion}
-                        maxTraits={7}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? `Remover [${trait.trait} Trait]`
-                                      : `Adicionar [${trait.trait} Trait]`
-                                  }`
-                                : `${trait.trait} x${trait.levelTemp}`
-                            }`}
-                            traitColor="black"
-                            isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
-                          >
-                            {level.status === 'full' ? <GiPlainCircle /> : ''}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{`${trait.trait}`}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              )}
-              {typeList.indexOf('influences') >= 0 && (
-                <TypeContainer
-                  borderTop
-                  borderLeft={typeList.indexOf('backgrounds') >= 0}
-                  isMobile={isMobileVersion}
-                >
-                  <h1>Influências:</h1>
-                  {traitsList.influences.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={trait.id}
-                      isMobile={isMobileVersion}
-                    >
-                      <SingleTraitsList
-                        isMobile={isMobileVersion}
-                        maxTraits={7}
-                      >
-                        {trait.levelArray.map(level => (
-                          <TraitButton
-                            id={level.id}
-                            key={level.id}
-                            disabled={!level.enabled}
-                            title={`${
-                              level.enabled
-                                ? `${
-                                    level.status === 'full'
-                                      ? `Remover [${trait.trait} Trait]`
-                                      : `Adicionar [${trait.trait} Trait]`
-                                  }`
-                                : `${trait.trait} x${trait.levelTemp}`
-                            }`}
-                            traitColor="black"
-                            isMobile={isMobileVersion}
-                            onClick={handleTraitClick}
-                          >
-                            {level.status === 'full' ? <GiPlainCircle /> : ''}
-                          </TraitButton>
-                        ))}
-                      </SingleTraitsList>
-                      <strong>{`${trait.trait}`}</strong>
-                      <span>{`x${trait.level}`}</span>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              )}
-            </DoubleTypeContainer>
-          )}
-
-          {isMobileVersion ? (
-            <>
-              {typeList.indexOf('merits') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Qualidades:</h1>
-                  {traitsList.merits.map((trait: ITrait) => (
-                    <SingleTraitContainer
-                      key={trait.id}
-                      isMobile={isMobileVersion}
-                    >
-                      <strong>{`${trait.trait}`}</strong>
-                      <span>{`(${trait.level} pts)`}</span>
-                      <>
-                        {trait.trait === 'Lucky' && (
                           <SingleTraitsList
                             isMobile={isMobileVersion}
-                            maxTraits={3}
+                            maxTraits={7}
                           >
                             {trait.levelArray.map(level => (
                               <TraitButton
@@ -2611,162 +2190,649 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                               </TraitButton>
                             ))}
                           </SingleTraitsList>
-                        )}
-                      </>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
+                          <strong>{trait.trait}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                  {typeList.indexOf('powers') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>{`${creaturePower}:`}</h1>
+                      {creaturePower === 'Dons' ? (
+                        <>
+                          {traitsList.powers.map(
+                            (trait: ITrait, index, traitArray: ITrait[]) => (
+                              <div key={trait.id}>
+                                {index === 0 && Number(trait.level) === 1 && (
+                                  <h2>Básico</h2>
+                                )}
+
+                                {(index === 0 && Number(trait.level) === 2) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 2 &&
+                                    Number(trait.level) === 2 && (
+                                      <h2>Intermediário</h2>
+                                    ))}
+
+                                {(index === 0 && Number(trait.level) === 3) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 3 &&
+                                    Number(trait.level) === 3 && (
+                                      <h2>Avançado</h2>
+                                    ))}
+
+                                <SingleTraitContainer
+                                  key={trait.id}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <a
+                                    href={`#power-${trait.trait}`}
+                                    id={`power-trait-${trait.trait}`}
+                                  >
+                                    <strong>{trait.trait}</strong>
+                                  </a>
+                                </SingleTraitContainer>
+                              </div>
+                            ),
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {traitsList.powers.map((trait: ITrait) => (
+                            <SingleTraitContainer
+                              key={trait.id}
+                              isMobile={isMobileVersion}
+                            >
+                              <a
+                                href={`#power-${trait.trait}`}
+                                id={`power-trait-${trait.trait}`}
+                              >
+                                <strong>{trait.trait}</strong>
+                              </a>
+                              {trait.level > 0 && (
+                                <span>{`x${trait.level}`}</span>
+                              )}
+                            </SingleTraitContainer>
+                          ))}
+                        </>
+                      )}
+                      {typeList.indexOf('rituals') >= 0 && (
+                        <>
+                          <h1>
+                            <br />
+                            {`${creatureRituals}`}
+                          </h1>
+                          {traitsList.rituals.map(
+                            (trait: ITrait, index, traitArray: ITrait[]) => (
+                              <div key={trait.id}>
+                                {index === 0 && Number(trait.level) === 1 && (
+                                  <h2>Básico</h2>
+                                )}
+
+                                {(index === 0 && Number(trait.level) === 2) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 2 &&
+                                    Number(trait.level) === 2 && (
+                                      <h2>Intermediário</h2>
+                                    ))}
+
+                                {(index === 0 && Number(trait.level) === 3) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 3 &&
+                                    Number(trait.level) === 3 && (
+                                      <h2>Avançado</h2>
+                                    ))}
+
+                                {(index === 0 && Number(trait.level) >= 4) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 4 &&
+                                    Number(trait.level) >= 4 && (
+                                      <h2>Ancião</h2>
+                                    ))}
+
+                                <SingleTraitContainer
+                                  key={trait.id}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <a
+                                    href={`#power-${trait.trait}`}
+                                    id={`power-trait-${trait.trait}`}
+                                  >
+                                    <strong>{trait.trait}</strong>
+                                  </a>
+                                </SingleTraitContainer>
+                              </div>
+                            ),
+                          )}
+                        </>
+                      )}
+                    </TypeContainer>
+                  )}
+                </>
+              ) : (
+                <DoubleTypeContainer>
+                  {typeList.indexOf('abilities') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Habilidades:</h1>
+                      {traitsList.abilities.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <SingleTraitsList
+                            isMobile={isMobileVersion}
+                            maxTraits={7}
+                          >
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `Adicionar [${trait.trait} Trait]`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
+                                traitColor="black"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  ''
+                                )}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                          <strong>{trait.trait}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+
+                  {typeList.indexOf('powers') >= 0 && (
+                    <TypeContainer
+                      borderTop
+                      borderLeft
+                      isMobile={isMobileVersion}
+                    >
+                      <h1>{`${creaturePower}:`}</h1>
+                      {creaturePower === 'Dons' ? (
+                        <>
+                          {traitsList.powers.map(
+                            (trait: ITrait, index, traitArray: ITrait[]) => (
+                              <div key={trait.id}>
+                                {index === 0 && Number(trait.level) === 1 && (
+                                  <h2>Básico</h2>
+                                )}
+
+                                {(index === 0 && Number(trait.level) === 2) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 2 &&
+                                    Number(trait.level) === 2 && (
+                                      <h2>Intermediário</h2>
+                                    ))}
+
+                                {(index === 0 && Number(trait.level) === 3) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 3 &&
+                                    Number(trait.level) === 3 && (
+                                      <h2>Avançado</h2>
+                                    ))}
+
+                                <SingleTraitContainer
+                                  key={trait.id}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <a
+                                    href={`#power-${trait.trait}`}
+                                    id={`power-trait-${trait.trait}`}
+                                  >
+                                    <strong>{trait.trait}</strong>
+                                  </a>
+                                </SingleTraitContainer>
+                              </div>
+                            ),
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {traitsList.powers.map((trait: ITrait) => (
+                            <SingleTraitContainer
+                              key={trait.id}
+                              isMobile={isMobileVersion}
+                            >
+                              <a
+                                href={`#power-${trait.trait}`}
+                                id={`power-trait-${trait.trait}`}
+                              >
+                                <strong>{trait.trait}</strong>
+                              </a>
+                              {trait.level > 0 && (
+                                <span>{`x${trait.level}`}</span>
+                              )}
+                            </SingleTraitContainer>
+                          ))}
+                        </>
+                      )}
+                      {typeList.indexOf('rituals') >= 0 && (
+                        <>
+                          <h1>
+                            <br />
+                            {`${creatureRituals}`}
+                          </h1>
+                          {traitsList.rituals.map(
+                            (trait: ITrait, index, traitArray: ITrait[]) => (
+                              <div key={trait.id}>
+                                {index === 0 && Number(trait.level) === 1 && (
+                                  <h2>Básico</h2>
+                                )}
+
+                                {(index === 0 && Number(trait.level) === 2) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 2 &&
+                                    Number(trait.level) === 2 && (
+                                      <h2>Intermediário</h2>
+                                    ))}
+
+                                {(index === 0 && Number(trait.level) === 3) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 3 &&
+                                    Number(trait.level) === 3 && (
+                                      <h2>Avançado</h2>
+                                    ))}
+
+                                {(index === 0 && Number(trait.level) >= 4) ||
+                                  (index > 0 &&
+                                    Number(traitArray[index - 1].level) < 4 &&
+                                    Number(trait.level) >= 4 && (
+                                      <h2>Ancião</h2>
+                                    ))}
+
+                                <SingleTraitContainer
+                                  key={trait.id}
+                                  isMobile={isMobileVersion}
+                                >
+                                  <a
+                                    href={`#power-${trait.trait}`}
+                                    id={`power-trait-${trait.trait}`}
+                                  >
+                                    <strong>{trait.trait}</strong>
+                                  </a>
+                                </SingleTraitContainer>
+                              </div>
+                            ),
+                          )}
+                        </>
+                      )}
+                    </TypeContainer>
+                  )}
+                </DoubleTypeContainer>
               )}
-              {typeList.indexOf('flaws') >= 0 && (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Defeitos:</h1>
-                  {traitsList.flaws.map((trait: ITrait) => (
+
+              {isMobileVersion ? (
+                <>
+                  {typeList.indexOf('backgrounds') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Antecedentes:</h1>
+                      {traitsList.backgrounds.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <SingleTraitsList
+                            isMobile={isMobileVersion}
+                            maxTraits={7}
+                          >
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `Adicionar [${trait.trait} Trait]`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
+                                traitColor="black"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  ''
+                                )}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                          <strong>{`${trait.trait}`}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                  {typeList.indexOf('influences') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Influências:</h1>
+                      {traitsList.influences.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <SingleTraitsList
+                            isMobile={isMobileVersion}
+                            maxTraits={7}
+                          >
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `Adicionar [${trait.trait} Trait]`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
+                                traitColor="black"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  ''
+                                )}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                          <strong>{`${trait.trait}`}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                </>
+              ) : (
+                <DoubleTypeContainer>
+                  {typeList.indexOf('backgrounds') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Antecedentes:</h1>
+                      {traitsList.backgrounds.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <SingleTraitsList
+                            isMobile={isMobileVersion}
+                            maxTraits={7}
+                          >
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `Adicionar [${trait.trait} Trait]`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
+                                traitColor="black"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  ''
+                                )}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                          <strong>{`${trait.trait}`}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                  {typeList.indexOf('influences') >= 0 && (
+                    <TypeContainer
+                      borderTop
+                      borderLeft={typeList.indexOf('backgrounds') >= 0}
+                      isMobile={isMobileVersion}
+                    >
+                      <h1>Influências:</h1>
+                      {traitsList.influences.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <SingleTraitsList
+                            isMobile={isMobileVersion}
+                            maxTraits={7}
+                          >
+                            {trait.levelArray.map(level => (
+                              <TraitButton
+                                id={level.id}
+                                key={level.id}
+                                disabled={!level.enabled}
+                                title={`${
+                                  level.enabled
+                                    ? `${
+                                        level.status === 'full'
+                                          ? `Remover [${trait.trait} Trait]`
+                                          : `Adicionar [${trait.trait} Trait]`
+                                      }`
+                                    : `${trait.trait} x${trait.levelTemp}`
+                                }`}
+                                traitColor="black"
+                                isMobile={isMobileVersion}
+                                onClick={handleTraitClick}
+                              >
+                                {level.status === 'full' ? (
+                                  <GiPlainCircle />
+                                ) : (
+                                  ''
+                                )}
+                              </TraitButton>
+                            ))}
+                          </SingleTraitsList>
+                          <strong>{`${trait.trait}`}</strong>
+                          <span>{`x${trait.level}`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                </DoubleTypeContainer>
+              )}
+
+              {isMobileVersion ? (
+                <>
+                  {typeList.indexOf('merits') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Qualidades:</h1>
+                      {traitsList.merits.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <strong>{`${trait.trait}`}</strong>
+                          <span>{`(${trait.level} pts)`}</span>
+                          <>
+                            {trait.trait === 'Lucky' && (
+                              <SingleTraitsList
+                                isMobile={isMobileVersion}
+                                maxTraits={3}
+                              >
+                                {trait.levelArray.map(level => (
+                                  <TraitButton
+                                    id={level.id}
+                                    key={level.id}
+                                    disabled={!level.enabled}
+                                    title={`${
+                                      level.enabled
+                                        ? `${
+                                            level.status === 'full'
+                                              ? `Remover [${trait.trait} Trait]`
+                                              : `Adicionar [${trait.trait} Trait]`
+                                          }`
+                                        : `${trait.trait} x${trait.levelTemp}`
+                                    }`}
+                                    traitColor="black"
+                                    isMobile={isMobileVersion}
+                                    onClick={handleTraitClick}
+                                  >
+                                    {level.status === 'full' ? (
+                                      <GiPlainCircle />
+                                    ) : (
+                                      ''
+                                    )}
+                                  </TraitButton>
+                                ))}
+                              </SingleTraitsList>
+                            )}
+                          </>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                  {typeList.indexOf('flaws') >= 0 && (
+                    <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Defeitos:</h1>
+                      {traitsList.flaws.map((trait: ITrait) => (
+                        <SingleTraitContainer
+                          key={trait.id}
+                          isMobile={isMobileVersion}
+                        >
+                          <strong>{`${trait.trait}`}</strong>
+                          <span>{`(${trait.level} pts)`}</span>
+                        </SingleTraitContainer>
+                      ))}
+                    </TypeContainer>
+                  )}
+                </>
+              ) : (
+                <>
+                  <DoubleTypeContainer>
+                    {typeList.indexOf('merits') >= 0 && (
+                      <TypeContainer borderTop isMobile={isMobileVersion}>
+                        <h1>Qualidades:</h1>
+                        {traitsList.merits.map((trait: ITrait) => (
+                          <SingleTraitContainer
+                            key={trait.id}
+                            isMobile={isMobileVersion}
+                          >
+                            <strong>{`${trait.trait}`}</strong>
+                            <span>{`(${trait.level} pts)`}</span>
+                            <>
+                              {trait.trait === 'Lucky' && (
+                                <SingleTraitsList
+                                  isMobile={isMobileVersion}
+                                  maxTraits={3}
+                                >
+                                  {trait.levelArray.map(level => (
+                                    <TraitButton
+                                      id={level.id}
+                                      key={level.id}
+                                      disabled={!level.enabled}
+                                      title={`${
+                                        level.enabled
+                                          ? `${
+                                              level.status === 'full'
+                                                ? `Remover [${trait.trait} Trait]`
+                                                : `Adicionar [${trait.trait} Trait]`
+                                            }`
+                                          : `${trait.trait} x${trait.levelTemp}`
+                                      }`}
+                                      traitColor="black"
+                                      isMobile={isMobileVersion}
+                                      onClick={handleTraitClick}
+                                    >
+                                      {level.status === 'full' ? (
+                                        <GiPlainCircle />
+                                      ) : (
+                                        ''
+                                      )}
+                                    </TraitButton>
+                                  ))}
+                                </SingleTraitsList>
+                              )}
+                            </>
+                          </SingleTraitContainer>
+                        ))}
+                      </TypeContainer>
+                    )}
+                    {typeList.indexOf('flaws') >= 0 && (
+                      <TypeContainer
+                        borderTop
+                        borderLeft={typeList.indexOf('merits') >= 0}
+                        isMobile={isMobileVersion}
+                      >
+                        <h1>Defeitos:</h1>
+                        {traitsList.flaws.map((trait: ITrait) => (
+                          <SingleTraitContainer
+                            key={trait.id}
+                            isMobile={isMobileVersion}
+                          >
+                            <strong>{`${trait.trait}`}</strong>
+                            <span>{`(${trait.level} pts)`}</span>
+                          </SingleTraitContainer>
+                        ))}
+                      </TypeContainer>
+                    )}
+                  </DoubleTypeContainer>
+                </>
+              )}
+              {typeList.indexOf('status') >= 0 && (
+                <TypeContainer
+                  borderTop
+                  isMobile={isMobileVersion}
+                  statusContainer
+                  title="Copiar Status"
+                  onClick={handleCopyStatusToClipboard}
+                >
+                  <h1>{`Status (${traitsList.status.length})`}</h1>
+                  <FiCopy />
+                  {traitsList.status.map((trait: ITrait) => (
                     <SingleTraitContainer
                       key={trait.id}
                       isMobile={isMobileVersion}
                     >
-                      <strong>{`${trait.trait}`}</strong>
-                      <span>{`(${trait.level} pts)`}</span>
+                      <span>{`- ${trait.trait}`}</span>
                     </SingleTraitContainer>
                   ))}
                 </TypeContainer>
               )}
-            </>
-          ) : (
-            <>
-              <DoubleTypeContainer>
-                {typeList.indexOf('merits') >= 0 && (
-                  <TypeContainer borderTop isMobile={isMobileVersion}>
-                    <h1>Qualidades:</h1>
-                    {traitsList.merits.map((trait: ITrait) => (
-                      <SingleTraitContainer
-                        key={trait.id}
-                        isMobile={isMobileVersion}
-                      >
-                        <strong>{`${trait.trait}`}</strong>
-                        <span>{`(${trait.level} pts)`}</span>
-                        <>
-                          {trait.trait === 'Lucky' && (
-                            <SingleTraitsList
-                              isMobile={isMobileVersion}
-                              maxTraits={3}
-                            >
-                              {trait.levelArray.map(level => (
-                                <TraitButton
-                                  id={level.id}
-                                  key={level.id}
-                                  disabled={!level.enabled}
-                                  title={`${
-                                    level.enabled
-                                      ? `${
-                                          level.status === 'full'
-                                            ? `Remover [${trait.trait} Trait]`
-                                            : `Adicionar [${trait.trait} Trait]`
-                                        }`
-                                      : `${trait.trait} x${trait.levelTemp}`
-                                  }`}
-                                  traitColor="black"
-                                  isMobile={isMobileVersion}
-                                  onClick={handleTraitClick}
-                                >
-                                  {level.status === 'full' ? (
-                                    <GiPlainCircle />
-                                  ) : (
-                                    ''
-                                  )}
-                                </TraitButton>
-                              ))}
-                            </SingleTraitsList>
-                          )}
-                        </>
-                      </SingleTraitContainer>
-                    ))}
-                  </TypeContainer>
-                )}
-                {typeList.indexOf('flaws') >= 0 && (
-                  <TypeContainer
-                    borderTop
-                    borderLeft={typeList.indexOf('merits') >= 0}
-                    isMobile={isMobileVersion}
-                  >
-                    <h1>Defeitos:</h1>
-                    {traitsList.flaws.map((trait: ITrait) => (
-                      <SingleTraitContainer
-                        key={trait.id}
-                        isMobile={isMobileVersion}
-                      >
-                        <strong>{`${trait.trait}`}</strong>
-                        <span>{`(${trait.level} pts)`}</span>
-                      </SingleTraitContainer>
-                    ))}
-                  </TypeContainer>
-                )}
-              </DoubleTypeContainer>
-            </>
-          )}
-          {typeList.indexOf('status') >= 0 && (
-            <TypeContainer
-              borderTop
-              isMobile={isMobileVersion}
-              statusContainer
-              title="Copiar Status"
-              onClick={handleCopyStatusToClipboard}
-            >
-              <h1>{`Status (${traitsList.status.length})`}</h1>
-              <FiCopy />
-              {traitsList.status.map((trait: ITrait) => (
-                <SingleTraitContainer key={trait.id} isMobile={isMobileVersion}>
-                  <span>{`- ${trait.trait}`}</span>
-                </SingleTraitContainer>
-              ))}
-            </TypeContainer>
-          )}
-          {typeList.indexOf('influences') >= 0 && (
-            <>
-              {isMobileVersion ? (
-                <TypeContainer borderTop isMobile={isMobileVersion}>
-                  <h1>Informações para Influências</h1>
-                  <SingleTraitContainer
-                    isMobile={isMobileVersion}
-                    title={`(${actions.morality} x${actions.morality_level} + Temporary Retainers x${actions.retainers_level_temp})`}
-                  >
-                    <strong>{`Número do Ações: ${actions.total}`}</strong>
-                  </SingleTraitContainer>
-                  <h2>Defesas Passivas</h2>
-                  {influencesDef.map((infDef: IInfluenceDef) => (
-                    <SingleTraitContainer
-                      key={infDef.influence}
-                      isMobile={isMobileVersion}
-                      title={`(Temporary ${infDef.influence} x${infDef.influence_level_temp} + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
-                    >
-                      <strong>{`${infDef.influence}: ${infDef.total_def_passive}`}</strong>
-                    </SingleTraitContainer>
-                  ))}
-                  <h2>Defesas Ativas</h2>
-                  {influencesDef.map((infDef: IInfluenceDef) => (
-                    <SingleTraitContainer
-                      key={infDef.influence}
-                      isMobile={isMobileVersion}
-                      title={`([Temporary ${infDef.influence} x${infDef.influence_level_temp}]x2 + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
-                    >
-                      <strong>{`${infDef.influence}: ${infDef.total_def_active}`}</strong>
-                    </SingleTraitContainer>
-                  ))}
-                </TypeContainer>
-              ) : (
+              {typeList.indexOf('influences') >= 0 && (
                 <>
-                  <TypeContainer borderTop isMobile={isMobileVersion}>
-                    <h1>Informações para Influências</h1>
-                    <SingleTraitContainer
-                      isMobile={isMobileVersion}
-                      title={`(${actions.morality} x${actions.morality_level} + Temporary Retainers x${actions.retainers_level_temp})`}
-                    >
-                      <strong>{`Número do Ações: ${actions.total}`}</strong>
-                    </SingleTraitContainer>
-                  </TypeContainer>
-
-                  <DoubleTypeContainer>
+                  {isMobileVersion ? (
                     <TypeContainer borderTop isMobile={isMobileVersion}>
+                      <h1>Informações para Influências</h1>
+                      <SingleTraitContainer
+                        isMobile={isMobileVersion}
+                        title={`(${actions.morality} x${actions.morality_level} + Temporary Retainers x${actions.retainers_level_temp})`}
+                      >
+                        <strong>{`Número do Ações: ${actions.total}`}</strong>
+                      </SingleTraitContainer>
                       <h2>Defesas Passivas</h2>
                       {influencesDef.map((infDef: IInfluenceDef) => (
                         <SingleTraitContainer
@@ -2777,12 +2843,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                           <strong>{`${infDef.influence}: ${infDef.total_def_passive}`}</strong>
                         </SingleTraitContainer>
                       ))}
-                    </TypeContainer>
-                    <TypeContainer
-                      borderTop
-                      borderLeft
-                      isMobile={isMobileVersion}
-                    >
                       <h2>Defesas Ativas</h2>
                       {influencesDef.map((infDef: IInfluenceDef) => (
                         <SingleTraitContainer
@@ -2794,15 +2854,67 @@ const TraitsPanel: React.FC<IPanelProps> = ({ myChar }) => {
                         </SingleTraitContainer>
                       ))}
                     </TypeContainer>
-                  </DoubleTypeContainer>
+                  ) : (
+                    <>
+                      <TypeContainer borderTop isMobile={isMobileVersion}>
+                        <h1>Informações para Influências</h1>
+                        <SingleTraitContainer
+                          isMobile={isMobileVersion}
+                          title={`(${actions.morality} x${actions.morality_level} + Temporary Retainers x${actions.retainers_level_temp})`}
+                        >
+                          <strong>{`Número do Ações: ${actions.total}`}</strong>
+                        </SingleTraitContainer>
+                      </TypeContainer>
+
+                      <DoubleTypeContainer>
+                        <TypeContainer borderTop isMobile={isMobileVersion}>
+                          <h2>Defesas Passivas</h2>
+                          {influencesDef.map((infDef: IInfluenceDef) => (
+                            <SingleTraitContainer
+                              key={infDef.influence}
+                              isMobile={isMobileVersion}
+                              title={`(Temporary ${infDef.influence} x${infDef.influence_level_temp} + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
+                            >
+                              <strong>{`${infDef.influence}: ${infDef.total_def_passive}`}</strong>
+                            </SingleTraitContainer>
+                          ))}
+                        </TypeContainer>
+                        <TypeContainer
+                          borderTop
+                          borderLeft
+                          isMobile={isMobileVersion}
+                        >
+                          <h2>Defesas Ativas</h2>
+                          {influencesDef.map((infDef: IInfluenceDef) => (
+                            <SingleTraitContainer
+                              key={infDef.influence}
+                              isMobile={isMobileVersion}
+                              title={`([Temporary ${infDef.influence} x${infDef.influence_level_temp}]x2 + ${infDef.ability} x${infDef.ability_level} + ${infDef.morality} x${infDef.morality_level})`}
+                            >
+                              <strong>{`${infDef.influence}: ${infDef.total_def_active}`}</strong>
+                            </SingleTraitContainer>
+                          ))}
+                        </TypeContainer>
+                      </DoubleTypeContainer>
+                    </>
+                  )}
                 </>
               )}
+              <PowersList myChar={myChar} />
             </>
           )}
-          <PowersList myChar={myChar} />
-        </>
+        </Container>
+      </DialogContent>
+      {user.storyteller && (
+        <DialogActions>
+          <ButtonsContainer>
+            <ButtonBox>
+              <Button onClick={handleReset}>Resetar Traits</Button>
+            </ButtonBox>
+          </ButtonsContainer>
+        </DialogActions>
       )}
-    </Container>
+    </Dialog>
   );
 };
 

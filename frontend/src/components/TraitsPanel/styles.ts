@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
-import { lighten, darken } from 'polished';
+import { lighten, darken, shade } from 'polished';
 
 interface ITraitProps {
   traitColor?: string;
@@ -49,10 +49,9 @@ export const Container = styled.div`
   display: flex;
   background: #fff;
   color: #000;
-  border: 1px solid #000;
-  border-radius: 4px;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+  //border-radius: 4px;
+  //box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+  // overflow: hidden;
 
   animation: ${divFadeIn} 0.6s ease-in 1;
 `;
@@ -455,5 +454,31 @@ export const TraitButton = styled.button.attrs<IButtonProps>(() => ({
                   `}
             }
           `}
+  }
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+`;
+
+export const ButtonBox = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  &:first-of-type {
+    margin-right: 10px;
+  }
+
+  &:last-of-type {
+    margin-left: 10px;
+  }
+
+  width: 135px;
+
+  button:disabled {
+    cursor: default;
+    background: ${shade(0.2, '#860209')};
   }
 `;
