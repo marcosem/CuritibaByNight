@@ -25,12 +25,10 @@ const Sidebar: React.FC = () => {
       if (item.link !== '') {
         history.push(item.link);
 
-        if (isMobileVersion) {
-          setOpened(false);
-        }
+        setOpened(false);
       }
     },
-    [activeItem, history, isMobileVersion],
+    [activeItem, history],
   );
 
   const isSubNavOpen = useCallback(
