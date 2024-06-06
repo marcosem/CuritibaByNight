@@ -55,14 +55,8 @@ export const Content = styled.main<ICharPanelProps>`
   margin: 0 auto;
   background: url(${bgImg}) repeat;
   display: flex;
-  overflow-y: auto;
-  min-height: 382px;
-  max-height: 75vh;
 
-  scrollbar-width: thin;
-  scrollbar-color: #555;
-  scrollbar-track-color: #f5f5f5;
-  scroll-behavior: smooth;
+  min-height: 382px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -84,10 +78,18 @@ export const Content = styled.main<ICharPanelProps>`
   ${props =>
     props.isMobile
       ? css`
+          overflow-y: hidden;
           max-width: 340px;
           flex-direction: column;
         `
       : css`
+          overflow-y: auto;
+          max-height: 75vh;
+          scrollbar-width: thin;
+          scrollbar-color: #555;
+          scrollbar-track-color: #f5f5f5;
+          scroll-behavior: smooth;
+
           min-width: 340px;
           max-width: 1012px;
 
