@@ -34,6 +34,10 @@ interface ITableTitleRowProps {
   borderTop?: boolean;
 }
 
+interface ITableCellProps {
+  maxWidth?: string;
+}
+
 export const Container = styled.div<IContainerProps>`
   ${props =>
     props.isMobile
@@ -272,7 +276,7 @@ export const StyledTableRow = styled(TableRow)`
   }
 `;
 
-export const StyledTableCell = styled(TableCell)`
+export const StyledTableCell = styled(TableCell)<ITableCellProps>`
   // Prioritize the CSS rules of styled-component over those of JSS
   && {
     ${StyledTableHead} & {
@@ -314,6 +318,8 @@ export const StyledTableCell = styled(TableCell)`
       padding: 8px;
       line-height: 24px;
       color: rgba(0, 0, 0, 0.87);
+
+      max-width: ${props => props.maxWidth};
 
       &:first-of-type {
         max-width: 170px;

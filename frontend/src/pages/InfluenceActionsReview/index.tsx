@@ -420,7 +420,9 @@ const InfluenceActionsReview: React.FC = () => {
         <StyledTableCell align="center">
           {getInfluencePT(action.influence)}
         </StyledTableCell>
-        <StyledTableCell align="left">{action.title}</StyledTableCell>
+        <StyledTableCell align="left" maxWidth="420px">
+          {action.title}
+        </StyledTableCell>
         <StyledTableCell align="center">
           <IconBox
             colorInterface={
