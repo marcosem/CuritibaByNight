@@ -196,7 +196,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endClan = line.indexOf('Motivation:') - 1;
 
               clan = line.substring(startClan, endClan);
-              char.clan = clan;
+              char.clan = clan.trim();
             }
             break;
           case 'Vampire':
@@ -205,7 +205,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endClan = line.indexOf('Generation:') - 1;
 
               clan = line.substring(startClan, endClan);
-              char.clan = clan;
+              char.clan = clan.trim();
 
               // Clan Ventrue loses one blood point
               if (clan === 'Ventrue') {
@@ -224,7 +224,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endClan = line.indexOf('Legion:') - 1;
 
               clan = line.substring(startClan, endClan);
-              char.clan = clan;
+              char.clan = clan.trim();
             }
             break;
           case 'Werewolf':
@@ -233,7 +233,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endClan = line.indexOf('Rank:') - 1;
 
               clan = line.substring(startClan, endClan);
-              char.clan = clan;
+              char.clan = clan.trim();
 
               // Get of Fenris has one extra Healthy
               if (clan === 'Get of Fenris') {
@@ -248,7 +248,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endClan = line.indexOf('Essence:') - 1;
 
               clan = line.substring(startClan, endClan);
-              char.clan = clan;
+              char.clan = clan.trim();
             }
             break;
           default:
@@ -264,7 +264,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endSect = line.indexOf('Title:') - 1;
 
               sect = line.substring(startSect, endSect);
-              char.sect = sect;
+              char.sect = sect.trim();
             }
             break;
           case 'Wraith':
@@ -273,7 +273,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endSect = line.indexOf('Rank:') - 1;
 
               sect = line.substring(startSect, endSect);
-              char.sect = sect;
+              char.sect = sect.trim();
               wraithFactionSet = true;
             }
             break;
@@ -290,7 +290,7 @@ class PDFParseProvider implements IPDFParserProvider {
                   sect = 'Wyld';
               }
 
-              char.sect = sect;
+              char.sect = sect.trim();
             }
             break;
           case 'Mage':
@@ -299,7 +299,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endSect = line.indexOf('Cabal:') - 1;
 
               sect = line.substring(startSect, endSect);
-              char.sect = sect;
+              char.sect = sect.trim();
             }
             break;
           case 'Mortal':
@@ -307,7 +307,6 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
-      // Title
       if (!title) {
         switch (char.creature_type) {
           case 'Mortal':
@@ -318,7 +317,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
               title = line.substring(startTitle, endTitle);
 
-              char.title = title;
+              char.title = title.trim();
             }
             break;
           case 'Vampire':
@@ -329,7 +328,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
               title = line.substring(startTitle, endTitle);
 
-              char.title = title;
+              char.title = title.trim();
             }
             break;
           case 'Wraith':
@@ -340,7 +339,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
               title = line.substring(startTitle, endTitle);
 
-              char.title = title;
+              char.title = title.trim();
             }
             break;
           case 'Werewolf':
@@ -351,7 +350,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
               title = line.substring(startTitle, endTitle);
 
-              char.title = title;
+              char.title = title.trim();
 
               // For Werewolf, it finishes here
               // rl.close();
@@ -364,7 +363,7 @@ class PDFParseProvider implements IPDFParserProvider {
 
               title = line.substring(startTitle, endTitle);
 
-              char.title = title;
+              char.title = title.trim();
 
               // For Mages, it finishes here
               // rl.close();
@@ -384,7 +383,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endCoterie = line.indexOf('Sire:') - 1;
 
               coterie = line.substring(startCoterie, endCoterie);
-              char.coterie = coterie;
+              char.coterie = coterie.trim();
 
               // For Vampire, it finishes here
               // rl.close();
@@ -397,7 +396,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endCoterie = line.indexOf('Demeanor:') - 1;
 
               coterie = line.substring(startCoterie, endCoterie);
-              char.coterie = coterie;
+              char.coterie = coterie.trim();
             }
             break;
           case 'Mage':
@@ -406,7 +405,7 @@ class PDFParseProvider implements IPDFParserProvider {
               const endCoterie = line.indexOf('Demeanor:') - 1;
 
               coterie = line.substring(startCoterie, endCoterie);
-              char.coterie = coterie;
+              char.coterie = coterie.trim();
             }
             break;
           case 'Mortal':
