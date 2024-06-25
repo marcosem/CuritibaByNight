@@ -205,6 +205,12 @@ class PDFParseProvider implements IPDFParserProvider {
               const endClan = line.indexOf('Generation:') - 1;
 
               clan = line.substring(startClan, endClan);
+
+              // Fix assamites issues
+              if (clan.indexOf('Assamites') >= 0) {
+                clan = clan.replace('Assamites', 'Assamite');
+              }
+
               char.clan = clan.trim();
 
               // Clan Ventrue loses one blood point
