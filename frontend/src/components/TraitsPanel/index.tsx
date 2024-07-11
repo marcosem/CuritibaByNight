@@ -5,7 +5,6 @@ import React, {
   useEffect,
   HTMLAttributes,
   MouseEvent,
-  Fragment,
 } from 'react';
 
 import {
@@ -38,12 +37,9 @@ import {
   TypeContainer,
   DoubleTypeContainer,
   TraitsRow,
-  NegativeTraitsRow,
   TraitContainer,
   VirtuesContainer,
   SingleTraitContainer,
-  AttributeContainer,
-  TraitsListRow,
   TraitsList,
   SingleTraitsList,
   TraitButton,
@@ -53,6 +49,8 @@ import {
   ButtonBox,
 } from './styles';
 
+import AttributesTraitsList from './AttributesTraitsList';
+import NegAttributesTraitsList from './NegAttributesTraitsList';
 import PowersList from './PowersList';
 
 import ICharacter from '../CharacterList/ICharacter';
@@ -1153,256 +1151,6 @@ const TraitsPanel: React.FC<IPanelProps> = ({
     ],
   );
 
-  const buildAttributesTraitsList = useCallback(
-    (traits: ITrait[]): JSX.Element => {
-      if (traits.length !== 3) {
-        return (
-          <TraitContainer key="attributes" isMobile={isMobileVersion}>
-            <strong>Nenhum</strong>
-          </TraitContainer>
-        );
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const attributesLevels: any[][] = [];
-
-      for (let i = 0; i < traits.length; i += 1) {
-        let levelsCount = 0;
-        const levelArraySize = traits[i].levelArray.length;
-        let levelsListBlock: ILevel[] = [];
-        let traitLevelsList = [];
-
-        while (levelsCount < levelArraySize) {
-          const level = traits[i].levelArray[levelsCount];
-
-          if ((levelsCount + 1) % 5 !== 0) {
-            levelsListBlock.push(level);
-          } else {
-            levelsListBlock.push(level);
-            const oldLevelsListBlock = levelsListBlock;
-            traitLevelsList.push(oldLevelsListBlock);
-            levelsListBlock = [];
-          }
-
-          if (
-            levelsCount === levelArraySize - 1 &&
-            levelsListBlock.length > 0
-          ) {
-            traitLevelsList.push(levelsListBlock);
-          }
-
-          levelsCount += 1;
-        }
-
-        attributesLevels.push(traitLevelsList);
-        traitLevelsList = [];
-      }
-
-      return (
-        <TraitsRow key="attributes">
-          {traits.map((trait, index) => (
-            <AttributeContainer
-              key={trait.id}
-              alignment={
-                index === 0 ? 'left' : `${index === 1 ? 'center' : 'right'}`
-              }
-              isMobile={isMobileVersion}
-            >
-              <div key={trait.trait}>
-                <strong>{`${trait.trait}:`}</strong>
-                <span>{`${trait.levelTemp}/${trait.level}`}</span>
-              </div>
-
-              {trait.level > 0 && (
-                <>
-                  {attributesLevels[index].length > 0 && (
-                    <>
-                      {attributesLevels[index].map((levelBlock: ILevel[]) => (
-                        <TraitsListRow
-                          key={`${trait.trait}:${levelBlock[0].id}`}
-                        >
-                          {levelBlock.map((level: ILevel) => (
-                            <TraitButton
-                              id={level.id}
-                              key={level.id}
-                              disabled={!level.enabled}
-                              title={`${
-                                level.enabled
-                                  ? `${
-                                      level.status === 'full'
-                                        ? `Remover [${trait.trait} Trait]`
-                                        : `${
-                                            level.status === 'empty'
-                                              ? `Remover [${trait.trait} Trait] Permanente`
-                                              : `Adicionar [${trait.trait} Trait]`
-                                          }`
-                                    }`
-                                  : `${trait.trait} x${trait.levelTemp}`
-                              }`}
-                              traitColor="black"
-                              isMobile={isMobileVersion}
-                              onClick={handleTraitClick}
-                            >
-                              {level.status === 'full' ? (
-                                <GiPlainCircle />
-                              ) : (
-                                <>
-                                  {level.status === 'permanent' ? (
-                                    <GiCancel />
-                                  ) : (
-                                    ''
-                                  )}
-                                </>
-                              )}
-                            </TraitButton>
-                          ))}
-                        </TraitsListRow>
-                      ))}
-                    </>
-                  )}
-                </>
-              )}
-            </AttributeContainer>
-          ))}
-        </TraitsRow>
-      );
-    },
-    [handleTraitClick, isMobileVersion],
-  );
-
-  const buildNegAttributesTraitsList = useCallback(
-    (traits: ITrait[]): JSX.Element => {
-      const physicalTraits = traits
-        .filter(trait => trait.trait.indexOf('physical:') !== -1)
-        .map(trait => {
-          const newTrait = { ...trait };
-          newTrait.trait = trait.trait.replace('physical:', '');
-
-          return newTrait;
-        });
-
-      const socialTraits = traits
-        .filter(trait => trait.trait.indexOf('social:') !== -1)
-        .map(trait => {
-          const newTrait = { ...trait };
-          newTrait.trait = trait.trait.replace('social:', '');
-
-          return newTrait;
-        });
-
-      const mentalTraits = traits
-        .filter(trait => trait.trait.indexOf('mental:') !== -1)
-        .map(trait => {
-          const newTrait = { ...trait };
-          newTrait.trait = trait.trait.replace('mental:', '');
-
-          return newTrait;
-        });
-
-      const largerArray = Math.max(
-        physicalTraits.length,
-        socialTraits.length,
-        mentalTraits.length,
-      );
-
-      physicalTraits.length = largerArray;
-      socialTraits.length = largerArray;
-      mentalTraits.length = largerArray;
-
-      interface negTraits {
-        id: string;
-        physical: string;
-        social: string;
-        mental: string;
-      }
-
-      let negTraitsArray: negTraits[] = [];
-
-      negTraitsArray.length = largerArray;
-      negTraitsArray = negTraitsArray.fill({
-        id: '',
-        physical: '',
-        social: '',
-        mental: '',
-      } as negTraits);
-
-      negTraitsArray = negTraitsArray.map((_, index) => {
-        let newPhysical = '';
-        let newSocial = '';
-        let newMental = '';
-
-        if (physicalTraits[index]) {
-          const trait = physicalTraits[index];
-          newPhysical =
-            trait.level > 1 ? `${trait.trait} x${trait.level}` : trait.trait;
-        }
-
-        if (socialTraits[index]) {
-          const trait = socialTraits[index];
-          newSocial =
-            trait.level > 1 ? `${trait.trait} x${trait.level}` : trait.trait;
-        }
-
-        if (mentalTraits[index]) {
-          const trait = mentalTraits[index];
-          newMental =
-            trait.level > 1 ? `${trait.trait} x${trait.level}` : trait.trait;
-        }
-
-        const newElem = {
-          id: `id-${index}`,
-          physical: newPhysical,
-          social: newSocial,
-          mental: newMental,
-        };
-
-        return newElem;
-      });
-
-      return (
-        <Fragment key="neg_attributes">
-          <TraitsRow>
-            <AttributeContainer alignment="left" isMobile={isMobileVersion}>
-              <div>
-                <strong>Physical</strong>
-              </div>
-            </AttributeContainer>
-            <AttributeContainer alignment="center" isMobile={isMobileVersion}>
-              <div>
-                <strong>Social</strong>
-              </div>
-            </AttributeContainer>
-            <AttributeContainer alignment="right" isMobile={isMobileVersion}>
-              <div>
-                <strong>Mental</strong>
-              </div>
-            </AttributeContainer>
-          </TraitsRow>
-          {negTraitsArray.map(trait => (
-            <NegativeTraitsRow key={`neg_attributes-${trait.id}`}>
-              <AttributeContainer alignment="left" isMobile={isMobileVersion}>
-                <div>
-                  <span>{trait.physical}</span>
-                </div>
-              </AttributeContainer>
-              <AttributeContainer alignment="center" isMobile={isMobileVersion}>
-                <div>
-                  <span>{trait.social}</span>
-                </div>
-              </AttributeContainer>
-              <AttributeContainer alignment="right" isMobile={isMobileVersion}>
-                <div>
-                  <span>{trait.mental}</span>
-                </div>
-              </AttributeContainer>
-            </NegativeTraitsRow>
-          ))}
-        </Fragment>
-      );
-    },
-    [isMobileVersion],
-  );
-
   const handleCopyStatusToClipboard = useCallback(() => {
     if (traitsList.status.length === 0) {
       return;
@@ -2288,13 +2036,16 @@ const TraitsPanel: React.FC<IPanelProps> = ({
               {typeList.indexOf('attributes') >= 0 && (
                 <TypeContainer borderTop isMobile={isMobileVersion}>
                   <h1>Atributos:</h1>
-                  {buildAttributesTraitsList(traitsList.attributes)}
+                  <AttributesTraitsList
+                    traits={traitsList.attributes}
+                    handleTraitClick={handleTraitClick}
+                  />
                 </TypeContainer>
               )}
               {typeList.indexOf('neg_attributes') >= 0 && (
                 <TypeContainer borderTop isMobile={isMobileVersion}>
                   <h1>Traits Negativos:</h1>
-                  {buildNegAttributesTraitsList(traitsList.neg_attributes)}
+                  <NegAttributesTraitsList traits={traitsList.neg_attributes} />
                 </TypeContainer>
               )}
 
