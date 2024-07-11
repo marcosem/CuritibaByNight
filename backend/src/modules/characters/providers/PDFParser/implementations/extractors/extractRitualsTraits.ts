@@ -11,13 +11,14 @@ export default function extractRitualsTraits(
   switch (creature) {
     case 'Vampire':
       {
-        const werewolfRites = [
+        const vampireRituals = [
           'Abyss Mysticism',
           'Akhu',
           'Anarch Curses',
           'Blooding',
           'Dark Thaumaturgy',
           'Dur-an-ki',
+          'Geomancy',
           'Necromancy',
           'Sabbat',
           'Voudoun',
@@ -35,7 +36,7 @@ export default function extractRitualsTraits(
         ];
 
         let ritualIndex = -1;
-        werewolfRites.some(rit => {
+        vampireRituals.some(rit => {
           const powerIndexAux = line.lastIndexOf(` ${rit}: `);
           if (powerIndexAux >= 0) {
             ritualIndex = powerIndexAux;
