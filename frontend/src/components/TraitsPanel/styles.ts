@@ -145,6 +145,11 @@ export const TraitsRow = styled.div`
   justify-content: center;
 `;
 
+export const NegativeTraitsRow = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 export const TraitContainer = styled.div<ITraitContainer>`
   display: flex;
   flex-direction: row;
@@ -324,6 +329,7 @@ export const AttributeContainer = styled.div<ITraitContainer>`
     props.alignment === 'center' &&
     css`
       align-items: center;
+      width: 100%;
     `}
 
   div {

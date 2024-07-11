@@ -5,6 +5,7 @@ import React, {
   useEffect,
   HTMLAttributes,
   MouseEvent,
+  Fragment,
 } from 'react';
 
 import {
@@ -37,6 +38,7 @@ import {
   TypeContainer,
   DoubleTypeContainer,
   TraitsRow,
+  NegativeTraitsRow,
   TraitContainer,
   VirtuesContainer,
   SingleTraitContainer,
@@ -95,6 +97,7 @@ interface ITraitsList {
   creature: ITrait[];
   virtues: ITrait[];
   attributes: ITrait[];
+  neg_attributes: ITrait[];
   abilities: ITrait[];
   powers: ITrait[];
   rituals: ITrait[];
@@ -143,6 +146,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({
     creature: [],
     virtues: [],
     attributes: [],
+    neg_attributes: [],
     abilities: [],
     powers: [],
     rituals: [],
@@ -234,6 +238,7 @@ const TraitsPanel: React.FC<IPanelProps> = ({
           creature: [],
           virtues: [],
           attributes: [],
+          neg_attributes: [],
           abilities: [],
           powers: [],
           rituals: [],
@@ -430,6 +435,10 @@ const TraitsPanel: React.FC<IPanelProps> = ({
               }
 
               newTraitsList.attributes.push(newTrait);
+              break;
+            case 'neg_attributes':
+              newTrait.index = [-1, -1];
+              newTraitsList.neg_attributes.push(newTrait);
               break;
             case 'abilities':
               newTrait.index = [-1, -1];
@@ -1259,6 +1268,139 @@ const TraitsPanel: React.FC<IPanelProps> = ({
       );
     },
     [handleTraitClick, isMobileVersion],
+  );
+
+  const buildNegAttributesTraitsList = useCallback(
+    (traits: ITrait[]): JSX.Element => {
+      const physicalTraits = traits
+        .filter(trait => trait.trait.indexOf('physical:') !== -1)
+        .map(trait => {
+          const newTrait = { ...trait };
+          newTrait.trait = trait.trait.replace('physical:', '');
+
+          return newTrait;
+        });
+
+      const socialTraits = traits
+        .filter(trait => trait.trait.indexOf('social:') !== -1)
+        .map(trait => {
+          const newTrait = { ...trait };
+          newTrait.trait = trait.trait.replace('social:', '');
+
+          return newTrait;
+        });
+
+      const mentalTraits = traits
+        .filter(trait => trait.trait.indexOf('mental:') !== -1)
+        .map(trait => {
+          const newTrait = { ...trait };
+          newTrait.trait = trait.trait.replace('mental:', '');
+
+          return newTrait;
+        });
+
+      const largerArray = Math.max(
+        physicalTraits.length,
+        socialTraits.length,
+        mentalTraits.length,
+      );
+
+      physicalTraits.length = largerArray;
+      socialTraits.length = largerArray;
+      mentalTraits.length = largerArray;
+
+      interface negTraits {
+        id: string;
+        physical: string;
+        social: string;
+        mental: string;
+      }
+
+      let negTraitsArray: negTraits[] = [];
+
+      negTraitsArray.length = largerArray;
+      negTraitsArray = negTraitsArray.fill({
+        id: '',
+        physical: '',
+        social: '',
+        mental: '',
+      } as negTraits);
+
+      negTraitsArray = negTraitsArray.map((_, index) => {
+        let newPhysical = '';
+        let newSocial = '';
+        let newMental = '';
+
+        if (physicalTraits[index]) {
+          const trait = physicalTraits[index];
+          newPhysical =
+            trait.level > 1 ? `${trait.trait} x${trait.level}` : trait.trait;
+        }
+
+        if (socialTraits[index]) {
+          const trait = socialTraits[index];
+          newSocial =
+            trait.level > 1 ? `${trait.trait} x${trait.level}` : trait.trait;
+        }
+
+        if (mentalTraits[index]) {
+          const trait = mentalTraits[index];
+          newMental =
+            trait.level > 1 ? `${trait.trait} x${trait.level}` : trait.trait;
+        }
+
+        const newElem = {
+          id: `id-${index}`,
+          physical: newPhysical,
+          social: newSocial,
+          mental: newMental,
+        };
+
+        return newElem;
+      });
+
+      return (
+        <Fragment key="neg_attributes">
+          <TraitsRow>
+            <AttributeContainer alignment="left" isMobile={isMobileVersion}>
+              <div>
+                <strong>Physical</strong>
+              </div>
+            </AttributeContainer>
+            <AttributeContainer alignment="center" isMobile={isMobileVersion}>
+              <div>
+                <strong>Social</strong>
+              </div>
+            </AttributeContainer>
+            <AttributeContainer alignment="right" isMobile={isMobileVersion}>
+              <div>
+                <strong>Mental</strong>
+              </div>
+            </AttributeContainer>
+          </TraitsRow>
+          {negTraitsArray.map(trait => (
+            <NegativeTraitsRow key={`neg_attributes-${trait.id}`}>
+              <AttributeContainer alignment="left" isMobile={isMobileVersion}>
+                <div>
+                  <span>{trait.physical}</span>
+                </div>
+              </AttributeContainer>
+              <AttributeContainer alignment="center" isMobile={isMobileVersion}>
+                <div>
+                  <span>{trait.social}</span>
+                </div>
+              </AttributeContainer>
+              <AttributeContainer alignment="right" isMobile={isMobileVersion}>
+                <div>
+                  <span>{trait.mental}</span>
+                </div>
+              </AttributeContainer>
+            </NegativeTraitsRow>
+          ))}
+        </Fragment>
+      );
+    },
+    [isMobileVersion],
   );
 
   const handleCopyStatusToClipboard = useCallback(() => {
@@ -2147,6 +2289,12 @@ const TraitsPanel: React.FC<IPanelProps> = ({
                 <TypeContainer borderTop isMobile={isMobileVersion}>
                   <h1>Atributos:</h1>
                   {buildAttributesTraitsList(traitsList.attributes)}
+                </TypeContainer>
+              )}
+              {typeList.indexOf('neg_attributes') >= 0 && (
+                <TypeContainer borderTop isMobile={isMobileVersion}>
+                  <h1>Traits Negativos:</h1>
+                  {buildNegAttributesTraitsList(traitsList.neg_attributes)}
                 </TypeContainer>
               )}
 

@@ -14,6 +14,7 @@ import { once } from 'events';
 import { Readable } from 'stream';
 import extractCreatureTraits from './extractors/extractCreatureTraits';
 import extractVirtuesTraits from './extractors/extractVirtuesTraits';
+import extractNegativeAttributeTraits from './extractors/extractNegativeAttributeTraits';
 import extractAbilitiesTraits from './extractors/extractAbilitiesTraits';
 import extractPowersTraits from './extractors/extractPowersTraits';
 import extractRitualsTraits from './extractors/extractRitualsTraits';
@@ -67,6 +68,8 @@ class PDFParseProvider implements IPDFParserProvider {
     let virtuesSectionDone = false;
     let morality: string;
     let attributesSectionDone = false;
+    let negAttributesSectionStart = false;
+    let negAttributesSectionDone = false;
     let abilitiesSectionStart = false;
     let abilitiesSectionDone = false;
     let statusAndRitualsSectionStart = false;
@@ -577,8 +580,57 @@ class PDFParseProvider implements IPDFParserProvider {
         }
       }
 
+      // Negative Attributes
+      if (attributesSectionDone && !negAttributesSectionDone) {
+        if (line.indexOf('Negative Physical Traits:') >= 0) {
+          negAttributesSectionStart = true;
+        }
+
+        if (negAttributesSectionStart) {
+          switch (char.creature_type) {
+            case 'Vampire':
+            case 'Mortal':
+              if (line.indexOf('Abilities:') >= 0) {
+                negAttributesSectionDone = true;
+              }
+              break;
+
+            case 'Wraith':
+              if (line.indexOf('Status:') >= 0) {
+                negAttributesSectionDone = true;
+              }
+              break;
+
+            case 'Mage':
+              if (line.indexOf('Backgrounds:') >= 0) {
+                negAttributesSectionDone = true;
+              }
+              break;
+
+            case 'Werewolf':
+              if (line.indexOf('Honor:') >= 0) {
+                negAttributesSectionDone = true;
+              }
+              break;
+
+            default:
+              negAttributesSectionDone = true;
+          }
+
+          if (!negAttributesSectionDone) {
+            const negAttributes = extractNegativeAttributeTraits(line);
+
+            if (negAttributes.length > 0) {
+              negAttributes.forEach((nAtt: CharacterTrait) => {
+                charTraits.push(nAtt);
+              });
+            }
+          }
+        }
+      }
+
       // Abilities, Powers, and Rotes
-      if (attributesSectionDone && !abilitiesSectionDone) {
+      if (negAttributesSectionDone && !abilitiesSectionDone) {
         if (line.indexOf('Abilities:') >= 0) {
           abilitiesSectionStart = true;
         }
