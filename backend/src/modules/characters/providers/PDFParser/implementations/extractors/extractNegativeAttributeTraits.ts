@@ -14,7 +14,10 @@ export default function extractNegativeAttributeTraits(
 
   const newLine = line.replace(/ x/g, '_x');
 
-  const nAtts = newLine.split(' ').filter(nAtt => nAtt.indexOf('(') === -1);
+  const nAtts = newLine
+    .split(' ')
+    .filter(nAtt => nAtt.indexOf('(') === -1 && nAtt.indexOf(')') === -1);
+
   if (nAtts.length < 3) {
     return [];
   }
