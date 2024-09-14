@@ -653,8 +653,9 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       {!user.storyteller ? (
                         <TextContainter isMobile={isMobileVersion} center>
                           <strong>
-                            Este site não funcionará na gestão atual da narração
-                            do Curitiba By Night
+                            Este site foi desenvolvido com trabalho voluntário e
+                            não funcionará na gestão atual da narração do
+                            Curitiba By Night.
                           </strong>
                         </TextContainter>
                       ) : (
