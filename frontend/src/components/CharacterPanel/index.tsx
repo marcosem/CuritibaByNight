@@ -586,7 +586,7 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     charId={myChar.id}
                     name={myChar.name}
                     experience={myChar.experience}
-                    sheetFile={myChar.character_url}
+                    sheetFile={user.storyteller ? myChar.character_url : ''}
                     clan={myChar.clan}
                     creature_type={myChar.creature_type}
                     sect={myChar.sect}
@@ -605,15 +605,18 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                   />
                   <CharacterSheet>
                     <div>
-                      <a
-                        href={myChar.character_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Baixar Ficha"
-                      >
-                        <GiLoad />
-                        <span>Baixar Ficha</span>
-                      </a>
+                      {/* BLOCK ADDED --- Remove storyteller */}
+                      {user.storyteller && (
+                        <a
+                          href={myChar.character_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Baixar Ficha"
+                        >
+                          <GiLoad />
+                          <span>Baixar Ficha</span>
+                        </a>
+                      )}
                     </div>
                   </CharacterSheet>
                 </CharCardContainer>
@@ -680,57 +683,80 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     </>
                   )}
 
-                  <ButtonBox isMobile={isMobileVersion} small>
-                    <Button onClick={handleShowTraits} disabled={showTraits}>
-                      Mostrar Traits
-                    </Button>
-                  </ButtonBox>
+                  {/* BLOCK ADDED - Remove next line to unblock */}
+                  {!user.storyteller ? (
+                    <TextContainter isMobile={isMobileVersion} center>
+                      <strong>
+                        Este site não funcionará na gestão atual da narração do
+                        Curitiba By Night
+                      </strong>
+                    </TextContainter>
+                  ) : (
+                    <>
+                      <ButtonBox isMobile={isMobileVersion} small>
+                        <Button
+                          onClick={handleShowTraits}
+                          disabled={showTraits}
+                        >
+                          Mostrar Traits
+                        </Button>
+                      </ButtonBox>
 
-                  <TraitsPanel
-                    myChar={myChar}
-                    open={showTraits}
-                    handleClose={handleShowTraits}
-                    handleReset={handleConfirmResetTraits}
-                  />
+                      <TraitsPanel
+                        myChar={myChar}
+                        open={showTraits}
+                        handleClose={handleShowTraits}
+                        handleReset={handleConfirmResetTraits}
+                      />
 
-                  {retainerList.length > 0 && (
-                    <DataContainer>
-                      <button type="button" onClick={handleShowRetainers}>
-                        {showRetainers ? <FiChevronDown /> : <FiChevronRight />}
-                        <strong>Meus Lacaios:</strong>
-                      </button>
-                      <TableWrapper
-                        isMobile={isMobileVersion}
-                        isVisible={showRetainers}
-                      >
-                        {drawRetainerTable(retainerList)}
-                      </TableWrapper>
-                    </DataContainer>
-                  )}
+                      {retainerList.length > 0 && (
+                        <DataContainer>
+                          <button type="button" onClick={handleShowRetainers}>
+                            {showRetainers ? (
+                              <FiChevronDown />
+                            ) : (
+                              <FiChevronRight />
+                            )}
+                            <strong>Meus Lacaios:</strong>
+                          </button>
+                          <TableWrapper
+                            isMobile={isMobileVersion}
+                            isVisible={showRetainers}
+                          >
+                            {drawRetainerTable(retainerList)}
+                          </TableWrapper>
+                        </DataContainer>
+                      )}
 
-                  {locationsList.length > 0 && (
-                    <DataContainer>
-                      <button type="button" onClick={handleShowLocals}>
-                        {showLocals ? <FiChevronDown /> : <FiChevronRight />}
-                        <strong>Locais Conhecidos por mim:</strong>
-                      </button>
-                      <TableWrapper
-                        isMobile={isMobileVersion}
-                        isVisible={showLocals}
-                      >
-                        {drawLocationTable(locationsList)}
-                      </TableWrapper>
-                    </DataContainer>
-                  )}
+                      {locationsList.length > 0 && (
+                        <DataContainer>
+                          <button type="button" onClick={handleShowLocals}>
+                            {showLocals ? (
+                              <FiChevronDown />
+                            ) : (
+                              <FiChevronRight />
+                            )}
+                            <strong>Locais Conhecidos por mim:</strong>
+                          </button>
+                          <TableWrapper
+                            isMobile={isMobileVersion}
+                            isVisible={showLocals}
+                          >
+                            {drawLocationTable(locationsList)}
+                          </TableWrapper>
+                        </DataContainer>
+                      )}
 
-                  {!dashboard && (
-                    <ButtonBox isMobile={isMobileVersion}>
-                      <Button onClick={handleGoBack}>Retornar</Button>
-                    </ButtonBox>
+                      {!dashboard && (
+                        <ButtonBox isMobile={isMobileVersion}>
+                          <Button onClick={handleGoBack}>Retornar</Button>
+                        </ButtonBox>
+                      )}
+                    </>
                   )}
 
                   <FunctionsContainer>
-                    {dashboard && (
+                    {/* dashboard && (
                       <>
                         {/* <FunctionButton
                       onClick={handleChallenges}
@@ -738,9 +764,9 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                       isGreen
                     >
                       <GiRollingDices />
-                    </FunctionButton> */}
+                    </FunctionButton> }
                       </>
-                    )}
+                    ) */}
 
                     {user.storyteller && !dashboard && (
                       <>

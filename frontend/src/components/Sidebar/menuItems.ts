@@ -38,13 +38,15 @@ export const menuItems: IMenuItem[] = [
     name: 'Perfil',
     Icon: FaUser,
     link: '/profile',
-    stOnly: false,
+    stOnly: true,
+    // stOnly: false,
   },
   {
     name: 'Meus personagens',
     Icon: GiOrganigram,
     link: '/mycharacters',
-    stOnly: false,
+    stOnly: true,
+    // stOnly: false,
   },
   {
     name: 'Jogadores',
@@ -112,7 +114,9 @@ export const menuItems: IMenuItem[] = [
     name: 'Mapa',
     Icon: FaMap,
     link: '/locals',
-    stOnly: false,
+    // BLOCK ADDED
+    // stOnly: false,
+    stOnly: true,
   },
   {
     name: 'Locais',
@@ -147,12 +151,16 @@ export const menuItems: IMenuItem[] = [
     name: 'Ações',
     Icon: GiSwordSpade,
     link: '',
-    stOnly: false,
+    // BLOCK ADDED
+    // stOnly: false,
+    stOnly: true,
     items: [
       {
         name: 'Minhas ações',
         link: '/actions',
-        stOnly: false,
+        // BLOCK ADDED
+        // stOnly: false,
+        stOnly: true,
       },
       {
         name: 'Revisar ações',
@@ -171,13 +179,17 @@ export const menuItems: IMenuItem[] = [
     name: 'Regras',
     Icon: GiStabbedNote,
     link: '/rules',
-    stOnly: false,
+    // BLOCK ADDED
+    // stOnly: false,
+    stOnly: true,
   },
   {
     name: 'Influências',
     Icon: GiStoneTower,
     link: '',
-    stOnly: false,
+    // BLOCK ADDED
+    // stOnly: false,
+    stOnly: true,
     items: [
       {
         name: 'Descrições',

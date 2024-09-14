@@ -5,6 +5,7 @@ import bgImg from '../../assets/yellow-old-paper.jpg';
 interface ICharPanelProps {
   isMobile: boolean;
   isVisible?: boolean;
+  center?: boolean;
 }
 
 interface IFunctionButtonProps {
@@ -160,6 +161,13 @@ export const TextContainter = styled.div<ICharPanelProps>`
   flex-direction: row;
   width: 100%;
   padding-bottom: 5px;
+
+  // BLOCK ADDED - remove next block and its variable
+  ${props =>
+    props.center &&
+    css`
+      margin: auto;
+    `}
 
   h1 {
     color: #333;
