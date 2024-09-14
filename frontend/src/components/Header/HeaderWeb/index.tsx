@@ -65,7 +65,12 @@ const HeaderWeb: React.FC = () => {
 
         <NotificationButton
           type="button"
-          onClick={notifications > 0 ? handleInfluenceActions : undefined}
+          // BLOCK ADDED - Remove user.storyteller
+          onClick={
+            user.storyteller && notifications > 0
+              ? handleInfluenceActions
+              : undefined
+          }
           hasNotification={notifications > 0}
         >
           <FiBell />
