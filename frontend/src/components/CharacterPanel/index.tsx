@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fi';
 import { GiLoad, GiPositionMarker /* ,GiRollingDices */ } from 'react-icons/gi';
 
+import { Alert } from '@material-ui/lab';
 import api from '../../services/api';
 
 import {
@@ -652,11 +653,11 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     <>
                       {!user.storyteller ? (
                         <TextContainter isMobile={isMobileVersion} center>
-                          <strong>
+                          <Alert severity="error" variant="filled">
                             Este site foi desenvolvido com trabalho voluntário e
                             não funcionará na gestão atual da narração do
                             Curitiba By Night.
-                          </strong>
+                          </Alert>
                         </TextContainter>
                       ) : (
                         <>
