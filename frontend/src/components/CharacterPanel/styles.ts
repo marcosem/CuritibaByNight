@@ -167,6 +167,10 @@ export const TextContainter = styled.div<ICharPanelProps>`
     props.center &&
     css`
       margin: auto;
+
+      strong {
+        margin: auto;
+      }
     `}
 
   h1 {

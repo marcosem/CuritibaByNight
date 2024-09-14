@@ -650,48 +650,52 @@ const CharacterPanel: React.FC<IPanelProps> = ({
                     </TextContainter>
                   ) : (
                     <>
-                      {isMobileVersion ? (
-                        <>
-                          <TextContainter isMobile={isMobileVersion}>
-                            <strong>Experiêcia Disponível:</strong>
-                            <span>{myChar.experience}</span>
-                          </TextContainter>
-                          <TextContainter isMobile={isMobileVersion}>
-                            <strong>Experiêcia Total:</strong>
-                            <span>{myChar.experience_total}</span>
-                          </TextContainter>
-                        </>
+                      {!user.storyteller ? (
+                        <TextContainter isMobile={isMobileVersion} center>
+                          <strong>
+                            Este site não funcionará na gestão atual da narração
+                            do Curitiba By Night
+                          </strong>
+                        </TextContainter>
                       ) : (
-                        <TextContainter isMobile={isMobileVersion}>
-                          <strong>Experiêcia Disponível:</strong>
-                          <span>{myChar.experience}</span>
-                          <strong>Experiêcia Total:</strong>
-                          <span>{myChar.experience_total}</span>
-                        </TextContainter>
-                      )}
-
-                      {!myChar.npc && (
-                        <TextContainter isMobile={isMobileVersion}>
-                          <strong>Jogador:</strong>
-                          {dashboard ? (
-                            <span>{user.name}</span>
+                        <>
+                          {isMobileVersion ? (
+                            <>
+                              <TextContainter isMobile={isMobileVersion}>
+                                <strong>Experiêcia Disponível:</strong>
+                                <span>{myChar.experience}</span>
+                              </TextContainter>
+                              <TextContainter isMobile={isMobileVersion}>
+                                <strong>Experiêcia Total:</strong>
+                                <span>{myChar.experience_total}</span>
+                              </TextContainter>
+                            </>
                           ) : (
-                            <span>{myChar.user && myChar.user.name}</span>
+                            <TextContainter isMobile={isMobileVersion}>
+                              <strong>Experiêcia Disponível:</strong>
+                              <span>{myChar.experience}</span>
+                              <strong>Experiêcia Total:</strong>
+                              <span>{myChar.experience_total}</span>
+                            </TextContainter>
                           )}
-                        </TextContainter>
+
+                          {!myChar.npc && (
+                            <TextContainter isMobile={isMobileVersion}>
+                              <strong>Jogador:</strong>
+                              {dashboard ? (
+                                <span>{user.name}</span>
+                              ) : (
+                                <span>{myChar.user && myChar.user.name}</span>
+                              )}
+                            </TextContainter>
+                          )}
+                        </>
                       )}
                     </>
                   )}
 
                   {/* BLOCK ADDED - Remove next line to unblock */}
-                  {!user.storyteller ? (
-                    <TextContainter isMobile={isMobileVersion} center>
-                      <strong>
-                        Este site não funcionará na gestão atual da narração do
-                        Curitiba By Night
-                      </strong>
-                    </TextContainter>
-                  ) : (
+                  {user.storyteller && (
                     <>
                       <ButtonBox isMobile={isMobileVersion} small>
                         <Button
